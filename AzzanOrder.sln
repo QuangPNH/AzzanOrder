@@ -1,0 +1,33 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.10.35013.160
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzzanOrder.Data", "AzzanOrder.Data\AzzanOrder.Data.csproj", "{832AED9A-48EF-47E5-80EF-B74AA3CA4C51}"
+EndProject
+Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "azzanorder.client", "AzzanOrder.Client\azzanorder.client.esproj", "{0DECF4C3-031B-4F81-8FE4-9531CAC4891E}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{832AED9A-48EF-47E5-80EF-B74AA3CA4C51}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{832AED9A-48EF-47E5-80EF-B74AA3CA4C51}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{832AED9A-48EF-47E5-80EF-B74AA3CA4C51}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{832AED9A-48EF-47E5-80EF-B74AA3CA4C51}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DECF4C3-031B-4F81-8FE4-9531CAC4891E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0DECF4C3-031B-4F81-8FE4-9531CAC4891E}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0DECF4C3-031B-4F81-8FE4-9531CAC4891E}.Debug|Any CPU.Deploy.0 = Debug|Any CPU
+		{0DECF4C3-031B-4F81-8FE4-9531CAC4891E}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0DECF4C3-031B-4F81-8FE4-9531CAC4891E}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0DECF4C3-031B-4F81-8FE4-9531CAC4891E}.Release|Any CPU.Deploy.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {E818232E-14E8-41C6-951C-883800F4E388}
+	EndGlobalSection
+EndGlobal
