@@ -1,20 +1,16 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
 namespace AzzanOrder.Data.Models
 {
-    public class OrderDetail
+    public partial class OrderDetail
     {
-        [Key]
         public int OrderDetailId { get; set; }
-        [Required]
-        public int Quantity { get; set; }
-        public float Discount { get; set; }
-        [ForeignKey("MenuItemId")]
-        public MenuItem MenuItem { get; set; }
-        public int MenuItemId { get; set; }
-        [ForeignKey("OrderId")]
-        public Order Order { get; set; }
-        public int OrderId { get; set; }
+        public int? Quantity { get; set; }
+        public int? MenuItemId { get; set; }
+        public int? OrderId { get; set; }
+
+        public virtual MenuItem? MenuItem { get; set; }
+        public virtual Order? Order { get; set; }
     }
 }

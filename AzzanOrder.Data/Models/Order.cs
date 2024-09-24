@@ -1,24 +1,25 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
 namespace AzzanOrder.Data.Models
 {
-    public class Order
+    public partial class Order
     {
-        [Key]
-        public int Id { get; set; }
-        [Required]
-        public DateTime OrderDate { get; set; }
-        public int OrderDetail { get; set; }
-        [ForeignKey("TableId")]
-        public Table Table { get; set; }
-        public int TableId { get; set; }
-        [Required]
-        public float Cost { get; set; }
-        [Required]
-        public float Tax { get; set; }
-        [ForeignKey("UserId")]
-        public User User { get; set; }
-        public int UserId { get; set; }
+        public Order()
+        {
+            OrderDetails = new HashSet<OrderDetail>();
+        }
+
+        public int OrderId { get; set; }
+        public DateTime? OrderDate { get; set; }
+        public int? OrderDetailId { get; set; }
+        public int? TableId { get; set; }
+        public double? Cost { get; set; }
+        public double? Tax { get; set; }
+        public int? MemberId { get; set; }
+
+        public virtual Member? Member { get; set; }
+        public virtual Table? Table { get; set; }
+        public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }
 }

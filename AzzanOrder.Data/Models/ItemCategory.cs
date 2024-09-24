@@ -1,14 +1,24 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 
 namespace AzzanOrder.Data.Models
 {
-    public class ItemCategory
+    public partial class ItemCategory
     {
-        [Key]
+        public ItemCategory()
+        {
+            MenuCategories = new HashSet<MenuCategory>();
+            VocherDetails = new HashSet<VoucherDetail>();
+        }
+
         public int ItemCategoryId { get; set; }
-        [Required]
-        public string ItemCategoryName { get; set; }
-        [Required]
-        public float Discount { get; set; }
+        public string? ItemCategoryName { get; set; }
+        public string? Description { get; set; }
+        public double? Discount { get; set; }
+        public string? Image { get; set; }
+
+        public virtual ICollection<MenuCategory> MenuCategories { get; set; }
+
+        public virtual ICollection<VoucherDetail> VocherDetails { get; set; }
     }
 }

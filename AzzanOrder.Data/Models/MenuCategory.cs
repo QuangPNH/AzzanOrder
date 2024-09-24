@@ -1,15 +1,17 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
 namespace AzzanOrder.Data.Models
 {
-    public class MenuCategory
+    public partial class MenuCategory
     {
-        [ForeignKey("MenuId")]
-        public MenuItem MenuItem { get; set; }
-        public int MenuId { get; set; }
-        [ForeignKey("CategoryId")]
-        public ItemCategory Category { get; set; }
-        public int CategoryId { get; set; }
+        public int MenuItemId { get; set; }
+        public int ItemCategoryId { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public bool? IsForCombo { get; set; }
+
+        public virtual ItemCategory ItemCategory { get; set; } = null!;
+        public virtual MenuItem MenuItem { get; set; } = null!;
     }
 }

@@ -1,17 +1,14 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
 namespace AzzanOrder.Data.Models
 {
-    public class Feedback
+    public partial class Feedback
     {
-        [Key]
-        public int FeedbackId { get; set; }
-        [Required]
-        public float Rating { get; set; }
-        public string Content { get; set; }
-        [ForeignKey("UserId")]
-        public User User { get; set; }
-        public int UserId { get; set; }
+        public int Feedbackid { get; set; }
+        public string? Content { get; set; }
+        public int? MemberId { get; set; }
+
+        public virtual Member? Member { get; set; }
     }
 }

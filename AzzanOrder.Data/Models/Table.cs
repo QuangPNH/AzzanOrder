@@ -1,14 +1,19 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using System;
+using System.Collections.Generic;
 
 namespace AzzanOrder.Data.Models
 {
-    public class Table
+    public partial class Table
     {
-        [Key]
+        public Table()
+        {
+            Orders = new HashSet<Order>();
+        }
+
         public int TableId { get; set; }
-        [Required]
-        public string QR { get; set; }
-        [Required]
-        public int Status { get; set; }
+        public string? Qr { get; set; }
+        public bool? Status { get; set; }
+
+        public virtual ICollection<Order> Orders { get; set; }
     }
 }

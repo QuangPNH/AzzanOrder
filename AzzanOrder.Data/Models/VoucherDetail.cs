@@ -1,17 +1,21 @@
-﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
+﻿using System;
+using System.Collections.Generic;
 
 namespace AzzanOrder.Data.Models
 {
-    public class VoucherDetail
+    public partial class VoucherDetail
     {
-        [Key]
-        public int VoucherMenuId { get; set; }
-        [ForeignKey("VoucherId")]
-        public Voucher Voucher { get; set; }
-        public int VoucherId { get; set; }
-        [ForeignKey("ItemCategoryId")]
-        public ItemCategory ItemCategory { get; set; }
-        public int ItemCategoryId { get; set; }
+        public VoucherDetail()
+        {
+            ItemCategories = new HashSet<ItemCategory>();
+        }
+
+        public int VoucherDetailId { get; set; }
+        public string? Title { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public double? Discount { get; set; }
+
+        public virtual ICollection<ItemCategory> ItemCategories { get; set; }
     }
 }
