@@ -1,17 +1,22 @@
 ﻿import React, { useState } from 'react';
 import { GoogleGenerativeAI } from "@google/generative-ai";
 import { GEMINI_API_KEY } from '../core/config';
-
-const AiwithText = () => {
+import ProductCard from './ProductCard/ProductCard';
+import MenuButton from './MenuButton/MenuComponent';
+import ShowMoreLink from './ShowMoreLink/ShowMoreLink';
+import WarningWindow from './WarningWindow/MainWindow';
+const Homepage = () => {
+    /*
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
 
     const [search, setSearch] = useState('');
     const [aiResponse, setResponse] = useState('');
     const [loading, setLoading] = useState(false);
-
+    */
     /**
      * Generative AI Call to fetch text insights
      */
+    /*
     async function aiRun() {
         setLoading(true);
         setResponse('');
@@ -23,7 +28,8 @@ const AiwithText = () => {
         setResponse(text);
         setLoading(false);
     }
-
+    */
+   /*
     const handleChangeSearch = (e) => {
         setSearch(e.target.value);
     }
@@ -31,8 +37,9 @@ const AiwithText = () => {
     const handleClick = () => {
         aiRun();
     }
-
+    */
     return (
+        /*
         <div>
             <div style={{ display: 'flex' }}>
                 <input placeholder='Search Food with Category using Generative AI' onChange={(e) => handleChangeSearch(e)} />
@@ -48,7 +55,12 @@ const AiwithText = () => {
                     </div>
             }
         </div>
+        */
+        //<MenuButton title="Menu" imageurl='../src/assets/book.svg' />
+        //<ProductCard imageSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" title="Product Title" price="1000" />
+        //<ShowMoreLink title="Recently Ordered" url='https://google.com' />
+        //<WarningWindow />
     );
 };
 
-export default AiwithText;
+export default Homepage;
