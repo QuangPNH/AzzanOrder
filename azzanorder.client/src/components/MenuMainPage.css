@@ -1,0 +1,18 @@
+body {  
+}  
+ 
+/* Desktop layout */  
+section > div {  
+   display: grid;  
+   grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));  
+   justify-items: center;  
+   align-items: center;  
+}  
+ 
+/* Mobile layout */  
+@media (max-width: 600px) {  
+   section > div {  
+       grid-template-columns: repeat(2, 1fr);  
+       width:100%;  
+   }  
+}

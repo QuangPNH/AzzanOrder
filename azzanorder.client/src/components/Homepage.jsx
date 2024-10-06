@@ -1,10 +1,5 @@
 ﻿import React, { useState } from 'react';
-import { GoogleGenerativeAI } from "@google/generative-ai";
-import { GEMINI_API_KEY } from '../core/config';
-import ProductCard from './ProductCard/ProductCard';
-import MenuButton from './MenuButton/MenuComponent';
-import ShowMoreLink from './ShowMoreLink/ShowMoreLink';
-import WarningWindow from './WarningWindow/MainWindow';
+import MenuMainPage from './MenuMainPage';
 const Homepage = () => {
     /*
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
@@ -60,6 +55,7 @@ const Homepage = () => {
         //<ProductCard imageSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" title="Product Title" price="1000" />
         //<ShowMoreLink title="Recently Ordered" url='https://google.com' />
         //<WarningWindow />
+        <MenuMainPage />
     );
 };
 
