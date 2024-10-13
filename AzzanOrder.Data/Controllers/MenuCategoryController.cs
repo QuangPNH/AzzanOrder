@@ -13,9 +13,9 @@ namespace AzzanOrder.Data.Controllers
     [ApiController]
     public class MenuCategoryController : ControllerBase
     {
-        private readonly AzzanOrderContext _context;
+        private readonly OrderingAssistSystemContext _context;
 
-        public MenuCategoryController(AzzanOrderContext context)
+        public MenuCategoryController(OrderingAssistSystemContext context)
         {
             _context = context;
         }
@@ -87,7 +87,7 @@ namespace AzzanOrder.Data.Controllers
         {
           if (_context.MenuCategories == null)
           {
-              return Problem("Entity set 'AzzanOrderContext.MenuCategories'  is null.");
+              return Problem("Entity set 'OrderingAssistSystemContext.MenuCategories'  is null.");
           }
             _context.MenuCategories.Add(menuCategory);
             try

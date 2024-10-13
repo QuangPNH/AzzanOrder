@@ -13,9 +13,9 @@ namespace AzzanOrder.Data.Controllers
     [ApiController]
     public class BankController : ControllerBase
     {
-        private readonly AzzanOrderContext _context;
+        private readonly OrderingAssistSystemContext _context;
 
-        public BankController(AzzanOrderContext context)
+        public BankController(OrderingAssistSystemContext context)
         {
             _context = context;
         }
@@ -87,7 +87,7 @@ namespace AzzanOrder.Data.Controllers
         {
           if (_context.Banks == null)
           {
-              return Problem("Entity set 'AzzanOrderContext.Banks'  is null.");
+              return Problem("Entity set 'OrderingAssistSystemContext.Banks'  is null.");
           }
             _context.Banks.Add(bank);
             await _context.SaveChangesAsync();

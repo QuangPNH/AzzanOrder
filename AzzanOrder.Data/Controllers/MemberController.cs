@@ -13,9 +13,9 @@ namespace AzzanOrder.Data.Controllers
     [ApiController]
     public class MemberController : ControllerBase
     {
-        private readonly AzzanOrderContext _context;
+        private readonly OrderingAssistSystemContext _context;
 
-        public MemberController(AzzanOrderContext context)
+        public MemberController(OrderingAssistSystemContext context)
         {
             _context = context;
         }

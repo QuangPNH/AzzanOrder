@@ -13,9 +13,9 @@ namespace AzzanOrder.Data.Controllers
     [ApiController]
     public class RoleController : ControllerBase
     {
-        private readonly AzzanOrderContext _context;
+        private readonly OrderingAssistSystemContext _context;
 
-        public RoleController(AzzanOrderContext context)
+        public RoleController(OrderingAssistSystemContext context)
         {
             _context = context;
         }
@@ -87,7 +87,7 @@ namespace AzzanOrder.Data.Controllers
         {
           if (_context.Roles == null)
           {
-              return Problem("Entity set 'AzzanOrderContext.Roles'  is null.");
+              return Problem("Entity set 'OrderingAssistSystemContext.Roles'  is null.");
           }
             _context.Roles.Add(role);
             await _context.SaveChangesAsync();

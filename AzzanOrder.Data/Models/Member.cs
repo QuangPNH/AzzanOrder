@@ -20,6 +20,7 @@ namespace AzzanOrder.Data.Models
         public DateTime? BirthDate { get; set; }
         public string? Address { get; set; }
         public int? Point { get; set; }
+        public string? Image { get; set; }
 
         public virtual ICollection<Feedback> Feedbacks { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }

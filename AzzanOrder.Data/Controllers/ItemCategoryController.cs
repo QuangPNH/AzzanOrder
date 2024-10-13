@@ -13,9 +13,9 @@ namespace AzzanOrder.Data.Controllers
     [ApiController]
     public class ItemCategoryController : ControllerBase
     {
-        private readonly AzzanOrderContext _context;
+        private readonly OrderingAssistSystemContext _context;
 
-        public ItemCategoryController(AzzanOrderContext context)
+        public ItemCategoryController(OrderingAssistSystemContext context)
         {
             _context = context;
         }
@@ -87,7 +87,7 @@ namespace AzzanOrder.Data.Controllers
         {
           if (_context.ItemCategories == null)
           {
-              return Problem("Entity set 'AzzanOrderContext.ItemCategories'  is null.");
+              return Problem("Entity set 'OrderingAssistSystemContext.ItemCategories'  is null.");
           }
             _context.ItemCategories.Add(itemCategory);
             await _context.SaveChangesAsync();
