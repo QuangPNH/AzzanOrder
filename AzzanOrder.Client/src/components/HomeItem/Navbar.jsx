@@ -3,7 +3,7 @@ import NavigationItem from './NavigationItem';
 
 const navigationItems = [
     { icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/4248bf27bbf27f1c483ff23778eaba7c542de4e8e12b9707e9f5dfec6988ba65?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533', label: 'Menu' },
-    { icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/09a6bbb1ce9749f7740bb7be4a0f65be3637b5fac9d4348aaaed232dd84d7840?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533', label: 'News' },
+    { icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/7a853134f70b6e70ec8c0b2dd80275ee6662820bbc34ce628dce07c644383e1b?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533', label: 'About Us' },
     { icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/77b7958b81123b01b3263f4d163a20b07db78de7b2898a7f38789ad7f4172289?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533', label: 'Order' },
     { icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/d896ad111b7b0d08a8da0eef1536518980ea24bf8935c612f44c1ad667772f3c?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533', label: 'Voucher' }
 ];
