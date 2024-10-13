@@ -22,7 +22,7 @@ const Footer = () => {
     },
   ];
 
-  const linkItems = ["About us", "News", "Contact"];
+  const linkItems = ["About us", "Contact"];
 
   return (
     <footer className="footer">

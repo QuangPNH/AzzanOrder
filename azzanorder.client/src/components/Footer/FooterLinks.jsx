@@ -37,6 +37,7 @@ const FooterLinks = ({ title, items }) => {
           font-size: 14px;
           color: #000;
           text-decoration: none;
+                    text-decoration: underline;
         }
       `}</style>
     </nav>
