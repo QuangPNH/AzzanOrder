@@ -1,4 +1,9 @@
-﻿import React from 'react';
+﻿import React, { useState } from 'react';
+
+/*
+    **import biến PriceCalculator từ file PriceCalculator
+    **phải có export từ hàm PriceCalculator
+*/
 import MenuMainPage from './MenuMainPage';
 import Footer from '../components/Footer/Footer';
 import Header from '../components/Header/Header';
@@ -42,18 +47,40 @@ const Homepage = () => {
                     max-width: 1200px; /* Set a max-width to avoid stretching */
                 }
 
+    const handleClick = () => {
+        aiRun();
+    }
+    */
+    return (
+
+        //Import PriceCalculator trong Function Return
+        <PriceCalculator />
+        /*
+        <div>
+            <div style={{ display: 'flex' }}>
+                <input placeholder='Search Food with Category using Generative AI' onChange={(e) => handleChangeSearch(e)} />
+                <button style={{ marginLeft: '20px' }} onClick={() => handleClick()}>Search</button>
+            </div>
                 .product-grid > * {
                     flex: 1 1 calc(50% - 20px); /* 2 items per row */
                     box-sizing: border-box;
                 }
 
-                @media (max-width: 768px) {
-                    .product-grid > * {
-                        flex: 1 1 100%; /* Full width on smaller screens */
-                    }
-                }
-            `}</style>
-        </>
+            {
+                loading == true && (aiResponse == '') ?
+                    <p style={{ margin: '30px 0' }}>Loading ...</p>
+                    :
+                    <div style={{ margin: '30px 0' }}>
+                        <p>{aiResponse}</p>
+                    </div>
+            }
+        </div>
+        */
+        //<MenuButton title="Menu" imageurl='../src/assets/book.svg' />
+        //<ProductCard imageSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" title="Product Title" price="1000" />
+        //<ShowMoreLink title="Recently Ordered" url='https://google.com' />
+        //<WarningWindow />
+        <MenuMainPage />
     );
 };
 
