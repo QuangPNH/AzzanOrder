@@ -5,6 +5,7 @@
     **phải có export từ hàm PriceCalculator
 */
 import MenuMainPage from './MenuMainPage';
+import ItemInCart from './ItemInCart/ItemInCart';
 import PriceCalculator from './PriceCalculator/PriceCalculator';
 const Homepage = () => {
     /*
@@ -42,7 +43,15 @@ const Homepage = () => {
     return (
 
         //Import PriceCalculator trong Function Return
-        <PriceCalculator />
+        <div>
+            <div>
+                <ItemInCart name="Milk tea" options={["50% đường, 50% đá", "Không topping"]} price="3000" quantity="3" />
+            </div>
+            <div>
+                <PriceCalculator />
+            </div>
+        </div>
+
         /*
         <div>
             <div style={{ display: 'flex' }}>
