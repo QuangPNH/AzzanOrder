@@ -8,7 +8,7 @@ namespace AzzanOrder.Data.Models
         public ItemCategory()
         {
             MenuCategories = new HashSet<MenuCategory>();
-            VocherDetails = new HashSet<VoucherDetail>();
+            Vouchers = new HashSet<Voucher>();
         }
 
         public int ItemCategoryId { get; set; }
@@ -18,7 +18,6 @@ namespace AzzanOrder.Data.Models
         public string? Image { get; set; }
 
         public virtual ICollection<MenuCategory> MenuCategories { get; set; }
-
-        public virtual ICollection<VoucherDetail> VocherDetails { get; set; }
+        public virtual ICollection<Voucher> Vouchers { get; set; }
     }
 }

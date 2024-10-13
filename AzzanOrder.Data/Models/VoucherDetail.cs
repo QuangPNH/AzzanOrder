@@ -7,7 +7,7 @@ namespace AzzanOrder.Data.Models
     {
         public VoucherDetail()
         {
-            ItemCategories = new HashSet<ItemCategory>();
+            Vouchers = new HashSet<Voucher>();
         }
 
         public int VoucherDetailId { get; set; }
@@ -16,6 +16,6 @@ namespace AzzanOrder.Data.Models
         public DateTime? EndDate { get; set; }
         public double? Discount { get; set; }
 
-        public virtual ICollection<ItemCategory> ItemCategories { get; set; }
+        public virtual ICollection<Voucher> Vouchers { get; set; }
     }
 }

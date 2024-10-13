@@ -13,9 +13,9 @@ namespace AzzanOrder.Data.Controllers
     [ApiController]
     public class OwnerController : ControllerBase
     {
-        private readonly AzzanOrderContext _context;
+        private readonly OrderingAssistSystemContext _context;
 
-        public OwnerController(AzzanOrderContext context)
+        public OwnerController(OrderingAssistSystemContext context)
         {
             _context = context;
         }
@@ -87,7 +87,7 @@ namespace AzzanOrder.Data.Controllers
         {
           if (_context.Owners == null)
           {
-              return Problem("Entity set 'AzzanOrderContext.Owners'  is null.");
+              return Problem("Entity set 'OrderingAssistSystemContext.Owners'  is null.");
           }
             _context.Owners.Add(owner);
             await _context.SaveChangesAsync();
