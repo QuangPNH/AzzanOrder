@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,55 +11,55 @@ namespace AzzanOrder.Data.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TableController : ControllerBase
+    public class PromotionsController : ControllerBase
     {
         private readonly OrderingAssistSystemContext _context;
 
-        public TableController(OrderingAssistSystemContext context)
+        public PromotionsController(OrderingAssistSystemContext context)
         {
             _context = context;
         }
 
-        // GET: api/Table
+        // GET: api/Promotions
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Table>>> GetTables()
+        public async Task<ActionResult<IEnumerable<Promotion>>> GetPromotions()
         {
-          if (_context.Tables == null)
+          if (_context.Promotions == null)
           {
               return NotFound();
           }
-            return await _context.Tables.ToListAsync();
+            return await _context.Promotions.ToListAsync();
         }
 
-        // GET: api/Table/5
+        // GET: api/Promotions/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Table>> GetTable(int id)
+        public async Task<ActionResult<Promotion>> GetPromotion(int id)
         {
-          if (_context.Tables == null)
+          if (_context.Promotions == null)
           {
               return NotFound();
           }
-            var table = await _context.Tables.FindAsync(id);
+            var promotion = await _context.Promotions.FindAsync(id);
 
-            if (table == null)
+            if (promotion == null)
             {
                 return NotFound();
             }
 
-            return table;
+            return promotion;
         }
 
-        // PUT: api/Table/5
+        // PUT: api/Promotions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTable(int id, Table table)
+        public async Task<IActionResult> PutPromotion(int id, Promotion promotion)
         {
-            if (id != table.TableId)
+            if (id != promotion.PromotionId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(table).State = EntityState.Modified;
+            _context.Entry(promotion).State = EntityState.Modified;
 
             try
             {
@@ -67,7 +67,7 @@ namespace AzzanOrder.Data.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!TableExists(id))
+                if (!PromotionExists(id))
                 {
                     return NotFound();
                 }
@@ -80,44 +80,44 @@ namespace AzzanOrder.Data.Controllers
             return NoContent();
         }
 
-        // POST: api/Table
+        // POST: api/Promotions
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Table>> PostTable(Table table)
+        public async Task<ActionResult<Promotion>> PostPromotion(Promotion promotion)
         {
-          if (_context.Tables == null)
+          if (_context.Promotions == null)
           {
-              return Problem("Entity set 'OrderingAssistSystemContext.Tables'  is null.");
+              return Problem("Entity set 'OrderingAssistSystemContext.Promotions'  is null.");
           }
-            _context.Tables.Add(table);
+            _context.Promotions.Add(promotion);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTable", new { id = table.TableId }, table);
+            return CreatedAtAction("GetPromotion", new { id = promotion.PromotionId }, promotion);
         }
 
-        // DELETE: api/Table/5
+        // DELETE: api/Promotions/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTable(int id)
+        public async Task<IActionResult> DeletePromotion(int id)
         {
-            if (_context.Tables == null)
+            if (_context.Promotions == null)
             {
                 return NotFound();
             }
-            var table = await _context.Tables.FindAsync(id);
-            if (table == null)
+            var promotion = await _context.Promotions.FindAsync(id);
+            if (promotion == null)
             {
                 return NotFound();
             }
 
-            _context.Tables.Remove(table);
+            _context.Promotions.Remove(promotion);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool TableExists(int id)
+        private bool PromotionExists(int id)
         {
-            return (_context.Tables?.Any(e => e.TableId == id)).GetValueOrDefault();
+            return (_context.Promotions?.Any(e => e.PromotionId == id)).GetValueOrDefault();
         }
     }
 }

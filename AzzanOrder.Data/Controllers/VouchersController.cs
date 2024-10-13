@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,55 +11,55 @@ namespace AzzanOrder.Data.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class MenuCategoryController : ControllerBase
+    public class VouchersController : ControllerBase
     {
         private readonly OrderingAssistSystemContext _context;
 
-        public MenuCategoryController(OrderingAssistSystemContext context)
+        public VouchersController(OrderingAssistSystemContext context)
         {
             _context = context;
         }
 
-        // GET: api/MenuCategory
+        // GET: api/Vouchers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MenuCategory>>> GetMenuCategories()
+        public async Task<ActionResult<IEnumerable<Voucher>>> GetVouchers()
         {
-          if (_context.MenuCategories == null)
+          if (_context.Vouchers == null)
           {
               return NotFound();
           }
-            return await _context.MenuCategories.ToListAsync();
+            return await _context.Vouchers.ToListAsync();
         }
 
-        // GET: api/MenuCategory/5
+        // GET: api/Vouchers/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<MenuCategory>> GetMenuCategory(int id)
+        public async Task<ActionResult<Voucher>> GetVoucher(int id)
         {
-          if (_context.MenuCategories == null)
+          if (_context.Vouchers == null)
           {
               return NotFound();
           }
-            var menuCategory = await _context.MenuCategories.FindAsync(id);
+            var voucher = await _context.Vouchers.FindAsync(id);
 
-            if (menuCategory == null)
+            if (voucher == null)
             {
                 return NotFound();
             }
 
-            return menuCategory;
+            return voucher;
         }
 
-        // PUT: api/MenuCategory/5
+        // PUT: api/Vouchers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMenuCategory(int id, MenuCategory menuCategory)
+        public async Task<IActionResult> PutVoucher(int id, Voucher voucher)
         {
-            if (id != menuCategory.MenuItemId)
+            if (id != voucher.VocherDetailId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(menuCategory).State = EntityState.Modified;
+            _context.Entry(voucher).State = EntityState.Modified;
 
             try
             {
@@ -67,7 +67,7 @@ namespace AzzanOrder.Data.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MenuCategoryExists(id))
+                if (!VoucherExists(id))
                 {
                     return NotFound();
                 }
@@ -80,23 +80,23 @@ namespace AzzanOrder.Data.Controllers
             return NoContent();
         }
 
-        // POST: api/MenuCategory
+        // POST: api/Vouchers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<MenuCategory>> PostMenuCategory(MenuCategory menuCategory)
+        public async Task<ActionResult<Voucher>> PostVoucher(Voucher voucher)
         {
-          if (_context.MenuCategories == null)
+          if (_context.Vouchers == null)
           {
-              return Problem("Entity set 'OrderingAssistSystemContext.MenuCategories'  is null.");
+              return Problem("Entity set 'OrderingAssistSystemContext.Vouchers'  is null.");
           }
-            _context.MenuCategories.Add(menuCategory);
+            _context.Vouchers.Add(voucher);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (MenuCategoryExists(menuCategory.MenuItemId))
+                if (VoucherExists(voucher.VocherDetailId))
                 {
                     return Conflict();
                 }
@@ -106,32 +106,32 @@ namespace AzzanOrder.Data.Controllers
                 }
             }
 
-            return CreatedAtAction("GetMenuCategory", new { id = menuCategory.MenuItemId }, menuCategory);
+            return CreatedAtAction("GetVoucher", new { id = voucher.VocherDetailId }, voucher);
         }
 
-        // DELETE: api/MenuCategory/5
+        // DELETE: api/Vouchers/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMenuCategory(int id)
+        public async Task<IActionResult> DeleteVoucher(int id)
         {
-            if (_context.MenuCategories == null)
+            if (_context.Vouchers == null)
             {
                 return NotFound();
             }
-            var menuCategory = await _context.MenuCategories.FindAsync(id);
-            if (menuCategory == null)
+            var voucher = await _context.Vouchers.FindAsync(id);
+            if (voucher == null)
             {
                 return NotFound();
             }
 
-            _context.MenuCategories.Remove(menuCategory);
+            _context.Vouchers.Remove(voucher);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool MenuCategoryExists(int id)
+        private bool VoucherExists(int id)
         {
-            return (_context.MenuCategories?.Any(e => e.MenuItemId == id)).GetValueOrDefault();
+            return (_context.Vouchers?.Any(e => e.VocherDetailId == id)).GetValueOrDefault();
         }
     }
 }

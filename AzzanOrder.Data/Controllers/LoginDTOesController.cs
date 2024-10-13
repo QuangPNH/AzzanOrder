@@ -15,9 +15,9 @@ namespace AzzanOrder.Data.Controllers
     [ApiController]
     public class LoginDTOesController : ControllerBase
     {
-        private readonly AzzanOrderContext _context;
+        private readonly OrderingAssistSystemContext _context;
 
-        public LoginDTOesController(AzzanOrderContext context)
+        public LoginDTOesController(OrderingAssistSystemContext context)
         {
             _context = context;
         }
@@ -104,7 +104,7 @@ namespace AzzanOrder.Data.Controllers
         {
           if (_context.LoginDTO == null)
           {
-              return Problem("Entity set 'AzzanOrderContext.LoginDTO'  is null.");
+              return Problem("Entity set 'OrderingAssistSystemContext.LoginDTO'  is null.");
           }
             _context.LoginDTO.Add(loginDTO);
             try

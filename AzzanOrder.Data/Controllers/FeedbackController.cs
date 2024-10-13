@@ -13,9 +13,9 @@ namespace AzzanOrder.Data.Controllers
     [ApiController]
     public class FeedbackController : ControllerBase
     {
-        private readonly AzzanOrderContext _context;
+        private readonly OrderingAssistSystemContext _context;
 
-        public FeedbackController(AzzanOrderContext context)
+        public FeedbackController(OrderingAssistSystemContext context)
         {
             _context = context;
         }
@@ -87,7 +87,7 @@ namespace AzzanOrder.Data.Controllers
         {
           if (_context.Feedbacks == null)
           {
-              return Problem("Entity set 'AzzanOrderContext.Feedbacks'  is null.");
+              return Problem("Entity set 'OrderingAssistSystemContext.Feedbacks'  is null.");
           }
             _context.Feedbacks.Add(feedback);
             await _context.SaveChangesAsync();

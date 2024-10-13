@@ -13,9 +13,9 @@ namespace AzzanOrder.Data.Controllers
     [ApiController]
     public class NotificationController : ControllerBase
     {
-        private readonly AzzanOrderContext _context;
+        private readonly OrderingAssistSystemContext _context;
 
-        public NotificationController(AzzanOrderContext context)
+        public NotificationController(OrderingAssistSystemContext context)
         {
             _context = context;
         }
@@ -87,7 +87,7 @@ namespace AzzanOrder.Data.Controllers
         {
           if (_context.Notifications == null)
           {
-              return Problem("Entity set 'AzzanOrderContext.Notifications'  is null.");
+              return Problem("Entity set 'OrderingAssistSystemContext.Notifications'  is null.");
           }
             _context.Notifications.Add(notification);
             await _context.SaveChangesAsync();

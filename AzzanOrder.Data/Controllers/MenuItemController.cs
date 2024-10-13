@@ -13,9 +13,9 @@ namespace AzzanOrder.Data.Controllers
     [ApiController]
     public class MenuItemController : ControllerBase
     {
-        private readonly AzzanOrderContext _context;
+        private readonly OrderingAssistSystemContext _context;
 
-        public MenuItemController(AzzanOrderContext context)
+        public MenuItemController(OrderingAssistSystemContext context)
         {
             _context = context;
         }
@@ -87,7 +87,7 @@ namespace AzzanOrder.Data.Controllers
         {
           if (_context.MenuItems == null)
           {
-              return Problem("Entity set 'AzzanOrderContext.MenuItems'  is null.");
+              return Problem("Entity set 'OrderingAssistSystemContext.MenuItems'  is null.");
           }
             _context.MenuItems.Add(menuItem);
             await _context.SaveChangesAsync();

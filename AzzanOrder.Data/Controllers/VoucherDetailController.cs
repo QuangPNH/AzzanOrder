@@ -13,9 +13,9 @@ namespace AzzanOrder.Data.Controllers
     [ApiController]
     public class VoucherDetailController : ControllerBase
     {
-        private readonly AzzanOrderContext _context;
+        private readonly OrderingAssistSystemContext _context;
 
-        public VoucherDetailController(AzzanOrderContext context)
+        public VoucherDetailController(OrderingAssistSystemContext context)
         {
             _context = context;
         }
@@ -87,7 +87,7 @@ namespace AzzanOrder.Data.Controllers
         {
           if (_context.VoucherDetails == null)
           {
-              return Problem("Entity set 'AzzanOrderContext.VoucherDetails'  is null.");
+              return Problem("Entity set 'OrderingAssistSystemContext.VoucherDetails'  is null.");
           }
             _context.VoucherDetails.Add(voucherDetail);
             await _context.SaveChangesAsync();

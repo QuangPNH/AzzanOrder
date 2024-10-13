@@ -13,9 +13,9 @@ namespace AzzanOrder.Data.Controllers
     [ApiController]
     public class OrderController : ControllerBase
     {
-        private readonly AzzanOrderContext _context;
+        private readonly OrderingAssistSystemContext _context;
 
-        public OrderController(AzzanOrderContext context)
+        public OrderController(OrderingAssistSystemContext context)
         {
             _context = context;
         }
@@ -87,7 +87,7 @@ namespace AzzanOrder.Data.Controllers
         {
           if (_context.Orders == null)
           {
-              return Problem("Entity set 'AzzanOrderContext.Orders'  is null.");
+              return Problem("Entity set 'OrderingAssistSystemContext.Orders'  is null.");
           }
             _context.Orders.Add(order);
             await _context.SaveChangesAsync();

@@ -13,9 +13,9 @@ namespace AzzanOrder.Data.Controllers
     [ApiController]
     public class MemberController : ControllerBase
     {
-        private readonly AzzanOrderContext _context;
+        private readonly OrderingAssistSystemContext _context;
 
-        public MemberController(AzzanOrderContext context)
+        public MemberController(OrderingAssistSystemContext context)
         {
             _context = context;
         }
@@ -46,6 +46,23 @@ namespace AzzanOrder.Data.Controllers
                 return NotFound();
             }
 
+            return member;
+        }
+
+        // GET: api/Member/5
+        [HttpGet("phone/{phone}")]
+        public async Task<ActionResult<Member>> GetMemberByPhone(string phone)
+        {
+            if (_context.Members == null)
+            {
+                return NotFound();
+            }
+            var member = await _context.Members.FirstOrDefaultAsync(m => m.Phone.Equals(phone));
+
+            if (member == null)
+            {
+                return NotFound();
+            }
             return member;
         }
 

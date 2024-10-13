@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -11,55 +11,55 @@ namespace AzzanOrder.Data.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
-    public class TableController : ControllerBase
+    public class AboutsController : ControllerBase
     {
         private readonly OrderingAssistSystemContext _context;
 
-        public TableController(OrderingAssistSystemContext context)
+        public AboutsController(OrderingAssistSystemContext context)
         {
             _context = context;
         }
 
-        // GET: api/Table
+        // GET: api/Abouts
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Table>>> GetTables()
+        public async Task<ActionResult<IEnumerable<About>>> GetAbouts()
         {
-          if (_context.Tables == null)
+          if (_context.Abouts == null)
           {
               return NotFound();
           }
-            return await _context.Tables.ToListAsync();
+            return await _context.Abouts.ToListAsync();
         }
 
-        // GET: api/Table/5
+        // GET: api/Abouts/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<Table>> GetTable(int id)
+        public async Task<ActionResult<About>> GetAbout(int id)
         {
-          if (_context.Tables == null)
+          if (_context.Abouts == null)
           {
               return NotFound();
           }
-            var table = await _context.Tables.FindAsync(id);
+            var about = await _context.Abouts.FindAsync(id);
 
-            if (table == null)
+            if (about == null)
             {
                 return NotFound();
             }
 
-            return table;
+            return about;
         }
 
-        // PUT: api/Table/5
+        // PUT: api/Abouts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutTable(int id, Table table)
+        public async Task<IActionResult> PutAbout(int id, About about)
         {
-            if (id != table.TableId)
+            if (id != about.AboutId)
             {
                 return BadRequest();
             }
 
-            _context.Entry(table).State = EntityState.Modified;
+            _context.Entry(about).State = EntityState.Modified;
 
             try
             {
@@ -67,7 +67,7 @@ namespace AzzanOrder.Data.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!TableExists(id))
+                if (!AboutExists(id))
                 {
                     return NotFound();
                 }
@@ -80,44 +80,44 @@ namespace AzzanOrder.Data.Controllers
             return NoContent();
         }
 
-        // POST: api/Table
+        // POST: api/Abouts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<Table>> PostTable(Table table)
+        public async Task<ActionResult<About>> PostAbout(About about)
         {
-          if (_context.Tables == null)
+          if (_context.Abouts == null)
           {
-              return Problem("Entity set 'OrderingAssistSystemContext.Tables'  is null.");
+              return Problem("Entity set 'OrderingAssistSystemContext.Abouts'  is null.");
           }
-            _context.Tables.Add(table);
+            _context.Abouts.Add(about);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTable", new { id = table.TableId }, table);
+            return CreatedAtAction("GetAbout", new { id = about.AboutId }, about);
         }
 
-        // DELETE: api/Table/5
+        // DELETE: api/Abouts/5
         [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTable(int id)
+        public async Task<IActionResult> DeleteAbout(int id)
         {
-            if (_context.Tables == null)
+            if (_context.Abouts == null)
             {
                 return NotFound();
             }
-            var table = await _context.Tables.FindAsync(id);
-            if (table == null)
+            var about = await _context.Abouts.FindAsync(id);
+            if (about == null)
             {
                 return NotFound();
             }
 
-            _context.Tables.Remove(table);
+            _context.Abouts.Remove(about);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool TableExists(int id)
+        private bool AboutExists(int id)
         {
-            return (_context.Tables?.Any(e => e.TableId == id)).GetValueOrDefault();
+            return (_context.Abouts?.Any(e => e.AboutId == id)).GetValueOrDefault();
         }
     }
 }

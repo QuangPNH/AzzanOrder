@@ -17,6 +17,7 @@ namespace AzzanOrder.Data.Models
         public double? Cost { get; set; }
         public double? Tax { get; set; }
         public int? MemberId { get; set; }
+        public bool? Status { get; set; }
 
         public virtual Member? Member { get; set; }
         public virtual Table? Table { get; set; }
