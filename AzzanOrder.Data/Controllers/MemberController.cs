@@ -49,6 +49,23 @@ namespace AzzanOrder.Data.Controllers
             return member;
         }
 
+        // GET: api/Member/5
+        [HttpGet("phone/{phone}")]
+        public async Task<ActionResult<Member>> GetMemberByPhone(string phone)
+        {
+            if (_context.Members == null)
+            {
+                return NotFound();
+            }
+            var member = await _context.Members.FirstOrDefaultAsync(m => m.Phone.Equals(phone));
+
+            if (member == null)
+            {
+                return NotFound();
+            }
+            return member;
+        }
+
         // PUT: api/Member/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

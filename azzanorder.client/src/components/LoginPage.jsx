@@ -13,7 +13,7 @@ function LoginPage() {
     event.preventDefault();
     
     try {
-      const response = await fetch(`/api/Members/${phoneNumber}`);
+      const response = await fetch(`https://localhost:7183/api/Member/phone/0934422800%20`);
       if (response.ok) {
         const memberInfo = await response.json();
         // Save the member info in session memory
