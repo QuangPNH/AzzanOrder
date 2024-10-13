@@ -43,6 +43,7 @@ const Homepage = () => {
     return (
 
         //Import PriceCalculator trong Function Return
+        /*
         <div>
             <div>
                 <ItemInCart name="Milk tea" options={["50% đường, 50% đá", "Không topping"]} price="3000" quantity="3" />
@@ -51,7 +52,7 @@ const Homepage = () => {
                 <PriceCalculator />
             </div>
         </div>
-
+        */
         /*
         <div>
             <div style={{ display: 'flex' }}>
