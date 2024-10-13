@@ -1,5 +1,11 @@
 ﻿import React, { useState } from 'react';
+
+/*
+    **import biến PriceCalculator từ file PriceCalculator
+    **phải có export từ hàm PriceCalculator
+*/
 import MenuMainPage from './MenuMainPage';
+import PriceCalculator from './PriceCalculator/PriceCalculator';
 const Homepage = () => {
     /*
     const genAI = new GoogleGenerativeAI(GEMINI_API_KEY);
@@ -34,6 +40,9 @@ const Homepage = () => {
     }
     */
     return (
+
+        //Import PriceCalculator trong Function Return
+        <PriceCalculator />
         /*
         <div>
             <div style={{ display: 'flex' }}>
@@ -54,8 +63,13 @@ const Homepage = () => {
         //<MenuButton title="Menu" imageurl='../src/assets/book.svg' />
         //<ProductCard imageSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" title="Product Title" price="1000" />
         //<ShowMoreLink title="Recently Ordered" url='https://google.com' />
+
+
+
         //<WarningWindow />
-        <MenuMainPage />
+        //<ItemInCart name="Milk tea" options={["50% đường, 50% đá", "Không topping"]} price="3000" quantity="3" />
+        //<MenuMainPage />
+
     );
 };
 

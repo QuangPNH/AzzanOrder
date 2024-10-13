@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
+using AzzanOrder.Data.DTO;
 
 namespace AzzanOrder.Data.Models
 {
@@ -227,5 +228,7 @@ namespace AzzanOrder.Data.Models
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
+
+        public DbSet<AzzanOrder.Data.DTO.LoginDTO>? LoginDTO { get; set; }
     }
 }
