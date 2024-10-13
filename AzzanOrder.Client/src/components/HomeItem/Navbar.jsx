@@ -1,0 +1,45 @@
+﻿import React from 'react';
+import NavigationItem from './NavigationItem';
+
+const navigationItems = [
+    { icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/4248bf27bbf27f1c483ff23778eaba7c542de4e8e12b9707e9f5dfec6988ba65?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533', label: 'Menu' },
+    { icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/09a6bbb1ce9749f7740bb7be4a0f65be3637b5fac9d4348aaaed232dd84d7840?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533', label: 'News' },
+    { icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/77b7958b81123b01b3263f4d163a20b07db78de7b2898a7f38789ad7f4172289?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533', label: 'Order' },
+    { icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/d896ad111b7b0d08a8da0eef1536518980ea24bf8935c612f44c1ad667772f3c?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533', label: 'Voucher' }
+];
+
+function Navbar() {
+    return (
+        <>
+            <nav className="redirect-bar-header">
+                <div className="redirect-bar-navigation">
+                    {navigationItems.map((item, index) => (
+                        <NavigationItem key={index} icon={item.icon} label={item.label} />
+                    ))}
+                </div>
+            </nav>
+            <style jsx>{`
+                .redirect-bar-header {
+                    border-radius: 16px;
+                    background-color: rgba(255, 255, 255, 0.4); /* Semi-transparent white */
+                    backdrop-filter: blur(10px); /* Background blur */
+                    display: flex;
+                    position: relative;
+                    max-width: 328px;
+                    overflow: hidden;
+                    padding: 15px 0;
+                    margin-top: -20px; /* To overlap part of the banner */
+                    z-index: 1;
+                }
+                .redirect-bar-navigation {
+                    display: flex;
+                    align-items: center;
+                    justify-content: space-around;
+                    width: 100%;
+                }
+            `}</style>
+        </>
+    );
+}
+
+export default Navbar;
