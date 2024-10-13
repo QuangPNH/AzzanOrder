@@ -2,21 +2,21 @@
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
-using AzzanOrder.Data.DTO;
 
 namespace AzzanOrder.Data.Models
 {
-    public partial class AzzanOrderContext : DbContext
+    public partial class OrderingAssistSystemContext : DbContext
     {
-        public AzzanOrderContext()
+        public OrderingAssistSystemContext()
         {
         }
 
-        public AzzanOrderContext(DbContextOptions<AzzanOrderContext> options)
+        public OrderingAssistSystemContext(DbContextOptions<OrderingAssistSystemContext> options)
             : base(options)
         {
         }
 
+        public virtual DbSet<About> Abouts { get; set; } = null!;
         public virtual DbSet<Bank> Banks { get; set; } = null!;
         public virtual DbSet<Employee> Employees { get; set; } = null!;
         public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;
@@ -28,21 +28,24 @@ namespace AzzanOrder.Data.Models
         public virtual DbSet<Order> Orders { get; set; } = null!;
         public virtual DbSet<OrderDetail> OrderDetails { get; set; } = null!;
         public virtual DbSet<Owner> Owners { get; set; } = null!;
+        public virtual DbSet<Promotion> Promotions { get; set; } = null!;
         public virtual DbSet<Role> Roles { get; set; } = null!;
         public virtual DbSet<Table> Tables { get; set; } = null!;
+        public virtual DbSet<Voucher> Vouchers { get; set; } = null!;
         public virtual DbSet<VoucherDetail> VoucherDetails { get; set; } = null!;
-
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-                var ConnectionString = new ConfigurationBuilder().AddJsonFile("appsettings.json").Build().GetConnectionString("MyCnn");
-                optionsBuilder.UseSqlServer(ConnectionString);
-            }
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            modelBuilder.Entity<About>(entity =>
+            {
+                entity.ToTable("About");
+
+                entity.HasOne(d => d.Owner)
+                    .WithMany(p => p.Abouts)
+                    .HasForeignKey(d => d.OwnerId)
+                    .HasConstraintName("FK_About_Owner");
+            });
+
             modelBuilder.Entity<Bank>(entity =>
             {
                 entity.ToTable("Bank");
@@ -190,6 +193,16 @@ namespace AzzanOrder.Data.Models
                     .HasConstraintName("FK_Owner_Bank");
             });
 
+            modelBuilder.Entity<Promotion>(entity =>
+            {
+                entity.ToTable("Promotion");
+
+                entity.HasOne(d => d.Employee)
+                    .WithMany(p => p.Promotions)
+                    .HasForeignKey(d => d.EmployeeId)
+                    .HasConstraintName("FK_Promotion_Employee");
+            });
+
             modelBuilder.Entity<Role>(entity =>
             {
                 entity.ToTable("Role");
@@ -202,6 +215,25 @@ namespace AzzanOrder.Data.Models
                 entity.Property(e => e.Qr).HasColumnName("QR");
             });
 
+            modelBuilder.Entity<Voucher>(entity =>
+            {
+                entity.HasKey(e => new { e.VocherDetailId, e.ItemCategoryId });
+
+                entity.ToTable("Voucher");
+
+                entity.HasOne(d => d.ItemCategory)
+                    .WithMany(p => p.Vouchers)
+                    .HasForeignKey(d => d.ItemCategoryId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Voucher_ItemCategory");
+
+                entity.HasOne(d => d.VocherDetail)
+                    .WithMany(p => p.Vouchers)
+                    .HasForeignKey(d => d.VocherDetailId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
+                    .HasConstraintName("FK_Voucher_VoucherDetail");
+            });
+
             modelBuilder.Entity<VoucherDetail>(entity =>
             {
                 entity.ToTable("VoucherDetail");
@@ -209,26 +241,11 @@ namespace AzzanOrder.Data.Models
                 entity.Property(e => e.EndDate).HasColumnType("datetime");
 
                 entity.Property(e => e.StartDate).HasColumnType("datetime");
-
-                entity.HasMany(d => d.ItemCategories)
-                    .WithMany(p => p.VocherDetails)
-                    .UsingEntity<Dictionary<string, object>>(
-                        "Voucher",
-                        l => l.HasOne<ItemCategory>().WithMany().HasForeignKey("ItemCategoryId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_Voucher_ItemCategory"),
-                        r => r.HasOne<VoucherDetail>().WithMany().HasForeignKey("VocherDetailId").OnDelete(DeleteBehavior.ClientSetNull).HasConstraintName("FK_Voucher_VoucherDetail"),
-                        j =>
-                        {
-                            j.HasKey("VocherDetailId", "ItemCategoryId");
-
-                            j.ToTable("Voucher");
-                        });
             });
 
             OnModelCreatingPartial(modelBuilder);
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
-
-        public DbSet<AzzanOrder.Data.DTO.LoginDTO>? LoginDTO { get; set; }
     }
 }

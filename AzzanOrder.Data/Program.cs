@@ -1,6 +1,5 @@
 using AzzanOrder.Data.Models;
 using Microsoft.EntityFrameworkCore;
-using System.Text.Json.Serialization;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -8,19 +7,14 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
+
+
+builder.Services.AddDbContext<OrderingAssistSystemContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("Database")));
+builder.Services.AddDbContext<OrderingAssistSystemContext>();
+
 builder.Services.AddEndpointsApiExplorer();
+
 builder.Services.AddSwaggerGen();
-
-builder.Services.AddDbContext<AzzanOrderContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("MyCnn")));
-builder.Services.AddDbContext<AzzanOrderContext>();
-
-builder.Services.AddCors(options =>
-{
-    options.AddPolicy("AllowAll",
-        builder => builder.AllowAnyOrigin()
-                          .AllowAnyHeader()
-                          .AllowAnyMethod());
-});
 
 var app = builder.Build();
 
@@ -36,7 +30,5 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseCors("AllowAll");
 
 app.Run();
