@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AzzanOrder.Data.Models;
+using AzzanOrder.Data.DTO;
 
 namespace AzzanOrder.Data.Controllers
 {
@@ -119,5 +120,30 @@ namespace AzzanOrder.Data.Controllers
         {
             return (_context.MenuItems?.Any(e => e.MenuItemId == id)).GetValueOrDefault();
         }
-    }
+		// GET: api/MenuItem/Top4
+		[HttpGet("Top4")]
+		public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetTop4MenuItems()
+		{
+			var top4MenuItems = await _context.MenuItems
+			.OrderByDescending(m => m.OrderDetails.Count)
+			.Take(4)
+					.Select(m => new MenuItemDTO
+					{
+						MenuItemId = m.MenuItemId,
+						ItemName = m.ItemName,
+						Price = m.Price,
+						Description = m.Description,
+						Discount = m.Discount,
+						ImageBase64 = m.Image
+					})
+			.ToListAsync();
+
+			if (top4MenuItems == null)
+			{
+				return NotFound();
+			}
+
+			return top4MenuItems;
+		}
+	}
 }
