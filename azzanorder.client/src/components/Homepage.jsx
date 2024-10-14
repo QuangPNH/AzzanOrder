@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 
 /*
     **import biến PriceCalculator từ file PriceCalculator
@@ -12,15 +12,9 @@ import ProductCard from './ProductCard/ProductCard';
 import HomeItem from './HomeItem/HomeItem';
 import PriceCalculator from './PriceCalculator/PriceCalculator'
 const Homepage = () => {
-    
-
-    const handleClick = () => {
-        aiRun();
-    }
     const [menuItems, setMenuItems] = useState([]);
 
     useEffect(() => {
-        // Fetch menu items from API
         fetchMenuItems();
     }, []);
 

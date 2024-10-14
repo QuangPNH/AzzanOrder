@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AzzanOrder.Data.Models;
+using AzzanOrder.Data.DTO;
 
 namespace AzzanOrder.Data.Controllers
 {
@@ -119,5 +120,33 @@ namespace AzzanOrder.Data.Controllers
         {
             return (_context.Promotions?.Any(e => e.PromotionId == id)).GetValueOrDefault();
         }
+		// GET: api/Promotions/GetByDescription/{description}
+		[HttpGet("GetByDescription/{description}")]
+		public async Task<ActionResult<IEnumerable<PromotionDTO>>> GetPromotionsByDescription(string description)
+		{
+			if (_context.Promotions == null)
+			{
+				return NotFound();
+			}
+
+			var promotions = await _context.Promotions.Where(p => p.Description.Contains(description))
+				.Select(m => new PromotionDTO
+				{
+					PromotionId = m.PromotionId,
+					Title = m.Title,
+					Description = m.Description,
+					Image = m.Image,
+					EmployeeId = m.EmployeeId
+				})
+				.ToListAsync();
+
+
+			if (promotions == null || !promotions.Any())
+			{
+				return NotFound();
+			}
+
+			return Ok(promotions);
+		}
     }
 }
