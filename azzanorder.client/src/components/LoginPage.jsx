@@ -3,7 +3,7 @@ import { useHistory } from 'react-router-dom';
 
 function LoginPage() {
   const [phoneNumber, setPhoneNumber] = useState('');
-  let history = useHistory();
+  //let history = useHistory();
 
   if (history == null) {
     console.log('The variable is null or undefined');
@@ -55,4 +55,4 @@ function LoginPage() {
     );
 }
 
-export default withRouter(LoginPage);
+export default LoginPage;
