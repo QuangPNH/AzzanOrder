@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-import { useHistory, withRouter, Redirect } from 'react-router-dom';
+//import { useHistory, withRouter, Redirect } from 'react-router-dom';
 
 function LoginPage() {
   const [phoneNumber, setPhoneNumber] = useState('');
-  let history = useHistory();
+  //let history = useHistory();
 
   if (history == null) {
     console.log('The variable is null or undefined');
@@ -25,7 +25,7 @@ function LoginPage() {
         
         
         // Redirect to Homepage.jsx
-        history.push('/HomePage');
+        //history.push('/HomePage');
       } else {
         console.error('Failed to retrieve member info');
       }
@@ -47,4 +47,4 @@ function LoginPage() {
   );
 }
 
-export default withRouter(LoginPage);
+export default LoginPage;
