@@ -25,7 +25,7 @@ function LoginPage() {
         
         
         // Redirect to Homepage.jsx
-        history.push('/HomePage');
+        history('/HomePage');
       } else {
         console.error('Failed to retrieve member info');
       }
@@ -47,4 +47,4 @@ function LoginPage() {
   );
 }
 
-export default withRouter(LoginPage);
+export default LoginPage;
