@@ -88,10 +88,8 @@ namespace AzzanOrder.Data.Controllers
             {
                 Random random = new Random();
                 char[] numbers = new char[6];
-
                 for (int i = 0; i < 6; i++)
                 {
-                    // Generate a random number between 0 and 9
                     numbers[i] = (char)('0' + random.Next(0, 10));
                 }
 
