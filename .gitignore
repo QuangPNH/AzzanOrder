@@ -364,8 +364,5 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
-
-# User only
-appsettings.json
-App.jsx
-/.vscode/launch.json
+/AzzanOrder.Data/appsettings.json
+/AzzanOrder.Data/Program.cs

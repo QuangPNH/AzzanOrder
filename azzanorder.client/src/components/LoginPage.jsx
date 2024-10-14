@@ -1,10 +1,13 @@
 import React, { useState } from 'react';
 import { useHistory } from 'react-router-dom';
-import LoginWidget from './SignUpForm/LoginWidget';
 
 function LoginPage() {
-    const [phoneNumber, setPhoneNumber] = useState('');
-    const history = useHistory();
+  const [phoneNumber, setPhoneNumber] = useState('');
+  let history = useHistory();
+
+  if (history == null) {
+    console.log('The variable is null or undefined');
+  }
 
     const handlePhoneNumberChange = (event) => {
         setPhoneNumber(event.target.value);
@@ -52,4 +55,4 @@ function LoginPage() {
     );
 }
 
-export default LoginPage;
+export default withRouter(LoginPage);

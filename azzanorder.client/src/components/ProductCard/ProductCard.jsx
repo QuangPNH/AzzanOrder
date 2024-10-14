@@ -2,10 +2,10 @@ import React from 'react';
 import Image from './Image';
 import PriceTag from './PriceTag';
 
-const ProductCard = ({ imageSrc, title, price }) => {
+const ProductCard = ({imageSrc, title, price }) => {
     return (
         <article className="product-card">
-            <Image src={imageSrc} alt={title} />
+            <Image src={`data:image/png;base64, ${imageSrc}`} alt={title} />
             <h2 className="product-title">{title}</h2>
             <PriceTag price={price} />
             <style jsx>

@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 
 /*
     **import biến PriceCalculator từ file PriceCalculator
@@ -12,23 +12,32 @@ import ProductCard from './ProductCard/ProductCard';
 import HomeItem from './HomeItem/HomeItem';
 import PriceCalculator from './PriceCalculator/PriceCalculator'
 const Homepage = () => {
-    
+    const [menuItems, setMenuItems] = useState([]);
 
-    const handleClick = () => {
-        aiRun();
-    }
+    useEffect(() => {
+        fetchMenuItems();
+    }, []);
+
+    const fetchMenuItems = async () => {
+        try {
+            const response = await fetch('https://localhost:7183/api/MenuItem/Top4');
+            const data = await response.json();
+            setMenuItems(data);
+        } catch (error) {
+            console.error('Error fetching menu items:', error);
+        }
+    };
     return (
             <><div className="page-container">
             <Header />
             <div><HomeItem /></div>
             <div>
             <ShowMoreLink title="HOT ITEMS" url='https://google.com' />
-            <div className='product-grid'>
-                <ProductCard imageSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" title="Product Title" price="1000" />
-                <ProductCard imageSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" title="Product Title" price="1000" />
-                <ProductCard imageSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" title="Product Title" price="1000" />
-                <ProductCard imageSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" title="Product Title" price="1000" />
-            </div>
+                <div className='product-grid'>
+                    {menuItems.map((menuItem) => (
+                        <ProductCard key={menuItem.id} title={menuItem.itemName} price={menuItem.price} imageSrc={menuItem.imageBase64} />
+                    ))}
+                </div>
         </div><Footer /><style jsx>{`
                 .page-container {
                     display: flex;
