@@ -9,7 +9,7 @@ import PlaceOrderButton from "./PlaceOrderButton";
 //Tạo Function tên PriceCalculator
 const PriceCalculator = () => {
   // Get cartData from session
-  const cartData = JSON.parse(sessionStorage.getItem("cartData"));
+  const cartData = JSON.parse(sessionStorage.getItem("cartData")) || [];
 
   // Calculate the total value based on items in cartData
   const calculateTotal = () => {
@@ -39,8 +39,8 @@ const PriceCalculator = () => {
               isTotal={item.isTotal}
             />
           ))}
-        </div>
-        <TotalPrice />
+              </div>
+              <TotalPrice finalPrice={calculateTotal()} discountPrice='0' />
       </div>
       <PlaceOrderButton />
       <style jsx>{`

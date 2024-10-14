@@ -1,11 +1,11 @@
 ﻿import React from 'react';
 
-const PriceTag = ({ price }) => {
+const PriceTag = ({ price, onclick }) => {
     return (
         <div className="price-tag">
             <span className="price">{price}</span>
             <span className="currency">đ</span>
-            <button className="add-to-cart" aria-label="Add to cart">
+            <button className="add-to-cart" onClick={onclick} aria-label="Add to cart">
                 <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" className="cart-icon" />
             </button>
             <style jsx>{`
