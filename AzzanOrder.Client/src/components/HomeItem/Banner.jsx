@@ -12,8 +12,7 @@ const Banner = () => {
     ];
 
     const images = [
-        { src: "https://cdn.builder.io/api/v1/image/assets/TEMP/0331dfde48d756041df00dddfc48c167232f3a52ae4fa409b002c70df0f909b3?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533", alt: "Background image" },
-        { src: "https://cdn.builder.io/api/v1/image/assets/TEMP/c7179b6bc950b4e515cb704ed8a566ba9b06514a09c8d8455c302b6102e7152a?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533", alt: "Foreground image" }
+        { src: "https://cdn.builder.io/api/v1/image/assets/TEMP/0331dfde48d756041df00dddfc48c167232f3a52ae4fa409b002c70df0f909b3?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533", alt: "Background image" }
     ];
 
     return (
@@ -55,14 +54,8 @@ const Banner = () => {
                     display: flex;
                     gap: 8px;
                     position: absolute;
-                    bottom: 20px;
-                    z-index: 2;
-                }
-
-                .gallery-image {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
+                    bottom: 40px; /* Increased space from the bottom */
+                    z-index: 2; /* Ensure dots are on top */
                 }
             `}</style>
         </>

@@ -2,13 +2,14 @@ import React from 'react';
 import Image from './Image';
 import PriceTag from './PriceTag';
 
-const ProductCard = ({ imageSrc, title, price }) => {
+const ProductCard = ({imageSrc, title, price }) => {
     return (
         <article className="product-card">
-            <Image src={imageSrc} alt={title} />
+            <Image src={`data:image/png;base64, ${imageSrc}`} alt={title} />
             <h2 className="product-title">{title}</h2>
             <PriceTag price={price} />
-            <style jsx>{`
+            <style jsx>
+                {`
                 .product-card {
                   border-radius: 8px;
                   display: flex;
@@ -24,7 +25,8 @@ const ProductCard = ({ imageSrc, title, price }) => {
                   font-size: 14px;
                   margin-top: 13px;
                 }
-      `}</style>
+                `}
+            </style>
         </article>
     );
 };
