@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import LoginWidget from "./SignUpForm/LoginWidget";
+//import { useHistory } from 'react-router-dom';
 
 function LoginPage() {
   const [phoneNumber, setPhoneNumber] = useState('');
@@ -24,7 +25,7 @@ function LoginPage() {
                 sessionStorage.setItem('memberInfo', JSON.stringify(memberInfo));
 
                 // Redirect to Homepage.jsx
-                history.push('/homepage');
+                //history.push('/homepage');
             } else {
                 console.error('Failed to retrieve member info');
             }
