@@ -1,31 +1,38 @@
-import React from 'react'
-import { StrictMode } from 'react'
-import { createRoot } from 'react-dom/client'
-import App from './App.jsx'
-import './index.css'
-import { ChakraProvider } from '@chakra-ui/react'
-import * as ReactDOM from 'react-dom/client'
-
-// 1. Import the extendTheme function
-import { extendTheme } from '@chakra-ui/react'
-// 2. Extend the theme to include custom colors, fonts, etc
-const colors = {
-    brand: {
-        900: '#1a365d',
-        800: '#153e75',
-        700: '#2a69ac',
+import React from 'react';
+import * as ReactDOM from "react-dom/client";
+import {
+    createBrowserRouter,
+    RouterProvider,
+} from "react-router-dom";
+import "./index.css";
+import App from "./App";
+import LoginPage from "./components/LoginPage";
+import RegisterPage from "./components/RegisterPage";
+import MenuPage from "./components/Menu";
+// 2. Define your routes
+const router = createBrowserRouter([
+    {
+        path: "/",
+        element: <App />,
     },
-}
+    {
+        path: "login",
+        element: <LoginPage />,
+    },
+    {
+        path: "register",
+        element: <RegisterPage />,
+    },
+    {
+        path: "menu",
+        element: <MenuPage />,
+    }
+]);
 
-const theme = extendTheme({ colors })
-
-// 3. Pass the `theme` prop to the `ChakraProvider`
-
+// 3. Wrap your app with the Router component
 const rootElement = document.getElementById('root')
 ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>
-        <ChakraProvider theme={theme}>
-            <App />
-        </ChakraProvider>
-    </React.StrictMode>,
+        <RouterProvider router={router} />
+    </React.StrictMode>
 )

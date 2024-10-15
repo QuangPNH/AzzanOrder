@@ -1,9 +1,13 @@
 import React, { useState } from 'react';
-import { useHistory } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
   const [phoneNumber, setPhoneNumber] = useState('');
-  const history = useHistory();
+  let history = useNavigate();
+
+  if (history == null) {
+    console.log('The variable is null or undefined');
+  }
 
   const handlePhoneNumberChange = (event) => {
     setPhoneNumber(event.target.value);
@@ -13,14 +17,15 @@ function LoginPage() {
     event.preventDefault();
     
     try {
-      const response = await fetch(`https://localhost:7183/api/Member/phone/0934422800%20`);
+      const response = await fetch(`https://localhost:7183/api/Member/phone/${phoneNumber}`);
       if (response.ok) {
         const memberInfo = await response.json();
         // Save the member info in session memory
         sessionStorage.setItem('memberInfo', JSON.stringify(memberInfo));
         
+        
         // Redirect to Homepage.jsx
-        history.push('/homepage');
+        history.push('/HomePage');
       } else {
         console.error('Failed to retrieve member info');
       }

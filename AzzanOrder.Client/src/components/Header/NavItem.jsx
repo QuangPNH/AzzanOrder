@@ -8,14 +8,41 @@ const NavItem = () => {
         { icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/360aab801c588575a78887d36d50e88cb9803d8221437815dec0250221ff6e7c?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533", text: "Send Feedback" }
     ];
 
+    const handleLoginClick = () => {
+        window.location.href = '/login';
+    };
+
+    const handleRegisterClick = () => {
+        window.location.href = '/register';
+    };
+
+    const handleNotificationClick = () => {
+        window.location.href = '/notification';
+    };
+
+    const handleSendFeedbackClick = () => {
+        window.location.href = '/sendfeedback';
+    };
+
+
     return (
         <div className="nav-items">
-            {navItems.map((item, index) => (
-                <div key={index} className="nav-item">
-                    <img loading="lazy" src={item.icon} alt={item.text} className="nav-icon" />
-                    <span className="nav-text">{item.text}</span>
-                </div>
-            ))}
+            <div className="nav-item" onClick={handleLoginClick}>
+                <img loading="lazy" src={navItems[0].icon} alt={navItems[0].text} className="nav-icon" />
+                <span className="nav-text">{navItems[0].text}</span>
+            </div>
+            <div className="nav-item" onClick={handleRegisterClick}>
+                <img loading="lazy" src={navItems[1].icon} alt={navItems[1].text} className="nav-icon" />
+                <span className="nav-text">{navItems[1].text}</span>
+            </div>
+            <div className="nav-item" onClick={handleNotificationClick}>
+                <img loading="lazy" src={navItems[2].icon} alt={navItems[2].text} className="nav-icon" />
+                <span className="nav-text">{navItems[2].text}</span>
+            </div>
+            <div className="nav-item" onClick={handleSendFeedbackClick}>
+                <img loading="lazy" src={navItems[3].icon} alt={navItems[3].text} className="nav-icon" />
+                <span className="nav-text">{navItems[3].text}</span>
+            </div>
             <style jsx>{`
         .nav-items {
           display: flex;

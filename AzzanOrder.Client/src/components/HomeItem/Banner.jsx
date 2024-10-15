@@ -1,27 +1,31 @@
-﻿import React from 'react';
+﻿import React, { useEffect, useState } from 'react';
 import DotIndicator from './DotIndicator';
 import ImageWrapper from './ImageWrapper';
 
 const Banner = () => {
-    const dots = [
-        { active: true },
-        { active: false },
-        { active: false },
-        { active: false },
-        { active: false },
-    ];
+    const [promotions, setPromotions] = useState([]);
 
-    const images = [
-        { src: "https://cdn.builder.io/api/v1/image/assets/TEMP/0331dfde48d756041df00dddfc48c167232f3a52ae4fa409b002c70df0f909b3?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533", alt: "Background image" },
-        { src: "https://cdn.builder.io/api/v1/image/assets/TEMP/c7179b6bc950b4e515cb704ed8a566ba9b06514a09c8d8455c302b6102e7152a?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533", alt: "Foreground image" }
-    ];
+    useEffect(() => {
+        fetchImages();
+    }, []);
+
+    const fetchImages = async () => {
+        try {
+            const response = await fetch('https://localhost:7183/api/Promotions/GetByDescription/banner');
+            const data = await response.json();
+            setPromotions(data);
+        } catch (error) {
+            console.error('Error fetching images:', error);
+        }
+    };
+    const dots = promotions.map((_, index) => ({ active: index === 0 }));
 
     return (
         <>
             <section className="banner">
                 <div className="image-gallery">
-                    {images.map((image, index) => (
-                        <ImageWrapper key={index} src={image.src} alt={image.alt} />
+                    {promotions.map((image, index) => (
+                        <ImageWrapper key={index} src={image.image} alt={image.title} />
                     ))}
                 </div>
 
@@ -55,14 +59,8 @@ const Banner = () => {
                     display: flex;
                     gap: 8px;
                     position: absolute;
-                    bottom: 20px;
-                    z-index: 2;
-                }
-
-                .gallery-image {
-                    width: 100%;
-                    height: 100%;
-                    object-fit: cover;
+                    bottom: 40px; /* Increased space from the bottom */
+                    z-index: 2; /* Ensure dots are on top */
                 }
             `}</style>
         </>

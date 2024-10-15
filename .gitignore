@@ -364,3 +364,9 @@ MigrationBackup/
 
 # Fody - auto-generated XML schema
 FodyWeavers.xsd
+/AzzanOrder.Data/appsettings.json
+/AzzanOrder.Data/Program.cs
+/AzzanOrder.Data/Models/OrderingAssistSystemContext.cs
+/azzanorder.client/package.json
+/azzanorder.client/package-lock.json
+/AzzanOrder.Client/src/App.jsx

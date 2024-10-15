@@ -8,17 +8,26 @@ import PlaceOrderButton from "./PlaceOrderButton";
 
 //Tạo Function tên PriceCalculator
 const PriceCalculator = () => {
+  // Get cartData from session
+  const cartData = JSON.parse(sessionStorage.getItem("cartData"));
+
+  // Calculate the total value based on items in cartData
+  const calculateTotal = () => {
+    let total = 0;
+    cartData.forEach((item) => {
+      total += item.price * item.quantity;
+    });
+    return total;
+  };
 
   const priceItems = [
     { label: "Voucher", value: "0 đ" },
     { label: "Discount:", value: "0 đ" },
-    { label: "Total:", value: "105.000 đ", isTotal: true },
+    { label: "Total:", value: `${calculateTotal()} đ`, isTotal: true },
     { label: "Pay in cash", value: "" },
   ];
-    //Viết HTML trong function Return
-    return (
-
-
+  //Viết HTML trong function Return
+  return (
     <section className="price-calculator">
       <div className="price-details">
         <div className="price-list">
@@ -56,7 +65,6 @@ const PriceCalculator = () => {
     </section>
   );
 };
-
 
 //Export Hàm PriceCalculator
 export default PriceCalculator;
