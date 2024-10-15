@@ -29,8 +29,8 @@ const Homepage = () => {
     };
     return (
         <>
+            <Header />
             <div className="page-container">
-                <Header />
                 <div><HomeItem /></div>
                 <div>
                     <ShowMoreLink title="HOT ITEMS" url='https://google.com' />
@@ -40,7 +40,6 @@ const Homepage = () => {
                         ))}
                     </div>
                 </div>
-                <Footer />
                 <style jsx>{`
                 .page-container {
                     display: flex;
@@ -65,7 +64,10 @@ const Homepage = () => {
     }
                 `}
                 </style>
-            </div></>
+                
+            </div>
+            <Footer />
+        </>
         /*
         <div>
             <div style={{ display: 'flex' }}>
