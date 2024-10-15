@@ -115,8 +115,8 @@ namespace AzzanOrder.Data.Controllers
 
             return NoContent();
         }
-
-        private bool MenuItemExists(int id)
+		
+		private bool MenuItemExists(int id)
         {
             return (_context.MenuItems?.Any(e => e.MenuItemId == id)).GetValueOrDefault();
         }
@@ -125,17 +125,22 @@ namespace AzzanOrder.Data.Controllers
 		public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetTop4MenuItems()
 		{
 			var top4MenuItems = await _context.MenuItems
-			.OrderByDescending(m => m.OrderDetails.Count)
-			.Take(4)
-					.Select(m => new MenuItemDTO
-					{
-						MenuItemId = m.MenuItemId,
-						ItemName = m.ItemName,
-						Price = m.Price,
-						Description = m.Description,
-						Discount = m.Discount,
-						ImageBase64 = m.Image
-					})
+                .Where(m => 
+                m.IsAvailable == true && 
+                m.MenuCategories.Any(mc => 
+                mc.EndDate < DateTime.Now && 
+                mc.IsForCombo == false))
+			    .OrderByDescending(m => m.OrderDetails.Count)
+			    .Take(4)
+				.Select(m => new MenuItemDTO
+				{
+					MenuItemId = m.MenuItemId,
+					ItemName = m.ItemName,
+					Price = m.Price,
+					Description = m.Description,
+					Discount = m.Discount,
+					ImageBase64 = m.Image
+				})
 			.ToListAsync();
 
 			if (top4MenuItems == null)
@@ -150,7 +155,12 @@ namespace AzzanOrder.Data.Controllers
 		public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetMenuItemsByCategory(string categoryname)
 		{
 			var menuItems = await _context.MenuItems
-				.Where(m => m.MenuCategories.Any(mc => mc.ItemCategory.Description.ToLower().Contains(categoryname.ToLower())))
+				.Where(m => 
+                m.MenuCategories.Any(mc => 
+                mc.ItemCategory.Description.ToLower().Contains(categoryname.ToLower()) && 
+                mc.EndDate < DateTime.Now && 
+                mc.IsForCombo == false) && 
+                m.IsAvailable == true)
                 .Select(m => new MenuItemDTO
 					{
 						MenuItemId = m.MenuItemId,

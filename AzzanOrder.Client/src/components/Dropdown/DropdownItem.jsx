@@ -1,12 +1,12 @@
 ﻿import React from 'react';
 
-const DropdownItem = ({ label, iconSrc, onClick }) => {
+const DropdownItem = ({ label, iconSrc, onClick, onClick1 }) => {
     return (
         <>
-            <div className="dropdown-item" onClick={onClick}>
-                <span className="item-label">{label}</span>
+            <div className="dropdown-item" >
+                <span className="item-label" onClick={() => onClick1(label)}>{label}</span>
                 {/* Display icon only if iconSrc is provided */}
-                {iconSrc && <img src={iconSrc} alt="" className="item-icon" />}
+                {iconSrc && <img src={iconSrc} alt="" className="item-icon" onClick={onClick}/>}
             </div>
             <style jsx>{`
         .dropdown-item {
