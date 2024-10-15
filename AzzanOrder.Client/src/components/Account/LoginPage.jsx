@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
-//import { useHistory, withRouter, Redirect } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 function LoginPage() {
   const [phoneNumber, setPhoneNumber] = useState('');
-  //let history = useHistory();
+  let history = useNavigate();
 
   if (history == null) {
     console.log('The variable is null or undefined');
@@ -25,7 +25,7 @@ function LoginPage() {
         
         
         // Redirect to Homepage.jsx
-        //history('/HomePage');
+        history.push('/HomePage');
       } else {
         console.error('Failed to retrieve member info');
       }

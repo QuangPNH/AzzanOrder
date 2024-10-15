@@ -369,3 +369,4 @@ FodyWeavers.xsd
 /AzzanOrder.Data/Models/OrderingAssistSystemContext.cs
 /azzanorder.client/package.json
 /azzanorder.client/package-lock.json
+/AzzanOrder.Client/src/App.jsx
