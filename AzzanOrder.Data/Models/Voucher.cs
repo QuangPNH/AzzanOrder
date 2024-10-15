@@ -1,15 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Text.Json.Serialization;
 
 namespace AzzanOrder.Data.Models
 {
     public partial class Voucher
     {
-        public int VocherDetailId { get; set; }
+        public int VoucherDetailId { get; set; }
         public int ItemCategoryId { get; set; }
         public bool? IsActive { get; set; }
-
         public virtual ItemCategory ItemCategory { get; set; } = null!;
-        public virtual VoucherDetail VocherDetail { get; set; } = null!;
+        public virtual VoucherDetail VoucherDetail { get; set; } = null!;
     }
 }

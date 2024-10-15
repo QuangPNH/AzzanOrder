@@ -7,15 +7,30 @@ const navigationItems = [
     { icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/77b7958b81123b01b3263f4d163a20b07db78de7b2898a7f38789ad7f4172289?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533', label: 'Order' },
     { icon: 'https://cdn.builder.io/api/v1/image/assets/TEMP/d896ad111b7b0d08a8da0eef1536518980ea24bf8935c612f44c1ad667772f3c?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533', label: 'Voucher' }
 ];
+const handleMenuClick = () => {
+    window.location.href = '/menu';
+};
 
+const handleAboutClick = () => {
+    window.location.href = '/about';
+};
+
+const handleOrderClick = () => {
+    window.location.href = '/order';
+};
+
+const handleVoucherClick = () => {
+    window.location.href = '/voucher';
+};
 function Navbar() {
     return (
         <>
             <nav className="redirect-bar-header">
                 <div className="redirect-bar-navigation">
-                    {navigationItems.map((item, index) => (
-                        <NavigationItem key={index} icon={item.icon} label={item.label} />
-                    ))}
+                    <div onClick={handleMenuClick}><NavigationItem icon={navigationItems[0].icon} label={navigationItems[0].label} /></div>
+                    <div onClick={handleAboutClick}><NavigationItem icon={navigationItems[1].icon} label={navigationItems[1].label} /></div>
+                    <div onClick={handleOrderClick}><NavigationItem icon={navigationItems[2].icon} label={navigationItems[2].label} /></div>
+                    <div onClick={handleVoucherClick}><NavigationItem icon={navigationItems[3].icon} label={navigationItems[3].label} /></div>
                 </div>
             </nav>
             <style jsx>{`
