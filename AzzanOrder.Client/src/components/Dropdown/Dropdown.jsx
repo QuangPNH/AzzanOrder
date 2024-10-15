@@ -62,7 +62,7 @@ const Dropdown = ({ options, onChange, onClick}) => {
                     iconSrc={
                         !isExpanded
                             ? 'https://cdn.builder.io/api/v1/image/assets/TEMP/149dee1c832975b05bb91e7928d007f9cfbf8aff03b0c89e8080bdf1f9308e5f?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533'
-                            : 'https://cdn.builder.io/api/v1/image/assets/TEMP/149dee1c832975b05bb91e7928d007f9cfbf8aff03b0c89e8080bdf1f9308e5f?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533'
+                            : 'https://cdn.builder.io/api/v1/image/assets/TEMP/60173c54a3ed014fe5a59386ec2a441bf961180f99b494537706a65900f41de2?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533&fbclid=IwZXh0bgNhZW0CMTEAAR2PR55PudHJ84uB3tn8Cx6eoZqDjOg8J1zPp-eGd945o90FACVUX1OLPTU_aem_fIfp5zTSe7E7_w3sPYsByg'
                     }
                     onClick1={onClick}
                     onClick={handleToggleDropdown}

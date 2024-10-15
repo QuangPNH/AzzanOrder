@@ -128,8 +128,9 @@ namespace AzzanOrder.Data.Controllers
                 .Where(m => 
                 m.IsAvailable == true && 
                 m.MenuCategories.Any(mc => 
-                mc.EndDate < DateTime.Now && 
-                mc.IsForCombo == false))
+                mc.EndDate > DateTime.Now &&
+				mc.StartDate < DateTime.Now &&
+				mc.IsForCombo == false))
 			    .OrderByDescending(m => m.OrderDetails.Count)
 			    .Take(4)
 				.Select(m => new MenuItemDTO
@@ -158,7 +159,8 @@ namespace AzzanOrder.Data.Controllers
 				.Where(m => 
                 m.MenuCategories.Any(mc => 
                 mc.ItemCategory.Description.ToLower().Contains(categoryname.ToLower()) && 
-                mc.EndDate < DateTime.Now && 
+                mc.EndDate > DateTime.Now && 
+                mc.StartDate < DateTime.Now &&
                 mc.IsForCombo == false) && 
                 m.IsAvailable == true)
                 .Select(m => new MenuItemDTO
