@@ -226,7 +226,7 @@ namespace AzzanOrder.Data.Models
 
             modelBuilder.Entity<Voucher>(entity =>
             {
-                entity.HasKey(e => new { e.VocherDetailId, e.ItemCategoryId });
+                entity.HasKey(e => new { e.VoucherDetailId, e.ItemCategoryId });
 
                 entity.ToTable("Voucher");
 
@@ -236,9 +236,9 @@ namespace AzzanOrder.Data.Models
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Voucher_ItemCategory");
 
-                entity.HasOne(d => d.VocherDetail)
+                entity.HasOne(d => d.VoucherDetail)
                     .WithMany(p => p.Vouchers)
-                    .HasForeignKey(d => d.VocherDetailId)
+                    .HasForeignKey(d => d.VoucherDetailId)
                     .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Voucher_VoucherDetail");
             });

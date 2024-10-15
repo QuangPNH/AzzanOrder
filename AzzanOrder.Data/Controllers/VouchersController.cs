@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AzzanOrder.Data.Models;
+using AzzanOrder.Data.DTO;
 
 namespace AzzanOrder.Data.Controllers
 {
@@ -22,54 +23,46 @@ namespace AzzanOrder.Data.Controllers
 
         // GET: api/Vouchers
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Voucher>>> GetVouchers()
+        public async Task<ActionResult> GetVouchers()
         {
-          if (_context.Vouchers == null)
-          {
-              return NotFound();
-          }
-            return await _context.Vouchers.ToListAsync();
-        }
-
-        // GET: api/Vouchers/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<Voucher>> GetVoucher(int id)
-        {
-          if (_context.Vouchers == null)
-          {
-              return NotFound();
-          }
-            var voucher = await _context.Vouchers.FindAsync(id);
-
-            if (voucher == null)
+            if (_context.Vouchers == null)
             {
-                return NotFound();
+                return NotFound("List voucher is empty");
             }
-
-            return voucher;
+            var vouchers = await _context.Vouchers.Select(v => new { v.ItemCategoryId, v.VoucherDetailId, v.IsActive }).ToListAsync();
+            return Ok(vouchers);
+        }
+        [HttpGet("CategoryId")]
+        public async Task<IActionResult> GetVoucherByCategory(int categoryId)
+        {
+            if (_context.Vouchers == null)
+            {
+                return NotFound("List voucher is empty");
+            }
+            var vouchers = await _context.Vouchers.Where(v => v.ItemCategoryId == categoryId && v.IsActive == true).Select(v => new { v.ItemCategoryId, v.VoucherDetailId, v.IsActive }).ToListAsync();
+            return Ok(vouchers);
         }
 
         // PUT: api/Vouchers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutVoucher(int id, Voucher voucher)
+        [HttpPut("Update")]
+        public async Task<IActionResult> PutVoucher(VoucherDTO voucher)
         {
-            if (id != voucher.VocherDetailId)
+            if (!VoucherExists(voucher))
             {
-                return BadRequest();
+                return NotFound("This voucher not exist");
             }
-
-            _context.Entry(voucher).State = EntityState.Modified;
-
+            var vou = new Voucher() { IsActive = voucher.IsActive, ItemCategoryId = voucher.ItemCategoryId, VoucherDetailId = voucher.VoucherDetailId };
+            _context.Entry(vou).State = EntityState.Modified;
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!VoucherExists(id))
+                if (!VoucherExists(voucher))
                 {
-                    return NotFound();
+                    return NotFound("This voucher not exist");
                 }
                 else
                 {
@@ -77,61 +70,57 @@ namespace AzzanOrder.Data.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok("Update Success");
         }
 
         // POST: api/Vouchers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<Voucher>> PostVoucher(Voucher voucher)
+        [HttpPost("Add")]
+        public async Task<ActionResult> PostVoucher(VoucherDTO voucher)
         {
-          if (_context.Vouchers == null)
-          {
-              return Problem("Entity set 'OrderingAssistSystemContext.Vouchers'  is null.");
-          }
-            _context.Vouchers.Add(voucher);
-            try
+            if (_context.Vouchers == null)
             {
-                await _context.SaveChangesAsync();
+                return Problem("List vouchers are null.");
             }
-            catch (DbUpdateException)
+            var vd = _context.VoucherDetails.FirstOrDefault(vd => vd.VoucherDetailId == voucher.VoucherDetailId);
+            var ic = _context.ItemCategories.FirstOrDefault(ic => ic.ItemCategoryId == voucher.ItemCategoryId);
+            if (vd == null || ic == null)
             {
-                if (VoucherExists(voucher.VocherDetailId))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                return Problem("This voucher not exist.");
             }
-
-            return CreatedAtAction("GetVoucher", new { id = voucher.VocherDetailId }, voucher);
+            var count = _context.Vouchers.Count();
+            Voucher v = new Voucher() { ItemCategoryId = voucher.ItemCategoryId, VoucherDetailId = voucher.VoucherDetailId, IsActive = true };
+            _context.Vouchers.Add(v);
+            await _context.SaveChangesAsync();
+            if(!(_context.Vouchers.Count() > count))
+            {
+                return Problem("Add fails");
+            }
+            return Ok(voucher);
         }
 
         // DELETE: api/Vouchers/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteVoucher(int id)
+        [HttpDelete("Delete")]
+        public async Task<IActionResult> DeleteVoucher([Bind("VoucherDetailId", "ItemCategoryId")] VoucherDTO voucher)
         {
             if (_context.Vouchers == null)
             {
                 return NotFound();
             }
-            var voucher = await _context.Vouchers.FindAsync(id);
-            if (voucher == null)
-            {
+            if(!VoucherExists(voucher))
+            { 
                 return NotFound();
             }
-
-            _context.Vouchers.Remove(voucher);
+            var v = _context.Vouchers.FirstOrDefault(v => v.VoucherDetailId == voucher.VoucherDetailId && v.ItemCategoryId == voucher.ItemCategoryId);
+            _context.Vouchers.Remove(v);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Delete success");
         }
 
-        private bool VoucherExists(int id)
+        private bool VoucherExists(VoucherDTO voucher)
         {
-            return (_context.Vouchers?.Any(e => e.VocherDetailId == id)).GetValueOrDefault();
+            return (_context.Vouchers?.Any(e => e.VoucherDetailId == voucher.VoucherDetailId && e.ItemCategoryId == voucher.ItemCategoryId)).GetValueOrDefault();
         }
     }
 }
