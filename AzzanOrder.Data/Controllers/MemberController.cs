@@ -107,7 +107,6 @@ namespace AzzanOrder.Data.Controllers
                 messageOptions.Body = "Your OTP is " + new string(numbers);
                 var message = MessageResource.Create(messageOptions);
                 Console.WriteLine(message.Body);
-
                 return Ok(member1);
             }
             else

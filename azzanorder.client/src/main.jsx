@@ -6,8 +6,8 @@ import {
 } from "react-router-dom";
 import "./index.css";
 import App from "./App";
-import LoginPage from "./components/LoginPage";
-import RegisterPage from "./components/RegisterPage";
+import LoginPage from "./components/Account/LoginPage";
+import RegisterPage from "./components/Account/RegisterPage";
 import MenuPage from "./components/Menu";
 // 2. Define your routes
 const router = createBrowserRouter([
