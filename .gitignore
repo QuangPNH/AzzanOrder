@@ -366,3 +366,6 @@ MigrationBackup/
 FodyWeavers.xsd
 /AzzanOrder.Data/appsettings.json
 /AzzanOrder.Data/Program.cs
+/AzzanOrder.Data/Models/OrderingAssistSystemContext.cs
+/azzanorder.client/package.json
+/azzanorder.client/package-lock.json

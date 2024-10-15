@@ -145,5 +145,29 @@ namespace AzzanOrder.Data.Controllers
 
 			return top4MenuItems;
 		}
+		// GET: api/MenuItem/Category/{category}
+		[HttpGet("Category/{categoryname}")]
+		public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetMenuItemsByCategory(string categoryname)
+		{
+			var menuItems = await _context.MenuItems
+				.Where(m => m.MenuCategories.Any(mc => mc.ItemCategory.Description.ToLower().Contains(categoryname.ToLower())))
+                .Select(m => new MenuItemDTO
+					{
+						MenuItemId = m.MenuItemId,
+						ItemName = m.ItemName,
+						Price = m.Price,
+						Description = m.Description,
+						Discount = m.Discount,
+						ImageBase64 = m.Image
+					})
+				.ToListAsync();
+
+			if (menuItems == null)
+			{
+				return NotFound();
+			}
+
+			return menuItems;
+		}
 	}
 }
