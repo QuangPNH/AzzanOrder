@@ -28,17 +28,20 @@ const Homepage = () => {
         }
     };
     return (
-            <><div className="page-container">
-            <Header />
-            <div><HomeItem /></div>
-            <div>
-            <ShowMoreLink title="HOT ITEMS" url='https://google.com' />
-                <div className='product-grid'>
-                    {menuItems.map((menuItem) => (
-                        <ProductCard key={menuItem.id} title={menuItem.itemName} price={menuItem.price} imageSrc={menuItem.imageBase64} />
-                    ))}
+        <>
+            <div className="page-container">
+                <Header />
+                <div><HomeItem /></div>
+                <div>
+                    <ShowMoreLink title="HOT ITEMS" url='https://google.com' />
+                    <div className='product-grid'>
+                        {menuItems.map((menuItem) => (
+                            <ProductCard key={menuItem.id} title={menuItem.itemName} price={menuItem.price} imageSrc={menuItem.imageBase64} />
+                        ))}
+                    </div>
                 </div>
-        </div><Footer /><style jsx>{`
+                <Footer />
+                <style jsx>{`
                 .page-container {
                     display: flex;
                     flex-direction: column;
@@ -60,7 +63,9 @@ const Homepage = () => {
       flex: 1 1 calc(50% - 20px); /* Ensures 2 items per row */
       box-sizing: border-box;
     }
-                `}</style></div></>
+                `}
+                </style>
+            </div></>
         /*
         <div>
             <div style={{ display: 'flex' }}>
