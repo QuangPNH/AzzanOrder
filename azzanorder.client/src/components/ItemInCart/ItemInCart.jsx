@@ -5,9 +5,10 @@ import React from "react";
 import CartItem from "./CartItem";
 import MenuSeparator from "./MenuSeparator";
 
-const ItemInCart = ({ name, options, price, quantity }) => {
+const ItemInCart = ({ key, name, options, price, quantity }) => {
   const cartItems = [
       {
+          key: key,
           name: name,
           options: options,
           price: price,

@@ -3,7 +3,7 @@
  */
 import React from "react";
 
-const TotalPrice = () => {
+const TotalPrice = ({ finalPrice, discountPrice }) => {
   return (
     <div className="total-price-container">
       <div className="voucher-input">
@@ -13,9 +13,9 @@ const TotalPrice = () => {
           className="voucher-icon"
         />
       </div>
-      <div className="price-values">
-        <p className="discount-price">0 đ</p>
-        <p className="final-price">105.000 đ</p>
+          <div className="price-values">
+              <p className="discount-price">{discountPrice} đ</p>
+              <p className="final-price">{finalPrice} đ</p>
         <img
           src="https://cdn.builder.io/api/v1/image/assets/TEMP/3daa88c596f12764a69508098612d6d3ba5839873c031a93b1ac416fd8d5c0b9?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8"
           alt=""

@@ -22,3 +22,6 @@ dist-ssr
 *.njsproj
 *.sln
 *.sw?
+App.jsx
+appsettings.json
+Program.cs

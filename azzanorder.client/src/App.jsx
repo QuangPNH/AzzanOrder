@@ -4,6 +4,7 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import React from 'react';
 import Homepage from './components/Homepage';
+import RegisterPage from './components/Account/RegisterPage';
 function App() {
   const [count, setCount] = useState(0)
 
@@ -13,8 +14,5 @@ function App() {
         </div>
     );
 }
-
-
-
 
 export default App
