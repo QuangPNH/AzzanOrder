@@ -24,14 +24,7 @@ const Navbar = () => (
         z-index: 1001; /* Ensure it overlaps other elements */
         box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25); /* Shadow for better visibility */
       }
-      .nav-item {
-        display: flex; /* Flex display for nav items */
-        align-items: center; /* Center align icons and text */
-        gap: 10px; /* Space between icon and text */
-        padding: 8px; /* Padding for nav items */
-        cursor: pointer; /* Cursor change on hover */
-        transition: background-color 0.3s; /* Smooth background transition */
-      }
+      
       .nav-item:hover {
         background-color: rgba(255, 255, 255, 0.5); /* Light hover effect */
       }

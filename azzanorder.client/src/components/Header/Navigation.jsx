@@ -35,11 +35,11 @@ const Navigation = ({ toggleNavbar }) => {
                     aspect-ratio: 1.02;
                     object-fit: contain;
                     object-position: center;
-                    width: 25px; /* Significantly reduce width */
+                    width: 40px; /* Significantly reduce width */
                 }
                 .nav-item-last {
                     aspect-ratio: 1;
-                    width: 22px; /* Smaller width for the last item */
+                    width: 38px; /* Smaller width for the last item */
                     align-self: center;
                     margin: auto 0 auto auto;
                 }

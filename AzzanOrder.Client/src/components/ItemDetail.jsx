@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 
 import Footer from '../components/Footer/Footer';
 import Header from '../components/Header/Header';
@@ -11,16 +11,45 @@ import Description from './MenuDetail/Description';
 import CustomItem from './MenuDetail/CustomItem';
 import ShowMoreLink from './ShowMoreLink/ShowMoreLink';
 import ProductCard from './ProductCard/ProductCard';
-const ItemDetail = () => {
 
+const ItemDetail = ({ closeModal, imageSrc, title, price, cate, desc }) => {
 
+    const [products, setProducts] = useState([]); // Initialize products state as an empty array
+    const [toppings, setToppings] = useState([]); // Initialize toppings state as an empty array
+
+    useEffect(() => {
+        fetchProducts({cate});
+        fetchToppings();
+    }, []);
+
+    const fetchProducts = async (category) => {
+        try {
+            const response = await fetch(`https://localhost:7183/api/MenuItem/Category/${category.cate}`);
+            const data = await response.json();
+            const limitedData = data.slice(0, 4); // Get only the first 4 items from the data array
+            setProducts(limitedData);
+        } catch (error) {
+            console.error('Error fetching products:', error);
+        }
+    };
+
+    const fetchToppings = async () => {
+        try {
+            const response = await fetch(`https://localhost:7183/api/MenuItem/Category/TOPPING`);
+            const data = await response.json();
+            setToppings(data);
+        } catch (error) {
+            console.error('Error fetching toppings:', error);
+        }
+    };
+   
     return (
         <>
-            <TopBar />
+            <TopBar closeModal={closeModal} />
             <ProductCardSingle
-                imageSrc='https://cdn.builder.io/api/v1/image/assets/TEMP/60173c54a3ed014fe5a59386ec2a441bf961180f99b494537706a65900f41de2?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533'
-                name='Tuan'
-                price={1000} />
+                imageSrc={imageSrc}
+                name={title}
+                price={price} />
 
             <div>
                 <CustomItem title="Lượng đường:" />
@@ -34,39 +63,34 @@ const ItemDetail = () => {
 
             <div>
                 <CustomItem title="Toppings:" />
-                <ToppingAdd toppingName='Thạch dừa' toppingNameEnglish='Coconut Jelly' toppingPrice={5000} />
-                <ToppingAdd toppingName='Thạch dừa' toppingNameEnglish='Coconut Jelly' toppingPrice={5000} />
-                <ToppingAdd toppingName='Thạch dừa' toppingNameEnglish='Coconut Jelly' toppingPrice={5000} />
+                {toppings && toppings.map((topping) => (
+                    <ToppingAdd
+                        key={topping.menuItemId}
+                        toppingName={topping.itemName}
+                        toppingNameEnglish={topping.description}
+                        toppingPrice={topping.price}
+                    />
+                ))}
             </div>
 
             <AddToCartButton />
-            <Description content='A very good drink for your health' />
+            <Description content={desc} />
 
             <div>
                 <ShowMoreLink title='RELATED PRODUCTS' />
-                <ProductCard
-                    imageSrc='https://cdn.builder.io/api/v1/image/assets/TEMP/60173c54a3ed014fe5a59386ec2a441bf961180f99b494537706a65900f41de2?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533'
-                    name='Tuan'
-                    price={1000}
-                />
-                <ProductCard
-                    imageSrc='https://cdn.builder.io/api/v1/image/assets/TEMP/60173c54a3ed014fe5a59386ec2a441bf961180f99b494537706a65900f41de2?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533'
-                    name='Tuan'
-                    price={1000}
-                />
-                <ProductCard
-                    imageSrc='https://cdn.builder.io/api/v1/image/assets/TEMP/60173c54a3ed014fe5a59386ec2a441bf961180f99b494537706a65900f41de2?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533'
-                    name='Tuan'
-                    price={1000}
-                />
-                <ProductCard
-                    imageSrc='https://cdn.builder.io/api/v1/image/assets/TEMP/60173c54a3ed014fe5a59386ec2a441bf961180f99b494537706a65900f41de2?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533'
-                    name='Tuan'
-                    price={1000}
-                />
+                <div className='product-grid'>
+                    {products && products.map((product) => (
+                        <ProductCard
+                            key={product.id}
+                            imageSrc={product.imageBase64}
+                            title={product.title}
+                            price={product.price}
+                            cate={product.categoryId}
+                            desc={product.description}
+                        />
+                    ))}
+                </div>
             </div>
-
-
         </>
     );
 };
