@@ -51,12 +51,12 @@ namespace AzzanOrder.Data.Controllers
 
         // PUT: api/Feedback/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutFeedback(int id, Feedback feedback)
+        [HttpPut("Update")]
+        public async Task<IActionResult> PutFeedback(Feedback feedback)
         {
-            if (id != feedback.Feedbackid)
+            if (!FeedbackExists(feedback.Feedbackid))
             {
-                return BadRequest();
+                return NotFound("This feedback not exist");
             }
 
             _context.Entry(feedback).State = EntityState.Modified;
@@ -67,7 +67,7 @@ namespace AzzanOrder.Data.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!FeedbackExists(id))
+                if (!FeedbackExists(feedback.Feedbackid))
                 {
                     return NotFound();
                 }
@@ -77,26 +77,27 @@ namespace AzzanOrder.Data.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok("Update success");
         }
 
         // POST: api/Feedback
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("Add")]
         public async Task<ActionResult<Feedback>> PostFeedback(Feedback feedback)
         {
-          if (_context.Feedbacks == null)
-          {
-              return Problem("Entity set 'OrderingAssistSystemContext.Feedbacks'  is null.");
-          }
-            _context.Feedbacks.Add(feedback);
+            if (_context.Feedbacks == null)
+            {
+                return Problem("Entity set 'OrderingAssistSystemContext.Feedbacks'  is null.");
+            }
+            var f = new Feedback() { Content = feedback.Content, MemberId = feedback.MemberId };
+            _context.Feedbacks.Add(f);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetFeedback", new { id = feedback.Feedbackid }, feedback);
+            return CreatedAtAction("GetFeedback", new { id = f.Feedbackid }, f);
         }
 
         // DELETE: api/Feedback/5
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> DeleteFeedback(int id)
         {
             if (_context.Feedbacks == null)
@@ -112,7 +113,7 @@ namespace AzzanOrder.Data.Controllers
             _context.Feedbacks.Remove(feedback);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Delete success");
         }
 
         private bool FeedbackExists(int id)
