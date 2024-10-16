@@ -40,12 +40,10 @@ namespace AzzanOrder.Data.Controllers
               return NotFound();
           }
             var menuCategory = await _context.MenuCategories.FindAsync(id);
-
             if (menuCategory == null)
             {
                 return NotFound();
             }
-
             return menuCategory;
         }
 
@@ -76,7 +74,6 @@ namespace AzzanOrder.Data.Controllers
                     throw;
                 }
             }
-
             return NoContent();
         }
 

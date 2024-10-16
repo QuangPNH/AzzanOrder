@@ -4,8 +4,10 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import React from 'react';
 
-import LoginPage from './components/Account/LoginPage';
+//import LoginPage from './components/Account/LoginPage';
 import Homepage from './components/Homepage';
+
+import LoginPage from './components/Account/LoginPage';
 function App() {
   const [count, setCount] = useState(0)
 

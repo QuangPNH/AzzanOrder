@@ -160,7 +160,6 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-
             return member;
         }
     }

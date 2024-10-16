@@ -98,7 +98,7 @@ namespace AzzanOrder.Data.Controllers
             _context.Employees.Add(employee);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetEmployee", new { id = e.EmployeeId }, e);
+            return CreatedAtAction("GetEmployee", new { id = employee.EmployeeId }, employee);
         }
 
         // DELETE: api/Employee/5

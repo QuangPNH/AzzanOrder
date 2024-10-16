@@ -109,6 +109,11 @@ namespace AzzanOrder.Data.Controllers
                 return NotFound();
             }
 
+            foreach(var orderDetail in order.OrderDetails)
+            {
+                _context.OrderDetails.Remove(orderDetail);
+            }
+
             _context.Orders.Remove(order);
             await _context.SaveChangesAsync();
 

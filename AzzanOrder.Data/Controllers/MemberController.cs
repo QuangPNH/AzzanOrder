@@ -87,45 +87,45 @@ namespace AzzanOrder.Data.Controllers
         public async Task<ActionResult<Member>> Register(string phone)
         {
             string errors = "";
+            //^(0)(\d{9})$
             if (!Regex.IsMatch(phone, "1234567890"))
             {
-                errors += "Phone number is invalid";
+                errors += "\nPhone number is invalid";
             }
-            
+            var member = await _context.Members.FirstOrDefaultAsync(m => m.Phone.Equals(phone));
+
+            //if (member == null || _context.Members == null)
+            //{
+            //    errors += "\nPhone number is already registered";
+            //}
             if (errors.Length > 0)
             {
                 return BadRequest(errors);
             }
-            else {
-                var member = await _context.Members.FirstOrDefaultAsync(m => m.Phone.Equals(phone));
-
-                if (member == null || _context.Members == null)
+            else
+            {
+                Random random = new Random();
+                char[] numbers = new char[6];
+                for (int i = 0; i < 6; i++)
                 {
-                    Random random = new Random();
-                    char[] numbers = new char[6];
-                    for (int i = 0; i < 6; i++)
-                    {
-                        numbers[i] = (char)('0' + random.Next(0, 10));
-                    }
-
-                    Member member1 = new Member()
-                    {
-                        Phone = phone,
-                        MemberName = new string(numbers)
-                    };
-
-                    var accountSid = "ACd5083d30edb839433981a766a0c2e2fd";
-                    var authToken = "a7006676dd3f015b9b47177e3f333852";
-                    TwilioClient.Init(accountSid, authToken);
-                    var messageOptions = new CreateMessageOptions(new PhoneNumber("+84388536414"));
-                    messageOptions.From = new PhoneNumber("+19096555985");
-                    messageOptions.Body = "Your OTP is " + new string(numbers);
-                    var message = MessageResource.Create(messageOptions);
-                    Console.WriteLine(message.Body);
-                    return Ok(member1);
+                    numbers[i] = (char)('0' + random.Next(0, 10));
                 }
-                else
-                    return Conflict("Phone number is already registered");
+
+                Member member1 = new Member()
+                {
+                    Phone = phone,
+                    MemberName = "000000"//new string(numbers)
+                };
+
+                //var accountSid = "ACd5083d30edb839433981a766a0c2e2fd";
+                //var authToken = "a7006676dd3f015b9b47177e3f333852";
+                //TwilioClient.Init(accountSid, authToken);
+                //var messageOptions = new CreateMessageOptions(new PhoneNumber("+84388536414"));
+                //messageOptions.From = new PhoneNumber("+19096555985");
+                //messageOptions.Body = "Your OTP is " + new string(numbers);
+                //var message = MessageResource.Create(messageOptions);
+                //Console.WriteLine(message.Body);
+                return Ok(member1);
             }
         }
 
@@ -184,7 +184,6 @@ namespace AzzanOrder.Data.Controllers
             member.MemberName = null;
             _context.Members.Add(member);
             await _context.SaveChangesAsync();
-
             return CreatedAtAction("GetMember", new { id = member.MemberId }, member);
         }
 

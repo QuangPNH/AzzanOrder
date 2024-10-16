@@ -6,6 +6,7 @@ import Button from "./Button";
 
 function LoginWidget({ title, icon, placeholder, buttonText }) {
 
+
   const [phoneNumber, setPhoneNumber] = useState('');
   let memberInfo;
 
@@ -21,8 +22,14 @@ function LoginWidget({ title, icon, placeholder, buttonText }) {
       if (response.ok) {
         memberInfo = await response.json();
         //sessionStorage.setItem('memberInfo', JSON.stringify(memberInfo));
-        setCookie("memberInfo", JSON.stringify(memberInfo), 100);
-        console.log('Yeeeeee ' + sessionStorage.getItem('memberInfo'));
+        console.log('yeeeee ' + memberInfo.phone);
+
+
+        setCookie('memberInfo', JSON.stringify(memberInfo), 100);
+        console.log('mao' + JSON.parse(getCookie('memberInfo')).phone);
+
+        window.location.href = '';
+
       } else {
         console.error('Nah not logged inn never');
       }
@@ -71,12 +78,10 @@ function LoginWidget({ title, icon, placeholder, buttonText }) {
 }
 
 
-
 function setCookie(name, value, days) {
   const expires = new Date(Date.now() + days * 864e5).toUTCString(); // Calculate expiration date
   document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; // Set cookie
 }
-
 
 function getCookie(name) {
   const value = `; ${document.cookie}`; // Add a leading semicolon for easier parsing

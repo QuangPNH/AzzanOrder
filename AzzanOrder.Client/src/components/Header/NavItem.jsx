@@ -1,6 +1,11 @@
-﻿import React from 'react';
+﻿import React, { useState } from 'react';
+import Popup from 'reactjs-popup';
+import LoginPage from '../../components/Account/LoginPage';
+import SignUpPage from '../../components/Account/SignUpPage';
 
 const NavItem = () => {
+    const [isPopupVisible, setPopupVisible] = useState(false);
+
     const navItems = [
         { icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/2000ef5b1388f84bd861a1cfeabcb17787a38e432ea204379ab731580cd84b0b?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533", text: "Login" },
         { icon: "https://cdn.builder.io/api/v1/image/assets/TEMP/fe570d9132ffff17abf26958447f9d8a921987650f9e6cb66275a59986d8d8d1?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533", text: "Sign up" },
@@ -27,13 +32,28 @@ const NavItem = () => {
 
     return (
         <div className="nav-items">
-            <div className="nav-item" onClick={handleLoginClick}>
-                <img loading="lazy" src={navItems[0].icon} alt={navItems[0].text} className="nav-icon" />
+            {/* <div className="nav-item" onClick={handleLoginClick}>
+            <img loading="lazy" src={navItems[0].icon} alt={navItems[0].text} className="nav-icon" />
                 <span className="nav-text">{navItems[0].text}</span>
+            </div> */}
+
+            <div className="nav-item">
+            <Popup position="bottom right" trigger=
+              {<button><img loading="lazy" src={navItems[0].icon} alt={navItems[0].text} className="nav-icon" />
+                <span className="nav-text">{navItems[0].text}</span></button>}>
+                    <LoginPage style="z-index: 10000000000000"/>
+            </Popup>
             </div>
-            <div className="nav-item" onClick={handleRegisterClick}>
+            {/* <div className="nav-item" onClick={handleRegisterClick}>
                 <img loading="lazy" src={navItems[1].icon} alt={navItems[1].text} className="nav-icon" />
                 <span className="nav-text">{navItems[1].text}</span>
+            </div> */}
+            <div className="nav-item">
+            <Popup position="bottom right" trigger=
+              {<button><img loading="lazy" src={navItems[1].icon} alt={navItems[1].text} className="nav-icon" />
+                <span className="nav-text">{navItems[1].text}</span></button>}>
+                    <SignUpPage style="z-index: 10000000000000"/>
+            </Popup>
             </div>
             <div className="nav-item" onClick={handleNotificationClick}>
                 <img loading="lazy" src={navItems[2].icon} alt={navItems[2].text} className="nav-icon" />
