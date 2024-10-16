@@ -86,7 +86,7 @@ const Dropdown = ({ options, onChange, onClick}) => {
                 .dropdown {
                     position: -webkit-sticky; /* For Safari */
                     position: sticky;
-                    top: 0; /* Adjust this value to control the sticky position */
+                    top: 50px; /* Adjust this value to control the sticky position */
                     border-radius: 10px;
                     background-color: #fff;
                     box-shadow: 0 5px 10px rgba(0, 0, 0, 0.25);

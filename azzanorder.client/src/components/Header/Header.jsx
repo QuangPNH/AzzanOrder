@@ -13,9 +13,10 @@ const Header = () => {
 
     return (
         <>
-            <header className="header">
+            <header className="header sticky">
                 <Logo />
                 <Navigation toggleNavbar={toggleNavbar} />
+                {showNavbar && <Navbar />} {/* Render Navbar below Header when visible */}
                 <style jsx>{`
           .header {
             background-color: #f6b5b5;
@@ -23,16 +24,17 @@ const Header = () => {
             justify-content: space-between;
             align-items: center;
             width: 100vw; /* Use viewport width for full coverage */
+            height: 64px;
             padding: 8px 14px;
             box-sizing: border-box; /* Ensure padding doesn't affect width */
-            position: fixed; /* Optionally, if you want the header to stick to the top */
+            position: sticky; /* Make the header sticky */
             top: 0; /* Stick it to the top of the page */
             left: 0; /* Align to the very left edge of the viewport */
             z-index: 1000;
           }
         `}</style>
             </header>
-            {showNavbar && <Navbar />} {/* Render Navbar below Header when visible */}
+            
         </>
     );
 };

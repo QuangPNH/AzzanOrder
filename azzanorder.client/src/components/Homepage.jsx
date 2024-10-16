@@ -34,7 +34,15 @@ const Homepage = () => {
             <div className="page-container">
                 <div><HomeItem /></div>
                 <div>
-                    <ShowMoreLink title="HOT ITEMS" url='https://google.com' />
+                    <ShowMoreLink title="HOT ITEMS"/>
+                    <div className='product-grid'>
+                        {menuItems.map((menuItem) => (
+                            <ProductCard key={menuItem.id} title={menuItem.itemName} price={menuItem.price} imageSrc={menuItem.imageBase64} />
+                        ))}
+                    </div>
+                </div>
+                <div>
+                    <ShowMoreLink title="HOT ITEMS" />
                     <div className='product-grid'>
                         {menuItems.map((menuItem) => (
                             <ProductCard key={menuItem.id} title={menuItem.itemName} price={menuItem.price} imageSrc={menuItem.imageBase64} />
