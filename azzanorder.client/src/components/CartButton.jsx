@@ -1,21 +1,29 @@
-import React from 'react';
+import React, { useState } from 'react';
+import ReactDOM from 'react-dom';
 import Cart from './Cart';
+import Popup from 'reactjs-popup';
 
 const CartButton = () => {
-  const handleCartButtonClick = () => {
-    // Open Cart.jsx as a popup
-    const cartPopup = window.open('', 'Cart', 'width=400,height=400');
-    cartPopup.document.body.innerHTML = '<div id="cart-root"></div>';
+    const [isOpen, setIsOpen] = React.useState(false);
 
-    // Render Cart component inside the popup
-    ReactDOM.render(<Cart />, cartPopup.document.getElementById('cart-root'));
-  };
+    const handleCartButtonClick = () => {
+        setIsOpen(true);
+    };
 
-  return (
-    <button onClick={handleCartButtonClick}>
-      Open Cart
-    </button>
-  );
+    const handleClosePopup = () => {
+        setIsOpen(false);
+    };
+
+    return (
+        <div style={{ position: 'fixed', top: '80px', right: '20px', zIndex: '9999' }}>
+            <button onClick={handleCartButtonClick} style={{ borderRadius: '50%', padding: '10px', backgroundColor: 'lightblue' }}>
+                <img src="../src/assets/shoppingCart.svg" style={{ width: '20px', height: '20px' }} />
+            </button>
+            <Popup open={isOpen} onClose={handleClosePopup}>
+                <Cart />
+            </Popup>
+        </div>
+    );
 };
 
 export default CartButton;

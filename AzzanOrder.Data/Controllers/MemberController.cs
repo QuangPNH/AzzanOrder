@@ -188,25 +188,7 @@ namespace AzzanOrder.Data.Controllers
             return CreatedAtAction("GetMember", new { id = member.MemberId }, member);
         }
 
-        // DELETE: api/Member/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMember(int id)
-        {
-            if (_context.Members == null)
-            {
-                return NotFound();
-            }
-            var member = await _context.Members.FindAsync(id);
-            if (member == null)
-            {
-                return NotFound();
-            }
-
-            _context.Members.Remove(member);
-            await _context.SaveChangesAsync();
-
-            return NoContent();
-        }
+        
 
         private bool MemberExists(int id)
         {

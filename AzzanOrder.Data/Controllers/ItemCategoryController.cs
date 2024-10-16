@@ -114,6 +114,11 @@ namespace AzzanOrder.Data.Controllers
                 return NotFound();
             }
 
+            foreach (var menuCategory in itemCategory.MenuCategories)
+            {
+                _context.MenuCategories.Remove(menuCategory);
+            }
+
             _context.ItemCategories.Remove(itemCategory);
             await _context.SaveChangesAsync();
 
