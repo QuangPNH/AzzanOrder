@@ -1,27 +1,56 @@
-﻿<div className="product-sale-container">
-    <ProductSale
-        saleAmount={10}
-        endDate="2024-12-01"
-        price={0}
-        infiniteUses={true}
-        useCount={0}
-    />
+﻿import React from 'react';
+import Footer from '../components/Footer/Footer';
+import Header from '../components/Header/Header';
+import Dropdown from './Dropdown/Dropdown';
+import ProductSale from './Voucher/VoucherDetail/ProductSale';
+import Category from './Voucher/Category';
+import PointsDisplay from './Voucher/PointDisplay';
+import VoucherList from './Voucher/VoucherList';
 
-    <ProductSale
-        saleAmount={10}
-        endDate="2024-12-01"
-        price={0}
-        infiniteUses={false}
-        useCount={5}
-    />
-</div>
+const VoucherScreen = () => {
+    return (
+        <>
+            <Header />
+            <div className="content-container">
+                <PointsDisplay points="30.000" />
+                <VoucherList />
+                <Category />
+                <Dropdown />
+            </div>
 
-<style jsx>{`
-    .product-sale-container {
-        display: flex; /* Flex display to align ProductSale components */
-        justify-content: center; /* Center the components horizontally */
-        align-items: stretch; /* Stretch to equal height */
-        margin-top: 20px; /* Space above */
-        width: 100%; /* Ensure it takes full width */
-    }
-`}></style>
+            <div className="product-sale-container">
+                <ProductSale
+                    saleAmount={10}
+                    endDate="2024-12-01"
+                    price={0}
+                    infiniteUses={true}
+                    useCount={0}
+                />
+
+                <ProductSale
+                    saleAmount={10}
+                    endDate="2024-12-01"
+                    price={0}
+                    infiniteUses={false}
+                    useCount={5}
+                />
+            </div>
+
+            <Footer />
+            <style jsx>{`
+                .content-container {
+                    padding: 20px; /* Add padding to the container */
+                    margin-top: 20px; /* Ensure there's space below the header */
+                }
+                .product-sale-container {
+                    display: flex; /* Use flex display to align items */
+                    flex-direction: column; /* Stack items vertically */
+                    align-items: center; /* Center items horizontally */
+                    margin-top: 20px; /* Space above the product sale section */
+                }
+            `}</style>
+        </>
+    );
+};
+
+export default VoucherScreen;
