@@ -76,7 +76,6 @@ namespace AzzanOrder.Data.Controllers
                     throw;
                 }
             }
-
             return NoContent();
         }
 
@@ -89,6 +88,12 @@ namespace AzzanOrder.Data.Controllers
           {
               return Problem("Entity set 'OrderingAssistSystemContext.Employees'  is null.");
           }
+
+            if (!_context.Roles.Any() && employee.Role != null)
+            {
+                _context.Roles.Add(employee.Role);
+            }
+
             _context.Employees.Add(employee);
             await _context.SaveChangesAsync();
 
@@ -103,6 +108,34 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
+            List<Promotion> promotions = await _context.Promotions.Where(p => p.EmployeeId == id).ToListAsync();
+            foreach (var promotion in promotions)
+            {
+                _context.Promotions.Remove(promotion);
+            }
+
+            List<Notification> notifications = await _context.Notifications.Where(n => n.EmployeeId == id).ToListAsync();
+            foreach (var notification in notifications)
+            {
+                _context.Notifications.Remove(notification);
+            }
+
+            List<MenuItem> menuItems = await _context.MenuItems.Where(m => m.EmployeeId == id).ToListAsync();
+            foreach (var menuItem in menuItems)
+            {
+                _context.MenuItems.Remove(menuItem);
+            }
+
+            foreach (MenuItem menuItem in menuItems)
+            {
+                _context.MenuCategories.RemoveRange(await _context.MenuCategories.Where(mc => mc.MenuItemId == menuItem.MenuItemId).ToListAsync());
+            }
+
+            foreach(MenuItem menuItem in menuItems)
+            {
+                _context.OrderDetails.RemoveRange(await _context.OrderDetails.Where(od => od.MenuItemId == menuItem.MenuItemId).ToListAsync());
+            }
+
             var employee = await _context.Employees.FindAsync(id);
             if (employee == null)
             {

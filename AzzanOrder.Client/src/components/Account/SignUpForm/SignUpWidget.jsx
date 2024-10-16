@@ -23,6 +23,7 @@ function SignUpWidget({ title, icon, placeholder, buttonText }) {
         sessionStorage.setItem('savedOTP', memberInfo.memberName);
         console.log('Yeeeeee ' + sessionStorage.getItem('savedOTP'));
         console.log('Yeeeeee ' + sessionStorage.getItem('memberInfo'));
+        
       } else {
         console.error('Failed to retrieve member info');
       }
@@ -72,5 +73,18 @@ function SignUpWidget({ title, icon, placeholder, buttonText }) {
         </>
     );
 }
+
+
+function setCookie(name, value, days) {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString(); // Calculate expiration date
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; // Set cookie
+}
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`; // Add a leading semicolon for easier parsing
+  const parts = value.split(`; ${name}=`); // Split the cookie string to find the desired cookie
+  if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift()); // Return the cookie value
+}
+
 
 export default SignUpWidget;
