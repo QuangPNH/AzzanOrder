@@ -22,14 +22,19 @@ namespace AzzanOrder.Data.Controllers
 
         // GET: api/ItemCategory
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<ItemCategory>>> GetItemCategories()
-        {
-          if (_context.ItemCategories == null)
-          {
-              return NotFound();
-          }
-            return await _context.ItemCategories.ToListAsync();
-        }
+		public async Task<ActionResult<IEnumerable<ItemCategory>>> GetItemCategories()
+		{
+			if (_context.ItemCategories == null)
+			{
+				return NotFound();
+			}
+
+			var itemCategories = await _context.ItemCategories
+				.Where(ic => !ic.ItemCategoryName.Contains("TOPPING"))
+				.ToListAsync();
+
+			return itemCategories;
+		}
 
         // GET: api/ItemCategory/5
         [HttpGet("{id}")]

@@ -1,22 +1,31 @@
 ﻿import React, { useState, useEffect } from 'react';
 
+
 /*
     **import biến PriceCalculator từ file PriceCalculator
     **phải có export từ hàm PriceCalculator
 */
-import MenuMainPage from './MenuMainPage';
 import Footer from '../components/Footer/Footer';
 import Header from '../components/Header/Header';
 import ShowMoreLink from './ShowMoreLink/ShowMoreLink';
 import ProductCard from './ProductCard/ProductCard';
 import HomeItem from './HomeItem/HomeItem';
-import PriceCalculator from './PriceCalculator/PriceCalculator'
+import { getCookie } from './Account/SignUpForm/Validate';
+
+    // Rest of the code...
 import Cart from './Cart';
+
 const Homepage = () => {
     const [menuItems, setMenuItems] = useState([]);
+    const [recentMenuItems, setRecentMenuItems] = useState([]);
+    const [showRecentlyOrdered, setShowRecentlyOrdered] = useState(false);
 
     useEffect(() => {
         fetchMenuItems();
+        if (getCookie('memberInfo') != null) {
+            fetchRecentMenuItems(JSON.parse(getCookie('memberInfo')).memberId);
+            setShowRecentlyOrdered(true);
+        }
     }, []);
 
     const fetchMenuItems = async () => {
@@ -28,27 +37,54 @@ const Homepage = () => {
             console.error('Error fetching menu items:', error);
         }
     };
+
+    const fetchRecentMenuItems = async (customerId) => {
+        try {
+            const response = await fetch(`https://localhost:7183/api/MenuItem/RecentMenuItems/${customerId}`);
+            const data = await response.json();
+            setRecentMenuItems(data);
+        } catch (error) {
+            console.error('Error fetching menu items:', error);
+        }
+    };
+
     return (
         <>
             <Header />
             <div className="page-container">
                 <div><HomeItem /></div>
                 <div>
-                    <ShowMoreLink title="HOT ITEMS"/>
-                    <div className='product-grid'>
-                        {menuItems.map((menuItem) => (
-                            <ProductCard key={menuItem.id} title={menuItem.itemName} price={menuItem.price} imageSrc={menuItem.imageBase64} />
-                        ))}
-                    </div>
-                </div>
-                <div>
                     <ShowMoreLink title="HOT ITEMS" />
                     <div className='product-grid'>
                         {menuItems.map((menuItem) => (
-                            <ProductCard key={menuItem.id} title={menuItem.itemName} price={menuItem.price} imageSrc={menuItem.imageBase64} />
+                            <ProductCard
+                                key={menuItem.id}
+                                title={menuItem.itemName}
+                                price={menuItem.price}
+                                imageSrc={menuItem.imageBase64}
+                                cate={menuItem.category}
+                                desc={menuItem.description}
+                            />
                         ))}
                     </div>
                 </div>
+                {showRecentlyOrdered && (
+                    <div>
+                        <ShowMoreLink title="RECENTLY ORDERED" />
+                        <div className='product-grid'>
+                            {recentMenuItems.map((menuItem) => (
+                                <ProductCard
+                                    key={menuItem.id}
+                                    title={menuItem.itemName}
+                                    price={menuItem.price}
+                                    imageSrc={menuItem.imageBase64}
+                                    cate={menuItem.category}
+                                    desc={menuItem.description}
+                                />
+                            ))}
+                        </div>
+                    </div>
+                )}
                 <style jsx>{`
                 .page-container {
                     display: flex;

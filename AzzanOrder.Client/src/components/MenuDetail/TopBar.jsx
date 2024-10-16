@@ -1,14 +1,15 @@
 ﻿import React from "react";
 
-export default function TopBar() {
+export default function TopBar({ closeModal }) {
     return (
         <>
             <div className="top-bar">
                 <img
                     loading="lazy"
                     src="https://cdn.builder.io/api/v1/image/assets/TEMP/32f3b78e1921df6d02584f941cbe40ab28cf7713789ab181fc6d080c5a20736c?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533"
-                    className="logo"
-                    alt="Logo"
+                    className="logo1"
+                    alt="Logo1"
+                    onClick={closeModal}
                 />
                 <h1 className="title">Drink Details</h1>
             </div>
@@ -23,7 +24,8 @@ export default function TopBar() {
                     color: #000;
                     font: 700 16px Inter, sans-serif;
                 }
-                .logo {
+                .logo1 {
+                    cursor: pointer;
                     aspect-ratio: 1.04;
                     object-fit: contain;
                     object-position: center;

@@ -140,6 +140,7 @@ namespace AzzanOrder.Data.Controllers
 					Price = m.Price,
 					Description = m.Description,
 					Discount = m.Discount,
+					Category = m.MenuCategories.FirstOrDefault().ItemCategory.Description,
 					ImageBase64 = m.Image
 				})
 			.ToListAsync();
@@ -168,7 +169,8 @@ namespace AzzanOrder.Data.Controllers
 						MenuItemId = m.MenuItemId,
 						ItemName = m.ItemName,
 						Price = m.Price,
-						Description = m.Description,
+					    Category = m.MenuCategories.FirstOrDefault().ItemCategory.Description,
+					    Description = m.Description,
 						Discount = m.Discount,
 						ImageBase64 = m.Image
 					})
@@ -181,5 +183,41 @@ namespace AzzanOrder.Data.Controllers
 
 			return menuItems;
 		}
+		// GET: api/MenuItem/RecentMenuItems/{customerId}
+		[HttpGet("RecentMenuItems/{customerId}")]
+		public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetRecentMenuItems(int customerId)
+		{
+			var recentMenuItems = await _context.OrderDetails
+				.Where(od => od.Order.MemberId == customerId)
+				.OrderByDescending(od => od.Order.OrderDate)
+				.Select(od => od.MenuItem)
+				.Distinct()
+				.Take(4)
+                .Where(m => 
+                m.MenuCategories.Any(mc => 
+                mc.EndDate > DateTime.Now &&
+				mc.StartDate < DateTime.Now &&
+				mc.IsForCombo == false) &&
+				m.IsAvailable == true)
+				.Select(m => new MenuItemDTO
+				{
+					MenuItemId = m.MenuItemId,
+					ItemName = m.ItemName,
+					Price = m.Price,
+					Description = m.Description,
+					Category = m.MenuCategories.FirstOrDefault().ItemCategory.Description,
+					Discount = m.Discount,
+					ImageBase64 = m.Image
+				})
+				.ToListAsync();
+
+			if (recentMenuItems == null)
+			{
+				return NotFound();
+			}
+
+			return recentMenuItems;
+		}
+
 	}
 }
