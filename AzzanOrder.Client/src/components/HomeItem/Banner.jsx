@@ -13,11 +13,12 @@ const Banner = () => {
         try {
             const response = await fetch('https://localhost:7183/api/Promotions/GetByDescription/banner');
             const data = await response.json();
-            setPromotions(data);
+            setPromotions(Array.isArray(data) ? data : []);
         } catch (error) {
             console.error('Error fetching images:', error);
         }
     };
+
     const dots = promotions.map((_, index) => ({ active: index === 0 }));
 
     return (
