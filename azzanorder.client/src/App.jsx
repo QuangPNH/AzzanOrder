@@ -4,13 +4,13 @@ import viteLogo from '/vite.svg'
 import './App.css'
 import React from 'react';
 import Homepage from './components/Homepage';
-import RegisterPage from './components/Account/RegisterPage';
+import LoginPage from './components/Account/LoginPage';
 function App() {
   const [count, setCount] = useState(0)
 
     return (
         <div className="App">
-            <RegisterPage />
+            <LoginPage/>
         </div>
     );
 }

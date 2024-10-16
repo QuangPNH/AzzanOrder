@@ -2,40 +2,40 @@
 import InputField from "./InputField";
 import Button from "./Button";
 
+function OTPWidget({ title, icon, placeholder, buttonText }) {
+  const [enterOTP, setEnterOTP] = useState('');
+  let receivedOTP;
 
-
-function LoginWidget({ title, icon, placeholder, buttonText }) {
-
-  const [phoneNumber, setPhoneNumber] = useState('');
-  let memberInfo;
-
-  const handlePhoneNumberChange = (event) => {
-    setPhoneNumber(event.target.value);
+  const handleEnterOTPChange = (event) => {
+    setEnterOTP(event.target.value);
   };
 
 
-  const handleSubmit = async (event) => {
+  const handleOTP = async (event) => {
     event.preventDefault();
-    try {
-      let response = await fetch(`https://localhost:7183/api/Member/Phone/${phoneNumber}`);
-      if (response.ok) {
-        memberInfo = await response.json();
-        //sessionStorage.setItem('memberInfo', JSON.stringify(memberInfo));
-        setCookie("memberInfo", JSON.stringify(memberInfo), 100);
-        console.log('Yeeeeee ' + sessionStorage.getItem('memberInfo'));
-      } else {
-        console.error('Nah not logged inn never');
-      }
-    } catch (error) {
-      console.error('An error occurred:', error);
+    receivedOTP = sessionStorage.getItem('savedOTP');
+    console.log('Noooooo ' + sessionStorage.getItem('savedOTP'));
+    if (enterOTP == receivedOTP){
+      setCookie("memberInfo", sessionStorage.getItem('memberInfo'), 100);
+      let response = await fetch(`https://localhost:7183/api/Member/`, {
+        method: 'POST', // Specify the request method
+        headers: {
+            'Content-Type': 'application/json', // Inform the server that you're sending JSON data
+        },
+        body: sessionStorage.getItem('memberInfo'), // Convert JavaScript object to JSON
+      });
+      console.log(response);
     }
   };
+
+  
+
     return (
         <>
             <section className="login-widget">
-                <form className="login-form" onSubmit={handleSubmit}>
+                <form className="login-form" onSubmit={handleOTP}>
                     <h2 className="register-title">{title}</h2>
-                    <InputField value={phoneNumber} onChange={handlePhoneNumberChange}
+                    <InputField value={enterOTP} onChange={handleEnterOTPChange}
                         icon={icon}
                         placeholder={placeholder}/>
                     <Button type="submit" text={buttonText} />
@@ -70,8 +70,6 @@ function LoginWidget({ title, icon, placeholder, buttonText }) {
     );
 }
 
-
-
 function setCookie(name, value, days) {
   const expires = new Date(Date.now() + days * 864e5).toUTCString(); // Calculate expiration date
   document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; // Set cookie
@@ -85,4 +83,4 @@ function getCookie(name) {
 }
 
 
-export default LoginWidget;
+export default OTPWidget;

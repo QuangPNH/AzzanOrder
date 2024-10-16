@@ -9,6 +9,8 @@ using AzzanOrder.Data.Models;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
+using Microsoft.Extensions.FileSystemGlobbing.Internal;
+using System.Text.RegularExpressions;
 
 namespace AzzanOrder.Data.Controllers
 {
@@ -74,6 +76,8 @@ namespace AzzanOrder.Data.Controllers
 
 
 
+        
+
 
 
 
@@ -82,35 +86,47 @@ namespace AzzanOrder.Data.Controllers
         [HttpGet("Register/{phone}")]
         public async Task<ActionResult<Member>> Register(string phone)
         {
-            var member = await _context.Members.FirstOrDefaultAsync(m => m.Phone.Equals(phone));
-
-            if (member == null || _context.Members == null)
+            string errors = "";
+            if (!Regex.IsMatch(phone, "1234567890"))
             {
-                Random random = new Random();
-                char[] numbers = new char[6];
-                for (int i = 0; i < 6; i++)
-                {
-                    numbers[i] = (char)('0' + random.Next(0, 10));
-                }
-
-                Member member1 = new Member()
-                {
-                    Phone = phone,
-                    MemberName = new string(numbers)
-                };
-
-                var accountSid = "ACd5083d30edb839433981a766a0c2e2fd";
-                var authToken = "a7006676dd3f015b9b47177e3f333852";
-                TwilioClient.Init(accountSid, authToken);
-                var messageOptions = new CreateMessageOptions(new PhoneNumber("+84388536414"));
-                messageOptions.From = new PhoneNumber("+19096555985");
-                messageOptions.Body = "Your OTP is " + new string(numbers);
-                var message = MessageResource.Create(messageOptions);
-                Console.WriteLine(message.Body);
-                return Ok(member1);
+                errors += "Phone number is invalid";
             }
-            else
-            return Conflict("Phone number is already registered");
+            
+            if (errors.Length > 0)
+            {
+                return BadRequest(errors);
+            }
+            else {
+                var member = await _context.Members.FirstOrDefaultAsync(m => m.Phone.Equals(phone));
+
+                if (member == null || _context.Members == null)
+                {
+                    Random random = new Random();
+                    char[] numbers = new char[6];
+                    for (int i = 0; i < 6; i++)
+                    {
+                        numbers[i] = (char)('0' + random.Next(0, 10));
+                    }
+
+                    Member member1 = new Member()
+                    {
+                        Phone = phone,
+                        MemberName = new string(numbers)
+                    };
+
+                    var accountSid = "ACd5083d30edb839433981a766a0c2e2fd";
+                    var authToken = "a7006676dd3f015b9b47177e3f333852";
+                    TwilioClient.Init(accountSid, authToken);
+                    var messageOptions = new CreateMessageOptions(new PhoneNumber("+84388536414"));
+                    messageOptions.From = new PhoneNumber("+19096555985");
+                    messageOptions.Body = "Your OTP is " + new string(numbers);
+                    var message = MessageResource.Create(messageOptions);
+                    Console.WriteLine(message.Body);
+                    return Ok(member1);
+                }
+                else
+                    return Conflict("Phone number is already registered");
+            }
         }
 
 
