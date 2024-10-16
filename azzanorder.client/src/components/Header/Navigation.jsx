@@ -28,18 +28,19 @@ const Navigation = ({ toggleNavbar }) => {
             <style jsx>{`
                 .navigation {
                     display: flex;
-                    gap: 19px;
+                    gap: 5px; /* Reduce gap even more to make it more compact */
+                    align-items: center;
                 }
                 .nav-item {
                     aspect-ratio: 1.02;
                     object-fit: contain;
                     object-position: center;
-                    width: 42px;
+                    width: 25px; /* Significantly reduce width */
                 }
                 .nav-item-last {
                     aspect-ratio: 1;
-                    width: 40px;
-                    align-self: start;
+                    width: 22px; /* Smaller width for the last item */
+                    align-self: center;
                     margin: auto 0 auto auto;
                 }
             `}</style>

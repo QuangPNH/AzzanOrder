@@ -1,115 +1,77 @@
-﻿import React, { useState } from 'react';
-
-/*
-    **import biến PriceCalculator từ file PriceCalculator
-    **phải có export từ hàm PriceCalculator
-*/
-import MenuMainPage from './MenuMainPage';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import Footer from '../components/Footer/Footer';
 import Header from '../components/Header/Header';
 import ShowMoreLink from './ShowMoreLink/ShowMoreLink';
 import ProductCard from './ProductCard/ProductCard';
-const Homepage = () => {
-    const [products, setProducts] = useState({
-        COFFEE: [],
-        TEA: [],
-        YOGURT: [],
-        'SMOOTHIE&FRUIT JUICE': [],
-        'ICE BLENDED': []
-    });
+import Dropdown from './Dropdown/Dropdown';
 
-    // Function to fetch products from API based on the title
-    const fetchProducts = async (title, category) => {
+const Homepage = () => {
+    const [products, setProducts] = useState({});
+    const [categories, setCategories] = useState([]);
+    const categoryRefs = useRef({});
+
+    useEffect(() => {
+        const fetchCategories = async () => {
+            try {
+                const response = await fetch('https://localhost:7183/api/ItemCategory');
+                const categories = await response.json();
+                const initialProducts = categories.reduce((acc, category) => {
+                    acc[category.description] = [];
+                    return acc;
+                }, {});
+                setProducts(initialProducts);
+                setCategories(categories);
+
+                // Fetch products for each category
+                categories.forEach(category => fetchProducts(category));
+            } catch (error) {
+                console.error('Error fetching categories:', error);
+            }
+        };
+
+        fetchCategories();
+    }, []);
+
+    const fetchProducts = async (category) => {
         try {
-            const response = await fetch(`https://localhost:7183/api/MenuItem/Category/${title}`);
+            const response = await fetch(`https://localhost:7183/api/MenuItem/Category/${category.description}`);
             const data = await response.json();
             setProducts(prevProducts => ({
                 ...prevProducts,
-                [category]: data
+                [category.description]: data
             }));
         } catch (error) {
             console.error('Error fetching products:', error);
         }
     };
 
+    const handleDropdownChange = (selectedCategory) => {
+        if (categoryRefs.current[selectedCategory]) {
+            categoryRefs.current[selectedCategory].scrollIntoView({ behavior: 'smooth' });
+        }
+    };
     return (
         <>
             <Header />
-            <div>
-                <ShowMoreLink title="COFFEE" url='https://google.com' />
-                <div className='product-grid'>
-                    {
-                        fetchProducts('COFFEE', 'COFFEE'),
-                        products.COFFEE.map((product) => (
+            <Dropdown
+                options={categories.map(category => category.description)}
+                onClick={handleDropdownChange}
+                onChange={handleDropdownChange} />
+            {categories.map((category) => (
+                <div key={category.description} ref={el => categoryRefs.current[category.description] = el}>
+                    <ShowMoreLink title={category.description}/>
+                    <div className='product-grid'>
+                        {products[category.description]?.map((product) => (
                             <ProductCard
                                 key={product.id}
-                                imageSrc={product.imageSrc}
+                                imageSrc={product.imageBase64}
                                 title={product.title}
                                 price={product.price}
                             />
                         ))}
+                    </div>
                 </div>
-            </div>
-            <div>
-                <ShowMoreLink title="TEA" url='https://google.com' />
-                <div className='product-grid'>
-                    {
-                        fetchProducts('TEA', 'TEA'),
-                        products.TEA.map((product) => (
-                            <ProductCard
-                                key={product.id}
-                                imageSrc={product.imageSrc}
-                                title={product.title}
-                                price={product.price}
-                            />
-                        ))}
-                </div>
-            </div>
-            <div>
-                <ShowMoreLink title="YOGURT" url='https://google.com' />
-                <div className='product-grid'>
-                    {
-                        fetchProducts('YOGURT', 'YOGURT'),
-                        products.YOGURT.map((product) => (
-                            <ProductCard
-                                key={product.id}
-                                imageSrc={product.imageSrc}
-                                title={product.title}
-                                price={product.price}
-                            />
-                        ))}
-                </div>
-            </div>
-            <div>
-                <ShowMoreLink title="SMOOTHIE&FRUIT JUICE" url='https://google.com' />
-                <div className='product-grid'>
-                    {
-                        fetchProducts('SMOOTHIE&FRUIT JUICE', 'SMOOTHIE&FRUIT JUICE'),
-                        products['SMOOTHIE&FRUIT JUICE'].map((product) => (
-                            <ProductCard
-                                key={product.id}
-                                imageSrc={product.imageSrc}
-                                title={product.title}
-                                price={product.price}
-                            />
-                        ))}
-                </div>
-            </div>
-            <div>
-                <ShowMoreLink title="ICE BLENDED" url='https://google.com' />
-                <div className='product-grid'>
-                    {
-                        fetchProducts('ICE BLENDED', 'ICE BLENDED'),
-                        products['ICE BLENDED'].map((product) => (
-                            <ProductCard
-                                key={product.id}
-                                imageSrc={product.imageSrc}
-                                title={product.title}
-                                price={product.price}
-                            />
-                        ))}
-                </div>
-            </div>
+            ))}
             <style jsx>{`
                 .page-container {
                     display: flex;
@@ -133,7 +95,7 @@ const Homepage = () => {
                     flex: 1 1 calc(50% - 20px); /* Ensures 2 items per row */
                     box-sizing: border-box;
                 }
-                `}</style>
+            `}</style>
             <Footer />
         </>
     );

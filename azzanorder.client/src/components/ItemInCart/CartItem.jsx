@@ -5,34 +5,38 @@ import React from "react";
 import QuantityControl from "./QuantityControl";
 
 const CartItem = ({
-  name,
-  options,
-  price,
-  quantity
+    name,
+    options,
+    price,
+    quantity
 }) => {
-  return (
-    <article className="cart-item">
-      <div className="cart-item-content">
-              <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/febac510c6d584a90466fa7c52c5724906fbbf8624bfa03ec21ea8114b229195?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" className="item-icon" />
-        <div className="item-details">
-          <div className="item-info">
-            <div className="item-header">
-              <h3 className="item-name">{name}</h3>
+    return (
+        <article className="cart-item">
+            <div className="cart-item-content">
+                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/febac510c6d584a90466fa7c52c5724906fbbf8624bfa03ec21ea8114b229195?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" className="item-icon" />
+                <div className="item-details">
+                    <div className="item-info">
+                        <div className="item-header">
+                            <h3 className="item-name">{name}</h3>
+                        </div>
+                        {Array.isArray(options) ? (
+                            options.map((option, index) => (
+                                <p key={index} className="item-option">
+                                    {option}
+                                </p>
+                            ))
+                        ) : (
+                            <p className="item-option">No options available</p>
+                        )}
+                    </div>
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/fbbe8e49109e7ba499ad0129a45932bcb03213d85b1c078668fd9d88bca09d81?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="Delete item" className="delete-icon" />
+                </div>
             </div>
-            {options.map((option, index) => (
-              <p key={index} className="item-option">
-                {option}
-              </p>
-            ))}
-          </div>
-                  <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/fbbe8e49109e7ba499ad0129a45932bcb03213d85b1c078668fd9d88bca09d81?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="Delete item" className="delete-icon" />
-        </div>
-      </div>
-      <div className="cart-item-footer">
-        <p className="item-price">{price}</p>
-        <QuantityControl quantity={quantity} />
-      </div>
-      <style jsx>{`
+            <div className="cart-item-footer">
+                <p className="item-price">{price}</p>
+                <QuantityControl quantity={quantity} />
+            </div>
+            <style jsx>{`
         .cart-item {
           display: flex;
           width: 100%;
@@ -110,8 +114,8 @@ const CartItem = ({
             var(--sds-typography-body-font-family);
         }
       `}</style>
-    </article>
-  );
+        </article>
+    );
 };
 
 export default CartItem;

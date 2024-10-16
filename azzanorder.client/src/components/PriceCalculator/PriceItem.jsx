@@ -19,6 +19,6 @@ const PriceItem = ({ label, value, isTotal }) => {
       `}</style>
     </p>
   );
-};
+};    
 
 export default PriceItem;
