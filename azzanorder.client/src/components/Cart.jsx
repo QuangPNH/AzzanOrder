@@ -21,7 +21,7 @@ const Cart = () => {
     ));
 
     return (
-        <div>
+        <div style={{ background: 'lightgray', border: '1px solid black', borderRadius: '20px', padding: '10px' }}>
             {itemsInCart}
             <div>
                 <PriceCalculator />

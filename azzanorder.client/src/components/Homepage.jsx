@@ -12,6 +12,7 @@ import ProductCard from './ProductCard/ProductCard';
 import HomeItem from './HomeItem/HomeItem';
 import PriceCalculator from './PriceCalculator/PriceCalculator'
 import Cart from './Cart';
+import CartButton from './CartButton';
 const Homepage = () => {
     const [menuItems, setMenuItems] = useState([]);
 
@@ -49,6 +50,7 @@ const Homepage = () => {
                         ))}
                     </div>
                 </div>
+                <CartButton />
                 <style jsx>{`
                 .page-container {
                     display: flex;
