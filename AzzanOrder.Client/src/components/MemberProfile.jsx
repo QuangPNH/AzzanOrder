@@ -5,7 +5,7 @@ import ProfileItem from './Profile/ProfileItem';
 import ProfilePicture from '../components/Profile/ProfilePicture';
 import ProfileButton from './Profile/ProfileButton';
 
-const Homepage = () => {
+const MemberProfile = () => {
     const [name, setName] = useState('Nguyễn Quang Minh');
     const [mobilePhone, setMobilePhone] = useState('0987654321');
     const [email, setEmail] = useState('minhsay23ra@gmail.com');
@@ -42,4 +42,4 @@ const Homepage = () => {
     );
 };
 
-export default Homepage;
+export default MemberProfile;
