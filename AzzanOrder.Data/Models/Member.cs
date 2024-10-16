@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace AzzanOrder.Data.Models
 {
@@ -15,6 +16,8 @@ namespace AzzanOrder.Data.Models
         public int MemberId { get; set; }
         public string? MemberName { get; set; }
         public bool? Gender { get; set; }
+        [Required(ErrorMessage = "Phone number is required")]
+        [RegularExpression(@"^(0)(\d{9})$", ErrorMessage = "Phone number must be 10 digits")]
         public string Phone { get; set; } = null!;
         public string? Gmail { get; set; }
         public DateTime? BirthDate { get; set; }

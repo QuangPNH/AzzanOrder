@@ -1,11 +1,13 @@
 ﻿import React from "react";
 
-function InputField({ icon, placeholder }) {
+function InputField({ icon, placeholder, value, onChange }) {
     return (
         <>
             <div className="input-container">
                 <img src={icon} alt="" className="input-icon" />
                 <input
+                    onChange={onChange}
+                    value={value}
                     type="tel"
                     placeholder={placeholder}
                     className="input-field"

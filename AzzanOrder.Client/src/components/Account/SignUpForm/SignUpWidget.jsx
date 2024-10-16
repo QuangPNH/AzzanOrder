@@ -4,7 +4,7 @@ import Button from "./Button";
 
 
 
-function LoginWidget({ title, icon, placeholder, buttonText }) {
+function SignUpWidget({ title, icon, placeholder, buttonText }) {
 
   const [phoneNumber, setPhoneNumber] = useState('');
   let memberInfo;
@@ -13,23 +13,26 @@ function LoginWidget({ title, icon, placeholder, buttonText }) {
     setPhoneNumber(event.target.value);
   };
 
-
   const handleSubmit = async (event) => {
     event.preventDefault();
     try {
-      let response = await fetch(`https://localhost:7183/api/Member/Phone/${phoneNumber}`);
+      let response = await fetch(`https://localhost:7183/api/Member/Register/${phoneNumber}`);
       if (response.ok) {
         memberInfo = await response.json();
-        //sessionStorage.setItem('memberInfo', JSON.stringify(memberInfo));
-        setCookie("memberInfo", JSON.stringify(memberInfo), 100);
+        sessionStorage.setItem('memberInfo', JSON.stringify(memberInfo));
+        sessionStorage.setItem('savedOTP', memberInfo.memberName);
+        console.log('Yeeeeee ' + sessionStorage.getItem('savedOTP'));
         console.log('Yeeeeee ' + sessionStorage.getItem('memberInfo'));
       } else {
-        console.error('Nah not logged inn never');
+        console.error('Failed to retrieve member info');
       }
     } catch (error) {
       console.error('An error occurred:', error);
     }
   };
+
+
+
     return (
         <>
             <section className="login-widget">
@@ -70,19 +73,4 @@ function LoginWidget({ title, icon, placeholder, buttonText }) {
     );
 }
 
-
-
-function setCookie(name, value, days) {
-  const expires = new Date(Date.now() + days * 864e5).toUTCString(); // Calculate expiration date
-  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; // Set cookie
-}
-
-
-function getCookie(name) {
-  const value = `; ${document.cookie}`; // Add a leading semicolon for easier parsing
-  const parts = value.split(`; ${name}=`); // Split the cookie string to find the desired cookie
-  if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift()); // Return the cookie value
-}
-
-
-export default LoginWidget;
+export default SignUpWidget;
