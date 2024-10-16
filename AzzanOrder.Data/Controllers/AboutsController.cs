@@ -51,12 +51,12 @@ namespace AzzanOrder.Data.Controllers
 
         // PUT: api/Abouts/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutAbout(int id, About about)
+        [HttpPut("Update")]
+        public async Task<IActionResult> PutAbout(About about)
         {
-            if (id != about.AboutId)
+            if (!AboutExists(about.AboutId))
             {
-                return BadRequest();
+                return NotFound("This is not exist");
             }
 
             _context.Entry(about).State = EntityState.Modified;
@@ -67,7 +67,7 @@ namespace AzzanOrder.Data.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!AboutExists(id))
+                if (!AboutExists(about.AboutId))
                 {
                     return NotFound();
                 }
@@ -77,26 +77,27 @@ namespace AzzanOrder.Data.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok("Update success");
         }
 
         // POST: api/Abouts
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("Add")]
         public async Task<ActionResult<About>> PostAbout(About about)
         {
           if (_context.Abouts == null)
           {
               return Problem("Entity set 'OrderingAssistSystemContext.Abouts'  is null.");
           }
-            _context.Abouts.Add(about);
+            var ab = new About() { Title = about.Title, Content = about.Content, OwnerId = about.OwnerId };
+            _context.Abouts.Add(ab);
             await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetAbout", new { id = about.AboutId }, about);
+            
+            return CreatedAtAction("GetAbout", new { id = ab.AboutId }, ab);
         }
 
         // DELETE: api/Abouts/5
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> DeleteAbout(int id)
         {
             if (_context.Abouts == null)
@@ -112,7 +113,7 @@ namespace AzzanOrder.Data.Controllers
             _context.Abouts.Remove(about);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Delete success");
         }
 
         private bool AboutExists(int id)
