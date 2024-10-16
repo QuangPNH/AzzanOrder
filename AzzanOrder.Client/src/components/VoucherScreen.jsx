@@ -35,8 +35,6 @@ const VoucherScreen = () => {
                     useCount={5}
                 />
             </div>
-
-            <Footer />
             <style jsx>{`
                 .content-container {
                     padding: 20px; /* Add padding to the container */
@@ -49,6 +47,8 @@ const VoucherScreen = () => {
                     margin-top: 20px; /* Space above the product sale section */
                 }
             `}</style>
+            <Footer />
+            
         </>
     );
 };
