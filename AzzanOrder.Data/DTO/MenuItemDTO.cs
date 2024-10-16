@@ -9,6 +9,7 @@
 		public double? Discount { get; set; }
 		public bool? IsAvailable { get; set; }
 		public int? EmployeeId { get; set; }
+		public string? Category { get; set; }
 		public string? ImageBase64 { get; set; }
 	}
 }

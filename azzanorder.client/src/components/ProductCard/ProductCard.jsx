@@ -1,6 +1,8 @@
 import React, { useState } from 'react';
+import Modal from 'react-modal';
 import Image from './Image';
 import PriceTag from './PriceTag';
+import ItemDetail from '../ItemDetail'; // Adjusted the import path
 
 function generateRandomKey(length) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -12,7 +14,7 @@ function generateRandomKey(length) {
   return key;
 }
 
-const ProductCard = ({ imageSrc, title, price }) => {
+const ProductCard = ({ imageSrc, title, price, desc, cate }) => {
     const handleAddToCart = () => {
         console.log("Add to cart");
         const storedData = sessionStorage.getItem('cartData');
@@ -30,13 +32,23 @@ const ProductCard = ({ imageSrc, title, price }) => {
         console.log(newItem);
         parsedData.push(newItem);
         sessionStorage.setItem('cartData', JSON.stringify(parsedData));
+        
     };
 
- 
+    const [modalIsOpen, setModalIsOpen] = useState(false);
+
+    const openModal = () => {
+        setModalIsOpen(true);
+    };
+
+    const closeModal = () => {
+        setModalIsOpen(false);
+    };
+
     return (
         <article className="product-card">
-            <Image src={`data:image/png;base64, ${imageSrc}`} alt={title} />
-            <h2 className="product-title">{title}</h2>
+            <Image src={`data:image/png;base64, ${imageSrc}`} alt={title} onClick={openModal} />
+            <h2 className="product-title" onClick={openModal}>{title}</h2>
             <PriceTag price={price} onclick={handleAddToCart} />
             <style jsx>
                 {`
@@ -57,7 +69,41 @@ const ProductCard = ({ imageSrc, title, price }) => {
                 }
                 `}
             </style>
+            <Modal
+                isOpen={modalIsOpen}
+                onRequestClose={closeModal}
+                contentLabel="Item Menu"
+                style={{
+                    content: {
+                        top: '60%',
+                        left: '50%',
+                        right: 'auto',
+                        bottom: 'auto',
+                        marginRight: '-50%',
+                        transform: 'translate(-50%, -50%)',
+                        maxHeight: '80vh',
+                        position: 'absolute',
+                        zIndex: 3,
+                        overflowY: 'auto',
+                        width: '80%',
+                    },
+                    overlay: {
+                        zIndex: 2, // Ensure the overlay is behind the modal
+                        backgroundColor: 'rgba(0, 0, 0, 0.7)'
+                    }
+                }}
+            >
+                <ItemDetail
+                    closeModal={closeModal}
+                    imageSrc={imageSrc}
+                    title={title}
+                    price={price}
+                    cate={cate}
+                    desc={desc}
+                />
+            </Modal>
         </article>
+
     );
 };
 

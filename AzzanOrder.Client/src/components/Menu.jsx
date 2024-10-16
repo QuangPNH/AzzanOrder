@@ -67,6 +67,8 @@ const Homepage = () => {
                                 imageSrc={product.imageBase64}
                                 title={product.title}
                                 price={product.price}
+                                cate={product.category}
+                                desc={product.description}
                             />
                         ))}
                     </div>

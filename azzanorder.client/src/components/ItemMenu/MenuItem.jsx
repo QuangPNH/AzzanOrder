@@ -1,10 +1,11 @@
-import React from "react";
+import React, { useState } from 'react';
 
 function MenuItem({ imageSrc, name, description, price }) {
+
     return (
         <>
             <article className="menu-item">
-                <img loading="lazy" src={imageSrc} alt={name} className="item-image" />
+                <img loading="lazy" src={imageSrc} alt={name} className="item-image"/>
                 <div className="item-details">
                     <h2 className="item-name">{name}</h2>
                     <p className="item-description">{description}</p>
@@ -16,6 +17,7 @@ function MenuItem({ imageSrc, name, description, price }) {
                 </div>
             </article>
             <hr className="item-separator" />
+            
             <style jsx>{`
         .menu-item {
           z-index: 10;

@@ -54,17 +54,17 @@ const NavItem = () => {
                 <img loading="lazy" src={navItems[2].icon} alt={navItems[2].text} className="nav-icon" />
                 <span className="nav-text">{navItems[2].text}</span>
             </div>
-            <div className="nav-item" onClick={handleSendFeedbackClick}>
+            <div className="nav-item1" onClick={handleSendFeedbackClick}>
                 <img loading="lazy" src={navItems[3].icon} alt={navItems[3].text} className="nav-icon" />
                 <span className="nav-text">{navItems[3].text}</span>
             </div>
             <style jsx>{`
-        .nav-items {
+        .nav-items1 {
           display: flex;
           flex-direction: column;
           gap: 8px; /* Space between nav items */
         }
-        .nav-item {
+        .nav-item1 {
           display: flex; /* Flex display for each nav item */
           align-items: center; /* Center align icon and text */
           gap: 10px; /* Space between icon and text */
@@ -72,7 +72,7 @@ const NavItem = () => {
           cursor: pointer; /* Cursor change on hover */
           transition: background-color 0.3s; /* Smooth background transition */
         }
-        .nav-item:hover {
+        .nav-item1:hover {
           background-color: rgba(255, 255, 255, 0.5); /* Light hover effect */
         }
         .nav-icon {
