@@ -24,10 +24,10 @@ namespace AzzanOrder.Data.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Bank>>> GetBanks()
         {
-          if (_context.Banks == null)
-          {
-              return NotFound();
-          }
+            if (_context.Banks == null)
+            {
+                return NotFound();
+            }
             return await _context.Banks.ToListAsync();
         }
 
@@ -35,10 +35,10 @@ namespace AzzanOrder.Data.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Bank>> GetBank(int id)
         {
-          if (_context.Banks == null)
-          {
-              return NotFound();
-          }
+            if (_context.Banks == null)
+            {
+                return NotFound();
+            }
             var bank = await _context.Banks.FindAsync(id);
 
             if (bank == null)
@@ -51,12 +51,12 @@ namespace AzzanOrder.Data.Controllers
 
         // PUT: api/Bank/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutBank(int id, Bank bank)
+        [HttpPut("Update")]
+        public async Task<IActionResult> PutBank(Bank bank)
         {
-            if (id != bank.BankId)
+            if (!BankExists(bank.BankId))
             {
-                return BadRequest();
+                return NotFound("This bank not exist.");
             }
 
             _context.Entry(bank).State = EntityState.Modified;
@@ -67,7 +67,7 @@ namespace AzzanOrder.Data.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!BankExists(id))
+                if (!BankExists(bank.BankId))
                 {
                     return NotFound();
                 }
@@ -76,23 +76,23 @@ namespace AzzanOrder.Data.Controllers
                     throw;
                 }
             }
-
-            return NoContent();
+            return Ok(_context.Banks.FirstOrDefault(a => a.BankId == bank.BankId));
         }
 
         // POST: api/Bank
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("Add")]
         public async Task<ActionResult<Bank>> PostBank(Bank bank)
         {
-          if (_context.Banks == null)
-          {
-              return Problem("Entity set 'OrderingAssistSystemContext.Banks'  is null.");
-          }
-            _context.Banks.Add(bank);
+            if (_context.Banks == null)
+            {
+                return Problem("Bank is null.");
+            }
+            var b = new Bank() { BankName = bank.BankName, BankNumber = bank.BankNumber };
+            _context.Banks.Add(b);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBank", new { id = bank.BankId }, bank);
+            return CreatedAtAction("GetBank", new { id = b.BankId }, b);
         }
 
         // DELETE: api/Bank/5
@@ -112,7 +112,7 @@ namespace AzzanOrder.Data.Controllers
             _context.Banks.Remove(bank);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Delete Success");
         }
 
         private bool BankExists(int id)

@@ -24,10 +24,10 @@ namespace AzzanOrder.Data.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<VoucherDetail>>> GetVoucherDetails()
         {
-          if (_context.VoucherDetails == null)
-          {
-              return NotFound();
-          }
+            if (_context.VoucherDetails == null)
+            {
+                return NotFound();
+            }
             return await _context.VoucherDetails.ToListAsync();
         }
 
@@ -35,10 +35,10 @@ namespace AzzanOrder.Data.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<VoucherDetail>> GetVoucherDetail(int id)
         {
-          if (_context.VoucherDetails == null)
-          {
-              return NotFound();
-          }
+            if (_context.VoucherDetails == null)
+            {
+                return NotFound();
+            }
             var voucherDetail = await _context.VoucherDetails.FindAsync(id);
 
             if (voucherDetail == null)
@@ -75,41 +75,45 @@ namespace AzzanOrder.Data.Controllers
                     throw;
                 }
             }
-            return Ok(_context.VoucherDetails.FirstOrDefault(vd=>vd.VoucherDetailId == voucherDetail.VoucherDetailId));
+            return Ok(_context.VoucherDetails.FirstOrDefault(vd => vd.VoucherDetailId == voucherDetail.VoucherDetailId));
         }
 
         // POST: api/VoucherDetail
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("Add")]
-        public async Task<ActionResult<VoucherDetail>> PostVoucherDetail([Bind("Title", "StartDate", "EndDate", "Discount")] VoucherDetail voucherDetail)
+        public async Task<ActionResult<VoucherDetail>> PostVoucherDetail(VoucherDetail voucherDetail)
         {
-          if (_context.VoucherDetails == null)
-          {
-              return Problem("List voucher are null.");
-          }
-            _context.VoucherDetails.Add(voucherDetail);
+            if (_context.VoucherDetails == null)
+            {
+                return Problem("List voucher are null.");
+            }
+            var vd = new VoucherDetail() { Title = voucherDetail.Title, StartDate = voucherDetail.StartDate, EndDate = voucherDetail.EndDate, Discount = voucherDetail.Discount };
+            _context.VoucherDetails.Add(vd);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetVoucherDetail", new { id = voucherDetail.VoucherDetailId }, voucherDetail);
+            
+            return CreatedAtAction("GetVoucherDetail", new { id = vd.VoucherDetailId }, vd);
         }
 
         // DELETE: api/VoucherDetail/5
-        [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> DeleteVoucherDetail(int id)
+        [HttpDelete("Delete/{voucherDetailId}")]
+        public async Task<IActionResult> DeleteVoucherDetail(int voucherDetailId)
         {
             if (_context.VoucherDetails == null)
             {
                 return NotFound();
             }
-            var voucherDetail = await _context.VoucherDetails.FindAsync(id);
+            var voucherDetail = await _context.VoucherDetails.FindAsync(voucherDetailId);
             if (voucherDetail == null)
             {
                 return NotFound();
             }
-
+            if (_context.Vouchers.Where(v => v.VoucherDetailId == voucherDetailId).Count() > 0)
+            {
+                return BadRequest("Delete fail cause have some item using this voucher.");
+            }
             _context.VoucherDetails.Remove(voucherDetail);
             await _context.SaveChangesAsync();
-
             return Ok("Delete success");
         }
 

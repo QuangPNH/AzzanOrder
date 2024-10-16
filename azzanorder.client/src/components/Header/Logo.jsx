@@ -18,7 +18,6 @@ const Logo = () => {
       object-fit: contain;
       object-position: center;
       width: 126px;
-      box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
       max-width: 100%;
       margin: auto 0;
     }

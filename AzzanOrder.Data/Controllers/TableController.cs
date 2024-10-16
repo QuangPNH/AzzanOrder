@@ -46,28 +46,26 @@ namespace AzzanOrder.Data.Controllers
                 return NotFound();
             }
 
-            return table;
+            return Ok(table);
         }
 
         // PUT: api/Table/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutTable(int id, Table table)
+        [HttpPut("Update")]
+        public async Task<IActionResult> PutTable([Bind("TableId", "Qr", "Status", "EmployeeId")]Table table)
         {
-            if (id != table.TableId)
+            if (!TableExists(table.TableId))
             {
-                return BadRequest();
+                return NotFound("This table not exist");
             }
-
             _context.Entry(table).State = EntityState.Modified;
-
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!TableExists(id))
+                if (!TableExists(table.TableId))
                 {
                     return NotFound();
                 }
@@ -77,42 +75,43 @@ namespace AzzanOrder.Data.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(_context.Tables.FirstOrDefault(t => t.TableId == table.TableId));
         }
 
         // POST: api/Table
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("Add")]
         public async Task<ActionResult<Table>> PostTable(Table table)
         {
           if (_context.Tables == null)
           {
-              return Problem("Entity set 'OrderingAssistSystemContext.Tables'  is null.");
+              return Problem("List table are null.");
           }
-            _context.Tables.Add(table);
+          var tab = new Table() { Qr = table.Qr , Orders = table.Orders, Status = table.Status, EmployeeId = table.EmployeeId};
+            _context.Tables.Add(tab);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTable", new { id = table.TableId }, table);
+            return CreatedAtAction("GetTable", new { id = tab.TableId }, tab);
         }
 
         // DELETE: api/Table/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteTable(int id)
+        [HttpDelete("Detele")]
+        public async Task<IActionResult> DeleteTable(Table table)
         {
             if (_context.Tables == null)
             {
                 return NotFound();
             }
-            var table = await _context.Tables.FindAsync(id);
-            if (table == null)
+            var t = await _context.Tables.FirstOrDefaultAsync(t => t.TableId == table.TableId);
+            if (t == null)
             {
-                return NotFound();
+                return NotFound("Table not exist");
             }
 
-            _context.Tables.Remove(table);
+            _context.Tables.Remove(t);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Delete success");
         }
 
         private bool TableExists(int id)

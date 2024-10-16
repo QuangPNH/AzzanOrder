@@ -3,14 +3,14 @@
 function NavigationItem({ icon, label }) {
     return (
         <>
-            <div className="nav-item">
+            <div className="nav-item1">
                 <div className="icon-wrapper">
                     <img src={icon} alt={`${label} icon`} className="icon" />
                 </div>
                 <span className="label">{label}</span>
             </div>
             <style jsx>{`
-        .nav-item {
+        .nav-item1 {
           box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
           align-self: stretch;
           display: flex;

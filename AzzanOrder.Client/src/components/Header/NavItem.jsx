@@ -67,6 +67,7 @@ const NavItem = () => {
           width: 24px; /* Adjust icon size */
         }
         .nav-text {
+          white-space: nowrap;
           font-size: 14px; /* Font size for text */
           line-height: 1.5; /* Adjust line height for better spacing */
           color: #000; /* Text color */

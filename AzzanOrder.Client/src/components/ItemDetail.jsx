@@ -11,7 +11,7 @@ import Description from './MenuDetail/Description';
 import CustomItem from './MenuDetail/CustomItem';
 import ShowMoreLink from './ShowMoreLink/ShowMoreLink';
 import ProductCard from './ProductCard/ProductCard';
-const Homepage = () => {
+const ItemDetail = () => {
 
 
     return (
@@ -71,4 +71,4 @@ const Homepage = () => {
     );
 };
 
-export default Homepage;
+export default ItemDetail;

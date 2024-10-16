@@ -51,12 +51,12 @@ namespace AzzanOrder.Data.Controllers
 
         // PUT: api/Employee/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutEmployee(int id, Employee employee)
+        [HttpPut("Update")]
+        public async Task<IActionResult> PutEmployee(Employee employee)
         {
-            if (id != employee.EmployeeId)
+            if (!EmployeeExists(employee.EmployeeId))
             {
-                return BadRequest();
+                return NotFound("Employee not exist");
             }
 
             _context.Entry(employee).State = EntityState.Modified;
@@ -67,7 +67,7 @@ namespace AzzanOrder.Data.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!EmployeeExists(id))
+                if (!EmployeeExists(employee.EmployeeId))
                 {
                     return NotFound();
                 }
@@ -76,12 +76,13 @@ namespace AzzanOrder.Data.Controllers
                     throw;
                 }
             }
-            return NoContent();
+
+            return Ok("Update success");
         }
 
         // POST: api/Employee
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("Add")]
         public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
         {
           if (_context.Employees == null)
@@ -97,11 +98,11 @@ namespace AzzanOrder.Data.Controllers
             _context.Employees.Add(employee);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetEmployee", new { id = employee.EmployeeId }, employee);
+            return CreatedAtAction("GetEmployee", new { id = e.EmployeeId }, e);
         }
 
         // DELETE: api/Employee/5
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> DeleteEmployee(int id)
         {
             if (_context.Employees == null)
@@ -145,7 +146,7 @@ namespace AzzanOrder.Data.Controllers
             _context.Employees.Remove(employee);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Delete success");
         }
 
         private bool EmployeeExists(int id)
