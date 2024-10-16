@@ -46,28 +46,27 @@ namespace AzzanOrder.Data.Controllers
                 return NotFound();
             }
 
-            return voucherDetail;
+            return Ok(voucherDetail);
         }
 
         // PUT: api/VoucherDetail/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutVoucherDetail(int id, VoucherDetail voucherDetail)
+        [HttpPut("Update")]
+        public async Task<IActionResult> PutVoucherDetail([Bind("VoucherDetailId", "Title", "StartDate", "EndDate", "Discount")] VoucherDetail voucherDetail)
         {
-            if (id != voucherDetail.VoucherDetailId)
+
+            if (!VoucherDetailExists(voucherDetail.VoucherDetailId))
             {
-                return BadRequest();
+                return NotFound("Voucher not exist!");
             }
-
             _context.Entry(voucherDetail).State = EntityState.Modified;
-
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!VoucherDetailExists(id))
+                if (!VoucherDetailExists(voucherDetail.VoucherDetailId))
                 {
                     return NotFound();
                 }
@@ -76,18 +75,17 @@ namespace AzzanOrder.Data.Controllers
                     throw;
                 }
             }
-
-            return NoContent();
+            return Ok(_context.VoucherDetails.FirstOrDefault(vd=>vd.VoucherDetailId == voucherDetail.VoucherDetailId));
         }
 
         // POST: api/VoucherDetail
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<VoucherDetail>> PostVoucherDetail(VoucherDetail voucherDetail)
+        [HttpPost("Add")]
+        public async Task<ActionResult<VoucherDetail>> PostVoucherDetail([Bind("Title", "StartDate", "EndDate", "Discount")] VoucherDetail voucherDetail)
         {
           if (_context.VoucherDetails == null)
           {
-              return Problem("Entity set 'OrderingAssistSystemContext.VoucherDetails'  is null.");
+              return Problem("List voucher are null.");
           }
             _context.VoucherDetails.Add(voucherDetail);
             await _context.SaveChangesAsync();
@@ -96,7 +94,7 @@ namespace AzzanOrder.Data.Controllers
         }
 
         // DELETE: api/VoucherDetail/5
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> DeleteVoucherDetail(int id)
         {
             if (_context.VoucherDetails == null)
@@ -112,7 +110,7 @@ namespace AzzanOrder.Data.Controllers
             _context.VoucherDetails.Remove(voucherDetail);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Delete success");
         }
 
         private bool VoucherDetailExists(int id)
