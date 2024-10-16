@@ -3,9 +3,7 @@ import InputField from "./InputField";
 import Button from "./Button";
 
 
-
 function LoginWidget({ title, icon, placeholder, buttonText }) {
-
 
   const [phoneNumber, setPhoneNumber] = useState('');
   let memberInfo;
@@ -13,7 +11,6 @@ function LoginWidget({ title, icon, placeholder, buttonText }) {
   const handlePhoneNumberChange = (event) => {
     setPhoneNumber(event.target.value);
   };
-
 
   const handleSubmit = async (event) => {
     event.preventDefault();

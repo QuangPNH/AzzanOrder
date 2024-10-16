@@ -36,25 +36,20 @@ const NavItem = () => {
             <img loading="lazy" src={navItems[0].icon} alt={navItems[0].text} className="nav-icon" />
                 <span className="nav-text">{navItems[0].text}</span>
             </div> */}
-
-            <div className="nav-item">
             <Popup position="bottom right" trigger=
-              {<button><img loading="lazy" src={navItems[0].icon} alt={navItems[0].text} className="nav-icon" />
-                <span className="nav-text">{navItems[0].text}</span></button>}>
+              {<div className="nav-item"><img loading="lazy" src={navItems[0].icon} alt={navItems[0].text} className="nav-icon" />
+                <span className="nav-text">{navItems[0].text}</span></div>}>
                     <LoginPage style="z-index: 10000000000000"/>
             </Popup>
-            </div>
             {/* <div className="nav-item" onClick={handleRegisterClick}>
                 <img loading="lazy" src={navItems[1].icon} alt={navItems[1].text} className="nav-icon" />
                 <span className="nav-text">{navItems[1].text}</span>
             </div> */}
-            <div className="nav-item">
             <Popup position="bottom right" trigger=
-              {<button><img loading="lazy" src={navItems[1].icon} alt={navItems[1].text} className="nav-icon" />
-                <span className="nav-text">{navItems[1].text}</span></button>}>
+              {<div className="nav-item"><img loading="lazy" src={navItems[1].icon} alt={navItems[1].text} className="nav-icon" />
+                <span className="nav-text">{navItems[1].text}</span></div>}>
                     <SignUpPage style="z-index: 10000000000000"/>
             </Popup>
-            </div>
             <div className="nav-item" onClick={handleNotificationClick}>
                 <img loading="lazy" src={navItems[2].icon} alt={navItems[2].text} className="nav-icon" />
                 <span className="nav-text">{navItems[2].text}</span>
@@ -97,4 +92,24 @@ const NavItem = () => {
     );
 };
 
+function setCookie(name, value, days) {
+  const expires = new Date(Date.now() + days * 864e5).toUTCString(); // Calculate expiration date
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; // Set cookie
+}
+
+function getCookie(name) {
+  const value = `; ${document.cookie}`; // Add a leading semicolon for easier parsing
+  const parts = value.split(`; ${name}=`); // Split the cookie string to find the desired cookie
+  if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift()); // Return the cookie value
+}
+
+function clearCookie(name) {
+  // Set the cookie's expiration to a time in the past to delete it
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`; // Clear cookie by setting the date to the past
+}
+
+
 export default NavItem;
+
+
+
