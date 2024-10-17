@@ -8,12 +8,16 @@ import React from 'react';
 import Homepage from './components/Homepage';
 
 import LoginPage from './components/Account/LoginPage';
+import Cart from './components/Cart';
+
+
+
 function App() {
   const [count, setCount] = useState(0)
 
     return (
         <div className="App">
-            <Homepage/>
+            <Cart/>
         </div>
     );
 }
