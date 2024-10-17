@@ -138,7 +138,8 @@ namespace AzzanOrder.Data.Controllers
             return NoContent();
         }
 
-        //
+        //https://www.vietqr.io/danh-sach-api/link-tao-ma-nhanh/api-tao-ma-qr/
+        //https://www.vietqr.io/en/danh-sach-api/link-tao-ma-nhanh/
         [HttpGet("QR/{price}/{Message}")]
         public async Task<IActionResult> VietQR(int price)
         {
