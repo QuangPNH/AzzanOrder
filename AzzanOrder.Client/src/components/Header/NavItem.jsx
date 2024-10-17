@@ -36,8 +36,8 @@ const NavItem = () => {
             <img loading="lazy" src={navItems[0].icon} alt={navItems[0].text} className="nav-icon" />
                 <span className="nav-text">{navItems[0].text}</span>
             </div> */}
-            <Popup position="bottom right" trigger=
-              {<div className="nav-item"><img loading="lazy" src={navItems[0].icon} alt={navItems[0].text} className="nav-icon" />
+            <Popup position="bottom right"
+            trigger={<div className="nav-item1"><img loading="lazy" src={navItems[0].icon} alt={navItems[0].text} className="nav-icon" />
                 <span className="nav-text">{navItems[0].text}</span></div>}>
                     <LoginPage style="z-index: 10000000000000"/>
             </Popup>
@@ -45,12 +45,12 @@ const NavItem = () => {
                 <img loading="lazy" src={navItems[1].icon} alt={navItems[1].text} className="nav-icon" />
                 <span className="nav-text">{navItems[1].text}</span>
             </div> */}
-            <Popup position="bottom right" trigger=
-              {<div className="nav-item"><img loading="lazy" src={navItems[1].icon} alt={navItems[1].text} className="nav-icon" />
+            <Popup position="bottom right" 
+            trigger={<div className="nav-item1"><img loading="lazy" src={navItems[1].icon} alt={navItems[1].text} className="nav-icon" />
                 <span className="nav-text">{navItems[1].text}</span></div>}>
                     <SignUpPage style="z-index: 10000000000000"/>
             </Popup>
-            <div className="nav-item" onClick={handleNotificationClick}>
+            <div className="nav-item1" onClick={handleNotificationClick}>
                 <img loading="lazy" src={navItems[2].icon} alt={navItems[2].text} className="nav-icon" />
                 <span className="nav-text">{navItems[2].text}</span>
             </div>
