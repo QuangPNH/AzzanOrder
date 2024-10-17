@@ -26,7 +26,7 @@ const NavItem = () => {
     };
 
     const handleSendFeedbackClick = () => {
-        window.location.href = '/sendfeedback';
+        window.location.href = '/feedback';
     };
 
 
