@@ -88,7 +88,7 @@ namespace AzzanOrder.Data.Controllers
         {
             string errors = "";
             //^(0)(\d{9})$
-            if (!Regex.IsMatch(phone, "1234567890"))
+            if (!Regex.IsMatch(phone, "^(0)(\\d{9})$"))
             {
                 errors += "\nPhone number is invalid";
             }
@@ -114,17 +114,17 @@ namespace AzzanOrder.Data.Controllers
                 Member member1 = new Member()
                 {
                     Phone = phone,
-                    MemberName = "000000"//new string(numbers)
+                    MemberName = new string(numbers)
                 };
 
-                //var accountSid = "ACd5083d30edb839433981a766a0c2e2fd";
-                //var authToken = "a7006676dd3f015b9b47177e3f333852";
-                //TwilioClient.Init(accountSid, authToken);
-                //var messageOptions = new CreateMessageOptions(new PhoneNumber("+84388536414"));
-                //messageOptions.From = new PhoneNumber("+19096555985");
-                //messageOptions.Body = "Your OTP is " + new string(numbers);
-                //var message = MessageResource.Create(messageOptions);
-                //Console.WriteLine(message.Body);
+                var accountSid = "ACd5083d30edb839433981a766a0c2e2fd";
+                var authToken = "00867f56a886a975463d3ec7941061";
+                TwilioClient.Init(accountSid, authToken);
+                var messageOptions = new CreateMessageOptions(new PhoneNumber("+84388536414"));
+                messageOptions.From = new PhoneNumber("+19096555985");
+                messageOptions.Body = "Your OTP is " + new string(numbers);
+                var message = MessageResource.Create(messageOptions);
+                Console.WriteLine(message.Body);
                 return Ok(member1);
             }
         }
