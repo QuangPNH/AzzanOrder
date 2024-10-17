@@ -2,6 +2,7 @@ import { useState } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
+import CartButton from './components/CartButton'
 import React from 'react';
 
 //import LoginPage from './components/Account/LoginPage';
@@ -17,7 +18,9 @@ function App() {
 
     return (
         <div className="App">
-            <Homepage/>
+            <Homepage />
+
+            <CartButton />
         </div>
     );
 }
