@@ -7,7 +7,6 @@ import React from 'react';
 
 //import LoginPage from './components/Account/LoginPage';
 import Homepage from './components/Homepage';
-
 import LoginPage from './components/Account/LoginPage';
 import Cart from './components/Cart';
 
