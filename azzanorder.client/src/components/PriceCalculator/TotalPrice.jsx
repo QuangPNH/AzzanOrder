@@ -16,12 +16,18 @@ const fetchVoucherDetails = async () => {
 
 const TotalPrice = ({ finalPrice, discountPrice }) => {
     const [voucherDetails, setVoucherDetails] = useState([]);
+    const [selectedVoucher, setSelectedVoucher] = useState(null);
     const [isExpanded, setIsExpanded] = useState(false);
 
     const handleVoucherClick = async () => {
         const details = await fetchVoucherDetails();
         setVoucherDetails(details);
         setIsExpanded(details.length > 0);
+    };
+
+    const handleVoucherSelection = (voucher) => {
+        setSelectedVoucher(voucher);
+        setIsExpanded(false);
     };
 
     const renderVoucherDetails = () => {
@@ -32,12 +38,16 @@ const TotalPrice = ({ finalPrice, discountPrice }) => {
         return (
             <div className="voucher-details">
                 {voucherDetails.map((detail, index) => (
-                    <p key={index}>{detail.title}</p>
+                    <button key={index} onClick={() => handleVoucherSelection(detail)}>
+                        {detail.title}
+                    </button>
                 ))}
             </div>
         );
     };
 
+    const discountedPrice = discountPrice - (selectedVoucher?.discount || 0);
+    const trueFinalPrice = finalPrice + discountedPrice;
     return (
         <div className="total-price-container">
             <button className="voucher-input" onClick={handleVoucherClick}>
@@ -47,10 +57,16 @@ const TotalPrice = ({ finalPrice, discountPrice }) => {
                     className="voucher-icon"
                 />
             </button>
+            {selectedVoucher && (
+                <div className="selected-voucher">
+                    <p>{selectedVoucher.title}</p>
+                    <button onClick={() => setSelectedVoucher(null)}>Close</button>
+                </div>
+            )}
             {isExpanded && renderVoucherDetails()}
             <div className="price-values">
-                <p className="discount-price">{discountPrice} đ</p>
-                <p className="final-price">{finalPrice} đ</p>
+                <p className="discount-price">{discountedPrice} đ</p>
+                <p className="final-price">{trueFinalPrice} đ</p>
                 <img
                     src="https://cdn.builder.io/api/v1/image/assets/TEMP/3daa88c596f12764a69508098612d6d3ba5839873c031a93b1ac416fd8d5c0b9?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8"
                     alt=""
@@ -76,6 +92,13 @@ const TotalPrice = ({ finalPrice, discountPrice }) => {
                     width: 22px;
                 }
                 .voucher-details {
+                    margin-top: 11px;
+                    padding-left: 32px;
+                    color: var(--Azzan-Color, #bd3326);
+                    text-align: right;
+                    font: 600 16px Inter, sans-serif;
+                }
+                .selected-voucher {
                     margin-top: 11px;
                     padding-left: 32px;
                     color: var(--Azzan-Color, #bd3326);
