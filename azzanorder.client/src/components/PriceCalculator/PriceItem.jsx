@@ -3,7 +3,7 @@
  */
 import React from "react";
 
-const PriceItem = ({ label, value, isTotal }) => {
+const PriceItem = ({key, label, value, isTotal }) => {
   return (
     <p className={`price-item ${isTotal ? "total" : ""}`}>
       {label}

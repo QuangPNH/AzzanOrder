@@ -21,9 +21,12 @@ const Cart = () => {
     ));
 
     return (
-        <div style={{ background: 'lightgray', border: '1px solid black', borderRadius: '20px', padding: '10px', maxHeight: '400px', overflowY: 'auto' }}>
-            {itemsInCart}
-            <div>
+        <div style={{ background: 'lightgray', border: '1px solid black', borderRadius: '20px', padding: '10px', maxHeight: '550px' }}>
+            <div style={{ background: 'lightgray', maxHeight: '250px', overflowY: 'auto' }}>
+                {itemsInCart}
+            </div>
+
+            <div>      
                 <PriceCalculator />
             </div>
         </div>
