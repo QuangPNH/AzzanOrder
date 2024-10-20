@@ -1,9 +1,11 @@
+import { useState } from 'react';
 import PriceItem from './PriceItem';
 import TotalPrice from './TotalPrice';
 import PlaceOrderButton from './PlaceOrderButton';
 
 const PriceCalculator = () => {
   const cartData = JSON.parse(sessionStorage.getItem("cartData")) || [];
+  const [trueTotalPrice, setTrueTotalPrice] = useState(0);
 
   const calculateTotal = () => {
     let total = 0;
@@ -30,6 +32,10 @@ const PriceCalculator = () => {
     { label: "Pay in cash", value: "" },
   ];
 
+  const handleTrueTotalPrice = (price) => {
+    setTrueTotalPrice(price);
+  };
+
   return (
     <section className="price-calculator">
       <div className="price-details">
@@ -43,14 +49,18 @@ const PriceCalculator = () => {
             />
           ))}
         </div>
-        <TotalPrice finalPrice={calculateTotal()} discountPrice="0" />
+        <TotalPrice
+          finalPrice={calculateTotal()}
+          discountPrice="0"
+          onTrueTotalPrice={handleTrueTotalPrice}
+        />
       </div>
       <PlaceOrderButton
         accountNo="08454845087"
         accountName="DemoShop"
         acqId="970432"
         addInfo={getFormattedCartData()}
-        amount={calculateTotal()}
+        amount={trueTotalPrice}
       />
       <style jsx>{`
         .price-calculator {

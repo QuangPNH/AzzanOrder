@@ -14,7 +14,7 @@ const fetchVoucherDetails = async () => {
     }
 };
 
-const TotalPrice = ({ finalPrice, discountPrice }) => {
+const TotalPrice = ({ finalPrice, discountPrice, onTrueTotalPrice }) => {
     const [voucherDetails, setVoucherDetails] = useState([]);
     const [selectedVoucher, setSelectedVoucher] = useState(null);
     const [isExpanded, setIsExpanded] = useState(false);
@@ -48,6 +48,8 @@ const TotalPrice = ({ finalPrice, discountPrice }) => {
 
     const discountedPrice = discountPrice - (selectedVoucher?.discount || 0);
     const trueFinalPrice = finalPrice + discountedPrice;
+    onTrueTotalPrice(trueFinalPrice); // Pass the trueFinalPrice through the onTrueTotalPrice callback function
+
     return (
         <div className="total-price-container">
             <button className="voucher-input" onClick={handleVoucherClick}>

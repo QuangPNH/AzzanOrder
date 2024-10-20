@@ -4,6 +4,12 @@ const PlaceOrderButton = ({ accountNo, accountName, acqId, addInfo, amount }) =>
   const [qrDataURL, setQRDataURL] = useState(null);
 
   const handlePlaceOrder = async () => {
+    console.log("accountNo:", accountNo);
+    console.log("accountName:", accountName);
+    console.log("acqId:", acqId);
+    console.log("addInfo:", addInfo);
+    console.log("amount:", amount);
+
     const response = await fetch("https://api.vietqr.io/v2/generate", {
       method: "POST",
       headers: {
@@ -22,7 +28,7 @@ const PlaceOrderButton = ({ accountNo, accountName, acqId, addInfo, amount }) =>
     });
 
     const data = await response.json();
-    console.log('data'+data); // Log the response data
+    console.log("data", data); // Log the response data
     setQRDataURL(data.qrDataURL);
   };
 
