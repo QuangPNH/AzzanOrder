@@ -2,28 +2,29 @@
 import InputField from "./InputField";
 import Button from "./Button";
 
-
-
 function SignUpWidget({ title, icon, placeholder, buttonText }) {
-
   const [phoneNumber, setPhoneNumber] = useState('');
+  const [isOTPSent, setOTPSent] = useState(false);
+  const [enterOTP, setEnterOTP] = useState('');
   let memberInfo;
 
   const handlePhoneNumberChange = (event) => {
     setPhoneNumber(event.target.value);
   };
 
-  const handleSubmit = async (event) => {
+  const handleOTPChange = (event) => {
+    setEnterOTP(event.target.value);
+  };
+
+  const handleSubmitPhoneNumber = async (event) => {
     event.preventDefault();
     try {
       let response = await fetch(`https://localhost:7183/api/Member/Register/${phoneNumber}`);
       if (response.ok) {
         memberInfo = await response.json();
         sessionStorage.setItem('memberInfo', JSON.stringify(memberInfo));
-        sessionStorage.setItem('savedOTP', memberInfo.memberName);
-        console.log('Yeeeeee ' + sessionStorage.getItem('savedOTP'));
-        console.log('Yeeeeee ' + sessionStorage.getItem('memberInfo'));
-        
+        sessionStorage.setItem('savedOTP', memberInfo.memberName); // Assuming OTP is memberName
+        setOTPSent(true);  // Proceed to OTP step
       } else {
         console.error('Failed to retrieve member info');
       }
@@ -32,20 +33,55 @@ function SignUpWidget({ title, icon, placeholder, buttonText }) {
     }
   };
 
+  const handleSubmitOTP = async (event) => {
+    event.preventDefault();
+    const receivedOTP = sessionStorage.getItem('savedOTP');
+    if (enterOTP === receivedOTP) {
+      setCookie('memberInfo', JSON.stringify(sessionStorage.getItem('memberInfo')), 100);
+      let response = await fetch(`https://localhost:7183/api/Member/`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: sessionStorage.getItem('memberInfo'),
+      });
+      console.log('OTP verified and member info saved', response);
+      window.location.href = '';
+    } else {
+      console.error('Incorrect OTP');
+    }
+  };
 
+  return (
+    <>
+      <section className="login-widget">
+        <form className="login-form" onSubmit={isOTPSent ? handleSubmitOTP : handleSubmitPhoneNumber}>
+          <h2 className="register-title">{title}</h2>
+          {!isOTPSent ? (
+            <>
+              <InputField 
+                value={phoneNumber} 
+                onChange={handlePhoneNumberChange}
+                icon={icon}
+                placeholder={placeholder}
+              />
+              <Button type="submit" text="Send OTP" />
+            </>
+          ) : (
+            <>
+              <InputField 
+                value={enterOTP} 
+                onChange={handleOTPChange}
+                icon={icon}
+                placeholder="Enter OTP"
+              />
+              <Button type="submit" text="Verify OTP" />
+            </>
+          )}
+        </form>
+      </section>
 
-    return (
-        <>
-            <section className="login-widget">
-                <form className="login-form" onSubmit={handleSubmit}>
-                    <h2 className="register-title">{title}</h2>
-                    <InputField value={phoneNumber} onChange={handlePhoneNumberChange}
-                        icon={icon}
-                        placeholder={placeholder}/>
-                    <Button type="submit" text={buttonText} />
-                </form>
-            </section>
-            <style jsx>{`
+      <style jsx>{`
         .login-widget {
           border-radius: 0;
           display: flex;
@@ -70,21 +106,13 @@ function SignUpWidget({ title, icon, placeholder, buttonText }) {
           text-align: center;
         }
       `}</style>
-        </>
-    );
+    </>
+  );
 }
-
 
 function setCookie(name, value, days) {
-  const expires = new Date(Date.now() + days * 864e5).toUTCString(); // Calculate expiration date
-  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; // Set cookie
+  const expires = new Date(Date.now() + days * 864e5).toUTCString(); 
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; 
 }
-
-function getCookie(name) {
-  const value = `; ${document.cookie}`; // Add a leading semicolon for easier parsing
-  const parts = value.split(`; ${name}=`); // Split the cookie string to find the desired cookie
-  if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift()); // Return the cookie value
-}
-
 
 export default SignUpWidget;

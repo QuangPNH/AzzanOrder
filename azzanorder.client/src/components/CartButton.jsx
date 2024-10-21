@@ -15,7 +15,7 @@ const CartButton = () => {
     };
 
     return (
-        <div style={{ position: 'fixed', top: '80px', right: '20px', zIndex: '9999' }}>
+        <div style={{ position: 'fixed', bottom: '80px', right: '20px', zIndex: '9999' }}>
             <button onClick={handleCartButtonClick} style={{ borderRadius: '50%', padding: '10px', backgroundColor: 'lightblue' }}>
                 <img src="../src/assets/shoppingCart.svg" style={{ width: '20px', height: '20px' }} />
             </button>

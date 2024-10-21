@@ -1,5 +1,6 @@
 import React from "react";
-import LoginWidget from "./SignUpForm/LoginWidget";
+import SignUpWidget from "./SignUpForm/SignUpWidget";
+
 
 function SignUpPage() {
     return (

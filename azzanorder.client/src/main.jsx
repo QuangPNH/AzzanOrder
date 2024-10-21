@@ -7,6 +7,11 @@ import {
 import "./index.css";
 import App from "./App";
 import MenuPage from "./components/Menu";
+import About from "./components/AboutUsPage"
+import Feedback from "./components/Feedback"
+import Voucher from "./components/VoucherScreen"
+import Order from "./components/OrderTrackScreen"
+
 // 2. Define your routes
 const router = createBrowserRouter([
     {
@@ -16,7 +21,23 @@ const router = createBrowserRouter([
     {
         path: "menu",
         element: <MenuPage />,
-    }
+    },
+    {
+        path: "about",
+        element: <About />,
+    },
+    {
+        path: "feedback",
+        element: <Feedback />,
+    },
+    {
+        path: "voucher",
+        element: <Voucher />,
+    },
+    {
+        path: "order",
+        element: <Order />,
+    },
 ]);
 
 // 3. Wrap your app with the Router component

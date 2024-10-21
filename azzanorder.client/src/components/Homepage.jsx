@@ -30,7 +30,7 @@ const Homepage = () => {
 
     const fetchMenuItems = async () => {
         try {
-            const response = await fetch('https://localhost:7183/api/MenuItem');
+            const response = await fetch('https://localhost:7183/api/MenuItem/');
             const data = await response.json();
             setMenuItems(data);
         } catch (error) {

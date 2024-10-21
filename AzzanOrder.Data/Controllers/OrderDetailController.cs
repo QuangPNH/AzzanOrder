@@ -89,7 +89,12 @@ namespace AzzanOrder.Data.Controllers
           {
               return Problem("Entity set 'OrderingAssistSystemContext.OrderDetails'  is null.");
           }
+           if(_context.Orders.Find(orderDetail.OrderId) == null && _context.MenuItems.Find(orderDetail.MenuItemId) != null)
+            {
+
+            }
             _context.OrderDetails.Add(orderDetail);
+
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetOrderDetail", new { id = orderDetail.OrderDetailId }, orderDetail);
