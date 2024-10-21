@@ -95,20 +95,20 @@ namespace AzzanOrder.Data.Controllers
         }
 
         // DELETE: api/Table/5
-        [HttpDelete("Detele")]
-        public async Task<IActionResult> DeleteTable(Table table)
+        [HttpDelete("Detele/{id}")]
+        public async Task<IActionResult> DeleteTable(int id)
         {
             if (_context.Tables == null)
             {
                 return NotFound();
             }
-            var t = await _context.Tables.FirstOrDefaultAsync(t => t.TableId == table.TableId);
+            var t = await _context.Tables.FirstOrDefaultAsync(t => t.TableId == id);
             if (t == null)
             {
                 return NotFound("Table not exist");
             }
-
-            _context.Tables.Remove(t);
+            t.Status = false;
+            _context.Tables.Update(t);
             await _context.SaveChangesAsync();
 
             return Ok("Delete success");

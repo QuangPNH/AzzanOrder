@@ -101,7 +101,7 @@ namespace AzzanOrder.Data.Controllers
         }
 
         // DELETE: api/ItemCategory/5
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> DeleteItemCategory(int id)
         {
             if (_context.ItemCategories == null)
@@ -113,10 +113,9 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-
-            foreach (var menuCategory in itemCategory.MenuCategories)
-            {
-                _context.MenuCategories.Remove(menuCategory);
+            var menuCategory = await _context.MenuCategories.Where(mc => mc.ItemCategoryId == itemCategory.ItemCategoryId).ToListAsync();
+            if (menuCategory.Count() > 0) {
+                return Conflict("Had exist data use this category");
             }
 
             _context.ItemCategories.Remove(itemCategory);
