@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AzzanOrder.Data.Models;
+using AzzanOrder.Data.DTO;
 
 namespace AzzanOrder.Data.Controllers
 {
@@ -51,23 +52,22 @@ namespace AzzanOrder.Data.Controllers
 
         // PUT: api/MenuCategory/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutMenuCategory(int id, MenuCategory menuCategory)
+        [HttpPut("Update")]
+        public async Task<IActionResult> PutMenuCategory(MenuCategoryDTO menuCategory)
         {
-            if (id != menuCategory.MenuItemId)
+            if (!MenuCategoryExists(menuCategory))
             {
-                return BadRequest();
+                return NotFound();
             }
-
-            _context.Entry(menuCategory).State = EntityState.Modified;
-
+            var menuC = _context.MenuCategories.FirstOrDefault(mc => mc.MenuItemId == menuCategory.MenuItemId && mc.ItemCategoryId == menuCategory.ItemCategoryId);
+            _context.Entry(menuC).State = EntityState.Modified;
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MenuCategoryExists(id))
+                if (!MenuCategoryExists(menuCategory))
                 {
                     return NotFound();
                 }
@@ -77,26 +77,27 @@ namespace AzzanOrder.Data.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(menuC);
         }
 
         // POST: api/MenuCategory
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
-        public async Task<ActionResult<MenuCategory>> PostMenuCategory(MenuCategory menuCategory)
+        [HttpPost("Add")]
+        public async Task<ActionResult> PostMenuCategory(MenuCategoryDTO menuCategory)
         {
           if (_context.MenuCategories == null)
           {
-              return Problem("Entity set 'OrderingAssistSystemContext.MenuCategories'  is null.");
+              return Problem("Category is null.");
           }
-            _context.MenuCategories.Add(menuCategory);
+          var menuC = new MenuCategory() { MenuItemId = menuCategory.MenuItemId, ItemCategoryId = menuCategory.ItemCategoryId, StartDate = menuCategory.StartDate, EndDate = menuCategory.EndDate, IsForCombo = menuCategory.IsForCombo };
+            _context.MenuCategories.Add(menuC);
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateException)
             {
-                if (MenuCategoryExists(menuCategory.MenuItemId))
+                if (MenuCategoryExists(menuCategory))
                 {
                     return Conflict();
                 }
@@ -106,32 +107,31 @@ namespace AzzanOrder.Data.Controllers
                 }
             }
 
-            return CreatedAtAction("GetMenuCategory", new { id = menuCategory.MenuItemId }, menuCategory);
+            return Ok(_context.MenuCategories.FirstOrDefault(mc => mc.MenuItemId == menuC.MenuItemId && mc.ItemCategoryId == menuC.ItemCategoryId));
         }
 
         // DELETE: api/MenuCategory/5
-        [HttpDelete("{id}")]
-        public async Task<IActionResult> DeleteMenuCategory(int id)
+        [HttpDelete("Delete/MenuCategory")]
+        public async Task<IActionResult> DeleteMenuCategory(MenuCategoryDTO menuCategory)
         {
             if (_context.MenuCategories == null)
             {
                 return NotFound();
             }
-            var menuCategory = await _context.MenuCategories.FindAsync(id);
-            if (menuCategory == null)
+            var menuC = await _context.MenuCategories.FirstOrDefaultAsync(mc=>mc.ItemCategoryId == menuCategory.ItemCategoryId && mc.ItemCategoryId == menuCategory.ItemCategoryId);
+            if (menuC == null)
             {
                 return NotFound();
             }
-
-            _context.MenuCategories.Remove(menuCategory);
+            _context.MenuCategories.Remove(menuC);
             await _context.SaveChangesAsync();
 
             return NoContent();
         }
 
-        private bool MenuCategoryExists(int id)
+        private bool MenuCategoryExists(MenuCategoryDTO menuCategory)
         {
-            return (_context.MenuCategories?.Any(e => e.MenuItemId == id)).GetValueOrDefault();
+            return (_context.MenuCategories?.Any(e => e.MenuItemId == menuCategory.MenuItemId && e.ItemCategoryId == menuCategory.ItemCategoryId)).GetValueOrDefault();
         }
     }
 }
