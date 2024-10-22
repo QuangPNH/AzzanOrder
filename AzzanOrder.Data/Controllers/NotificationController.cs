@@ -51,10 +51,10 @@ namespace AzzanOrder.Data.Controllers
 
         // PUT: api/Notification/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutNotification(int id, Notification notification)
+        [HttpPut("Update")]
+        public async Task<IActionResult> PutNotification(Notification notification)
         {
-            if (id != notification.NotificationId)
+            if (NotificationExists( notification.NotificationId))
             {
                 return BadRequest();
             }
@@ -67,7 +67,7 @@ namespace AzzanOrder.Data.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!NotificationExists(id))
+                if (!NotificationExists(notification.NotificationId))
                 {
                     return NotFound();
                 }
@@ -77,12 +77,12 @@ namespace AzzanOrder.Data.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(notification);
         }
 
         // POST: api/Notification
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("Add")]
         public async Task<ActionResult<Notification>> PostNotification(Notification notification)
         {
           if (_context.Notifications == null)
@@ -96,7 +96,7 @@ namespace AzzanOrder.Data.Controllers
         }
 
         // DELETE: api/Notification/5
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> DeleteNotification(int id)
         {
             if (_context.Notifications == null)
@@ -112,7 +112,7 @@ namespace AzzanOrder.Data.Controllers
             _context.Notifications.Remove(notification);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Delete success");
         }
 
         private bool NotificationExists(int id)

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AzzanOrder.Data.Models;
+using Newtonsoft.Json;
 
 namespace AzzanOrder.Data.Controllers
 {
@@ -31,6 +32,20 @@ namespace AzzanOrder.Data.Controllers
             return await _context.Banks.ToListAsync();
         }
 
+        [HttpGet("AllBank")]
+        public async Task<ActionResult> GetAllBank()
+        {
+            if (_context.Banks == null)
+            {
+                return NotFound();
+            }
+            using (System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient())
+            {
+                var htmlData = await httpClient.GetStringAsync("https://api.vietqr.io/v2/banks");
+                var listBankData = JsonConvert.DeserializeObject<Api.Bank>(htmlData);
+                return Ok(listBankData);
+            }
+        }
         // GET: api/Bank/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Bank>> GetBank(int id)
@@ -96,7 +111,7 @@ namespace AzzanOrder.Data.Controllers
         }
 
         // DELETE: api/Bank/5
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> DeleteBank(int id)
         {
             if (_context.Banks == null)

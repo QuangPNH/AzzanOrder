@@ -34,14 +34,6 @@ namespace AzzanOrder.Data.Models
         public virtual DbSet<Voucher> Vouchers { get; set; } = null!;
         public virtual DbSet<VoucherDetail> VoucherDetails { get; set; } = null!;
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("server = NGUYENMINH; database = OrderingAssistSystem; user = sa; password = 123456;TrustServerCertificate=true;Trusted_Connection=true;");
-            }
-        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -73,6 +65,16 @@ namespace AzzanOrder.Data.Models
                 entity.Property(e => e.Phone)
                     .HasMaxLength(10)
                     .IsUnicode(false);
+
+                entity.HasOne(d => d.Manager)
+                    .WithMany(p => p.InverseManager)
+                    .HasForeignKey(d => d.ManagerId)
+                    .HasConstraintName("FK_Employee_Employee");
+
+                entity.HasOne(d => d.Ower)
+                    .WithMany(p => p.Employees)
+                    .HasForeignKey(d => d.OwerId)
+                    .HasConstraintName("FK_Employee_Owner");
 
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.Employees)
@@ -257,6 +259,5 @@ namespace AzzanOrder.Data.Models
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
         public DbSet<AzzanOrder.Data.DTO.LoginDTO>? LoginDTO { get; set; }
-
     }
 }

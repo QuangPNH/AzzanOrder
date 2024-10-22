@@ -52,7 +52,7 @@ namespace AzzanOrder.Data.Controllers
         // PUT: api/VoucherDetail/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("Update")]
-        public async Task<IActionResult> PutVoucherDetail([Bind("VoucherDetailId", "Title", "StartDate", "EndDate", "Discount")] VoucherDetail voucherDetail)
+        public async Task<IActionResult> PutVoucherDetail(VoucherDetail voucherDetail)
         {
 
             if (!VoucherDetailExists(voucherDetail.VoucherDetailId))

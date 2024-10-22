@@ -76,7 +76,7 @@ namespace AzzanOrder.Data.Controllers
 
 
 
-        
+
 
 
 
@@ -117,14 +117,14 @@ namespace AzzanOrder.Data.Controllers
                     MemberName = new string(numbers)
                 };
 
-                var accountSid = "ACd5083d30edb839433981a766a0c2e2fd";
-                var authToken = "00867f56a886a975463d3ec7941061";
-                TwilioClient.Init(accountSid, authToken);
-                var messageOptions = new CreateMessageOptions(new PhoneNumber("+84388536414"));
-                messageOptions.From = new PhoneNumber("+19096555985");
-                messageOptions.Body = "Your OTP is " + new string(numbers);
-                var message = MessageResource.Create(messageOptions);
-                Console.WriteLine(message.Body);
+                //var accountSid = "ACd5083d30edb839433981a766a0c2e2fd";
+                //var authToken = "00867f56a886a975463d3ec7941061";
+                //TwilioClient.Init(accountSid, authToken);
+                //var messageOptions = new CreateMessageOptions(new PhoneNumber("+84388536414"));
+                //messageOptions.From = new PhoneNumber("+19096555985");
+                //messageOptions.Body = "Your OTP is " + new string(numbers);
+                //var message = MessageResource.Create(messageOptions);
+                //Console.WriteLine(message.Body);
                 return Ok(member1);
             }
         }
@@ -143,10 +143,10 @@ namespace AzzanOrder.Data.Controllers
 
         // PUT: api/Member/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutMember(int id, Member member)
+        [HttpPut("Update")]
+        public async Task<IActionResult> PutMember(Member member)
         {
-            if (id != member.MemberId)
+            if (MemberExists(member.MemberId))
             {
                 return BadRequest();
             }
@@ -159,7 +159,7 @@ namespace AzzanOrder.Data.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MemberExists(id))
+                if (!MemberExists(member.MemberId))
                 {
                     return NotFound();
                 }
@@ -169,25 +169,43 @@ namespace AzzanOrder.Data.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(member);
         }
 
         // POST: api/Member
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("Add")]
         public async Task<ActionResult<Member>> PostMember(Member member)
         {
             if (_context.Members == null)
             {
                 return Problem("Entity set 'AzzanOrderContext.Members'  is null.");
             }
-            member.MemberName = null;
+            member.IsDelete = false;
             _context.Members.Add(member);
             await _context.SaveChangesAsync();
             return CreatedAtAction("GetMember", new { id = member.MemberId }, member);
         }
 
-        
+        // DELETE: api/Owner/5
+        [HttpDelete("Delete/{id}")]
+        public async Task<IActionResult> DeleteOwner(int id)
+        {
+            if (_context.Members == null)
+            {
+                return NotFound();
+            }
+            var member = await _context.Members.FindAsync(id);
+            if (member == null)
+            {
+                return NotFound();
+            }
+            member.IsDelete = true;
+            _context.Members.Update(member);
+            await _context.SaveChangesAsync();
+
+            return Ok("Delete success");
+        }
 
         private bool MemberExists(int id)
         {

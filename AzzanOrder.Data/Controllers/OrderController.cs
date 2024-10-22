@@ -135,7 +135,7 @@ namespace AzzanOrder.Data.Controllers
             _context.Orders.Remove(order);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok();
         }
 
         //https://www.vietqr.io/danh-sach-api/link-tao-ma-nhanh/api-tao-ma-qr/
