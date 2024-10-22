@@ -29,7 +29,6 @@ const ProductCard = ({ imageSrc, title, price, desc, cate }) => {
             price: price,
             quantity: 1
         };
-        console.log(newItem);
         parsedData.push(newItem);
         sessionStorage.setItem('cartData', JSON.stringify(parsedData));
         
@@ -63,6 +62,7 @@ const ProductCard = ({ imageSrc, title, price, desc, cate }) => {
                   padding: 10px;
                 }
                 .product-title {
+                    cursor: pointer;
                   color: #000;
                   font-size: 14px;
                   margin-top: 13px;

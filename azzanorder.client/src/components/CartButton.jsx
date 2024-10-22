@@ -16,7 +16,7 @@ const CartButton = () => {
 
     return (
         <div style={{ position: 'fixed', bottom: '80px', right: '20px', zIndex: '9999' }}>
-            <button onClick={handleCartButtonClick} style={{ borderRadius: '50%', padding: '10px', backgroundColor: 'lightblue' }}>
+            <button onClick={handleCartButtonClick} style={{ borderRadius: '50%', padding: '10px', backgroundColor: 'lightblue', cursor: 'pointer' }}>
                 <img src="../src/assets/shoppingCart.svg" style={{ width: '20px', height: '20px' }} />
             </button>
             <Popup open={isOpen} onClose={handleClosePopup}>

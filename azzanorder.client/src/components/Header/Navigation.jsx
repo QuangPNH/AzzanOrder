@@ -1,7 +1,13 @@
-import React from "react";
+import React, { useState, useEffect } from 'react';
+import { getCookie } from '../Account/SignUpForm/Validate';
+import LoginPage from '../Account/LoginPage';
 
 const Navigation = ({ toggleNavbar }) => {
-    const navItems = [
+
+    const [showProfile, setShowProfile] = useState(false);
+    const [showLogin, setShowLogin] = useState(false);
+
+    const [navItems, setNavItems] = useState([
         {
             src: "https://cdn.builder.io/api/v1/image/assets/TEMP/aae56868fdcb862e605ea9a58584175c78f8bec2f1376557a9d660d8863bf323?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8",
             alt: "Navigation item 1",
@@ -9,22 +15,58 @@ const Navigation = ({ toggleNavbar }) => {
         {
             src: "https://cdn.builder.io/api/v1/image/assets/TEMP/189297da07ec9868357cb4291401ef50667416493bf889bffb02c9cca138ebca?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8",
             alt: "Navigation item 2",
-            onClick: toggleNavbar, // Pass the toggle function for the second item
+            onClick: toggleNavbar,
         },
-    ];
+    ]);
+
+    useEffect(() => {
+        if (getCookie('memberInfo') != null) {
+            setShowProfile(true);
+            const updatedNavItems = [...navItems];
+            updatedNavItems[0].src = JSON.parse(getCookie('memberInfo')).image;
+            setNavItems(updatedNavItems);
+        }
+    }, []);
+
+    const handleProfileClick = () => {
+        window.location.href = '/profile';
+    };
+
+    const handleLoginClick = () => {
+        setShowLogin(true);
+    };
+
+    const handleCloseLogin = () => {
+        setShowLogin(false);
+    };
+
+    const navItem1 = (
+        <img
+            key={0}
+            src={navItems[0].src}
+            alt={navItems[0].alt}
+            className="nav-item"
+            loading="lazy"
+            onClick={showProfile ? handleProfileClick : handleLoginClick}
+        />
+    );
+
+    const navItem2 = (
+        <img
+            key={1}
+            src={navItems[1].src}
+            alt={navItems[1].alt}
+            className="nav-item nav-item-last"
+            loading="lazy"
+            onClick={navItems[1].onClick}
+        />
+    );
 
     return (
         <nav className="navigation">
-            {navItems.map((item, index) => (
-                <img
-                    key={index}
-                    src={item.src}
-                    alt={item.alt}
-                    className={`nav-item ${index === 1 ? "nav-item-last" : ""}`}
-                    loading="lazy"
-                    onClick={index === 1 ? toggleNavbar : undefined} // Only bind click for the second item
-                />
-            ))}
+            {navItem1}
+            {navItem2}
+            {showLogin && <LoginPage isOpen={showLogin} handleClosePopup={handleCloseLogin} />}
             <style jsx>{`
                 .navigation {
                     display: flex;
@@ -32,6 +74,7 @@ const Navigation = ({ toggleNavbar }) => {
                     align-items: center;
                 }
                 .nav-item {
+                    cursor: pointer;
                     aspect-ratio: 1.02;
                     object-fit: contain;
                     object-position: center;

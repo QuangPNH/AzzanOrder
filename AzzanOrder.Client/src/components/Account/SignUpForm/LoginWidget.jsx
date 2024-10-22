@@ -3,52 +3,53 @@ import InputField from "./InputField";
 import Button from "./Button";
 import SignUpPage from "../SignUpPage";
 
-function LoginWidget({ title, icon, placeholder, buttonText }) {
-  const [phoneNumber, setPhoneNumber] = useState('');
-  const [isPopupOpen, setIsPopupOpen] = useState(false);
+function LoginWidget({ title, icon, placeholder, buttonText, onCheck }) {
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-  const handlePhoneNumberChange = (event) => {
-    setPhoneNumber(event.target.value);
-  };
+    const handlePhoneNumberChange = (event) => {
+        setPhoneNumber(event.target.value);
+    };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      let response = await fetch(`https://localhost:7183/api/Member/Phone/${phoneNumber}`);
-      if (response.ok) {
-        const memberInfo = await response.json();
-        setCookie('memberInfo', JSON.stringify(memberInfo), 100);
-        window.location.href = '';
-      } else if (response.status === 400) {
-        setIsPopupOpen(true);
-      }
-    } catch (error) {
-      console.error('An error occurred:', error);
-    }
-  };
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        try {
+            let response = await fetch(`https://localhost:7183/api/Member/Phone/${phoneNumber}`);
+            if (response.ok) {
+                const memberInfo = await response.json();
+                setCookie('memberInfo', JSON.stringify(memberInfo), 100);
+                window.location.href = '';
+            } else if (response.status === 404) {
+                const result = 'fail';
+                onCheck(result);
+            }
+        } catch (error) {
+            console.error('An error occurred:', error);
+        }
+    };
 
-  const handleClosePopup = () => {
-    setIsPopupOpen(false);
-  };
+    const handleClosePopup = () => {
+        setIsPopupOpen(false);
+    };
 
-  return (
-    <>
-      <section className="login-widget">
-        <form className="login-form" onSubmit={handleSubmit}>
-          <h2 className="register-title">{title}</h2>
-          <InputField
-            value={phoneNumber}
-            onChange={handlePhoneNumberChange}
-            icon={icon}
-            placeholder={placeholder}
-          />
-          <Button type="submit" text={buttonText} />
-        </form>
-      </section>
-      {isPopupOpen && (
-        <SignUpPage isOpen={isPopupOpen} handleClosePopup={handleClosePopup} />
-      )}
-      <style jsx>{`
+    return (
+        <>
+            <section className="login-widget">
+                <form className="login-form" onSubmit={handleSubmit}>
+                    <h2 className="register-title">{title}</h2>
+                    <InputField
+                        value={phoneNumber}
+                        onChange={handlePhoneNumberChange}
+                        icon={icon}
+                        placeholder={placeholder}
+                    />
+                    <Button type="submit" text={buttonText} />
+                </form>
+            </section>
+            {isPopupOpen && (
+                <SignUpPage isOpen={isPopupOpen} handleClosePopup={handleClosePopup} />
+            )}
+            <style jsx>{`
         .login-widget {
           border-radius: 0;
           display: flex;
@@ -73,19 +74,13 @@ function LoginWidget({ title, icon, placeholder, buttonText }) {
           text-align: center;
         }
       `}</style>
-    </>
-  );
+        </>
+    );
 }
 
 function setCookie(name, value, days) {
-  const expires = new Date(Date.now() + days * 864e5).toUTCString(); // Calculate expiration date
-  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; // Set cookie
-}
-
-function getCookie(name) {
-  const value = `; ${document.cookie}`; // Add a leading semicolon for easier parsing
-  const parts = value.split(`; ${name}=`); // Split the cookie string to find the desired cookie
-  if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift()); // Return the cookie value
+    const expires = new Date(Date.now() + days * 864e5).toUTCString(); // Calculate expiration date
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; // Set cookie
 }
 
 export default LoginWidget;

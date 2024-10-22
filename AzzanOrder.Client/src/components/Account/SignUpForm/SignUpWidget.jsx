@@ -3,11 +3,10 @@ import InputField from "./InputField";
 import Button from "./Button";
 import LoginPage from '../LoginPage';
 
-function SignUpWidget({ title, icon, placeholder, buttonText }) {
+function SignUpWidget({ title, icon, placeholder, buttonText, onCheck }) {
     const [phoneNumber, setPhoneNumber] = useState('');
     const [isOTPSent, setOTPSent] = useState(false);
     const [enterOTP, setEnterOTP] = useState('');
-    const [isPopupOpen, setIsPopupOpen] = useState(false);
 
     let memberInfo;
 
@@ -17,10 +16,6 @@ function SignUpWidget({ title, icon, placeholder, buttonText }) {
 
     const handleOTPChange = (event) => {
         setEnterOTP(event.target.value);
-    };
-
-    const handleClosePopup = () => {
-        setIsPopupOpen(false);
     };
 
     const handleSubmitPhoneNumber = async (event) => {
@@ -33,7 +28,8 @@ function SignUpWidget({ title, icon, placeholder, buttonText }) {
                 sessionStorage.setItem('savedOTP', memberInfo.memberName); // Assuming OTP is memberName
                 setOTPSent(true);  // Proceed to OTP step
             } else if (response.status === 400) {
-                setIsPopupOpen(true);
+                const result = 'fail';
+                onCheck(result);
             }
         } catch (error) {
             console.error('An error occurred:', error);
@@ -87,9 +83,6 @@ function SignUpWidget({ title, icon, placeholder, buttonText }) {
                     )}
                 </form>
             </section>
-            {isPopupOpen && (
-                <LoginPage isOpen={isPopupOpen} handleClosePopup={handleClosePopup} />
-            )}
             <style jsx>{`
         .login-widget {
           border-radius: 0;

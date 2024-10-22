@@ -26,6 +26,21 @@ const NavItem = () => {
     const handleSendFeedbackClick = () => {
         window.location.href = '/feedback';
     };
+
+    const handleLoginCheck = (result) => {
+        if (result === 'fail') {
+            setLogin(false);
+            setSignup(true);
+        }
+    };
+
+    const handleSignUpCheck = (result) => {
+        if (result === 'fail') {
+            setSignup(false);
+            setLogin(true);
+        }
+    };
+
     useEffect(() => {
         if (getCookie('memberInfo') != null) {
             setShowRecentlyOrdered(true);
@@ -34,8 +49,8 @@ const NavItem = () => {
 
     return (
         <div>
-            <LoginPage isOpen={showLogin} handleClosePopup={() => setLogin(false)} />
-            <SignUpPage isOpen={showSignup} handleClosePopup={() => setSignup(false)} />
+            <LoginPage isOpen={showLogin} handleClosePopup={() => setLogin(false)} onCheck={handleLoginCheck} />
+            <SignUpPage isOpen={showSignup} handleClosePopup={() => setSignup(false)} onCheck={handleSignUpCheck} />
             <LogoutPage isOpen={showLogout} handleClosePopup={() => setLogout(false)} />
             <div className="nav-items">
                 {!showRecentlyOrdered && (
@@ -55,11 +70,13 @@ const NavItem = () => {
                         <img loading="lazy" src={navItems[1].icon} alt={navItems[1].text} className="nav-icon" />
                         <span className="nav-text">{navItems[1].text}</span>
                     </div>
-                    )}
-                <div className="nav-item1" onClick={handleNotificationClick}>
-                    <img loading="lazy" src={navItems[2].icon} alt={navItems[2].text} className="nav-icon" />
-                    <span className="nav-text">{navItems[2].text}</span>
-                </div>
+                )}
+                {showRecentlyOrdered && (
+                    <div className="nav-item1" onClick={handleNotificationClick}>
+                        <img loading="lazy" src={navItems[2].icon} alt={navItems[2].text} className="nav-icon" />
+                        <span className="nav-text">{navItems[2].text}</span>
+                    </div>
+                )}
                 {showRecentlyOrdered && (
                     <div className="nav-item1" onClick={handleSendFeedbackClick}>
                         <img loading="lazy" src={navItems[3].icon} alt={navItems[3].text} className="nav-icon" />

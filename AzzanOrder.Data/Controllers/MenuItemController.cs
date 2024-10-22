@@ -134,6 +134,8 @@ namespace AzzanOrder.Data.Controllers
                 .Where(m =>
                 m.IsAvailable == true &&
                 m.MenuCategories.Any(mc =>
+                mc.EndDate == null &&
+                mc.StartDate == null ||
                 mc.EndDate > DateTime.Now &&
                 mc.StartDate < DateTime.Now &&
                 mc.IsForCombo == false))
@@ -150,7 +152,7 @@ namespace AzzanOrder.Data.Controllers
                     ImageBase64 = m.Image
                 })
             .ToListAsync();
-
+            
             if (top4MenuItems == null)
             {
                 return NotFound();
@@ -166,6 +168,8 @@ namespace AzzanOrder.Data.Controllers
                 .Where(m =>
                 m.MenuCategories.Any(mc =>
                 mc.ItemCategory.Description.ToLower().Contains(categoryname.ToLower()) &&
+                mc.EndDate == null &&
+                mc.StartDate == null ||
                 mc.EndDate > DateTime.Now &&
                 mc.StartDate < DateTime.Now &&
                 mc.IsForCombo == false) &&
@@ -201,6 +205,8 @@ namespace AzzanOrder.Data.Controllers
                 .Take(4)
                 .Where(m =>
                 m.MenuCategories.Any(mc =>
+                mc.EndDate == null &&
+                mc.StartDate == null ||
                 mc.EndDate > DateTime.Now &&
                 mc.StartDate < DateTime.Now &&
                 mc.IsForCombo == false) &&

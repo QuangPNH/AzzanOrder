@@ -19,7 +19,7 @@ const RecentlyOrdered = ({ title, url }) => {
           color: #000;
         }
         .section-title {
-           white-space: nowarp;
+           white-space: nowrap;
           font-size: 20px;
           font-weight: 700;
           margin: 0;

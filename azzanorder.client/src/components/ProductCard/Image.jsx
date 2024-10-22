@@ -6,6 +6,7 @@ const Image = ({ src, alt, onClick }) => {
             <img src={src} alt={alt} className="product-image" onClick={onClick} />
             <style jsx>{`
         .product-image {
+            cursor: pointer;
           aspect-ratio: 1;
           object-fit: contain;
           object-position: center;

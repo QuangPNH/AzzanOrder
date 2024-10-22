@@ -94,10 +94,10 @@ namespace AzzanOrder.Data.Controllers
             }
             var member = await _context.Members.FirstOrDefaultAsync(m => m.Phone.Equals(phone));
 
-            //if (member == null || _context.Members == null)
-            //{
-            //    errors += "\nPhone number is already registered";
-            //}
+            if (member != null)
+            {
+                errors += "\nPhone number is already registered";
+            }
             if (errors.Length > 0)
             {
                 return BadRequest(errors);
