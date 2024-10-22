@@ -30,7 +30,7 @@ namespace AzzanOrder.Data.Controllers
 			}
 
 			var itemCategories = await _context.ItemCategories
-				.Where(ic => !ic.ItemCategoryName.Contains("TOPPING"))
+				.Where(ic => !ic.Description.Contains("TOPPING"))
 				.ToListAsync();
 
 			return itemCategories;

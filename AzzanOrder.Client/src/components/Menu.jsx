@@ -55,7 +55,7 @@ const Homepage = () => {
             <Header />
             <Dropdown
                 options={categories.map(category => category.description)}
-                onClick={handleDropdownChange}
+                onClick2={handleDropdownChange}
                 onChange={handleDropdownChange} />
             {categories.map((category) => (
                 <div key={category.description} ref={el => categoryRefs.current[category.description] = el}>
