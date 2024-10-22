@@ -177,10 +177,6 @@ namespace AzzanOrder.Data.Controllers
             return Ok(new { base64Image });
         }
 
-
-
-
-
         private string Base64ToImage(string base64String)
         {
             byte[] imageBytes = Convert.FromBase64String(base64String);
