@@ -19,6 +19,8 @@ const Homepage = () => {
     const [menuItems, setMenuItems] = useState([]);
     const [recentMenuItems, setRecentMenuItems] = useState([]);
     const [showRecentlyOrdered, setShowRecentlyOrdered] = useState(false);
+    const [tableId, setTableId] = useState(null);
+
 
     useEffect(() => {
         fetchMenuItems();
@@ -26,6 +28,12 @@ const Homepage = () => {
             fetchRecentMenuItems(JSON.parse(getCookie('memberInfo')).memberId);
             setShowRecentlyOrdered(true);
         }
+        const queryParams = new URLSearchParams(window.location.search);
+        const tableIdParam = queryParams.get('tableid');
+        setTableId(tableIdParam);
+        deleteCookie('tableId');
+        setCookie('tableId', {tableId}, 100);
+        console.log(getCookie('tableId'));
     }, []);
 
     const fetchMenuItems = async () => {
@@ -141,5 +149,21 @@ const Homepage = () => {
         //<MenuMainPage />
     );
 };
+
+
+function setCookie(name, value, days) {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString(); // Calculate expiration date
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; // Set cookie
+  }
+  
+  function getCookie(name) {
+    const value = `; ${document.cookie}`; // Add a leading semicolon for easier parsing
+    const parts = value.split(`; ${name}=`); // Split the cookie string to find the desired cookie
+    if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift()); // Return the cookie value
+  }
+
+  function deleteCookie(name) {
+    setCookie(name, '', -1); // Call setCookie with negative days to delete
+  }
 
 export default Homepage;

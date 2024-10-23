@@ -20,13 +20,9 @@ function LoginWidget({ title, icon, placeholder, buttonText }) {
         memberInfo = await response.json();
         //sessionStorage.setItem('memberInfo', JSON.stringify(memberInfo));
         console.log('yeeeee ' + memberInfo.phone);
-
-
         setCookie('memberInfo', JSON.stringify(memberInfo), 100);
         console.log('mao' + JSON.parse(getCookie('memberInfo')).phone);
-
         window.location.href = '';
-
       } else {
         console.error('Nah not logged inn never');
       }
