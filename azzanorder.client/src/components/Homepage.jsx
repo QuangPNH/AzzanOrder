@@ -21,7 +21,7 @@ const Homepage = () => {
     const [recentMenuItems, setRecentMenuItems] = useState([]);
     const [showRecentlyOrdered, setShowRecentlyOrdered] = useState(false);
     const search = useLocation().search;
-    const id=new URLSearchParams(search).get("tableid");
+    const id=new URLSearchParams(search).get("tableqr");
 
     useEffect(() => {
         fetchMenuItems();
@@ -29,8 +29,9 @@ const Homepage = () => {
             fetchRecentMenuItems(JSON.parse(getCookie('memberInfo')).memberId);
             setShowRecentlyOrdered(true);
         }
-        deleteCookie('tableid');
-        setCookie('tableId',id,1);
+        deleteCookie('tableqr');
+        setCookie('tableqr',id,1);
+        console.log(id);
         
     }, []);
 
