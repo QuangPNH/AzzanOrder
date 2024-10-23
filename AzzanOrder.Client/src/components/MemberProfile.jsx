@@ -24,8 +24,9 @@ const MemberProfile = () => {
     useEffect(() => {
         const memberInfoCookie = getCookie('memberInfo');
         if (memberInfoCookie != null) {
-            const memberInfo1 = JSON.parse(memberInfoCookie);
-            setFormattedMemberInfo(memberInfo1);
+            setFormattedMemberInfo(memberInfoCookie);
+        } else {
+            window.location.href = '';
         }
     }, []);
 

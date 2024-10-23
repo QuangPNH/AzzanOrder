@@ -41,6 +41,7 @@ function Navbar() {
                     display: flex;
                     position: relative;
                     max-width: 328px;
+                    height: 20vh;
                     overflow: hidden;
                     padding: 15px 0;
                     margin-top: -20px; /* To overlap part of the banner */

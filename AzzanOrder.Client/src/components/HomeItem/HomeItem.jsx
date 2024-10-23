@@ -1,6 +1,6 @@
 ﻿import React from 'react';
 import Banner from './Banner';
-import Navbar from './Navbar';
+
 import Frame from './Frame';
 import ShowMoreLink from '../ShowMoreLink/ShowMoreLink'
 const HomeItem = () => {
@@ -8,7 +8,6 @@ const HomeItem = () => {
         <>
             <div className="home-item-container">
                 <Banner />
-                <Navbar />
                 <ShowMoreLink title="LIMITED COMBO" />
                 <Frame />
             </div>

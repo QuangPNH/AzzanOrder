@@ -80,7 +80,7 @@ const Dropdown = ({ options, onChange, onClick}) => {
                     font: 600 16px Inter, sans-serif;
                     border: 1px solid rgba(0, 0, 0, 0.5);
                     cursor: pointer;
-                    z-index: 1000; /* Ensure it stays above other content */
+                    z-index: 999; /* Ensure it stays above other content */
                 }
 
                 .dropdown-items {

@@ -10,10 +10,13 @@ import { getCookie } from './Account/SignUpForm/Validate';
 
 const FeedbackScreen = () => {
     const [feedback, setContent] = useState(null);
+
     useEffect(() => {
         const memberInfoCookie = getCookie('memberInfo');
         if (memberInfoCookie != null) {
             fetchContentFromAPI(JSON.parse(memberInfoCookie).memberId)
+        } else {
+            window.location.href = '';
         }
     }, []);
 
@@ -31,12 +34,22 @@ const FeedbackScreen = () => {
 
     const handleSave = async () => {
         try {
-            const response = await fetch('https://localhost:7183/api/Feedback/Update', {
-                method: 'PUT',
+            const method = feedback?.id ? 'PUT' : 'POST';
+            const url = feedback?.id
+                ? 'https://localhost:7183/api/Feedback/Update'
+                : 'https://localhost:7183/api/Feedback/Add';
+
+            const feedbackData = {
+                ...feedback,
+                memberId: feedback?.memberId || JSON.parse(getCookie('memberInfo')).memberId
+            };
+
+            const response = await fetch(url, {
+                method: method,
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(feedback)
+                body: JSON.stringify(feedbackData)
             });
             if (response.ok) {
                 console.log('Member info updated successfully');

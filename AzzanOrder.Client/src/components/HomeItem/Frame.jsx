@@ -1,92 +1,136 @@
-﻿import React, { useState } from 'react';
+﻿import React, { useState, useEffect } from 'react';
 
 const Frame = () => {
-    const [activeImage, setActiveImage] = useState(null); // State to track the active image
+    const [promotions, setPromotions] = useState([]);
+    const [currentIndex, setCurrentIndex] = useState(0);
 
-    const handleIconClick = (position) => {
-        setActiveImage(position); // Update the active image based on which icon is clicked
+    useEffect(() => {
+        // Fetch promotions from API
+        const fetchPromotions = async () => {
+            try {
+                const response = await fetch('https://localhost:7183/api/Promotions/GetByDescription/carousel'); // Replace with your API endpoint
+                const data = await response.json();
+                setPromotions(data);
+            } catch (error) {
+                console.error('Error fetching promotions:', error);
+            }
+        };
+
+        fetchPromotions();
+    }, []);
+
+    const handleNext = () => {
+        setCurrentIndex((prevIndex) => (prevIndex + 1) % promotions.length);
     };
 
+    const handlePrev = () => {
+        setCurrentIndex((prevIndex) => (prevIndex - 1 + promotions.length) % promotions.length);
+    };
+
+    if (promotions.length === 0) {
+        return <div>Loading...</div>;
+    }
+
+    const bigPromotion = promotions[currentIndex];
+    const leftPromotion = promotions[(currentIndex - 1 + promotions.length) % promotions.length];
+    const rightPromotion = promotions[(currentIndex + 1) % promotions.length];
+
     return (
-        <div className="image-48-parent">
-            <img
-                className="image-48-icon"
-                alt=""
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/597b0a02ed608c600001fc12a8c900fab2ea7b20e253c0d9e392607176db0535?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533"
-                onClick={() => handleIconClick('right')} // Click event for the right icon
-            />
-            <div className="image-25-parent">
-                {activeImage === 'left' ? (
-                    <img className="image-27-icon" alt="" src="https://cdn.builder.io/api/v1/image/assets/TEMP/597b0a02ed608c600001fc12a8c900fab2ea7b20e253c0d9e392607176db0535?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" />
-                ) : (
-                    <img className="image-27-icon" alt="" src="https://cdn.builder.io/api/v1/image/assets/TEMP/597b0a02ed608c600001fc12a8c900fab2ea7b20e253c0d9e392607176db0535?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" />
-                )}
+        <div className="carousel-container">
+            <div className="small-image-container left">
+                <img
+                    className="small-image"
+                    alt={leftPromotion.title}
+                    src={leftPromotion.image}
+                    onClick={handlePrev}
+                />
             </div>
-            <img
-                className="image-47-icon"
-                alt=""
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/597b0a02ed608c600001fc12a8c900fab2ea7b20e253c0d9e392607176db0535?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533"
-                onClick={() => handleIconClick('left')} // Click event for the left icon
-            />
+            <div className="big-image-container">
+                <img className="big-image" alt={bigPromotion.title} src={bigPromotion.image} />
+                <div className="promotion-details">
+                    <h2>{bigPromotion.title}</h2>
+                </div>
+            </div>
+            <div className="small-image-container right">
+                <img
+                    className="small-image"
+                    alt={rightPromotion.title}
+                    src={rightPromotion.image}
+                    onClick={handleNext}
+                />
+            </div>
 
             <style jsx>{`
-                .image-48-icon {
-                    width: 100%; /* Full width for responsiveness */
-                    max-width: 272px; /* Max width to maintain aspect ratio */
-                    border-radius: 12px;
-                    flex-shrink: 0;
-                    object-fit: cover;
-                    cursor: pointer; /* Change cursor to pointer for clickable image */
-                }
-
-                .image-27-icon {
-                    position: absolute;
-                    width: 100%; /* Full width for responsiveness */
-                    height: 100%; /* Full height to fit the parent */
-                    object-fit: cover; /* Ensure it covers the parent */
-                }
-
-                .image-25-parent {
-                    width: 80%; /* Adjust as needed for responsiveness */
-                    max-width: 272px; /* Max width */
+                .carousel-container {
                     position: relative;
-                    border-radius: 12px;
-                    background-color: #d4c3c3;
-                    height: 20vh; /* Responsive height */
-                    overflow: hidden; /* Ensure it only shows parts of images inside */
-                    flex-shrink: 0;
-                    display: flex; /* Flexbox for centering */
-                    justify-content: center; /* Center the inner image */
-                    align-items: center; /* Center the inner image */
-                }
-
-                .image-47-icon {
-                    width: 100%; /* Full width for responsiveness */
-                    max-width: 272px; /* Max width to maintain aspect ratio */
-                    border-radius: 12px;
-                    flex-shrink: 0;
-                    cursor: pointer; /* Change cursor to pointer for clickable image */
-                }
-
-                .image-48-parent {
-                    width: 100%;
-                    position: relative;
-                    height: 20vh; /* Responsive height */
-                    overflow: hidden; /* Changed to hidden to only show parts of images */
                     display: flex;
-                    flex-direction: row;
-                    align-items: center; /* Center elements vertically */
-                    justify-content: center; /* Center elements horizontally */
-                    gap: 12px;
+                    align-items: center;
+                    justify-content: center;
+                    width: 100%;
+                    height: 20vh;
+                    overflow: hidden;
+                }
+
+                .big-image-container {
+                    position: relative;
+                    width: 70%;
+                    z-index: 2;
+                    border-radius: 12px;
+                    overflow: hidden;
+                    text-align: center;
+                }
+
+                .big-image {
+                    width: 100%;
+                    height: auto;
+                    object-fit: cover;
+                }
+
+                .promotion-details {
+                    position: absolute;
+                    bottom: 0;
+                    background: rgba(0, 0, 0, 0.1);
+                    color: white;
+                    width: 100%;
+                    padding: 10px;
+                }
+
+                .small-image-container {
+                    position: absolute;
+                    background: rgba(0, 0, 0, 0.3);
+                    width: 56%; /* 70% of 80% */
+                    z-index: 1;
+                }
+
+                .small-image-container.left {
+                    left: 0;
+                    transform: translateX(-30%);
+                }
+
+                .small-image-container.right {
+                    right: 0;
+                    transform: translateX(30%);
+                }
+
+                .small-image {
+                    width: 100%;
+                    cursor: pointer;
+                    border-radius: 12px;
+                    object-fit: cover;
                 }
 
                 @media (max-width: 768px) {
-                    .image-25-parent {
-                        width: 90%; /* Wider for smaller screens */
+
+                    .small-image-container {
+                        width: 63%; /* 70% of 90% */
                     }
 
-                    .image-48-parent {
-                        height: 30vh; /* Adjust height for smaller screens */
+                    .small-image-container.left {
+                        transform: translateX(-35%);
+                    }
+
+                    .small-image-container.right {
+                        transform: translateX(35%);
                     }
                 }
             `}</style>

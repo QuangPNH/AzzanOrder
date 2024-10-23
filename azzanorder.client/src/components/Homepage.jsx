@@ -9,12 +9,14 @@ import Footer from '../components/Footer/Footer';
 import Header from '../components/Header/Header';
 import ShowMoreLink from './ShowMoreLink/ShowMoreLink';
 import ProductCard from './ProductCard/ProductCard';
-import HomeItem from './HomeItem/HomeItem';
+import Navbar from './HomeItem/Navbar';
+import Frame from './HomeItem/Frame';
 import { getCookie } from './Account/SignUpForm/Validate';
 
     // Rest of the code...
 import Cart from './Cart';
 import { del } from 'framer-motion/client';
+import Banner from './HomeItem/Banner';
 
 const Homepage = () => {
     const [menuItems, setMenuItems] = useState([]);
@@ -59,7 +61,9 @@ const Homepage = () => {
         <>
             <Header />
             <div className="page-container">
-                <div><HomeItem /></div>
+                <Navbar />
+                <ShowMoreLink title="LIMITED COMBO" />
+                <Frame />
                 <div>
                     {showRecentlyOrdered && (
                         <div>
@@ -78,6 +82,7 @@ const Homepage = () => {
                             </div>
                         </div>
                     )}
+                    
                     <ShowMoreLink title="HOT ITEMS" />
                     <div className='product-grid'>
                         {menuItems.map((menuItem) => (
@@ -91,8 +96,8 @@ const Homepage = () => {
                             />
                         ))}
                     </div>
+                    <Banner />
                 </div>
-                
                 <style jsx>{`
                 .page-container {
                     display: flex;
