@@ -1,7 +1,7 @@
 ﻿import React, { useState, useEffect } from "react";
 import ProfileItem from "./ProfileItem"; // Assuming ProfileItem is in the same folder
 
-const DetailInfo = ({ title, memberDetail, onChange }) => {
+const DetailDateTime = ({ title, memberDetail, onChange }) => {
     const [value, setValue] = useState(memberDetail);
 
     useEffect(() => {
@@ -19,7 +19,7 @@ const DetailInfo = ({ title, memberDetail, onChange }) => {
                 <ProfileItem title={title} />
                 <input
                     className="member-detail"
-                    type="text"
+                    type="date"
                     value={value}
                     onChange={handleChange}
                 />
@@ -27,21 +27,13 @@ const DetailInfo = ({ title, memberDetail, onChange }) => {
             <style jsx>{`
                 .detail-info {
                     display: flex;
-                    width: calc(100% - 50px); /* Takes up full width of the parent minus padding */
+                    width: 100%; /* Takes up full width of the parent */
                     gap: 9px;
                     font-family: Inter, sans-serif;
                     color: #000;
                     border-radius: 6px;
-                    align-items: center; /* Aligns items vertically at the center */
+                    align-items: flex-start; /* Aligns items vertically at the start */
                     margin-bottom: 5px; /* Added margin for spacing between DetailInfo components */
-                    padding: 0 10px; /* Adds padding to the left and right */
-                    box-sizing: border-box; /* Ensures padding is included in the element's total width and height */
-                }
-                .detail-info > :first-child {
-                    flex: 0 0 30%; /* ProfileItem takes up 30% of the width */
-                }
-                .detail-info > :last-child {
-                    flex: 0 0 70%; /* Input takes up 70% of the width */
                 }
                 .member-detail {
                     font-size: 14px;
@@ -51,12 +43,13 @@ const DetailInfo = ({ title, memberDetail, onChange }) => {
                     border: 1px solid #000;
                     border-radius: 6px;
                     margin: 0;
+                    flex-grow: 1; /* Takes up remaining space */
                     width: 100%; /* Ensures it stretches to full width */
-                    min-width: 0; /* Prevents minimum width from affecting layout */
+                    min-width: 200px; /* Increase minimum width */
                 }
             `}</style>
         </>
     );
 };
 
-export default DetailInfo;
+export default DetailDateTime;

@@ -1,13 +1,32 @@
-﻿import React from "react";
+﻿import React, { useState, useEffect } from "react";
 
-const ProfilePicture = ({ src }) => {
+const ProfilePicture = ({ src, onChange }) => {
+    const [avatarSrc, setAvatarSrc] = useState(src);
+
+    useEffect(() => {
+        setAvatarSrc(src);
+    }, [src]);
+
+    const handleImageChange = (event) => {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = (e) => {
+                const newAvatarSrc = e.target.result;
+                setAvatarSrc(newAvatarSrc);
+                onChange(newAvatarSrc);
+            };
+            reader.readAsDataURL(file);
+        }
+    };
+
     return (
         <>
             <header className="profile-picture">
-                <div className="image-container">
+                <div className="image-container" onClick={() => document.getElementById('fileInput').click()}>
                     <img
                         loading="lazy"
-                        src={src} // Use the src prop for the avatar
+                        src={avatarSrc}
                         alt="Avatar"
                         className="background-image"
                     />
@@ -18,17 +37,25 @@ const ProfilePicture = ({ src }) => {
                         className="foreground-icon"
                     />
                 </div>
+                <input
+                    type="file"
+                    id="fileInput"
+                    style={{ display: 'none' }}
+                    accept="image/*"
+                    onChange={handleImageChange}
+                />
             </header>
             <style jsx>{`
                 .profile-picture {
-                    border-radius: 270px;
+                    border-radius: 100%;
                     background-color: rgba(0, 0, 0, 0.5);
                     display: flex;
-                    flex-direction: column;
                     overflow: hidden;
                     align-items: center;
                     aspect-ratio: 1;
                     border: 5px solid #fff;
+                    margin: auto;
+                    max-width: 400px;
                 }
                 .image-container {
                     display: flex;

@@ -46,7 +46,7 @@ const ProductCard = ({ imageSrc, title, price, desc, cate }) => {
 
     return (
         <article className="product-card">
-            <Image src={`data:image/png;base64, ${imageSrc}`} alt={title} onClick={openModal} />
+            <Image src={imageSrc} alt={title} onClick={openModal} />
             <h2 className="product-title" onClick={openModal}>{title}</h2>
             <PriceTag price={price} onclick={handleAddToCart} />
             <style jsx>

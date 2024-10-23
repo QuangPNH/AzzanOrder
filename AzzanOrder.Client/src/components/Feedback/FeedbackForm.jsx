@@ -1,14 +1,15 @@
 ﻿import React, { useState, useEffect } from 'react';
 
-const FeedbackTextbox = ({ content = '' }) => {
-    const [feedback, setFeedback] = useState(content);
+const FeedbackTextbox = ({ data, onChange }) => {
+    const [value, setValue] = useState(data);
 
     useEffect(() => {
-        setFeedback(content); // Update feedback when content prop changes
-    }, [content]);
+        setValue(data);
+    }, [data]);
 
-    const handleChange = (event) => {
-        setFeedback(event.target.value); // Update feedback state on change
+    const handleChange = (e) => {
+        setValue(e.target.value);
+        onChange(e.target.value);
     };
 
     return (
@@ -16,7 +17,7 @@ const FeedbackTextbox = ({ content = '' }) => {
             <section className="feedback-container">
                 <textarea
                     className="feedback-input"
-                    value={feedback} // Set the textarea value to the feedback state
+                    value={value} // Set the textarea value to the feedback state
                     onChange={handleChange} // Handle changes to the textarea
                     placeholder="Write your feedback here..."
                     aria-label="Feedback input"

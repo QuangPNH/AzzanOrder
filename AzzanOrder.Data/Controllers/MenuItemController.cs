@@ -53,29 +53,26 @@ namespace AzzanOrder.Data.Controllers
         // PUT: api/MenuItem/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMenuItem(MenuItem menuItem)
+        public async Task<IActionResult> PutMenuItem(int id, MenuItemAddDTO menuItem)
         {
-            if (MenuItemExists(menuItem.MenuItemId))
-            {
-                return BadRequest();
-            }
-
-            _context.Entry(menuItem).State = EntityState.Modified;
-
+            
             try
             {
+                var menuItemToUpdate = await _context.MenuItems.FindAsync(id);
+                if (!MenuItemExists(id))
+                {
+                    return NotFound();
+                }
+                menuItemToUpdate.ItemName = menuItem.ItemName;
+                menuItemToUpdate.Price = menuItem.Price;
+                menuItemToUpdate.Description = menuItem.Description;
+                menuItemToUpdate.Discount = menuItem.Discount;
+                menuItemToUpdate.Image = menuItem.ImageBase64;
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MenuItemExists(menuItem.MenuItemId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                
             }
 
             return Ok(menuItem);
