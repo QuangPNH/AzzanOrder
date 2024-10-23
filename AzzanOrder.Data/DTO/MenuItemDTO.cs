@@ -2,8 +2,7 @@
 {
     public class MenuItemDTO
 	{
-        internal string? Category;
-
+        public string? Category { get; set; }
         public int MenuItemId { get; set; }
 		public string? ItemName { get; set; }
 		public double? Price { get; set; }

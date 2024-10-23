@@ -25,10 +25,10 @@ namespace AzzanOrder.Data.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<MenuItem>>> GetMenuItems()
         {
-          if (_context.MenuItems == null)
-          {
-              return NotFound();
-          }
+            if (_context.MenuItems == null)
+            {
+                return NotFound();
+            }
             return await _context.MenuItems.ToListAsync();
         }
 
@@ -36,10 +36,10 @@ namespace AzzanOrder.Data.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<MenuItem>> GetMenuItem(int id)
         {
-          if (_context.MenuItems == null)
-          {
-              return NotFound();
-          }
+            if (_context.MenuItems == null)
+            {
+                return NotFound();
+            }
             var menuItem = await _context.MenuItems.FindAsync(id);
 
             if (menuItem == null)
@@ -53,9 +53,9 @@ namespace AzzanOrder.Data.Controllers
         // PUT: api/MenuItem/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutMenuItem(int id, MenuItem menuItem)
+        public async Task<IActionResult> PutMenuItem(MenuItem menuItem)
         {
-            if (id != menuItem.MenuItemId)
+            if (MenuItemExists(menuItem.MenuItemId))
             {
                 return BadRequest();
             }
@@ -68,7 +68,7 @@ namespace AzzanOrder.Data.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!MenuItemExists(id))
+                if (!MenuItemExists(menuItem.MenuItemId))
                 {
                     return NotFound();
                 }
@@ -78,18 +78,19 @@ namespace AzzanOrder.Data.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(menuItem);
         }
 
         // POST: api/MenuItem
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("Add")]
         public async Task<ActionResult<MenuItem>> PostMenuItem(MenuItem menuItem)
         {
-          if (_context.MenuItems == null)
-          {
-              return Problem("Entity set 'OrderingAssistSystemContext.MenuItems'  is null.");
-          }
+            if (_context.MenuItems == null)
+            {
+                return Problem("Entity set 'OrderingAssistSystemContext.MenuItems'  is null.");
+            }
+            menuItem.IsAvailable = true;
             _context.MenuItems.Add(menuItem);
             await _context.SaveChangesAsync();
 
@@ -97,7 +98,7 @@ namespace AzzanOrder.Data.Controllers
         }
 
         // DELETE: api/MenuItem/5
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> DeleteMenuItem(int id)
         {
             if (_context.MenuItems == null)
@@ -109,120 +110,126 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
+            menuItem.IsAvailable = false;
+            //foreach(var menuCategory in menuItem.MenuCategories)
+            //{
+            //    _context.MenuCategories.Remove(menuCategory);
+            //}
 
-            foreach(var menuCategory in menuItem.MenuCategories)
-            {
-                _context.MenuCategories.Remove(menuCategory);
-            }
-
-            _context.MenuItems.Remove(menuItem);
+            _context.MenuItems.Update(menuItem);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Delete success");
         }
-		
-		private bool MenuItemExists(int id)
+
+        private bool MenuItemExists(int id)
         {
             return (_context.MenuItems?.Any(e => e.MenuItemId == id)).GetValueOrDefault();
         }
-		// GET: api/MenuItem/Top4
-		[HttpGet("Top4")]
-		public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetTop4MenuItems()
-		{
-			var top4MenuItems = await _context.MenuItems
-                .Where(m => 
-                m.IsAvailable == true && 
-                m.MenuCategories.Any(mc => 
+        // GET: api/MenuItem/Top4
+        [HttpGet("Top4")]
+        public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetTop4MenuItems()
+        {
+            var top4MenuItems = await _context.MenuItems
+                .Where(m =>
+                m.IsAvailable == true &&
+                m.MenuCategories.Any(mc =>
+                mc.EndDate == null &&
+                mc.StartDate == null ||
                 mc.EndDate > DateTime.Now &&
-				mc.StartDate < DateTime.Now &&
-				mc.IsForCombo == false))
-			    .OrderByDescending(m => m.OrderDetails.Count)
-			    .Take(4)
-				.Select(m => new MenuItemDTO
-				{
-					MenuItemId = m.MenuItemId,
-					ItemName = m.ItemName,
-					Price = m.Price,
-					Description = m.Description,
-					Discount = m.Discount,
-					Category = m.MenuCategories.FirstOrDefault().ItemCategory.Description,
-					ImageBase64 = m.Image
-				})
-			.ToListAsync();
-
-			if (top4MenuItems == null)
-			{
-				return NotFound();
-			}
-
-			return top4MenuItems;
-		}
-		// GET: api/MenuItem/Category/{category}
-		[HttpGet("Category/{categoryname}")]
-		public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetMenuItemsByCategory(string categoryname)
-		{
-			var menuItems = await _context.MenuItems
-				.Where(m => 
-                m.MenuCategories.Any(mc => 
-                mc.ItemCategory.Description.ToLower().Contains(categoryname.ToLower()) && 
-                mc.EndDate > DateTime.Now && 
                 mc.StartDate < DateTime.Now &&
-                mc.IsForCombo == false) && 
+                mc.IsForCombo == false))
+                .OrderByDescending(m => m.OrderDetails.Count)
+                .Take(4)
+                .Select(m => new MenuItemDTO
+                {
+                    MenuItemId = m.MenuItemId,
+                    ItemName = m.ItemName,
+                    Price = m.Price,
+                    Description = m.Description,
+                    Discount = m.Discount,
+                    Category = m.MenuCategories.FirstOrDefault().ItemCategory.Description,
+                    ImageBase64 = m.Image
+                })
+            .ToListAsync();
+            
+            if (top4MenuItems == null)
+            {
+                return NotFound();
+            }
+
+            return top4MenuItems;
+        }
+        // GET: api/MenuItem/Category/{category}
+        [HttpGet("Category/{categoryname}")]
+        public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetMenuItemsByCategory(string categoryname)
+        {
+            var menuItems = await _context.MenuItems
+                .Where(m =>
+                m.MenuCategories.Any(mc =>
+                mc.ItemCategory.Description.ToLower().Contains(categoryname.ToLower()) &&
+                mc.EndDate == null &&
+                mc.StartDate == null ||
+                mc.EndDate > DateTime.Now &&
+                mc.StartDate < DateTime.Now &&
+                mc.IsForCombo == false) &&
                 m.IsAvailable == true)
                 .Select(m => new MenuItemDTO
-					{
-						MenuItemId = m.MenuItemId,
-						ItemName = m.ItemName,
-						Price = m.Price,
-					    Category = m.MenuCategories.FirstOrDefault().ItemCategory.Description,
-					    Description = m.Description,
-						Discount = m.Discount,
-						ImageBase64 = m.Image
-					})
-				.ToListAsync();
+                {
+                    MenuItemId = m.MenuItemId,
+                    ItemName = m.ItemName,
+                    Price = m.Price,
+                    Category = m.MenuCategories.FirstOrDefault().ItemCategory.Description,
+                    Description = m.Description,
+                    Discount = m.Discount,
+                    ImageBase64 = m.Image
+                })
+                .ToListAsync();
 
-			if (menuItems == null)
-			{
-				return NotFound();
-			}
+            if (menuItems == null)
+            {
+                return NotFound();
+            }
 
-			return menuItems;
-		}
-		// GET: api/MenuItem/RecentMenuItems/{customerId}
-		[HttpGet("RecentMenuItems/{customerId}")]
-		public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetRecentMenuItems(int customerId)
-		{
-			var recentMenuItems = await _context.OrderDetails
-				.Where(od => od.Order.MemberId == customerId)
-				.OrderByDescending(od => od.Order.OrderDate)
-				.Select(od => od.MenuItem)
-				.Distinct()
-				.Take(4)
-                .Where(m => 
-                m.MenuCategories.Any(mc => 
+            return menuItems;
+        }
+        // GET: api/MenuItem/RecentMenuItems/{customerId}
+        [HttpGet("RecentMenuItems/{customerId}")]
+        public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetRecentMenuItems(int customerId)
+        {
+            var recentMenuItems = await _context.OrderDetails
+                .Where(od => od.Order.MemberId == customerId)
+                .OrderByDescending(od => od.Order.OrderDate)
+                .Select(od => od.MenuItem)
+                .Distinct()
+                .Take(4)
+                .Where(m =>
+                m.MenuCategories.Any(mc =>
+                mc.EndDate == null &&
+                mc.StartDate == null ||
                 mc.EndDate > DateTime.Now &&
-				mc.StartDate < DateTime.Now &&
-				mc.IsForCombo == false) &&
-				m.IsAvailable == true)
-				.Select(m => new MenuItemDTO
-				{
-					MenuItemId = m.MenuItemId,
-					ItemName = m.ItemName,
-					Price = m.Price,
-					Description = m.Description,
-					Category = m.MenuCategories.FirstOrDefault().ItemCategory.Description,
-					Discount = m.Discount,
-					ImageBase64 = m.Image
-				})
-				.ToListAsync();
+                mc.StartDate < DateTime.Now &&
+                mc.IsForCombo == false) &&
+                m.IsAvailable == true)
+                .Select(m => new MenuItemDTO
+                {
+                    MenuItemId = m.MenuItemId,
+                    ItemName = m.ItemName,
+                    Price = m.Price,
+                    Description = m.Description,
+                    Category = m.MenuCategories.FirstOrDefault().ItemCategory.Description,
+                    Discount = m.Discount,
+                    ImageBase64 = m.Image
+                })
+                .ToListAsync();
 
-			if (recentMenuItems == null)
-			{
-				return NotFound();
-			}
+            if (recentMenuItems == null)
+            {
+                return NotFound();
+            }
 
-			return recentMenuItems;
-		}
+            return recentMenuItems;
+        }
 
-	}
+    }
 }

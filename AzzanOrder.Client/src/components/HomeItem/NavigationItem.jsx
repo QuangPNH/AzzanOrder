@@ -11,6 +11,7 @@ function NavigationItem({ icon, label }) {
             </div>
             <style jsx>{`
         .nav-item2 {
+            cursor: pointer;
           box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
           align-self: stretch;
           display: flex;

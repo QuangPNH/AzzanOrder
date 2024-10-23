@@ -34,6 +34,7 @@ const AddToCartButton = () => {
                     margin: 0 auto; /* Center button within container */
                 }
                 .cart-icon {
+                    cursor: pointer;
                     width: 24px;
                     height: 24px;
                     object-fit: contain;

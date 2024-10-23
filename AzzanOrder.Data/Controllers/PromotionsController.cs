@@ -52,10 +52,10 @@ namespace AzzanOrder.Data.Controllers
 
         // PUT: api/Promotions/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutPromotion(int id, Promotion promotion)
+        [HttpPut("Update")]
+        public async Task<IActionResult> PutPromotion(Promotion promotion)
         {
-            if (id != promotion.PromotionId)
+            if (PromotionExists(promotion.PromotionId))
             {
                 return BadRequest();
             }
@@ -68,7 +68,7 @@ namespace AzzanOrder.Data.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!PromotionExists(id))
+                if (!PromotionExists(promotion.PromotionId))
                 {
                     return NotFound();
                 }
@@ -78,12 +78,12 @@ namespace AzzanOrder.Data.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(promotion);
         }
 
         // POST: api/Promotions
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("Add")]
         public async Task<ActionResult<Promotion>> PostPromotion(Promotion promotion)
         {
           if (_context.Promotions == null)
@@ -97,7 +97,7 @@ namespace AzzanOrder.Data.Controllers
         }
 
         // DELETE: api/Promotions/5
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> DeletePromotion(int id)
         {
             if (_context.Promotions == null)

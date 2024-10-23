@@ -38,7 +38,7 @@ const Homepage = () => {
 
     const fetchMenuItems = async () => {
         try {
-            const response = await fetch('https://localhost:7183/api/MenuItem/');
+            const response = await fetch('https://localhost:7183/api/MenuItem');
             const data = await response.json();
             setMenuItems(data);
         } catch (error) {
@@ -62,6 +62,23 @@ const Homepage = () => {
             <div className="page-container">
                 <div><HomeItem /></div>
                 <div>
+                    {showRecentlyOrdered && (
+                        <div>
+                            <ShowMoreLink title="RECENTLY ORDERED" />
+                            <div className='product-grid'>
+                                {recentMenuItems.map((menuItem) => (
+                                    <ProductCard
+                                        key={menuItem.id}
+                                        title={menuItem.itemName}
+                                        price={menuItem.price}
+                                        imageSrc={menuItem.imageBase64}
+                                        cate={menuItem.category}
+                                        desc={menuItem.description}
+                                    />
+                                ))}
+                            </div>
+                        </div>
+                    )}
                     <ShowMoreLink title="HOT ITEMS" />
                     <div className='product-grid'>
                         {menuItems.map((menuItem) => (
@@ -76,23 +93,7 @@ const Homepage = () => {
                         ))}
                     </div>
                 </div>
-                {showRecentlyOrdered && (
-                    <div>
-                        <ShowMoreLink title="RECENTLY ORDERED" />
-                        <div className='product-grid'>
-                            {recentMenuItems.map((menuItem) => (
-                                <ProductCard
-                                    key={menuItem.id}
-                                    title={menuItem.itemName}
-                                    price={menuItem.price}
-                                    imageSrc={menuItem.imageBase64}
-                                    cate={menuItem.category}
-                                    desc={menuItem.description}
-                                />
-                            ))}
-                        </div>
-                    </div>
-                )}
+                
                 <style jsx>{`
                 .page-container {
                     display: flex;

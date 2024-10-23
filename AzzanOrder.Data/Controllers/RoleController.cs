@@ -51,10 +51,10 @@ namespace AzzanOrder.Data.Controllers
 
         // PUT: api/Role/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutRole(int id, Role role)
+        [HttpPut("Update")]
+        public async Task<IActionResult> PutRole(Role role)
         {
-            if (id != role.RoleId)
+            if (RoleExists(role.RoleId))
             {
                 return BadRequest();
             }
@@ -67,7 +67,7 @@ namespace AzzanOrder.Data.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!RoleExists(id))
+                if (!RoleExists(role.RoleId))
                 {
                     return NotFound();
                 }
@@ -76,13 +76,12 @@ namespace AzzanOrder.Data.Controllers
                     throw;
                 }
             }
-
-            return NoContent();
+            return Ok(role);
         }
 
         // POST: api/Role
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("Add")]
         public async Task<ActionResult<Role>> PostRole(Role role)
         {
           if (_context.Roles == null)
@@ -96,7 +95,7 @@ namespace AzzanOrder.Data.Controllers
         }
 
         // DELETE: api/Role/5
-        [HttpDelete("{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> DeleteRole(int id)
         {
             if (_context.Roles == null)
@@ -108,11 +107,15 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-
+            var employees = await _context.Employees.Where(e => e.RoleId == role.RoleId).ToListAsync();
+            if(employees.Count > 0)
+            {
+                return Conflict("Had data use this role can't delete");
+            }
             _context.Roles.Remove(role);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Delete success");
         }
 
         private bool RoleExists(int id)

@@ -24,22 +24,22 @@ namespace AzzanOrder.Data.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Owner>>> GetOwners()
         {
-          if (_context.Owners == null)
-          {
-              return NotFound();
-          }
-            return await _context.Owners.ToListAsync();
+            if (_context.Owners == null)
+            {
+                return NotFound();
+            }
+            return await _context.Owners.Where(o => o.IsDelete == false).ToListAsync();
         }
 
         // GET: api/Owner/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Owner>> GetOwner(int id)
         {
-          if (_context.Owners == null)
-          {
-              return NotFound();
-          }
-            var owner = await _context.Owners.FindAsync(id);
+            if (_context.Owners == null)
+            {
+                return NotFound();
+            }
+            var owner = await _context.Owners.Where(o => o.IsDelete == false).FirstOrDefaultAsync(o => o.OwnerId == id);
 
             if (owner == null)
             {
@@ -51,10 +51,10 @@ namespace AzzanOrder.Data.Controllers
 
         // PUT: api/Owner/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutOwner(int id, Owner owner)
+        [HttpPut("Update")]
+        public async Task<IActionResult> PutOwner(Owner owner)
         {
-            if (id != owner.OwnerId)
+            if (OwnerExists(owner.OwnerId))
             {
                 return BadRequest();
             }
@@ -67,7 +67,7 @@ namespace AzzanOrder.Data.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!OwnerExists(id))
+                if (!OwnerExists(owner.OwnerId))
                 {
                     return NotFound();
                 }
@@ -77,18 +77,19 @@ namespace AzzanOrder.Data.Controllers
                 }
             }
 
-            return NoContent();
+            return Ok(owner);
         }
 
         // POST: api/Owner
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("Add")]
         public async Task<ActionResult<Owner>> PostOwner(Owner owner)
         {
-          if (_context.Owners == null)
-          {
-              return Problem("Entity set 'OrderingAssistSystemContext.Owners'  is null.");
-          }
+            if (_context.Owners == null)
+            {
+                return Problem("Entity set 'OrderingAssistSystemContext.Owners'  is null.");
+            }
+            owner.IsDelete = false;
             _context.Owners.Add(owner);
             await _context.SaveChangesAsync();
 
@@ -108,11 +109,11 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-
-            _context.Owners.Remove(owner);
+            owner.IsDelete = true;
+            _context.Owners.Update(owner);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Delete success");
         }
 
         private bool OwnerExists(int id)

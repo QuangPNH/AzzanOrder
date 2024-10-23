@@ -8,6 +8,7 @@ namespace AzzanOrder.Data.Models
         public Owner()
         {
             Abouts = new HashSet<About>();
+            Employees = new HashSet<Employee>();
         }
 
         public int OwnerId { get; set; }
@@ -18,8 +19,10 @@ namespace AzzanOrder.Data.Models
         public DateTime? BirthDate { get; set; }
         public int? BankId { get; set; }
         public string? Image { get; set; }
+        public bool? IsDelete { get; set; }
 
         public virtual Bank? Bank { get; set; }
         public virtual ICollection<About> Abouts { get; set; }
+        public virtual ICollection<Employee> Employees { get; set; }
     }
 }

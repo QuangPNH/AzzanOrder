@@ -1,52 +1,60 @@
 ﻿import React, { useState } from 'react';
 import InputField from "./InputField";
 import Button from "./Button";
+import SignUpPage from "../SignUpPage";
 
+function LoginWidget({ title, icon, placeholder, buttonText, onCheck }) {
+    const [phoneNumber, setPhoneNumber] = useState('');
+    const [isPopupOpen, setIsPopupOpen] = useState(false);
 
-function LoginWidget({ title, icon, placeholder, buttonText }) {
+    const handlePhoneNumberChange = (event) => {
+        setPhoneNumber(event.target.value);
+    };
 
-  const [phoneNumber, setPhoneNumber] = useState('');
-  let memberInfo;
+    const handleSubmit = async (event) => {
+        event.preventDefault();
+        try {
+            let response = await fetch(`https://localhost:7183/api/Member/Phone/${phoneNumber}`);
+            if (response.ok) {
+                const memberInfo = await response.json();
+                setCookie('memberInfo', JSON.stringify(memberInfo), 100);
+                window.location.href = '';
+            } else if (response.status === 404) {
+                const result = 'fail';
+                onCheck(result);
+            }
+        } catch (error) {
+            console.error('An error occurred:', error);
+        }
+    };
 
-  const handlePhoneNumberChange = (event) => {
-    setPhoneNumber(event.target.value);
-  };
+    const handleClosePopup = () => {
+        setIsPopupOpen(false);
+    };
 
-  const handleSubmit = async (event) => {
-    event.preventDefault();
-    try {
-      let response = await fetch(`https://localhost:7183/api/Member/Phone/${phoneNumber}`);
-      if (response.ok) {
-        memberInfo = await response.json();
-        //sessionStorage.setItem('memberInfo', JSON.stringify(memberInfo));
-        console.log('yeeeee ' + memberInfo.phone);
-        setCookie('memberInfo', JSON.stringify(memberInfo), 100);
-        console.log('mao' + JSON.parse(getCookie('memberInfo')).phone);
-        window.location.href = '';
-      } else {
-        console.error('Nah not logged inn never');
-      }
-    } catch (error) {
-      console.error('An error occurred:', error);
-    }
-  };
     return (
         <>
             <section className="login-widget">
                 <form className="login-form" onSubmit={handleSubmit}>
                     <h2 className="register-title">{title}</h2>
-                    <InputField value={phoneNumber} onChange={handlePhoneNumberChange}
+                    <InputField
+                        value={phoneNumber}
+                        onChange={handlePhoneNumberChange}
                         icon={icon}
-                        placeholder={placeholder}/>
+                        placeholder={placeholder}
+                    />
                     <Button type="submit" text={buttonText} />
                 </form>
             </section>
+            {isPopupOpen && (
+                <SignUpPage isOpen={isPopupOpen} handleClosePopup={handleClosePopup} />
+            )}
             <style jsx>{`
         .login-widget {
           border-radius: 0;
           display: flex;
           max-width: 328px;
-          flex-direction: column;
+          flex-direction: row-reverse;
           font-family: Inter, sans-serif;
           color: #000;
         }
@@ -70,17 +78,9 @@ function LoginWidget({ title, icon, placeholder, buttonText }) {
     );
 }
 
-
 function setCookie(name, value, days) {
-  const expires = new Date(Date.now() + days * 864e5).toUTCString(); // Calculate expiration date
-  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; // Set cookie
+    const expires = new Date(Date.now() + days * 864e5).toUTCString(); // Calculate expiration date
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; // Set cookie
 }
-
-function getCookie(name) {
-  const value = `; ${document.cookie}`; // Add a leading semicolon for easier parsing
-  const parts = value.split(`; ${name}=`); // Split the cookie string to find the desired cookie
-  if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift()); // Return the cookie value
-}
-
 
 export default LoginWidget;

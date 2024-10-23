@@ -11,6 +11,7 @@ import About from "./components/AboutUsPage"
 import Feedback from "./components/Feedback"
 import Voucher from "./components/VoucherScreen"
 import Order from "./components/OrderTrackScreen"
+import Profile from "./components/MemberProfile"
 
 // 2. Define your routes
 const router = createBrowserRouter([
@@ -37,6 +38,10 @@ const router = createBrowserRouter([
     {
         path: "order",
         element: <Order />,
+    },
+    {
+        path: "profile",
+        element: <Profile />,
     },
 ]);
 

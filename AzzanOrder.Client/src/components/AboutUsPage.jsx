@@ -39,7 +39,6 @@ const Homepage = () => {
     return (
         <>
             <Header />
-            <Banner />
             <div>
                 <AboutUs aboutUsData={aboutUsData} />
             </div>

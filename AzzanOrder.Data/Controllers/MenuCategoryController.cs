@@ -124,7 +124,7 @@ namespace AzzanOrder.Data.Controllers
             _context.MenuCategories.Remove(menuC);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Delete success");
         }
 
         private bool MenuCategoryExists(MenuCategoryDTO menuCategory)

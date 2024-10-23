@@ -19,8 +19,6 @@ const Footer = () => {
         },
     ];
 
-    const linkItems = ["About us", "Contact"];
-
     return (
         <footer className="footer">
             <div className="footer-content">
@@ -33,7 +31,6 @@ const Footer = () => {
                     alt="Company logo"
                     className="company-logo"
                 />
-                <FooterLinks title="Information" items={linkItems} />
             </div>
             <Copyright />
             <style jsx>{`

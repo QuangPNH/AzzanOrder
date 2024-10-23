@@ -100,7 +100,7 @@ namespace AzzanOrder.Data.Controllers
         }
 
         // DELETE: api/Vouchers/5
-        [HttpDelete("Delete")]
+        [HttpDelete("Delete/Voucher")]
         public async Task<IActionResult> DeleteVoucher([Bind("VoucherDetailId", "ItemCategoryId")] VoucherDTO voucher)
         {
             if (_context.Vouchers == null)
