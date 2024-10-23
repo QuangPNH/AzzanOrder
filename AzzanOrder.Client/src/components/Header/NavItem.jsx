@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
-
+import Modal from 'react-modal';
 import LoginPage from '../../components/Account/LoginPage';
 import SignUpPage from '../../components/Account/SignUpPage';
 import LogoutPage from '../Account/LogoutPage';

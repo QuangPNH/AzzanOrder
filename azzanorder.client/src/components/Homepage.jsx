@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
-
+import { useLocation } from "react-router-dom";
 
 /*
     **import biến PriceCalculator từ file PriceCalculator
@@ -14,13 +14,14 @@ import { getCookie } from './Account/SignUpForm/Validate';
 
     // Rest of the code...
 import Cart from './Cart';
+import { del } from 'framer-motion/client';
 
 const Homepage = () => {
     const [menuItems, setMenuItems] = useState([]);
     const [recentMenuItems, setRecentMenuItems] = useState([]);
     const [showRecentlyOrdered, setShowRecentlyOrdered] = useState(false);
-    const [tableId, setTableId] = useState(null);
-
+    const search = useLocation().search;
+    const id=new URLSearchParams(search).get("tableid");
 
     useEffect(() => {
         fetchMenuItems();
@@ -28,12 +29,9 @@ const Homepage = () => {
             fetchRecentMenuItems(JSON.parse(getCookie('memberInfo')).memberId);
             setShowRecentlyOrdered(true);
         }
-        const queryParams = new URLSearchParams(window.location.search);
-        const tableIdParam = queryParams.get('tableid');
-        setTableId(tableIdParam);
-        deleteCookie('tableId');
-        setCookie('tableId', {tableId}, 100);
-        console.log(getCookie('tableId'));
+        deleteCookie('tableid');
+        setCookie('tableId',id,1);
+        
     }, []);
 
     const fetchMenuItems = async () => {
@@ -156,12 +154,8 @@ function setCookie(name, value, days) {
     const expires = new Date(Date.now() + days * 864e5).toUTCString(); // Calculate expiration date
     document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; // Set cookie
   }
-  
-  function getCookie(name) {
-    const value = `; ${document.cookie}`; // Add a leading semicolon for easier parsing
-    const parts = value.split(`; ${name}=`); // Split the cookie string to find the desired cookie
-    if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift()); // Return the cookie value
-  }
+
+
 
   function deleteCookie(name) {
     setCookie(name, '', -1); // Call setCookie with negative days to delete
