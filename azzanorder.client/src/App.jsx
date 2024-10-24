@@ -9,7 +9,7 @@ import React from 'react';
 import Homepage from './components/Homepage';
 import LoginPage from './components/Account/LoginPage';
 import Cart from './components/Cart';
-
+import VoucherScreen from './components/VoucherScreen';
 
 
 function App() {
@@ -17,7 +17,7 @@ function App() {
 
     return (
         <div className="App">
-            <Homepage />
+            <VoucherScreen />
 
             <CartButton />
         </div>

@@ -12,6 +12,7 @@ const MemberProfile = () => {
     const [birthday, setBirthday] = useState('07-09-2002');
     const [gender, setGender] = useState('M');
     const [address, setAddress] = useState('123 Hoang Quoc Viet');
+    const [point, setPoint] =useState('30000');
 
     // Avatar image URL
     const avatarUrl = "https://cdn.builder.io/api/v1/image/assets/TEMP/af073c35b1871015eb287de06ef4feda70cb6aec68d5d06202816f3a08d59e32?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533";
@@ -31,6 +32,7 @@ const MemberProfile = () => {
                     <DetailInfo title="Birthday" memberDetail={birthday} setMemberDetail={setBirthday} />
                     <DetailInfo title="Gender" memberDetail={gender} setMemberDetail={setGender} />
                     <DetailInfo title="Address" memberDetail={address} setMemberDetail={setAddress} />
+                    <DetailInfo title="Point" memberDetail={point} setMemberDetail={setPoint}/>
                 </div>
 
                 <div className="button-container">

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AzzanOrder.Data.Models;
+using System.Collections;
 
 namespace AzzanOrder.Data.Controllers
 {
@@ -38,13 +39,17 @@ namespace AzzanOrder.Data.Controllers
 
         // GET: api/ItemCategory/5
         [HttpGet("{id}")]
-        public async Task<ActionResult<ItemCategory>> GetItemCategory(int id)
+        public async Task<ActionResult<IEnumerable>> GetItemCategory(int id)
         {
           if (_context.ItemCategories == null)
           {
               return NotFound();
           }
-            var itemCategory = await _context.ItemCategories.FindAsync(id);
+            if(id == 0)
+            {
+                return await _context.ItemCategories.ToListAsync();
+            }
+            var itemCategory = await _context.ItemCategories.Where(ic=>ic.ItemCategoryId == id).ToListAsync();
 
             if (itemCategory == null)
             {
