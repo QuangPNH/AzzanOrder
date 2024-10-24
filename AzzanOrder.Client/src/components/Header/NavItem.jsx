@@ -1,8 +1,11 @@
 ﻿import React, { useState, useEffect } from 'react';
-
+import Modal from 'react-modal';
 import LoginPage from '../../components/Account/LoginPage';
 import SignUpPage from '../../components/Account/SignUpPage';
 import LogoutPage from '../Account/LogoutPage';
+
+// Set the app element to avoid accessibility warnings in react-modal
+Modal.setAppElement('#root');
 
 const NavItem = () => {
 
@@ -119,20 +122,18 @@ const NavItem = () => {
 };
 
 function setCookie(name, value, days) {
-  const expires = new Date(Date.now() + days * 864e5).toUTCString(); // Calculate expiration date
-  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; // Set cookie
+  const expires = new Date(Date.now() + days * 864e5).toUTCString();
+  document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
 }
 
 function getCookie(name) {
-  const value = `; ${document.cookie}`; // Add a leading semicolon for easier parsing
-  const parts = value.split(`; ${name}=`); // Split the cookie string to find the desired cookie
-  if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift()); // Return the cookie value
+  const value = `; ${document.cookie}`;
+  const parts = value.split(`; ${name}=`);
+  if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
 }
 
 function clearCookie(name) {
-  // Set the cookie's expiration to a time in the past to delete it
-  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`; // Clear cookie by setting the date to the past
+  document.cookie = `${name}=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/`;
 }
-
 
 export default NavItem;

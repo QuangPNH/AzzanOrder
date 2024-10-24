@@ -49,6 +49,23 @@ namespace AzzanOrder.Data.Controllers
             return notification;
         }
 
+        [HttpGet("Member/{id}")]
+        public async Task<ActionResult<IEnumerable<Notification>>> GetNotificationByMember(int id)
+        {
+            if (_context.Notifications == null)
+            {
+                return NotFound();
+            }
+            var notification = await _context.Notifications.Where(x => x.MemberId == id).ToListAsync();
+
+            if (notification == null)
+            {
+                return NotFound();
+            }
+
+            return notification;
+        }
+
         // PUT: api/Notification/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("Update")]

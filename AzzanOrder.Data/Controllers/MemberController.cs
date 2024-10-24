@@ -146,11 +146,6 @@ namespace AzzanOrder.Data.Controllers
         [HttpPut("Update")]
         public async Task<IActionResult> PutMember(Member member)
         {
-            if (MemberExists(member.MemberId))
-            {
-                return BadRequest();
-            }
-
             _context.Entry(member).State = EntityState.Modified;
 
             try
@@ -207,6 +202,18 @@ namespace AzzanOrder.Data.Controllers
             return Ok("Delete success");
         }
 
+        [HttpPut("ImageAdd/{id}")]
+        public async Task<IActionResult> PutImage(int id,[FromBody] string img)
+        {
+            var member = await _context.Members.FindAsync(id);
+            if (member == null)
+            {
+                return NotFound();
+            }
+            member.Image = img;
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
         private bool MemberExists(int id)
         {
             return (_context.Members?.Any(e => e.MemberId == id)).GetValueOrDefault();

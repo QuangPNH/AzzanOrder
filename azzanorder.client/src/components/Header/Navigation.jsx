@@ -2,11 +2,23 @@ import React, { useState, useEffect } from 'react';
 import { getCookie } from '../Account/SignUpForm/Validate';
 import LoginPage from '../Account/LoginPage';
 
-const Navigation = ({ toggleNavbar }) => {
+const fetchData = async (phoneNumber, setImage, setNavItems, navItems) => {
+    try {
+        const response = await fetch(`https://localhost:7183/api/Member/Phone/${phoneNumber}`);
+        const data = await response.json();
+        setImage(data.image);
+        const updatedNavItems = [...navItems];
+        updatedNavItems[0].src = data.image;
+        setNavItems(updatedNavItems);
+    } catch (error) {
+        console.error('Error fetching member info:', error);
+    }
+};
 
+const Navigation = ({ toggleNavbar }) => {
+    const [image, setImage] = useState(undefined);
     const [showProfile, setShowProfile] = useState(false);
     const [showLogin, setShowLogin] = useState(false);
-
     const [navItems, setNavItems] = useState([
         {
             src: "https://cdn.builder.io/api/v1/image/assets/TEMP/aae56868fdcb862e605ea9a58584175c78f8bec2f1376557a9d660d8863bf323?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8",
@@ -22,11 +34,10 @@ const Navigation = ({ toggleNavbar }) => {
     useEffect(() => {
         if (getCookie('memberInfo') != null) {
             setShowProfile(true);
-            const updatedNavItems = [...navItems];
-            updatedNavItems[0].src = JSON.parse(getCookie('memberInfo')).image;
-            setNavItems(updatedNavItems);
+            const phoneNumber = JSON.parse(getCookie('memberInfo')).phone;
+            fetchData(phoneNumber, setImage, setNavItems, navItems);
         }
-    }, []);
+    }, [image]);
 
     const handleProfileClick = () => {
         window.location.href = '/profile';

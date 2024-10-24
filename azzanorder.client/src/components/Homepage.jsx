@@ -1,5 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
-
+import { useLocation } from "react-router-dom";
 
 /*
     **import biến PriceCalculator từ file PriceCalculator
@@ -9,16 +9,21 @@ import Footer from '../components/Footer/Footer';
 import Header from '../components/Header/Header';
 import ShowMoreLink from './ShowMoreLink/ShowMoreLink';
 import ProductCard from './ProductCard/ProductCard';
-import HomeItem from './HomeItem/HomeItem';
+import Navbar from './HomeItem/Navbar';
+import Frame from './HomeItem/Frame';
 import { getCookie } from './Account/SignUpForm/Validate';
 
     // Rest of the code...
 import Cart from './Cart';
+import { del } from 'framer-motion/client';
+import Banner from './HomeItem/Banner';
 
 const Homepage = () => {
     const [menuItems, setMenuItems] = useState([]);
     const [recentMenuItems, setRecentMenuItems] = useState([]);
     const [showRecentlyOrdered, setShowRecentlyOrdered] = useState(false);
+    const search = useLocation().search;
+    const id=new URLSearchParams(search).get("tableqr");
 
     useEffect(() => {
         fetchMenuItems();
@@ -26,11 +31,15 @@ const Homepage = () => {
             fetchRecentMenuItems(JSON.parse(getCookie('memberInfo')).memberId);
             setShowRecentlyOrdered(true);
         }
+        deleteCookie('tableqr');
+        setCookie('tableqr',id,1);
+        console.log(id);
+        
     }, []);
 
     const fetchMenuItems = async () => {
         try {
-            const response = await fetch('https://localhost:7183/api/MenuItem');
+            const response = await fetch('https://localhost:7183/api/MenuItem/top4');
             const data = await response.json();
             setMenuItems(data);
         } catch (error) {
@@ -52,7 +61,9 @@ const Homepage = () => {
         <>
             <Header />
             <div className="page-container">
-                <div><HomeItem /></div>
+                <Navbar />
+                <ShowMoreLink title="LIMITED COMBO" />
+                <Frame />
                 <div>
                     {showRecentlyOrdered && (
                         <div>
@@ -71,6 +82,7 @@ const Homepage = () => {
                             </div>
                         </div>
                     )}
+                    
                     <ShowMoreLink title="HOT ITEMS" />
                     <div className='product-grid'>
                         {menuItems.map((menuItem) => (
@@ -84,8 +96,8 @@ const Homepage = () => {
                             />
                         ))}
                     </div>
+                    <Banner />
                 </div>
-                
                 <style jsx>{`
                 .page-container {
                     display: flex;
@@ -142,5 +154,17 @@ const Homepage = () => {
         //<MenuMainPage />
     );
 };
+
+
+function setCookie(name, value, days) {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString(); // Calculate expiration date
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; // Set cookie
+  }
+
+
+
+  function deleteCookie(name) {
+    setCookie(name, '', -1); // Call setCookie with negative days to delete
+  }
 
 export default Homepage;

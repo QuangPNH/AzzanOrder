@@ -148,5 +148,18 @@ namespace AzzanOrder.Data.Controllers
 
 			return Ok(promotions);
 		}
+
+        [HttpPut("ImageAdd/{id}")]
+        public async Task<IActionResult> PutImage(int id,[FromBody] string img)
+        {
+            var member = await _context.Promotions.FindAsync(id);
+            if (member == null)
+            {
+                return NotFound();
+            }
+            member.Image = img;
+            await _context.SaveChangesAsync();
+            return Ok();
+        }
     }
 }

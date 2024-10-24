@@ -49,6 +49,19 @@ namespace AzzanOrder.Data.Controllers
             return feedback;
         }
 
+        [HttpGet("ByMemberId/{id}")]
+        public async Task<ActionResult<Feedback>> GetFeedbackByMember(int id)
+        {
+            var feedback = await _context.Feedbacks.Where(x => x.MemberId == id).FirstOrDefaultAsync();
+
+            if (feedback == null)
+            {
+                return NotFound();
+            }
+
+            return feedback;
+        }
+
         // PUT: api/Feedback/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("Update")]

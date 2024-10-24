@@ -1,13 +1,13 @@
 ﻿import React from "react";
 
-function ProfileButton({ text }) {
+function ProfileButton({ text, onClick }) {
     // Calculate the width based on the text length
     const buttonWidth = `${30 + text.length * 10}px`;
 
     return (
         <>
             <div className="button-container"> {/* Added a container for the button */}
-                <button className="submit-button">{text}</button>
+                <button className="submit-button" onClick={onClick}>{text}</button>
             </div>
             <style jsx>{`
                 .button-container {

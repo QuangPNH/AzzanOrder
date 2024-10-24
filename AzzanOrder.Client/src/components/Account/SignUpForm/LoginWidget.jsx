@@ -17,6 +17,7 @@ function LoginWidget({ title, icon, placeholder, buttonText, onCheck }) {
             let response = await fetch(`https://localhost:7183/api/Member/Phone/${phoneNumber}`);
             if (response.ok) {
                 const memberInfo = await response.json();
+                memberInfo.image = "null";
                 setCookie('memberInfo', JSON.stringify(memberInfo), 100);
                 window.location.href = '';
             } else if (response.status === 404) {
