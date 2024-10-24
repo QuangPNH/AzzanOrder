@@ -3,17 +3,14 @@ import Footer from '../components/Footer/Footer';
 import Header from '../components/Header/Header';
 import Dropdown from './Dropdown/Dropdown';
 import ProductSale from './Voucher/VoucherDetail/ProductSale';
-import Category from './Voucher/Category';
 import PointsDisplay from './Voucher/PointDisplay';
 import VoucherList from './Voucher/VoucherList';
-import ShowMoreLink from './ShowMoreLink/ShowMoreLink';
 
 const VoucherScreen = () => {
     const [vouchers, setVouchers] = useState([]);
     const [point, setPoint] = useState(false);
     const [categories, setCategories] = useState([]);
-    const categoryRefs = useRef({});
-    const [memberVouchers, setMemberVouchers] = useState([false]);
+    const [memberVouchers, setMemberVouchers] = useState(false);
     useEffect(() => {
         fetchVouchers();
         fetchCategories();
@@ -21,7 +18,7 @@ const VoucherScreen = () => {
             fetchMembers(JSON.parse(getCookie('memberInfo')).memberId);
             fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId);
             setPoint(true);
-            setMemberVouchers([true]);
+            setMemberVouchers(true);
         }
     }, []);
     const fetchMemberVouchers = async (memberId) => {
@@ -36,9 +33,10 @@ const VoucherScreen = () => {
 
     const fetchVouchers = async (category = '') => {
         try {
-            const response = category == '' ? await fetch(`https://localhost:7183/api/VoucherDetail`) : await fetch(`https://localhost:7183/api/VoucherDetail/categoryId?categoryId=${category.id}`);
+            const response = category == '' ? await fetch(`https://localhost:7183/api/VoucherDetail`) : await fetch(`https://localhost:7183/api/VoucherDetail/categoryId?categoryId=${category}`);
             const data = await response.json();
             setVouchers(data);
+            console.log(category);
         } catch (error) {
             console.error('Error fetching menu items:', error);
         }
@@ -65,9 +63,7 @@ const VoucherScreen = () => {
     };
 
     const handleDropdownChange = (selectedCategory) => {
-        if (categoryRefs.current[selectedCategory]) {
-            categoryRefs.current[selectedCategory].scrollIntoView({ behavior: 'smooth' });
-        }
+        fetchVouchers(selectedCategory);
     };
 
     return (
@@ -78,12 +74,10 @@ const VoucherScreen = () => {
                 {point && (
                     <div>
                         <div className='product-grid'>
-                            {point => (
-                                <PointsDisplay
-                                    key={point.id}
-                                    points={point.point}
-                                />
-                            )}
+                            <PointsDisplay
+                                key={point.id}
+                                points={point.point}
+                            />
                         </div>
                     </div>
                 )}
@@ -108,9 +102,7 @@ const VoucherScreen = () => {
                     options={categories.map(category => category.description)}
                     onClick2={handleDropdownChange}
                     onChange={handleDropdownChange} />
-                {categories.map((category) => (
-                    <div key={category.description} ref={el => categoryRefs.current[category.description] = el}>
-                        <ShowMoreLink title={category.description} />
+                
                         {vouchers && (
                             <div className="product-sale-container">
                                 {vouchers.map((voucher) => (
@@ -126,8 +118,7 @@ const VoucherScreen = () => {
                             </div>
                         )}
                     </div>
-                ))}
-            </div>
+       
 
 
             <style jsx>{`
