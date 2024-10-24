@@ -1,7 +1,29 @@
-﻿import React from 'react';
+﻿import React, { useState, useEffect } from 'react';
+
+
+
 
 const SaleContent = ({ saleAmount, price, infiniteUses, useCount }) => {
+    const [vouchers, setVouchers] = useState([]);
+
+    useEffect(() => {voucherDetails();}, []);
+    const voucherDetails = async () => {
+    try {
+        const response = await fetch('https://localhost:7183/api/VoucherDetail');
+        const data = await response.json();
+        setVouchers(data);
+    } catch (error) {
+        console.error('Error fetching menu items:', error);
+    }
+};
+// return (
+//     <div>
+//         <h1>Voucher List</h1>
+        
+//     </div>
+// );
     return (
+        
         <section className="sale-content">
             <div className="sale-info">
                 <div className="sale-percentage">Sale <span className="discount">{saleAmount}%</span></div>

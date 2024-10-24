@@ -1,6 +1,7 @@
-﻿import React from 'react';
+﻿import React, { useState, useEffect } from 'react';
 import SaleHeader from './SaleHeader';
 import SaleContent from './SaleContent';
+import Category from '../Category';
 
 // Utility function to format date to MM/DD
 const formatDate = (dateString) => {
@@ -12,10 +13,22 @@ const formatDate = (dateString) => {
 
 const ProductSale = ({ saleAmount, endDate, price, infiniteUses, useCount }) => {
     const formattedEndDate = formatDate(endDate);  // Format the date
-
+//     const [category, setCategory] = useState([]);
+//     useEffect(() => {
+//         fetchCategory();
+// });
+// const fetchCategory = async () => {
+//     try {
+//         const response = await fetch(`https://localhost:7183/api/Category/${CategoryId}`);
+//         const data = await response.json();
+//         setCategory(data);
+//     } catch (error) {
+//         console.error('Error fetching menu items:', error);
+//     }
+// };
     return (
         <div className="product-sale">
-            <SaleHeader endDate={formattedEndDate} />
+            <SaleHeader endDate={formattedEndDate}/>
             <SaleContent saleAmount={saleAmount} price={price} infiniteUses={infiniteUses} useCount={useCount} />
             <style jsx>{`
                 .product-sale {

@@ -8,6 +8,7 @@ namespace AzzanOrder.Data.Models
         public Member()
         {
             Feedbacks = new HashSet<Feedback>();
+            MemberVouchers = new HashSet<MemberVoucher>();
             Notifications = new HashSet<Notification>();
             Orders = new HashSet<Order>();
         }
@@ -24,6 +25,7 @@ namespace AzzanOrder.Data.Models
         public bool? IsDelete { get; set; }
 
         public virtual ICollection<Feedback> Feedbacks { get; set; }
+        public virtual ICollection<MemberVoucher> MemberVouchers { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<Order> Orders { get; set; }
     }

@@ -30,7 +30,21 @@ namespace AzzanOrder.Data.Controllers
             }
             return await _context.VoucherDetails.ToListAsync();
         }
+        [HttpGet("categoryId")]
+        public async Task<ActionResult> GetVoucherDetailByCategory(int categoryId)
+        {
+            if (_context.VoucherDetails == null)
+            { 
+                return NotFound(); 
+            }
+            var voucherDetails = _context.Vouchers
+    .Where(v => v.ItemCategoryId == categoryId && v.IsActive == true)  // L?c theo categoryId và IsActive
+    .Select(v => v.VoucherDetail)
+    .ToList();
 
+
+            return Ok(voucherDetails);
+        }
         // GET: api/VoucherDetail/5
         [HttpGet("{id}")]
         public async Task<ActionResult<VoucherDetail>> GetVoucherDetail(int id)
@@ -91,7 +105,7 @@ namespace AzzanOrder.Data.Controllers
             _context.VoucherDetails.Add(vd);
             await _context.SaveChangesAsync();
 
-            
+
             return CreatedAtAction("GetVoucherDetail", new { id = vd.VoucherDetailId }, vd);
         }
 

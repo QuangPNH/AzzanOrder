@@ -116,7 +116,7 @@ namespace AzzanOrder.Data.Controllers
                     Phone = phone,
                     MemberName = new string(numbers)
                 };
-
+                
                 //var accountSid = "ACd5083d30edb839433981a766a0c2e2fd";
                 //var authToken = "00867f56a886a975463d3ec7941061";
                 //TwilioClient.Init(accountSid, authToken);

@@ -1,10 +1,34 @@
-﻿import React from 'react';
+﻿import React, { useState, useEffect } from 'react';
 
 const Category = () => {
+    // const [category, setCategorys] = useState([]);
+    // useEffect(() => {
+    //     fetchCategorys();
+    // });
+    // const fetchCategorys = async () => {
+    //     try {
+    //         const response = await fetch(`https://localhost:7183/api/Category/${CategoryId}`);
+    //         const data = await response.json();
+    //         setCategorys(data);
+    //     } catch (error) {
+    //         console.error('Error fetching menu items:', error);
+    //     }
+    // };
     return (
         <>
             <div className="category">
-                <div className="category-title">Category</div>
+                
+                {/* {ponit && ( */}
+                    <div>
+                        <div className="category-title">Category</div>
+                            {/* {ponit.map((m) => (
+                                <Category
+                                    key={m.id}
+                                    points={m.title}
+                                />
+                            ))} */}
+                    </div>
+                {/* )} */}
             </div>
             <style jsx>{`
                 .category {

@@ -1,10 +1,10 @@
 ﻿import React from 'react';
 
-const SaleHeader = ({ endDate }) => {
+const SaleHeader = ({category, endDate }) => {
     return (
         <div className="sale-header">
             <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/46e20667afa9d08fbd38cb9448d5e29e3e5cd42b24c7ba3407f78bffb5babf1d?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" alt="Sale banner" className="sale-banner" />
-            <div className="sale-title">All<br />Products</div>
+            <div className="sale-title">{category}</div>
             <div className="sale-end-date">
                 <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/c567125b1e63313ad4d2fcb6e291b8566bafd451b0848750569e09708aeea750?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" alt="Calendar icon" className="calendar-icon" />
                 <p>End: {endDate}</p> {/* Dynamic End Date */}

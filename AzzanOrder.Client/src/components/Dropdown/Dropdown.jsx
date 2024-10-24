@@ -34,7 +34,7 @@ const Dropdown = ({ options, onChange, onClick}) => {
     const handleSelectItem = (item) => {
         setSelectedItem(item);
         setIsExpanded(false);
-        onChange(item.description);
+        onChange(item.itemCategoryId);
     };
 
 

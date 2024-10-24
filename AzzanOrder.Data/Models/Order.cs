@@ -7,6 +7,7 @@ namespace AzzanOrder.Data.Models
     {
         public Order()
         {
+            MemberVouchers = new HashSet<MemberVoucher>();
             OrderDetails = new HashSet<OrderDetail>();
         }
 
@@ -21,6 +22,7 @@ namespace AzzanOrder.Data.Models
 
         public virtual Member? Member { get; set; }
         public virtual Table? Table { get; set; }
+        public virtual ICollection<MemberVoucher> MemberVouchers { get; set; }
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }
 }
