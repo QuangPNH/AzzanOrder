@@ -1,6 +1,6 @@
 import React, { useState } from "react";
 
-const PlaceOrderButton = ({ accountNo, accountName, acqId, addInfo, amount }) => {
+const PlaceOrderButton = ({ addInfo, amount }) => {
   const [qrDataURL, setQRDataURL] = useState(null);
   const [error, setError] = useState(null);
 

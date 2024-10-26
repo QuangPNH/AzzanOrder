@@ -1,7 +1,4 @@
 ﻿import React, { useState, useEffect } from 'react';
-
-import Footer from '../components/Footer/Footer';
-import Header from '../components/Header/Header';
 import TopBar from './MenuDetail/TopBar';
 import ProductCardSingle from './MenuDetail/ProductCardSingle';
 import AmountBar from './MenuDetail/AmountBar';
@@ -11,14 +8,18 @@ import Description from './MenuDetail/Description';
 import CustomItem from './MenuDetail/CustomItem';
 import ShowMoreLink from './ShowMoreLink/ShowMoreLink';
 import ProductCard from './ProductCard/ProductCard';
+import { getCookie, setCookie } from './Account/SignUpForm/Validate';
+import { generateRandomKey } from './ProductCard/ProductCard';
 
 const ItemDetail = ({ closeModal, imageSrc, title, price, cate, desc }) => {
-
-    const [products, setProducts] = useState([]); // Initialize products state as an empty array
-    const [toppings, setToppings] = useState([]); // Initialize toppings state as an empty array
+    const [products, setProducts] = useState([]);
+    const [toppings, setToppings] = useState([]);
+    const [selectedSugar, setSelectedSugar] = useState('50');
+    const [selectedIce, setSelectedIce] = useState('50');
+    const [currentQuantity, setCurrentQuantity] = useState(1);
 
     useEffect(() => {
-        fetchProducts({cate});
+        fetchProducts({ cate });
         fetchToppings();
     }, []);
 
@@ -42,24 +43,69 @@ const ItemDetail = ({ closeModal, imageSrc, title, price, cate, desc }) => {
             console.error('Error fetching toppings:', error);
         }
     };
-   
+
+    // Remove anything before the first "/" and the "/" itself
+    const modifiedDesc = desc.includes('/') ? desc.split('/').slice(1).join('/') : desc;
+
+    const formattedOptions = {
+        selectedSugar,
+        selectedIce
+    };
+
+    const handleAddToCart = () => {
+        const storedData = getCookie('cartData');
+        let parsedData = [];
+        if (storedData) {
+            parsedData = JSON.parse(storedData);
+        }
+
+        const existingItemIndex = parsedData.findIndex(item =>
+            item.name === title &&
+            item.options.selectedSugar === selectedSugar &&
+            item.options.selectedIce === selectedIce
+        );
+
+        if (existingItemIndex !== -1) {
+            // Item exists, increase quantity
+            parsedData[existingItemIndex].quantity += currentQuantity;
+        } else {
+            // Item does not exist, add new item
+            const newItem = {
+                key: generateRandomKey(5),
+                name: title,
+                options: formattedOptions,
+                price: price,
+                quantity: currentQuantity
+            };
+            parsedData.push(newItem);
+        }
+
+        setCookie("cartData", JSON.stringify(parsedData), 7);
+    };
+
     return (
         <>
             <TopBar closeModal={closeModal} />
             <ProductCardSingle
                 imageSrc={imageSrc}
                 name={title}
-                price={price} />
+                price={price}
+                onQuantityChange={setCurrentQuantity}
+            />
 
-            <div>
-                <CustomItem title="Lượng đường:" />
-                <AmountBar />
-            </div>
+            {desc.includes('drink') && (
+                <>
+                    <div>
+                        <CustomItem title="Lượng đường:" />
+                        <AmountBar selectedValue={selectedSugar} onStepClick={setSelectedSugar} />
+                    </div>
 
-            <div>
-                <CustomItem title="Lượng đá:" />
-                <AmountBar />
-            </div>
+                    <div>
+                        <CustomItem title="Lượng đá:" />
+                        <AmountBar selectedValue={selectedIce} onStepClick={setSelectedIce} />
+                    </div>
+                </>
+            )}
 
             <div>
                 <CustomItem title="Toppings:" />
@@ -73,8 +119,8 @@ const ItemDetail = ({ closeModal, imageSrc, title, price, cate, desc }) => {
                 ))}
             </div>
 
-            <AddToCartButton />
-            <Description content={desc} />
+            <AddToCartButton onClick={handleAddToCart} />
+            <Description content={modifiedDesc} />
 
             <div>
                 <ShowMoreLink title='RELATED PRODUCTS' />

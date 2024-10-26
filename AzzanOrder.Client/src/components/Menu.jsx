@@ -54,10 +54,10 @@ const Homepage = () => {
         <>
             <Header />
             <Dropdown
-                options={categories.map(category => category.description)}
+                options={categories?.map(category => category.description)}
                 onClick2={handleDropdownChange}
                 onChange={handleDropdownChange} />
-            {categories.map((category) => (
+            {categories?.map((category) => (
                 <div key={category.description} ref={el => categoryRefs.current[category.description] = el}>
                     <ShowMoreLink title={category.description}/>
                     <div className='product-grid'>

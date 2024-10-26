@@ -1,88 +1,58 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import PriceItem from './PriceItem';
-import TotalPrice from './TotalPrice';
 import PlaceOrderButton from './PlaceOrderButton';
 
-const PriceCalculator = () => {
-  const cartData = JSON.parse(sessionStorage.getItem("cartData")) || [];
-  const [trueTotalPrice, setTrueTotalPrice] = useState(0);
+const PriceCalculator = ({ totalPrice }) => {
+    const cartData = JSON.parse(sessionStorage.getItem("cartData")) || [];
+    const [trueTotalPrice, setTrueTotalPrice] = useState(totalPrice);
 
-  const calculateTotal = () => {
-    let total = 0;
-    cartData.forEach((item) => {
-      total += item.price * item.quantity;
-    });
-    return total;
-  };
+    useEffect(() => {
+        setTrueTotalPrice(totalPrice);
+    }, [totalPrice]);
 
-  const getFormattedCartData = () => {
-    const formattedList = cartData.map((item) => {
-      if (item.label) {
-        return item.label.replace(/ /g, "_");
-      }
-      return "";
-    });
-    return formattedList;
-  };
+    const getFormattedCartData = () => {
+        const formattedList = cartData.map((item) => {
+            if (item.label) {
+                return item.label.replace(/ /g, "_");
+            }
+            return "";
+        });
+        return formattedList;
+    };
 
-  const priceItems = [
-    { label: "Voucher", value: "0 đ" },
-    { label: "Discount:", value: "0 đ" },
-    { label: "Total:", value: `${calculateTotal()} đ`, isTotal: true },
-    { label: "Pay in cash", value: "" },
-  ];
-
-  const handleTrueTotalPrice = (price) => {
-    setTrueTotalPrice(price);
-  };
-
-  return (
-    <section className="price-calculator">
-      <div className="price-details">
-        <div className="price-list">
-          {priceItems.map((item, index) => (
-            <PriceItem
-              key={index}
-              label={item.label}
-              value={item.value}
-              isTotal={item.isTotal}
+    return (
+        <section className="price-calculator">
+            <div className="price-details">
+                <div className="price-list">
+                    <PriceItem label="Total:" value={`${trueTotalPrice} đ`} isTotal={true} />
+                </div>
+            </div>
+            <PlaceOrderButton
+                addInfo={getFormattedCartData()}
+                amount={trueTotalPrice}
             />
-          ))}
-        </div>
-        <TotalPrice
-          finalPrice={calculateTotal()}
-          discountPrice="0"
-          onTrueTotalPrice={handleTrueTotalPrice}
-        />
-      </div>
-      <PlaceOrderButton
-        accountNo="08454845087"
-        accountName="DemoShop"
-        acqId="970432"
-        addInfo={getFormattedCartData()}
-        amount={trueTotalPrice}
-      />
-      <style jsx>{`
-        .price-calculator {
-          border-radius: 0;
-          display: flex;
-          max-width: 312px;
-          flex-direction: column;
-        }
-        .price-details {
-          display: flex;
-          gap: 20px;
-          justify-content: space-between;
-        }
-        .price-list {
-          align-self: start;
-          display: flex;
-          flex-direction: column;
-          align-items: start;
-        }
-      `}</style>
-    </section>
-  );
+            <style jsx="true">{`
+                .price-calculator {
+                    border-radius: 0;
+                    display: flex;
+                    max-width: 312px;
+                    flex-direction: column;
+                }
+                .price-details {
+                    display: flex;
+                    gap: 20px;
+                    justify-content: space-between;
+                }
+                .price-list {
+                    align-self: start;
+                    display: flex;
+                    width: 90%;
+                    flex-direction: column;
+                    align-items: start;
+                }
+            `}</style>
+        </section>
+    );
 };
 
 export default PriceCalculator;

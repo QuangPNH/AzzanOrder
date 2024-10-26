@@ -3,8 +3,9 @@ import Modal from 'react-modal';
 import Image from './Image';
 import PriceTag from './PriceTag';
 import ItemDetail from '../ItemDetail'; // Adjusted the import path
+import { getCookie, setCookie } from '../Account/SignUpForm/Validate';
 
-function generateRandomKey(length) {
+export function generateRandomKey(length) {
   const characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
   let key = '';
   for (let i = 0; i < length; i++) {
@@ -17,7 +18,7 @@ function generateRandomKey(length) {
 const ProductCard = ({ imageSrc, title, price, desc, cate }) => {
     const handleAddToCart = () => {
         console.log("Add to cart");
-        const storedData = sessionStorage.getItem('cartData');
+        const storedData = getCookie('cartData');
         let parsedData = [];
         if (storedData) {
             parsedData = JSON.parse(storedData);
@@ -25,12 +26,15 @@ const ProductCard = ({ imageSrc, title, price, desc, cate }) => {
         const newItem = {
             key: generateRandomKey(5),
             name: title,
-            options: ["Full sugar", "Full Ice"],
+            options: {
+                selectedSugar: '100',
+                selectedIce: '100'
+            },
             price: price,
             quantity: 1
         };
         parsedData.push(newItem);
-        sessionStorage.setItem('cartData', JSON.stringify(parsedData));
+        setCookie("cartData", JSON.stringify(parsedData),7);
         
     };
 

@@ -31,6 +31,16 @@ namespace AzzanOrder.Data.Controllers
             return await _context.Tables.ToListAsync();
         }
 
+        [HttpGet("GetTablesByManagerId/{id}")]
+        public async Task<ActionResult<IEnumerable<Table>>> GetTablesByManagerId(int id)
+        {
+            if (_context.Tables == null)
+            {
+                return NotFound();
+            }
+            return await _context.Tables.Where(x => x.EmployeeId == 1).ToListAsync();
+        }
+
         // GET: api/Table/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Table>> GetTable(int id)

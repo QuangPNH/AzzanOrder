@@ -34,7 +34,7 @@ const NotificationPage = () => {
             <NotificationPageTitle />
 
             <div className="notification-container">
-                {notifications.map((notification, index) => (
+                {notifications?.map((notification, index) => (
                     <NotificationCard
                         key={index}
                         title={notification.title}

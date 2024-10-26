@@ -22,7 +22,7 @@ const Description = ({ content }) => {
                 }
                 .content {
                     color: rgba(0, 0, 0, 0.8);
-                    font-size: 12px;
+                    font-size: 14px;
                     font-weight: 400;
                     z-index: 10;
                     margin-top: 14px;

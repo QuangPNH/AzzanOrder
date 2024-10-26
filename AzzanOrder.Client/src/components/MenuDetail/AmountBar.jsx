@@ -1,4 +1,4 @@
-﻿import React, { useState } from 'react';
+﻿import React from 'react';
 import AmountIcon from './AmountIcon';
 
 const progressSteps = [
@@ -9,21 +9,16 @@ const progressSteps = [
     { value: '100', label: '100%' }
 ];
 
-function AmountBar() {
-    const [selectedValue, setSelectedValue] = useState('50'); // Default selected value
-
-    const handleStepClick = (value) => {
-        setSelectedValue(value); // Update the selected value when a step is clicked
-    };
-
+function AmountBar({ selectedValue, onStepClick, compact }) {
     return (
-        <section className="amount-bar">
+        <section className={`amount-bar ${compact ? 'compact' : ''}`}>
             {progressSteps.map((step) => (
                 <AmountIcon
                     key={step.value}
                     label={step.label}
                     isSelected={step.value === selectedValue} // Check if the step is selected
-                    onClick={() => handleStepClick(step.value)} // Handle click event
+                    onClick={() => onStepClick(step.value)} // Handle click event
+                    compact={compact }
                 />
             ))}
             <style jsx>{`
@@ -37,6 +32,10 @@ function AmountBar() {
                     font: 200 15px Inter, sans-serif;
                     max-width: 100%; /* Ensure it doesn't exceed the parent width */
                     overflow: hidden; /* Hide any overflow to prevent scrolling */
+                }
+                .amount-bar.compact {
+                    gap: 0px; /* Reduce space between buttons */
+                    font-size: 12px; /* Smaller font size */
                 }
             `}</style>
         </section>

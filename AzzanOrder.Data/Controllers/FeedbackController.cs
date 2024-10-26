@@ -102,6 +102,10 @@ namespace AzzanOrder.Data.Controllers
             {
                 return Problem("Entity set 'OrderingAssistSystemContext.Feedbacks'  is null.");
             }
+            if (_context.Feedbacks.Where(x => x.MemberId == feedback.MemberId).Any())
+            {
+                return BadRequest("Y");
+            }
             var f = new Feedback() { Content = feedback.Content, MemberId = feedback.MemberId };
             _context.Feedbacks.Add(f);
             await _context.SaveChangesAsync();

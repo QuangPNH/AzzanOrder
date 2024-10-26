@@ -1,9 +1,9 @@
 ﻿import React from 'react';
 
-function AmountIcon({ isSelected, label, onClick }) {
+function AmountIcon({ isSelected, label, onClick, compact }) {
     return (
         <div
-            className={`amount ${isSelected ? 'amount-selected' : 'amount-unselected'}`}
+            className={`amount ${isSelected ? 'amount-selected' : 'amount-unselected'} ${compact ? 'compact' : ''}`}
             onClick={onClick}
         >
             {label}
@@ -28,6 +28,9 @@ function AmountIcon({ isSelected, label, onClick }) {
                     font-weight: 400;
                     padding: 7px 16px;
                     border: none; /* No border for the selected step */
+                }
+                .compact{
+                    padding: 3px !important;
                 }
             `}</style>
         </div>

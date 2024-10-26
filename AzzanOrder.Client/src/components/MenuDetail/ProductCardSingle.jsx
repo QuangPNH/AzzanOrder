@@ -1,7 +1,14 @@
-﻿import React from 'react';
-import QuantityChange from './QuantityChange';
+﻿import React, { useState, useEffect, useRef } from "react";
+import QuantityControl from "../ItemInCart/QuantityControl";
 
-const ProductCardSingle = ({ imageSrc, name, price }) => {
+const ProductCardSingle = ({ imageSrc, name, price, onQuantityChange }) => {
+    const [currentQuantity, setCurrentQuantity] = useState(1);
+
+    const handleQuantityChange = (newQuantity) => {
+        setCurrentQuantity(newQuantity);
+        onQuantityChange(newQuantity); // Pass the new quantity to the parent component
+    };
+
     return (
         <div className="product-card-container">
             <img src={imageSrc} alt={`${name} product`} className="product-image" />
@@ -10,10 +17,13 @@ const ProductCardSingle = ({ imageSrc, name, price }) => {
                     <h2 className="product-name">{name}</h2>
                     <div className="price-quantity-container">
                         <p className="product-price">
-                            <span className="price-value">{price}</span>
+                            <span className="price-value">{price * currentQuantity}</span>
                             <span className="price-currency">đ</span>
                         </p>
-                        <QuantityChange />
+                        <QuantityControl
+                            quantity={currentQuantity}
+                            onQuantityChange={handleQuantityChange}
+                        />
                     </div>
                 </div>
             </div>

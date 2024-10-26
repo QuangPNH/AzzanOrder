@@ -69,7 +69,7 @@ const Homepage = () => {
                         <div>
                             <ShowMoreLink title="RECENTLY ORDERED" />
                             <div className='product-grid'>
-                                {recentMenuItems.map((menuItem) => (
+                                {recentMenuItems?.map((menuItem) => (
                                     <ProductCard
                                         key={menuItem.id}
                                         title={menuItem.itemName}
@@ -85,7 +85,7 @@ const Homepage = () => {
                     
                     <ShowMoreLink title="HOT ITEMS" />
                     <div className='product-grid'>
-                        {menuItems.map((menuItem) => (
+                        {menuItems?.map((menuItem) => (
                             <ProductCard
                                 key={menuItem.id}
                                 title={menuItem.itemName}

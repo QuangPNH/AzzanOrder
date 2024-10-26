@@ -1,9 +1,11 @@
 ﻿import React from 'react';
+import { getCookie, setCookie } from '../Account/SignUpForm/Validate';
+import { generateRandomKey } from '../ProductCard/ProductCard';
 
-const AddToCartButton = () => {
+const AddToCartButton = ({ onClick  }) => {
     return (
         <div className="button-container">
-            <button className="add-to-cart-button">
+            <button className="add-to-cart-button" onClick={onClick}>
                 <img
                     loading="lazy"
                     src="https://cdn.builder.io/api/v1/image/assets/TEMP/2ec0000c0c17b1641a0155e40b8e96b2e7f5b2f471eb8d27f08cc4a1b3f1b8af?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533"

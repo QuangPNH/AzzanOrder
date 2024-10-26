@@ -34,8 +34,8 @@ const FeedbackScreen = () => {
 
     const handleSave = async () => {
         try {
-            const method = feedback?.id ? 'PUT' : 'POST';
-            const url = feedback?.id
+            const method = feedback?.memberId ? 'PUT' : 'POST';
+            const url = feedback?.memberId
                 ? 'https://localhost:7183/api/Feedback/Update'
                 : 'https://localhost:7183/api/Feedback/Add';
 

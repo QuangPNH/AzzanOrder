@@ -25,7 +25,7 @@ const Banner = () => {
         <>
             <section className="banner">
                 <div className="image-gallery">
-                    {promotions.map((image, index) => (
+                    {promotions?.map((image, index) => (
                         <ImageWrapper key={index} src={image.image} alt={image.title} />
                     ))}
                 </div>

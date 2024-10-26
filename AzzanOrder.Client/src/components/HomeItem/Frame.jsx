@@ -40,22 +40,22 @@ const Frame = () => {
             <div className="small-image-container left">
                 <img
                     className="small-image"
-                    alt={leftPromotion.title}
-                    src={leftPromotion.image}
+                    alt={leftPromotion?.title}
+                    src={leftPromotion?.image}
                     onClick={handlePrev}
                 />
             </div>
             <div className="big-image-container">
-                <img className="big-image" alt={bigPromotion.title} src={bigPromotion.image} />
+                <img className="big-image" alt={bigPromotion?.title} src={bigPromotion?.image} />
                 <div className="promotion-details">
-                    <h2>{bigPromotion.title}</h2>
+                    <h2>{bigPromotion?.title}</h2>
                 </div>
             </div>
             <div className="small-image-container right">
                 <img
                     className="small-image"
-                    alt={rightPromotion.title}
-                    src={rightPromotion.image}
+                    alt={rightPromotion?.title}
+                    src={rightPromotion?.image}
                     onClick={handleNext}
                 />
             </div>
