@@ -1,7 +1,16 @@
-﻿import React from 'react';
-import QuantityChange from './QuantityChange';
+﻿import React, { useState, useEffect } from 'react';
 
-const ToppingAdd = ({ toppingName, toppingNameEnglish, toppingPrice }) => {
+const ToppingAdd = ({ toppingName, toppingNameEnglish, toppingPrice, onToppingChange }) => {
+    const [isChecked, setIsChecked] = useState(false);
+
+    const handleCheckboxChange = () => {
+        const updatedChecked = !isChecked;
+        setIsChecked(updatedChecked);
+
+        const topping = { name: toppingName, price: toppingPrice };
+        onToppingChange(topping, updatedChecked);
+    };
+
     return (
         <>
             <div className="item-container">
@@ -14,7 +23,12 @@ const ToppingAdd = ({ toppingName, toppingNameEnglish, toppingPrice }) => {
                         <span className="price-currency">đ</span>
                     </div>
                 </div>
-                <QuantityChange quantity='0' />
+                <input
+                    type="checkbox"
+                    className="topping-checkbox"
+                    checked={isChecked}
+                    onChange={handleCheckboxChange}
+                />
             </div>
             <div className="item-divider" />
             <style jsx>{`
@@ -52,6 +66,9 @@ const ToppingAdd = ({ toppingName, toppingNameEnglish, toppingPrice }) => {
                     border: none;
                     border-top: 1px solid rgba(0, 0, 0, 0.4);
                     box-sizing: border-box; /* Include padding and border in element's total width and height */
+                }
+                .topping-checkbox {
+                    align-self: center;
                 }
             `}</style>
         </>

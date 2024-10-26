@@ -63,7 +63,8 @@ const Homepage = () => {
                     <div className='product-grid'>
                         {products[category.description]?.map((product) => (
                             <ProductCard
-                                key={product.id}
+                                key={product.menuItemId}
+                                id={product.menuItemId}
                                 imageSrc={product.imageBase64}
                                 title={product.title}
                                 price={product.price}

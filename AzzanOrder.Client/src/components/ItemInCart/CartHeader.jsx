@@ -1,40 +1,68 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 
+// Utility functions to get and set cookies
+const getCookie = (name) => {
+    const value = `; ${document.cookie}`;
+    const parts = value.split(`; ${name}=`);
+    if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift());
+};
+
+const setCookie = (name, value, days) => {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString();
+    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`;
+};
 
 const fetchDropdownOptions = async (id) => {
-    try {
-        const response = await fetch(`https://localhost:7183/api/Table/GetTablesByManagerId/${id}`);
-        if (!response.ok) {
-            throw new Error("Network response was not ok");
+    if (id) {
+        try {
+            const response = await fetch(`https://localhost:7183/api/Table/GetTablesByManagerId/${id}`);
+            if (!response.ok) {
+                throw new Error("Network response was not ok");
+            }
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error("Failed to fetch dropdown options:", error);
+            return [];
         }
-        const data = await response.json();
-        return data;
-    } catch (error) {
-        console.error("Failed to fetch dropdown options:", error);
-        return [];
     }
+    return [];
 };
 
 const CartHeader = () => {
-
-    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
-    const [selectedOption, setSelectedOption] = useState("0");
+    // Extract tableqr cookie and parse it
+    const tableqr = getCookie("tableqr");
+    const [selectedOption, setSelectedOption] = useState("");
     const [dropdownOptions, setDropdownOptions] = useState([]);
+    const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     useEffect(() => {
-        const fetchData = async () => {
-            const options = await fetchDropdownOptions(1);
-            setDropdownOptions(options);
-        };
-        fetchData();
-    }, []);
+        if (tableqr) {
+            const [qr, id, tableId] = tableqr.split('/');
+            setSelectedOption(qr); // Ensure selectedOption is set to qr
+
+            const fetchData = async () => {
+                const options = await fetchDropdownOptions(id);
+                setDropdownOptions(options);
+
+                // Update the cookie with tableId if it's missing
+                if (!tableId && options.length > 0) {
+                    const newTableId = options[0].tableId; // Assuming the first option's tableId
+                    setCookie("tableqr", `${qr}/${id}/${newTableId}`, 7);
+                }
+            };
+            fetchData();
+        }
+    }, [tableqr]);
 
     const toggleDropdown = () => {
         setIsDropdownOpen(!isDropdownOpen);
     };
 
-    const handleOptionSelection = (option) => {
-        setSelectedOption(option);
+    const handleOptionSelection = (qr, tableId) => {
+        const [, id] = tableqr.split('/'); // Extract the id part from the cookie
+        setSelectedOption(qr); // Set selectedOption to qr
+        setCookie("tableqr", `${qr}/${id}/${tableId}`, 7); // Update the tableqr cookie with the new qr, existing id, and new tableId
         setIsDropdownOpen(false);
     };
 
@@ -54,14 +82,14 @@ const CartHeader = () => {
                 {isDropdownOpen && (
                     <div className="dropdown-menu">
                         {dropdownOptions.map((option, index) => (
-                            <button key={index} onClick={() => handleOptionSelection(option.tableId)}>
-                                {option.tableId}
+                            <button key={index} onClick={() => handleOptionSelection(option.qr, option.tableId)}>
+                                {option.qr}
                             </button>
                         ))}
                     </div>
                 )}
             </div>
-            <style jsx>{`
+            <style>{`
                 .cartHeader {
                     display: flex;
                     align-items: center;

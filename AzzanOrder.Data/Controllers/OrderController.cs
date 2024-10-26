@@ -103,13 +103,39 @@ namespace AzzanOrder.Data.Controllers
         [HttpPost]
         public async Task<ActionResult<Order>> PostOrder(Order order)
         {
-            if (_context.Orders == null)
+            try
             {
-                return Problem("Entity set 'OrderingAssistSystemContext.Orders'  is null.");
-            }
-            _context.Orders.Add(order);
-            await _context.SaveChangesAsync();
+                if (_context.Orders == null)
+                {
+                    return Problem("Entity set 'OrderingAssistSystemContext.Orders' is null.");
+                }
 
+                if (order.OrderDetails == null || !order.OrderDetails.Any())
+                {
+                    return BadRequest("Order must contain at least one order detail.");
+                }
+
+                // Add the order to the context
+                _context.Orders.Add(order);
+
+                // Save the order to generate the OrderId
+                await _context.SaveChangesAsync();
+
+                // Add the OrderId to each order detail and reset OrderDetailId
+                foreach (var orderDetail in order.OrderDetails)
+                {
+                    orderDetail.OrderId = order.OrderId;
+                    orderDetail.OrderDetailId = 0; // Ensure the ID is reset
+                    _context.OrderDetails.Add(orderDetail);
+                }
+
+                // Save the order details
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(ex);
+            }
             return CreatedAtAction("GetOrder", new { id = order.OrderId }, order);
         }
 
@@ -140,7 +166,7 @@ namespace AzzanOrder.Data.Controllers
 
         //https://www.vietqr.io/danh-sach-api/link-tao-ma-nhanh/api-tao-ma-qr/
         //https://www.vietqr.io/en/danh-sach-api/link-tao-ma-nhanh/
-        [HttpGet("QR/{price}/{Message}")]
+        [HttpGet("QR/{price}")]
         public async Task<IActionResult> VietQR(int price)
         {
             using (System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient())

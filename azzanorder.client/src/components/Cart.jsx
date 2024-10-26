@@ -2,7 +2,7 @@
 import ItemInCart from './ItemInCart/ItemInCart';
 import CartHeader from './ItemInCart/CartHeader';
 import PriceCalculator from './PriceCalculator/PriceCalculator';
-import { getCookie, setCookie } from './Account/SignUpForm/Validate';
+import { getCookie } from './Account/SignUpForm/Validate';
 
 function getCartData() {
     const cartDataString = getCookie("cartData");
@@ -26,7 +26,8 @@ const Cart = () => {
         const calculateTotal = () => {
             let total = 0;
             cartData.forEach((item) => {
-                total += item.price * item.quantity;
+                const toppingsPrice = item.options?.selectedToppings?.reduce((sum, topping) => sum + topping.price, 0) || 0;
+                total += (item.price + toppingsPrice) * item.quantity;
             });
             setTotalPrice(total);
         };

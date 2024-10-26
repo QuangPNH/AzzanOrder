@@ -9,14 +9,14 @@ import CustomItem from './MenuDetail/CustomItem';
 import ShowMoreLink from './ShowMoreLink/ShowMoreLink';
 import ProductCard from './ProductCard/ProductCard';
 import { getCookie, setCookie } from './Account/SignUpForm/Validate';
-import { generateRandomKey } from './ProductCard/ProductCard';
 
-const ItemDetail = ({ closeModal, imageSrc, title, price, cate, desc }) => {
+const ItemDetail = ({ closeModal, imageSrc, key, title, price, cate, desc, id }) => {
     const [products, setProducts] = useState([]);
     const [toppings, setToppings] = useState([]);
     const [selectedSugar, setSelectedSugar] = useState('50');
     const [selectedIce, setSelectedIce] = useState('50');
     const [currentQuantity, setCurrentQuantity] = useState(1);
+    const [selectedToppings, setSelectedToppings] = useState([]);
 
     useEffect(() => {
         fetchProducts({ cate });
@@ -44,12 +44,14 @@ const ItemDetail = ({ closeModal, imageSrc, title, price, cate, desc }) => {
         }
     };
 
-    // Remove anything before the first "/" and the "/" itself
-    const modifiedDesc = desc.includes('/') ? desc.split('/').slice(1).join('/') : desc;
-
-    const formattedOptions = {
-        selectedSugar,
-        selectedIce
+    const handleToppingChange = (topping, isChecked) => {
+        setSelectedToppings(prevToppings => {
+            if (isChecked) {
+                return [...prevToppings, topping];
+            } else {
+                return prevToppings.filter(t => t.name !== topping.name);
+            }
+        });
     };
 
     const handleAddToCart = () => {
@@ -59,10 +61,17 @@ const ItemDetail = ({ closeModal, imageSrc, title, price, cate, desc }) => {
             parsedData = JSON.parse(storedData);
         }
 
+        const formattedOptions = {
+            selectedSugar,
+            selectedIce,
+            selectedToppings: selectedToppings
+        };
+
         const existingItemIndex = parsedData.findIndex(item =>
             item.name === title &&
             item.options.selectedSugar === selectedSugar &&
-            item.options.selectedIce === selectedIce
+            item.options.selectedIce === selectedIce &&
+            JSON.stringify(item.options.toppings) === JSON.stringify(selectedToppings)
         );
 
         if (existingItemIndex !== -1) {
@@ -71,7 +80,8 @@ const ItemDetail = ({ closeModal, imageSrc, title, price, cate, desc }) => {
         } else {
             // Item does not exist, add new item
             const newItem = {
-                key: generateRandomKey(5),
+                key: key,
+                id: id,
                 name: title,
                 options: formattedOptions,
                 price: price,
@@ -82,6 +92,8 @@ const ItemDetail = ({ closeModal, imageSrc, title, price, cate, desc }) => {
 
         setCookie("cartData", JSON.stringify(parsedData), 7);
     };
+
+    const modifiedDesc = desc.includes('/') ? desc.split('/').slice(1).join('/') : desc;
 
     return (
         <>
@@ -115,6 +127,7 @@ const ItemDetail = ({ closeModal, imageSrc, title, price, cate, desc }) => {
                         toppingName={topping.itemName}
                         toppingNameEnglish={topping.description}
                         toppingPrice={topping.price}
+                        onToppingChange={handleToppingChange}
                     />
                 ))}
             </div>
@@ -127,7 +140,8 @@ const ItemDetail = ({ closeModal, imageSrc, title, price, cate, desc }) => {
                 <div className='product-grid'>
                     {products && products.map((product) => (
                         <ProductCard
-                            key={product.id}
+                            key={product.menuItemId}
+                            id={product.menuItemId}
                             imageSrc={product.imageBase64}
                             title={product.title}
                             price={product.price}

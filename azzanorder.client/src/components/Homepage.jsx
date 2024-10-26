@@ -33,8 +33,6 @@ const Homepage = () => {
         }
         deleteCookie('tableqr');
         setCookie('tableqr',id,1);
-        console.log(id);
-        
     }, []);
 
     const fetchMenuItems = async () => {
@@ -71,7 +69,8 @@ const Homepage = () => {
                             <div className='product-grid'>
                                 {recentMenuItems?.map((menuItem) => (
                                     <ProductCard
-                                        key={menuItem.id}
+                                        key={menuItem.menuItemId}
+                                        id={menuItem.menuItemId}
                                         title={menuItem.itemName}
                                         price={menuItem.price}
                                         imageSrc={menuItem.imageBase64}
@@ -87,7 +86,8 @@ const Homepage = () => {
                     <div className='product-grid'>
                         {menuItems?.map((menuItem) => (
                             <ProductCard
-                                key={menuItem.id}
+                                key={menuItem.menuItemId}
+                                id={menuItem.menuItemId}
                                 title={menuItem.itemName}
                                 price={menuItem.price}
                                 imageSrc={menuItem.imageBase64}

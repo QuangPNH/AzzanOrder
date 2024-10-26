@@ -7,9 +7,9 @@ import CustomItem from '../MenuDetail/CustomItem';
 import { getCookie, setCookie } from '../Account/SignUpForm/Validate';
 
 const ItemInCart = ({ id, name, options, price, quantity, onQuantityChange }) => {
-
     const [selectedSugar, setSelectedSugar] = useState(options?.selectedSugar); // State for selected sugar amount
     const [selectedIce, setSelectedIce] = useState(options?.selectedIce); // State for selected ice amount
+    const [selectedToppings, setSelectedToppings] = useState(options?.selectedToppings || []); // State for selected toppings
     const [currentQuantity, setCurrentQuantity] = useState(quantity);
     const isFirstRender = useRef(true);
 
@@ -18,17 +18,18 @@ const ItemInCart = ({ id, name, options, price, quantity, onQuantityChange }) =>
             isFirstRender.current = false;
             return;
         }
-        // Update the quantity in the cookie
+        // Update the quantity and options in the cookie
         const cartData = JSON.parse(getCookie("cartData"));
         const updatedCartData = cartData.map((item) => {
-            if (item.id === id && item.options.selectedSugar === selectedSugar && item.options.selectedIce === selectedIce) {
+            if (item.id === id && JSON.stringify(item.options) === JSON.stringify(options)) {
                 return {
                     ...item,
                     quantity: currentQuantity,
                     options: {
                         ...item.options,
                         selectedSugar,
-                        selectedIce
+                        selectedIce,
+                        selectedToppings
                     }
                 };
             }
@@ -36,7 +37,7 @@ const ItemInCart = ({ id, name, options, price, quantity, onQuantityChange }) =>
         });
         setCookie("cartData", JSON.stringify(updatedCartData), 7);
         onQuantityChange(updatedCartData);
-    }, [currentQuantity, selectedSugar, selectedIce, id]);
+    }, [currentQuantity, selectedSugar, selectedIce, selectedToppings, id]);
 
     const handleQuantityChange = (newQuantity) => {
         setCurrentQuantity(newQuantity);
@@ -47,6 +48,11 @@ const ItemInCart = ({ id, name, options, price, quantity, onQuantityChange }) =>
         const updatedCartData = cartData.filter((item) => item.id !== id);
         setCookie("cartData", JSON.stringify(updatedCartData), 7);
         onQuantityChange(updatedCartData);
+    };
+
+    const calculateTotalPrice = () => {
+        const toppingsPrice = selectedToppings.reduce((total, topping) => total + topping.price, 0);
+        return (price + toppingsPrice) * currentQuantity;
     };
 
     return (
@@ -78,12 +84,16 @@ const ItemInCart = ({ id, name, options, price, quantity, onQuantityChange }) =>
                                     <CustomItem title="Lượng đá:" compact />
                                     <AmountBar selectedValue={selectedIce} onStepClick={setSelectedIce} compact />
                                 </div>
+                                <div className="item-option compact">
+                                    <CustomItem title="Toppings:" compact />
+                                    <p>+{selectedToppings.map(topping => `${topping.name}`).join(', ')}</p>
+                                </div>
                             </>
                         )}
                     </div>
                 </div>
                 <div className="cart-item-footer">
-                    <p className="item-price">{price * currentQuantity}đ</p>
+                    <p className="item-price">{calculateTotalPrice()}đ</p>
                     <QuantityControl
                         quantity={currentQuantity}
                         onQuantityChange={handleQuantityChange}

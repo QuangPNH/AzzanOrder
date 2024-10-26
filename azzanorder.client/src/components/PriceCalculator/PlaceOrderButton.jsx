@@ -1,53 +1,109 @@
 import React, { useState } from "react";
+import { getCookie } from '../Account/SignUpForm/Validate';
 
-const PlaceOrderButton = ({ addInfo, amount }) => {
-  const [qrDataURL, setQRDataURL] = useState(null);
-  const [error, setError] = useState(null);
+const PlaceOrderButton = ({ amount }) => {
+    const [qrDataURL, setQRDataURL] = useState(null);
+    const [error, setError] = useState(null);
 
-  const handlePlaceOrder = async () => {
-    console.log("amount:", amount);
-    console.log("addInfo:", addInfo);
+    const handlePlaceOrder = async () => {
+        console.log("amount:", amount);
 
-    try {
-      const response = await fetch(`https://localhost:7183/api/Order/QR/${amount}/${addInfo}`, {
-        method: "GET",
-        headers: {
-          "Content-Type": "application/json",
-        },
-      });
+        try {
+            //const response = await fetch(`https://localhost:7183/api/Order/QR/${amount}`, {
+            //    method: "GET",
+            //    headers: {
+            //        "Content-Type": "application/json",
+            //    },
+            //});
 
-      if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
-      }
+            //if (!response.ok) {
+            //    throw new Error(`HTTP error! status: ${response.status}`);
+            //}
 
-      const data = await response.json();
-      console.log("data", data); // Log the response data
+            //const data = await response.json();
 
-      // Assuming the base64 string is in the 'qrCode' property
-      if (data && data.base64Image) {
-        console.log("Base64 Image Data:", data.base64Image); // Log the base64 image data
-        setQRDataURL(data.base64Image);
-      } else {
-        console.error("QR code data is missing in the response:", data);
-        throw new Error("QR code data is missing in the response");
-      }
-    } catch (error) {
-      console.error("Error fetching QR code:", error);
-      setError(error.message);
-    }
-  };
+            //if (data && data.base64Image) {
+            //    setQRDataURL(data.base64Image);
+                
+            //} else {
+            //    console.error("QR code data is missing in the response:", data);
+            //    throw new Error("QR code data is missing in the response");
+            //}
+            await postOrder();
+        } catch (error) {
+            console.error("Error fetching QR code:", error);
+            setError(error.message);
+        }
+    };
 
-  return (
-    <div>
-      {error && <p style={{ color: "red" }}>{error}</p>}
-      {qrDataURL ? (
-        <img src={`data:image/png;base64,${qrDataURL}`} alt="QR Code" className="qr-image" />
-      ) : (
-        <button className="place-order" onClick={handlePlaceOrder}>
-          Place Order
-        </button>
-      )}
-      <style jsx>{`
+    const postOrder = async () => {
+        const cartDataString = getCookie("cartData");
+        if (!cartDataString) {
+            setError("No item in cart");
+        }else
+        try {
+            const cartData = JSON.parse(cartDataString);
+            const orderDetails = cartData.map(item => {
+                const { selectedIce, selectedSugar, toppings } = item.options || {};
+                const descriptionParts = [];
+
+                if (selectedIce) {
+                    descriptionParts.push(`${selectedIce}% Ice`);
+                }
+                if (selectedSugar) {
+                    descriptionParts.push(`${selectedSugar}% Sugar`);
+                }
+                if (toppings && toppings.length > 0) {
+                    descriptionParts.push(...toppings);
+                }
+
+                return {
+                    Quantity: item.quantity,
+                    MenuItemId: item.id,
+                    Description: descriptionParts.length > 0 ? descriptionParts.join(', ') : null,
+                };
+            });
+
+            const order = {
+                OrderDate: new Date(),
+                TableId: parseInt(getCookie('tableqr').split('/')[2]),
+                Cost: amount,
+                MemberId: JSON.parse(getCookie('memberInfo')).memberId,
+                Status: true,
+                OrderDetails: orderDetails,
+            };
+
+            const response = await fetch("https://localhost:7183/api/Order", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(order),
+            });
+
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
+
+            const data = await response.json();
+            console.log("Order created successfully:", data);
+        } catch (error) {
+            console.error("Error creating order:", error);
+            setError(error.message);
+        }
+    };
+
+    return (
+        <div>
+            {error && <p style={{ color: "red" }}>{error}</p>}
+            {qrDataURL ? (
+                <img src={`data:image/png;base64,${qrDataURL}`} alt="QR Code" className="qr-image" />
+            ) : (
+                <button className="place-order" onClick={handlePlaceOrder}>
+                    Place Order
+                </button>
+            )}
+            <style jsx>{`
         .place-order {
           border-radius: 10px;
           background: var(--Azzan-Color, #bd3326);
@@ -69,8 +125,8 @@ const PlaceOrderButton = ({ addInfo, amount }) => {
           margin-top: 49px;
         }
       `}</style>
-    </div>
-  );
+        </div>
+    );
 };
 
 export default PlaceOrderButton;

@@ -15,27 +15,38 @@ export function generateRandomKey(length) {
   return key;
 }
 
-const ProductCard = ({ imageSrc, title, price, desc, cate }) => {
+const ProductCard = ({ imageSrc, title, price, desc, cate, id }) => {
     const handleAddToCart = () => {
-        console.log("Add to cart");
         const storedData = getCookie('cartData');
         let parsedData = [];
         if (storedData) {
             parsedData = JSON.parse(storedData);
         }
-        const newItem = {
-            key: generateRandomKey(5),
-            name: title,
-            options: {
-                selectedSugar: '100',
-                selectedIce: '100'
-            },
-            price: price,
-            quantity: 1
-        };
-        parsedData.push(newItem);
-        setCookie("cartData", JSON.stringify(parsedData),7);
-        
+        const existingItemIndex = parsedData.findIndex(item =>
+            item.name === title &&
+            item.options.selectedSugar === '100' &&
+            item.options.selectedIce === '100' &&
+            JSON.stringify(item.options.toppings) !== null
+        );
+
+        if (existingItemIndex !== -1) {
+            // Item exists, increase quantity
+            parsedData[existingItemIndex].quantity += 1;
+        } else {
+            const newItem = {
+                key: generateRandomKey(5),
+                id: id,
+                name: title,
+                options: {
+                    selectedSugar: '100',
+                    selectedIce: '100'
+                },
+                price: price,
+                quantity: 1
+            };
+            parsedData.push(newItem);
+        }
+        setCookie("cartData", JSON.stringify(parsedData), 7);
     };
 
     const [modalIsOpen, setModalIsOpen] = useState(false);
@@ -100,6 +111,7 @@ const ProductCard = ({ imageSrc, title, price, desc, cate }) => {
                 <ItemDetail
                     closeModal={closeModal}
                     imageSrc={imageSrc}
+                    id={id}
                     title={title}
                     price={price}
                     cate={cate}

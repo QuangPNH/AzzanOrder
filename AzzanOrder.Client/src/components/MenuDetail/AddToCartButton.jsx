@@ -1,6 +1,4 @@
 ﻿import React from 'react';
-import { getCookie, setCookie } from '../Account/SignUpForm/Validate';
-import { generateRandomKey } from '../ProductCard/ProductCard';
 
 const AddToCartButton = ({ onClick  }) => {
     return (

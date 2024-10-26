@@ -3,22 +3,13 @@ import PriceItem from './PriceItem';
 import PlaceOrderButton from './PlaceOrderButton';
 
 const PriceCalculator = ({ totalPrice }) => {
-    const cartData = JSON.parse(sessionStorage.getItem("cartData")) || [];
     const [trueTotalPrice, setTrueTotalPrice] = useState(totalPrice);
 
     useEffect(() => {
         setTrueTotalPrice(totalPrice);
     }, [totalPrice]);
 
-    const getFormattedCartData = () => {
-        const formattedList = cartData.map((item) => {
-            if (item.label) {
-                return item.label.replace(/ /g, "_");
-            }
-            return "";
-        });
-        return formattedList;
-    };
+   
 
     return (
         <section className="price-calculator">
@@ -28,7 +19,6 @@ const PriceCalculator = ({ totalPrice }) => {
                 </div>
             </div>
             <PlaceOrderButton
-                addInfo={getFormattedCartData()}
                 amount={trueTotalPrice}
             />
             <style jsx="true">{`
