@@ -1,0 +1,142 @@
+﻿<div class="col-12">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Add Employee</h5>
+        </div>
+        <div class="card-body">
+            <form action="@Url.Action("List", "Employee")" method="post">
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Name</label>
+                    <div class="col-sm-10">
+                        <input type="Name" class="form-control" placeholder="Name">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Phone</label>
+                    <div class="col-sm-10">
+                        <input type="phone" class="form-control" placeholder="Phone">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Email</label>
+                    <div class="col-sm-10">
+                        <input type="email" class="form-control" placeholder="Email">
+                    </div>
+                </div>
+
+                <fieldset class="mb-3">
+                    <div class="row">
+                        <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Gender</label>
+                        <div class="col-sm-10">
+                            <label class="form-check">
+                                <input name="gender" type="radio" class="form-check-input" checked>
+                                <span class="form-check-label">Male</span>
+                            </label>
+                            <label class="form-check">
+                                <input name="gender" type="radio" class="form-check-input">
+                                <span class="form-check-label">Female</span>
+                            </label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                @* <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Birthday</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control flatpickr-minimum" placeholder="Birthdate" />
+                    </div>
+                </div> 
+                Commented cause javascript library needed :/*@
+
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Birthday</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" data-inputmask-alias="datetime"
+                               data-inputmask-inputformat="dd/mm/yyyy" />
+                        <span class="text-muted">DD/MM/YYYY format.</span>
+                    </div>
+
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Home Address</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" placeholder="Home Address" rows="3"></textarea>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Work Address</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" placeholder="Work Address" rows="3"></textarea>
+                    </div>
+                </div>
+                <fieldset class="mb-3">
+                    <div class="row">
+                        <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Role</label>
+                        <div class="col-sm-10">
+                            <label class="form-check">
+                                <input name="role" type="radio" class="form-check-input" checked>
+                                <span class="form-check-label">Staff</span>
+                            </label>
+                            <label class="form-check">
+                                <input name="role" type="radio" class="form-check-input">
+                                <span class="form-check-label">Bartender</span>
+                            </label>
+                            <label class="form-check">
+                                <input name="role" type="radio" class="form-check-input" disabled>
+                                <span class="form-check-label">Manager</span>
+                            </label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Image</label>
+                    <div class="col-sm-10">
+                        <input type="file">
+                        <small class="form-check-label text-muted">Only png and jpg allowed.</small>
+
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <div class="col-sm-10 ms-sm-auto">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Choices.js
+        new Choices(document.querySelector(".choices-single"));
+        new Choices(document.querySelector(".choices-multiple"));
+        // Flatpickr
+        flatpickr(".flatpickr-minimum");
+        flatpickr(".flatpickr-datetime", {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+        });
+        flatpickr(".flatpickr-human", {
+            altInput: true,
+            altFormat: "F j, Y",
+            dateFormat: "Y-m-d",
+        });
+        flatpickr(".flatpickr-multiple", {
+            mode: "multiple",
+            dateFormat: "Y-m-d"
+        });
+        flatpickr(".flatpickr-range", {
+            mode: "range",
+            dateFormat: "Y-m-d"
+        });
+        flatpickr(".flatpickr-time", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+        });
+    });
+</script>
