@@ -370,3 +370,5 @@ FodyWeavers.xsd
 /azzanorder.client/package.json
 /azzanorder.client/package-lock.json
 /AzzanOrder.Client/src/App.jsx
+/AzzanOrder.Data/appsettings.Development.json
+/AzzanOrder.Data/appsettings.json
