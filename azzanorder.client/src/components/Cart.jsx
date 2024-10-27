@@ -3,6 +3,7 @@ import ItemInCart from './ItemInCart/ItemInCart';
 import CartHeader from './ItemInCart/CartHeader';
 import PriceCalculator from './PriceCalculator/PriceCalculator';
 import { getCookie } from './Account/SignUpForm/Validate';
+import VoucherCart from './VoucherCart';
 
 function getCartData() {
     const cartDataString = getCookie("cartData");
@@ -53,6 +54,7 @@ const Cart = () => {
 
     return (
         <div style={{ background: 'white', border: '1px solid black', borderRadius: '20px', padding: '10px', maxHeight: '550px' }}>
+            
             <CartHeader />
             <div style={{ background: 'white', maxHeight: '250px', overflowY: 'auto' }}>
                 {cartData.length > 0 ? (
@@ -61,6 +63,7 @@ const Cart = () => {
                     <p>Your cart is empty.</p>
                 )}
             </div>
+            <VoucherCart/>
             <div>
                 <PriceCalculator totalPrice={totalPrice} />
             </div>

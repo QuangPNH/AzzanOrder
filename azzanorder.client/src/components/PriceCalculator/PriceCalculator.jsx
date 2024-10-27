@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import PriceItem from './PriceItem';
 import PlaceOrderButton from './PlaceOrderButton';
 
-const PriceCalculator = ({ totalPrice }) => {
+const PriceCalculator = ({discount, totalPrice }) => {
     const [trueTotalPrice, setTrueTotalPrice] = useState(totalPrice);
 
     useEffect(() => {

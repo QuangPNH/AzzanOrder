@@ -101,12 +101,12 @@ namespace AzzanOrder.Data.Controllers
             {
                 return Problem("List voucher are null.");
             }
-            var vd = new VoucherDetail() { Title = voucherDetail.Title, StartDate = voucherDetail.StartDate, EndDate = voucherDetail.EndDate, Discount = voucherDetail.Discount };
-            _context.VoucherDetails.Add(vd);
+            
+            _context.VoucherDetails.Add(voucherDetail);
             await _context.SaveChangesAsync();
 
 
-            return CreatedAtAction("GetVoucherDetail", new { id = vd.VoucherDetailId }, vd);
+            return CreatedAtAction("GetVoucherDetail", new { id = voucherDetail.VoucherDetailId }, voucherDetail);
         }
 
         // DELETE: api/VoucherDetail/5

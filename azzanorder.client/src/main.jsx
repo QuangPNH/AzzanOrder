@@ -14,6 +14,7 @@ import Voucher from "./components/VoucherScreen";
 import Order from "./components/OrderTrackScreen";
 import Profile from "./components/MemberProfile";
 import Notification from "./components/NotificationPage";
+import VoucherCart from './components/VoucherCart';
 
 // Define your routes
 const router = createBrowserRouter([
@@ -40,6 +41,10 @@ const router = createBrowserRouter([
             {
                 path: "voucher",
                 element: <Voucher />,
+            },
+            {
+                path: "voucherCart",
+                element: <VoucherCart />
             },
             {
                 path: "order",

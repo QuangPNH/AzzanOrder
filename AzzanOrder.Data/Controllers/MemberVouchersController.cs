@@ -50,6 +50,21 @@ namespace AzzanOrder.Data.Controllers
             return Ok(memberVoucher);
         }
 
+        [HttpGet("memberId/itemCategoryId")]
+        public async Task<ActionResult> GetMemberVoucherByMemberAndCategory(int memberId, int categoryId)
+        {
+            if (_context.MemberVouchers == null)
+            {
+                return BadRequest();
+            }
+           
+            var memberVoucher = await _context.VoucherDetails.Where(vd => vd.Vouchers.Any(v => v.ItemCategoryId == categoryId) && vd.MemberVouchers.Any(mv => mv.MemberId == memberId && mv.IsActive == true)).ToListAsync();
+            
+           return Ok(memberVoucher);
+           
+
+        }
+
         // PUT: api/MemberVouchers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("Update")]

@@ -18,7 +18,7 @@ const VoucherScreen = () => {
             fetchMembers(JSON.parse(getCookie('memberInfo')).memberId);
             fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId);
             setPoint(true);
-            setMemberVouchers(true);
+            setMemberVouchers([true]);
         }
     }, []);
     const fetchMemberVouchers = async (memberId) => {
@@ -26,6 +26,7 @@ const VoucherScreen = () => {
             const response = await fetch(`https://localhost:7183/api/MemberVouchers/memberId?memberId=${memberId}`);
             const data = await response.json();
             setMemberVouchers(data);
+            console.log(data);
         } catch (error) {
             console.error('Error fetching menu items:', error);
         }
@@ -36,7 +37,7 @@ const VoucherScreen = () => {
             const response = category == '' ? await fetch(`https://localhost:7183/api/VoucherDetail`) : await fetch(`https://localhost:7183/api/VoucherDetail/categoryId?categoryId=${category}`);
             const data = await response.json();
             setVouchers(data);
-            console.log(category);
+            
         } catch (error) {
             console.error('Error fetching menu items:', error);
         }
@@ -88,10 +89,7 @@ const VoucherScreen = () => {
                                 key={memberVoucher.id}
                                 saleAmount={memberVoucher.discount}
                                 endDate={memberVoucher.endDate}
-                                price={memberVoucher.price}
-                                infiniteUses={true}
-                                useCount={0}
-                            />
+                                bought={true}                            />
                         ))}
                     </div>
                 )}
