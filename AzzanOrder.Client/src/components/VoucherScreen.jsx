@@ -26,7 +26,7 @@ const VoucherScreen = () => {
             const response = await fetch(`https://localhost:7183/api/MemberVouchers/memberId?memberId=${memberId}`);
             const data = await response.json();
             setMemberVouchers(data);
-            console.log(data);
+            memberVouchers.forEach(memberVoucher => console.log(memberVoucher.voucherDetail.endDate));
         } catch (error) {
             console.error('Error fetching menu items:', error);
         }
@@ -86,9 +86,9 @@ const VoucherScreen = () => {
                     <div className="product-sale-container">
                         {memberVouchers.map((memberVoucher) => (
                             <ProductSale
-                                key={memberVoucher.id}
-                                saleAmount={memberVoucher.discount}
-                                endDate={memberVoucher.endDate}
+                                key={memberVoucher.voucherDetail ? memberVoucher.voucherDetail.id : null}
+                                saleAmount={memberVoucher.voucherDetail ? memberVoucher.voucherDetail.discount : null}
+                                endDate={memberVoucher.voucherDetail ? memberVoucher.voucherDetail.endDate : null}
                                 bought={true}                            />
                         ))}
                     </div>

@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AzzanOrder.Data.Models;
+using Microsoft.AspNetCore.OData.Query;
 
 namespace AzzanOrder.Data.Controllers
 {
@@ -22,15 +23,18 @@ namespace AzzanOrder.Data.Controllers
 
         // GET: api/VoucherDetail
         [HttpGet]
+        [EnableQuery]
         public async Task<ActionResult<IEnumerable<VoucherDetail>>> GetVoucherDetails()
         {
             if (_context.VoucherDetails == null)
             {
                 return NotFound();
             }
-            return await _context.VoucherDetails.ToListAsync();
+            return await _context.VoucherDetails.Include(vd => vd.Vouchers).ToListAsync();
         }
+
         [HttpGet("categoryId")]
+        [EnableQuery]
         public async Task<ActionResult> GetVoucherDetailByCategory(int categoryId)
         {
             if (_context.VoucherDetails == null)
@@ -39,7 +43,7 @@ namespace AzzanOrder.Data.Controllers
             }
             var voucherDetails = _context.Vouchers
     .Where(v => v.ItemCategoryId == categoryId && v.IsActive == true)  // L?c theo categoryId và IsActive
-    .Select(v => v.VoucherDetail)
+    .Include(vd => vd.VoucherDetail)
     .ToList();
 
 
@@ -53,7 +57,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            var voucherDetail = await _context.VoucherDetails.FindAsync(id);
+            var voucherDetail = await _context.VoucherDetails.Include(vd => vd.Vouchers).FirstOrDefaultAsync(vd => vd.VoucherDetailId == id);
 
             if (voucherDetail == null)
             {

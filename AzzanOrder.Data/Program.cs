@@ -1,5 +1,9 @@
 using AzzanOrder.Data.Models;
 using Microsoft.EntityFrameworkCore;
+using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.OData;
+using AzzanOrder.Data.DTO;
+
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -21,7 +25,10 @@ builder.Services.AddDbContext<OrderingAssistSystemContext>(option => option.UseS
 builder.Services.AddDbContext<OrderingAssistSystemContext>();
 
 builder.Services.AddEndpointsApiExplorer();
-
+builder.Services.AddControllers()
+.AddOData(options => options.Select().Filter().Count().OrderBy().Expand().SetMaxTop(100)
+.AddRouteComponents("odata", EdmModel.GetEdmModel()))
+.AddJsonOptions(options => options.JsonSerializerOptions.ReferenceHandler = ReferenceHandler.IgnoreCycles);
 builder.Services.AddSwaggerGen();
 
 var app = builder.Build();

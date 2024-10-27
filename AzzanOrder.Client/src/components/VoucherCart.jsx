@@ -6,7 +6,7 @@ import ProductSale from './Voucher/VoucherDetail/ProductSale';
 import PointsDisplay from './Voucher/PointDisplay';
 import VoucherList from './Voucher/VoucherList';
 
-const VoucherCart = () => {
+const VoucherCart = ({onSelectVoucher}) => {
     const [vouchers, setVouchers] = useState([]);
     const [categories, setCategories] = useState([]);
     const [memberVouchers, setMemberVouchers] = useState(false);
@@ -29,8 +29,8 @@ const VoucherCart = () => {
         }
     };
 
-    const fetchVoucherDetails = async(voucherDetailId) => {
-        try{
+    const fetchVoucherDetails = async (voucherDetailId) => {
+        try {
             const response = await fetch(`https://localhost:7183/api/VoucherDetail/${voucherDetailId}`);
             const data = await response.json();
             setVoucherDetail(data);
@@ -52,30 +52,31 @@ const VoucherCart = () => {
     const handleDropdownChange = (selectedItem) => {
         // fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId, selectedItem.voucherDetailId);
         fetchVoucherDetails(selectedItem.voucherDetailId);
+        onSelectVoucher(selectedItem);
     };
-    
     return (
         <>
 
 
             {/* <Category /> */}
             {
-               voucherDetail && (
-                <div>
-                    < ProductSale
-                        key={voucherDetail.id}
-                        saleAmount={voucherDetail.discount}
-                        endDate={voucherDetail.endDate}
-                        bought={true}
-                    />
-                </div>
-               )  
+                voucherDetail && (
+                    <div>
+                        < ProductSale
+                            key={voucherDetail.id}
+                            saleAmount={voucherDetail.discount}
+                            endDate={voucherDetail.endDate}
+                            bought={true}
+                        />
+
+                    </div>
+
+                )
             }
+
             <DropTest
-                
                 onClick={handleDropdownChange}
                 onChange={handleDropdownChange} />
-
             {/* <div className="content-container">
                 {memberVouchers && (
                     <div className="product-sale-container">

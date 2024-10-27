@@ -19,7 +19,6 @@ const DropTest = ({ options, onChange }) => {
         try {
             const response = categoryId != '' ? await fetch(`https://localhost:7183/api/MemberVouchers/memberId/itemCategoryId?memberId=${memberId}&categoryId=${categoryId}`) : await fetch(`https://localhost:7183/api/MemberVouchers/memberId?memberId=${memberId}`);
             const data = await response.json();
-            console.log(categoryId);
             return data;
 
         } catch (error) {
@@ -62,7 +61,7 @@ const DropTest = ({ options, onChange }) => {
         <>
             <div className="dropdown">
                 <DropdownItem
-                    label={selectedItem ? selectedItem.title + " Sale " + selectedItem.discount + "%" : ''}
+                    label={selectedItem ? selectedItem.voucherDetail.title + " Sale " + selectedItem.voucherDetail.discount + "%" : ''}
                     iconSrc={
                         !isExpanded
                             ? 'https://cdn.builder.io/api/v1/image/assets/TEMP/149dee1c832975b05bb91e7928d007f9cfbf8aff03b0c89e8080bdf1f9308e5f?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533'
@@ -76,7 +75,7 @@ const DropTest = ({ options, onChange }) => {
                         {items.map((item, index) => (
                             <DropdownItem
                                 key={index}
-                                label={item.title + " Sale " + item.discount + "%"}
+                                label={item.voucherDetail.title + " Sale " + item.voucherDetail.discount + "%"}
                                 onClick={() => handleSelectItem(item)}
                             />
                         ))}

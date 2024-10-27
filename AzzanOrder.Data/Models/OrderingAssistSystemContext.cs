@@ -281,7 +281,7 @@ namespace AzzanOrder.Data.Models
             modelBuilder.Entity<VoucherDetail>(entity =>
             {
                 entity.ToTable("VoucherDetail");
-
+               
                 entity.Property(e => e.EndDate).HasColumnType("datetime");
 
                 entity.Property(e => e.StartDate).HasColumnType("datetime");

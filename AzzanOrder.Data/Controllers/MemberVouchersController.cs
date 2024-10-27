@@ -29,7 +29,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            return await _context.MemberVouchers.ToListAsync();
+            return await _context.MemberVouchers.Include(mv => mv.VoucherDetail).ThenInclude(mv => mv.Vouchers).ToListAsync();
         }
 
         // GET: api/MemberVouchers/5
@@ -40,8 +40,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            var memberVoucher = await _context.MemberVouchers.Where(mv => mv.MemberId == memberId && mv.IsActive == true).Select(mv => mv.VoucherDetail).ToListAsync();
-
+            var memberVoucher = await _context.MemberVouchers.Where(mv => mv.MemberId == memberId && mv.IsActive == true).Include(mv => mv.VoucherDetail).ThenInclude(mv => mv.Vouchers).Select(mv => mv.VoucherDetail).ToListAsync();
             if (memberVoucher == null)
             {
                 return NotFound();
@@ -58,7 +57,7 @@ namespace AzzanOrder.Data.Controllers
                 return BadRequest();
             }
            
-            var memberVoucher = await _context.VoucherDetails.Where(vd => vd.Vouchers.Any(v => v.ItemCategoryId == categoryId) && vd.MemberVouchers.Any(mv => mv.MemberId == memberId && mv.IsActive == true)).ToListAsync();
+            var memberVoucher = await _context.VoucherDetails.Where(vd => vd.Vouchers.Any(v => v.ItemCategoryId == categoryId) && vd.MemberVouchers.Any(mv => mv.MemberId == memberId && mv.IsActive == true)).Include(vd => vd.Vouchers).ToListAsync();
             
            return Ok(memberVoucher);
            

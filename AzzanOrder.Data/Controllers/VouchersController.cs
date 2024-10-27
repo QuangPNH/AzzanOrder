@@ -29,7 +29,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound("List voucher is empty");
             }
-            var vouchers = await _context.Vouchers.Select(v => new { v.ItemCategoryId, v.VoucherDetailId, v.IsActive }).ToListAsync();
+            var vouchers = await _context.Vouchers.ToListAsync();
             return Ok(vouchers);
         }
         [HttpGet("CategoryId")]
