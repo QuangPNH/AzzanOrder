@@ -1,5 +1,55 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿<h1 class="h3 mb-3">Table Management</h1>
+
+<div class="col-12">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">ListTable</h5>
+        </div>
+        <div>
+            <a href="@Url.Action("Add", "Table")" class="btn btn-primary">Add New Table</a>
+        </div>
+
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th style="width:10%">No.</th>
+                    <th style="width:50%">QR code</th>
+                    <th style="width:30%">Table Status</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>QR text or sth or image here</td>
+                    <td>Open</td>
+                    <td class="table-action">
+                        <a href="@Url.Action("Update", "Table")"><i class="align-middle" data-feather="edit-2"></i></a>
+                        <a href="@Url.Action("Delete", "Table")"><i class="align-middle" data-feather="trash"></i></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="row mt-3">
+            <div class="col d-flex align-items-center">
+                <span id="response-info">Showing 0-0 out of 0 responses</span>
+            </div>
+            <div class="col d-flex justify-content-end">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination pagination-md mb-0">
+                        <li class="page-item"><a class="page-link" href="#"><i class="fas fa-angle-left"></i></a></li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item active"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">4</a></li>
+                        <li class="page-item"><a class="page-link" href="#">5</a></li>
+                        <li class="page-item"><a class="page-link" href="#"><i class="fas fa-angle-right"></i></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+
+    </div>
+</div>

@@ -1,5 +1,53 @@
-﻿@*
-    For more information on enabling MVC for empty projects, visit https://go.microsoft.com/fwlink/?LinkID=397860
-*@
-@{
-}
+﻿<div class="col-12">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Add Table</h5>
+        </div>
+        <div class="card-body">
+            <form action="@Url.Action("List", "Table")" method="post">
+                
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">QR code</label>
+                    <div class="col-sm-10">
+                        <input type="qr" class="form-control" placeholder="QR code">
+                    </div>
+                </div>
+
+                <fieldset class="mb-3">
+                    <div class="row">
+                        <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Role</label>
+                        <div class="col-sm-10">
+                            <label class="form-check">
+                                <input name="status" type="radio" class="form-check-input" checked>
+                                <span class="form-check-label">Open</span>
+                            </label>
+                            <label class="form-check">
+                                <input name="status" type="radio" class="form-check-input">
+                                <span class="form-check-label">Closed</span>
+                            </label>
+                            <label class="form-check">
+                                <input name="status" type="radio" class="form-check-input">
+                                <span class="form-check-label">Another Status</span>
+                            </label>
+                        </div>
+                    </div>
+                </fieldset>
+
+                @* <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Image</label>
+                    <div class="col-sm-10">
+                        <input type="file">
+                        <small class="form-check-label text-muted">Only png and jpg allowed.</small>
+
+                    </div>
+                </div> Comment in case needed *@
+
+                <div class="mb-3 row">
+                    <div class="col-sm-10 ms-sm-auto">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
