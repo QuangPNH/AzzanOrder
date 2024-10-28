@@ -8,6 +8,7 @@ import VoucherList from './Voucher/VoucherList';
 
 const VoucherScreen = () => {
     const [vouchers, setVouchers] = useState([]);
+    const [allVouchers, setAllVouchers] = useState(false);
     const [point, setPoint] = useState(false);
     const [categories, setCategories] = useState([]);
     const [memberVouchers, setMemberVouchers] = useState(false);
@@ -26,7 +27,8 @@ const VoucherScreen = () => {
             const response = await fetch(`https://localhost:7183/api/MemberVouchers/memberId?memberId=${memberId}`);
             const data = await response.json();
             setMemberVouchers(data);
-            memberVouchers.forEach(memberVoucher => console.log(memberVoucher.voucherDetail.endDate));
+            // memberVouchers.forEach(memberVoucher => console.log(memberVoucher.voucherDetail.endDate));
+
         } catch (error) {
             console.error('Error fetching menu items:', error);
         }
@@ -36,8 +38,7 @@ const VoucherScreen = () => {
         try {
             const response = category == '' ? await fetch(`https://localhost:7183/api/VoucherDetail`) : await fetch(`https://localhost:7183/api/VoucherDetail/categoryId?categoryId=${category}`);
             const data = await response.json();
-            setVouchers(data);
-            
+            category == '' ? setAllVouchers(data) : setVouchers(data);
         } catch (error) {
             console.error('Error fetching menu items:', error);
         }
@@ -100,15 +101,28 @@ const VoucherScreen = () => {
                     options={categories.map(category => category.description)}
                     onClick2={handleDropdownChange}
                     onChange={handleDropdownChange} />
-                
+                        {allVouchers && (
+                            <div className="product-sale-container">
+                                {allVouchers.map((aV) => (
+                                    <ProductSale
+                                        key={aV.id}
+                                        saleAmount={aV.discount}
+                                        endDate={aV.endDate}
+                                        price={aV.price}
+                                        infiniteUses={true}
+                                        useCount={0}
+                                    />
+                                ))}
+                            </div>
+                        )}
                         {vouchers && (
                             <div className="product-sale-container">
-                                {vouchers.map((voucher) => (
+                                {vouchers.map((v) => (
                                     <ProductSale
-                                        key={voucher.id}
-                                        saleAmount={voucher.discount}
-                                        endDate={voucher.endDate}
-                                        price={voucher.price}
+                                        key={v.voucherDetail.id}
+                                        saleAmount={v.voucherDetail.discount}
+                                        endDate={v.voucherDetail.endDate}
+                                        price={v.voucherDetail.price}
                                         infiniteUses={true}
                                         useCount={0}
                                     />

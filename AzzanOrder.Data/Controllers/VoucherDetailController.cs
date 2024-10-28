@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -30,7 +30,8 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            return await _context.VoucherDetails.Include(vd => vd.Vouchers).ToListAsync();
+            var a = await _context.VoucherDetails.Include(vd => vd.Vouchers.Where(v=>v.IsActive == true)).ToListAsync();
+            return Ok(a);
         }
 
         [HttpGet("categoryId")]
@@ -42,7 +43,7 @@ namespace AzzanOrder.Data.Controllers
                 return NotFound(); 
             }
             var voucherDetails = _context.Vouchers
-    .Where(v => v.ItemCategoryId == categoryId && v.IsActive == true)  // L?c theo categoryId v� IsActive
+    .Where(v => v.ItemCategoryId == categoryId && v.IsActive == true)  // L?c theo categoryId và IsActive
     .Include(vd => vd.VoucherDetail)
     .ToList();
 
