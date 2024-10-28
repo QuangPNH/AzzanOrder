@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
@@ -9,6 +9,10 @@ using AzzanOrder.Data.Models;
 
 namespace AzzanOrder.Data.Controllers
 {
+
+    //P/S: Bổ sung open và close table nha
+
+
     [Route("api/[controller]")]
     [ApiController]
     public class TableController : ControllerBase
