@@ -69,7 +69,6 @@ const PlaceOrderButton = ({ amount }) => {
                 TableId: parseInt(getCookie('tableqr').split('/')[2]),
                 Cost: amount,
                 MemberId: JSON.parse(getCookie('memberInfo')).memberId,
-                Status: true,
                 OrderDetails: orderDetails,
             };
 

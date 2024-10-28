@@ -67,6 +67,24 @@ namespace AzzanOrder.Data.Controllers
             return order;
         }
 
+        [HttpGet("GetOrderByTableQr/{qr}/{id}")]
+        public async Task<ActionResult<IEnumerable<Order>>> GetOrderByTableQr(string qr, int id)
+        {
+            if (_context.Orders == null)
+            {
+                return NotFound();
+            }
+            var oneHourAgo = DateTime.Now.AddHours(-1);
+            var order = await _context.Orders.Where(x=> x.Table.Qr == qr && x.Table.EmployeeId == id && x.OrderDate > oneHourAgo).ToListAsync();
+
+            if (order.IsNullOrEmpty())
+            {
+                return NotFound();
+            }
+
+            return order;
+        }
+
         // PUT: api/Order/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]

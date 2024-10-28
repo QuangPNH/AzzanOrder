@@ -35,7 +35,7 @@ const ItemInCart = ({ id, name, options, price, quantity, onQuantityChange }) =>
             }
             return item;
         });
-        setCookie("cartData", JSON.stringify(updatedCartData), 7);
+        setCookie("cartData", JSON.stringify(updatedCartData), 0.02);
         onQuantityChange(updatedCartData);
     }, [currentQuantity, selectedSugar, selectedIce, selectedToppings, id]);
 
@@ -46,7 +46,7 @@ const ItemInCart = ({ id, name, options, price, quantity, onQuantityChange }) =>
     const handleDelete = () => {
         const cartData = JSON.parse(getCookie("cartData"));
         const updatedCartData = cartData.filter((item) => item.id !== id);
-        setCookie("cartData", JSON.stringify(updatedCartData), 7);
+        setCookie("cartData", JSON.stringify(updatedCartData), 0.02);
         onQuantityChange(updatedCartData);
     };
 

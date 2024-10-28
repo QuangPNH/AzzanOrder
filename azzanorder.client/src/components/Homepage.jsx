@@ -32,7 +32,10 @@ const Homepage = () => {
             setShowRecentlyOrdered(true);
         }
         deleteCookie('tableqr');
-        setCookie('tableqr',id,1);
+        if (id) {
+            setCookie('tableqr', id, 1);
+            fetchOrderExits(id.split('/')[0], id.split('/')[1]);
+        }
     }, []);
 
     const fetchMenuItems = async () => {
@@ -40,6 +43,17 @@ const Homepage = () => {
             const response = await fetch('https://localhost:7183/api/MenuItem/top4');
             const data = await response.json();
             setMenuItems(data);
+        } catch (error) {
+            console.error('Error fetching menu items:', error);
+        }
+    };
+
+    const fetchOrderExits = async (tableQr, manaId) => {
+        try {
+            const response = await fetch(`https://localhost:7183/api/Order/GetOrderByTableQr/${tableQr}/${manaId}`);
+            if (response.ok) {
+                window.location.href = '/order';
+            }
         } catch (error) {
             console.error('Error fetching menu items:', error);
         }
