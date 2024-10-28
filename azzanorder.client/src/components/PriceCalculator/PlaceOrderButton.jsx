@@ -9,26 +9,26 @@ const PlaceOrderButton = ({ amount }) => {
         console.log("amount:", amount);
 
         try {
-            //const response = await fetch(`https://localhost:7183/api/Order/QR/${amount}`, {
-            //    method: "GET",
-            //    headers: {
-            //        "Content-Type": "application/json",
-            //    },
-            //});
+            const response = await fetch(`https://localhost:7183/api/Order/QR/${amount}`, {
+                method: "GET",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+            });
 
-            //if (!response.ok) {
-            //    throw new Error(`HTTP error! status: ${response.status}`);
-            //}
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
-            //const data = await response.json();
+            const data = await response.json();
 
-            //if (data && data.base64Image) {
-            //    setQRDataURL(data.base64Image);
+            if (data && data.base64Image) {
+                setQRDataURL(data.base64Image);
                 
-            //} else {
-            //    console.error("QR code data is missing in the response:", data);
-            //    throw new Error("QR code data is missing in the response");
-            //}
+            } else {
+                console.error("QR code data is missing in the response:", data);
+                throw new Error("QR code data is missing in the response");
+            }
             await postOrder();
         } catch (error) {
             console.error("Error fetching QR code:", error);
@@ -69,7 +69,6 @@ const PlaceOrderButton = ({ amount }) => {
                 TableId: parseInt(getCookie('tableqr').split('/')[2]),
                 Cost: amount,
                 MemberId: JSON.parse(getCookie('memberInfo')).memberId,
-                Status: true,
                 OrderDetails: orderDetails,
             };
 
@@ -79,6 +78,10 @@ const PlaceOrderButton = ({ amount }) => {
                     "Content-Type": "application/json",
                 },
                 body: JSON.stringify(order),
+            });
+
+            const updateMemberPoints = await fetch(`https://localhost:7183/api/Members/UpdatePoints/${JSON.parse(getCookie('memberInfo')).memberId}/${amount / 1000}`, {
+                method: 'PUT'
             });
 
             if (!response.ok) {

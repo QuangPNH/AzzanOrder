@@ -90,7 +90,7 @@ const ItemDetail = ({ closeModal, imageSrc, key, title, price, cate, desc, id })
             parsedData.push(newItem);
         }
 
-        setCookie("cartData", JSON.stringify(parsedData), 7);
+        setCookie("cartData", JSON.stringify(parsedData), 0.02);
     };
 
     const modifiedDesc = desc.includes('/') ? desc.split('/').slice(1).join('/') : desc;

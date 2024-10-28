@@ -24,15 +24,16 @@ const MemberProfile = () => {
     useEffect(() => {
         const memberInfoCookie = getCookie('memberInfo');
         if (memberInfoCookie != null) {
-            setFormattedMemberInfo(memberInfoCookie);
+
+            setFormattedMemberInfo(JSON.parse(memberInfoCookie).phone);
         } else {
             window.location.href = '';
         }
     }, []);
 
-    const setFormattedMemberInfo = async (memberInfo) => {
+    const setFormattedMemberInfo = async (phone) => {
         try {
-            const response = await fetch(`https://localhost:7183/api/Member/Phone/${memberInfo.phone}`);
+            const response = await fetch(`https://localhost:7183/api/Member/Phone/${phone}`);
             if (response.ok) {
                 const data = await response.json();
                 const formattedMemberInfo = {
