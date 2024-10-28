@@ -31,7 +31,7 @@ const Homepage = () => {
             fetchRecentMenuItems(JSON.parse(getCookie('memberInfo')).memberId);
             setShowRecentlyOrdered(true);
         }
-        deleteCookie('tableqr');
+        //deleteCookie('tableqr');
         if (id) {
             setCookie('tableqr', id, 1);
             fetchOrderExits(id.split('/')[0], id.split('/')[1]);

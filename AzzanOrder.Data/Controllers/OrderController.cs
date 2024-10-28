@@ -1,27 +1,8 @@
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AzzanOrder.Data.Models;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.DotNet.Scaffolding.Shared.CodeModifier.CodeChange;
-using Microsoft.OpenApi.Models;
 using Newtonsoft.Json;
-using System.Collections;
-using System.Net;
-using System.Text;
-using Twilio.Http;
-using System.Collections;
-using System.Net;
-using System.Text;
-using Microsoft.AspNetCore.Mvc;
-using Microsoft.AspNetCore.Mvc.RazorPages;
-using Microsoft.EntityFrameworkCore;
 using Microsoft.IdentityModel.Tokens;
-using Newtonsoft.Json;
 using RestSharp;
 
 namespace AzzanOrder.Data.Controllers
@@ -74,16 +55,25 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            var oneHourAgo = DateTime.Now.AddHours(-1);
-            var order = await _context.Orders.Where(x=> x.Table.Qr == qr && x.Table.EmployeeId == id && x.OrderDate > oneHourAgo).ToListAsync();
 
-            if (order.IsNullOrEmpty())
+            var oneHourAgo = DateTime.Now.AddHours(-1);
+            var orders = await _context.Orders
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.MenuItem)
+                .Include(o => o.Table)
+                .Where(x => x.Table.Qr == qr
+                            && x.Table.EmployeeId == id
+                //&& x.OrderDate > oneHourAgo
+                ).ToListAsync();
+
+            if (orders == null || !orders.Any())
             {
                 return NotFound();
             }
 
-            return order;
+            return orders;
         }
+
 
         // PUT: api/Order/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

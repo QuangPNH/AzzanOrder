@@ -167,6 +167,21 @@ namespace AzzanOrder.Data.Controllers
             return Ok(member);
         }
 
+        [HttpPut("UpdatePoints/{memberId}/{point}")]
+        public async Task<IActionResult> UpdatePoints(int memberId, int point)
+        {
+            var member = await _context.Members.FindAsync(memberId);
+            if (member == null)
+            {
+                return NotFound();
+            }
+
+            member.Point += point; // Assuming the member has a Points property
+            await _context.SaveChangesAsync();
+
+            return NoContent();
+        }
+
         // POST: api/Member
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("Add")]
