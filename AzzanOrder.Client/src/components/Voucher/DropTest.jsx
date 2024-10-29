@@ -61,7 +61,7 @@ const DropTest = ({ options, onChange }) => {
         <>
             <div className="dropdown">
                 <DropdownItem
-                    label={selectedItem ? selectedItem.voucherDetail.title + " Sale " + selectedItem.voucherDetail.discount + "%" : ''}
+                    label={selectedItem ? selectedItem.title + " Sale " + selectedItem.discount + "%" : ''}
                     iconSrc={
                         !isExpanded
                             ? 'https://cdn.builder.io/api/v1/image/assets/TEMP/149dee1c832975b05bb91e7928d007f9cfbf8aff03b0c89e8080bdf1f9308e5f?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533'
@@ -75,7 +75,7 @@ const DropTest = ({ options, onChange }) => {
                         {items.map((item, index) => (
                             <DropdownItem
                                 key={index}
-                                label={item.voucherDetail.title + " Sale " + item.voucherDetail.discount + "%"}
+                                label={item.title + " Sale " + item.discount + "%"}
                                 onClick={() => handleSelectItem(item)}
                             />
                         ))}

@@ -28,7 +28,7 @@ const VoucherScreen = () => {
             const data = await response.json();
             setMemberVouchers(data);
             // memberVouchers.forEach(memberVoucher => console.log(memberVoucher.voucherDetail.endDate));
-
+            memberVouchers.forEach(memberVoucher => console.log(memberVoucher));
         } catch (error) {
             console.error('Error fetching menu items:', error);
         }
@@ -38,7 +38,12 @@ const VoucherScreen = () => {
         try {
             const response = category == '' ? await fetch(`https://localhost:7183/api/VoucherDetail`) : await fetch(`https://localhost:7183/api/VoucherDetail/categoryId?categoryId=${category}`);
             const data = await response.json();
-            category == '' ? setAllVouchers(data) : setVouchers(data);
+            if (category == '') {
+                setAllVouchers(data);
+            } else {
+                setAllVouchers(false);
+                setVouchers(data);
+            }
         } catch (error) {
             console.error('Error fetching menu items:', error);
         }
@@ -87,50 +92,50 @@ const VoucherScreen = () => {
                     <div className="product-sale-container">
                         {memberVouchers.map((memberVoucher) => (
                             <ProductSale
-                                key={memberVoucher.voucherDetail ? memberVoucher.voucherDetail.id : null}
-                                saleAmount={memberVoucher.voucherDetail ? memberVoucher.voucherDetail.discount : null}
-                                endDate={memberVoucher.voucherDetail ? memberVoucher.voucherDetail.endDate : null}
-                                bought={true}                            />
+                                key={memberVoucher.voucherDetailId}
+                                saleAmount={memberVoucher.discount}
+                                endDate={memberVoucher.endDate}
+                                bought={true} />
                         ))}
                     </div>
                 )}
 
                 {/* <Category /> */}
-
+                <p>0934422800</p>
                 <Dropdown
                     options={categories.map(category => category.description)}
                     onClick2={handleDropdownChange}
                     onChange={handleDropdownChange} />
-                        {allVouchers && (
-                            <div className="product-sale-container">
-                                {allVouchers.map((aV) => (
-                                    <ProductSale
-                                        key={aV.id}
-                                        saleAmount={aV.discount}
-                                        endDate={aV.endDate}
-                                        price={aV.price}
-                                        infiniteUses={true}
-                                        useCount={0}
-                                    />
-                                ))}
-                            </div>
-                        )}
-                        {vouchers && (
-                            <div className="product-sale-container">
-                                {vouchers.map((v) => (
-                                    <ProductSale
-                                        key={v.voucherDetail.id}
-                                        saleAmount={v.voucherDetail.discount}
-                                        endDate={v.voucherDetail.endDate}
-                                        price={v.voucherDetail.price}
-                                        infiniteUses={true}
-                                        useCount={0}
-                                    />
-                                ))}
-                            </div>
-                        )}
+                {allVouchers && (
+                    <div className="product-sale-container">
+                        {allVouchers.map((aV) => (
+                            <ProductSale
+                                key={aV.id}
+                                saleAmount={aV.discount}
+                                endDate={aV.endDate}
+                                price={aV.price}
+                                infiniteUses={true}
+                                useCount={0}
+                            />
+                        ))}
                     </div>
-       
+                )}
+                {vouchers && (
+                    <div className="product-sale-container">
+                        {vouchers.map((v) => (
+                            <ProductSale
+                                key={v.voucherDetail.id}
+                                saleAmount={v.voucherDetail.discount}
+                                endDate={v.voucherDetail.endDate}
+                                price={v.voucherDetail.price}
+                                infiniteUses={true}
+                                useCount={0}
+                            />
+                        ))}
+                    </div>
+                )}
+            </div>
+
 
 
             <style jsx>{`

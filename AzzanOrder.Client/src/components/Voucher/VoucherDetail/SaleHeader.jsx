@@ -14,7 +14,10 @@ const SaleHeader = ({category, endDate }) => {
                     border-radius: 10px 0 0 10px;
                     background-color: rgba(191, 50, 39, 0.75);
                     box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+                    width:20em;
                     display: flex;
+                    justify-content: center;
+                    align-items: center;
                     flex-direction: column;
                     overflow: hidden;
                     font-family: Inter, sans-serif;

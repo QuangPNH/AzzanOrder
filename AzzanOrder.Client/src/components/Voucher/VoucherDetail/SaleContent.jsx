@@ -51,6 +51,7 @@ const SaleContent = ({ saleAmount, price, infiniteUses, useCount, bought }) => {
             <style jsx>{`
                 .sale-content {
                     border-radius: 0 10px 10px 0;
+                    width: 50em;
                     background-color: #f6b5b5;
                     display: flex;
                     flex-direction: column;
