@@ -56,25 +56,25 @@ namespace AzzanOrder.Data.Controllers
             {
                 return BadRequest();
             }
-           
+
             var memberVoucher = await _context.VoucherDetails.Where(vd => vd.Vouchers.Any(v => v.ItemCategoryId == categoryId) && vd.MemberVouchers.Any(mv => mv.MemberId == memberId && mv.IsActive == true)).Include(vd => vd.Vouchers).ToListAsync();
-            
-           return Ok(memberVoucher);
-           
+
+            return Ok(memberVoucher);
+
 
         }
 
         // PUT: api/MemberVouchers/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("Update")]
-        public async Task<IActionResult> PutMemberVoucher(MemberVoucherDTO memberVoucher)
+        public async Task<IActionResult> PutMemberVoucher(MemberVoucher memberVoucher)
         {
             if (!MemberVoucherExists(memberVoucher))
             {
                 return BadRequest();
             }
-            var mv = new MemberVoucher() { MemberId = memberVoucher.MemberId, VoucherDetailId = memberVoucher.VoucherDetailId, IsActive = memberVoucher.IsActive, OrderId = memberVoucher.OrderId };
-            _context.Entry(mv).State = EntityState.Modified;
+
+            _context.Entry(memberVoucher).State = EntityState.Modified;
 
             try
             {
@@ -98,17 +98,18 @@ namespace AzzanOrder.Data.Controllers
         // POST: api/MemberVouchers
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost("Add")]
-        public async Task<ActionResult<MemberVoucher>> PostMemberVoucher(MemberVoucherDTO memberVoucher)
+        public async Task<ActionResult<MemberVoucher>> PostMemberVoucher(MemberVoucher memberVoucher)
         {
             if (_context.MemberVouchers == null)
             {
                 return Problem("Entity set 'OrderingAssistSystemContext.MemberVouchers'  is null.");
             }
-            if (MemberVoucherExists(memberVoucher))
-            {
-                return Conflict("You have this voucher");
-            }
-            MemberVoucher mv = new MemberVoucher() { MemberId = memberVoucher.MemberId, VoucherDetailId = memberVoucher.VoucherDetailId, IsActive = memberVoucher.IsActive, OrderId = memberVoucher.OrderId };
+            //if (MemberVoucherExists(memberVoucher))
+            //{
+            //    return Conflict("You have this voucher");
+            //}
+            MemberVoucher mv = new MemberVoucher() { MemberId = memberVoucher.MemberId, VoucherDetailId = memberVoucher.VoucherDetailId, OrderId = memberVoucher.OrderId };
+            mv.IsActive = true;
             _context.MemberVouchers.Add(mv);
             try
             {
@@ -126,33 +127,34 @@ namespace AzzanOrder.Data.Controllers
                 }
             }
 
-            return CreatedAtAction("GetMemberVoucher", new { id = memberVoucher.MemberId, memberVoucher.VoucherDetailId }, memberVoucher);
+            return CreatedAtAction("GetMemberVoucher", new { id = mv.MemberVoucherId }, mv);
         }
 
         // DELETE: api/MemberVouchers/5
-        [HttpDelete("Delete/MemberVoucher")]
-        public async Task<IActionResult> DeleteMemberVoucher(MemberVoucherDTO memberVoucher)
+        [HttpDelete("Delete/MemberVoucherId")]
+        public async Task<IActionResult> DeleteMemberVoucher(int MemberVoucherId)
         {
             if (_context.MemberVouchers == null)
             {
                 return NotFound();
             }
-            var mv = await _context.MemberVouchers.FirstOrDefaultAsync(m => m.VoucherDetailId == memberVoucher.VoucherDetailId && m.MemberId == memberVoucher.MemberId);
+            var mv = await _context.MemberVouchers.FirstOrDefaultAsync(m => m.MemberVoucherId == MemberVoucherId);
             if (mv == null)
             {
                 return NotFound();
             }
-            if(mv.OrderId != null)
+            if (mv.OrderId != null)
             {
-                return Conflict("This not be delete");
+                mv.IsActive = false;
+                _context.MemberVouchers.Update(mv);
             }
             _context.MemberVouchers.Remove(mv);
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok("Remove Success");
         }
 
-        private bool MemberVoucherExists(MemberVoucherDTO memberVoucher)
+        private bool MemberVoucherExists(MemberVoucher memberVoucher)
         {
             return (_context.MemberVouchers?.Any(e => e.MemberId == memberVoucher.MemberId && e.VoucherDetailId == memberVoucher.VoucherDetailId)).GetValueOrDefault();
         }

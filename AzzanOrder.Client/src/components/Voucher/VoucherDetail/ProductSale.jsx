@@ -11,8 +11,9 @@ const formatDate = (dateString) => {
     return `${month}/${day}`;
 };
 
-const ProductSale = ({ saleAmount, endDate, price, infiniteUses, useCount , bought }) => {
-    const formattedEndDate = formatDate(endDate);  // Format the date
+const ProductSale = ({ saleAmount, endDate, price, infiniteUses, useCount , bought, voucherDetailId}) => {
+    const formattedEndDate = formatDate(endDate); 
+     // Format the date
 //     const [category, setCategory] = useState([]);
 //     useEffect(() => {
 //         fetchCategory();
@@ -28,8 +29,8 @@ const ProductSale = ({ saleAmount, endDate, price, infiniteUses, useCount , boug
 // };
     return (
         <div className="product-sale">
-            <SaleHeader endDate={formattedEndDate}/>
-            <SaleContent saleAmount={saleAmount} price={price} infiniteUses={infiniteUses} useCount={useCount}  bought={bought}/>
+            <SaleHeader endDate={formattedEndDate} voucherDetailId={voucherDetailId}/>
+            <SaleContent saleAmount={saleAmount} price={price} infiniteUses={infiniteUses} useCount={useCount}  bought={bought} voucherDetailId={voucherDetailId}/>
             <style jsx>{`
                 .product-sale {
                     display: flex; /* Make it a flex container */

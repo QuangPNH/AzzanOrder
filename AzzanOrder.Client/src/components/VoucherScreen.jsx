@@ -11,6 +11,7 @@ const VoucherScreen = () => {
     const [allVouchers, setAllVouchers] = useState(false);
     const [point, setPoint] = useState(false);
     const [categories, setCategories] = useState([]);
+  
     const [memberVouchers, setMemberVouchers] = useState(false);
     useEffect(() => {
         fetchVouchers();
@@ -21,6 +22,7 @@ const VoucherScreen = () => {
             setPoint(true);
             setMemberVouchers([true]);
         }
+        
     }, []);
     const fetchMemberVouchers = async (memberId) => {
         try {
@@ -28,7 +30,6 @@ const VoucherScreen = () => {
             const data = await response.json();
             setMemberVouchers(data);
             // memberVouchers.forEach(memberVoucher => console.log(memberVoucher.voucherDetail.endDate));
-            memberVouchers.forEach(memberVoucher => console.log(memberVoucher));
         } catch (error) {
             console.error('Error fetching menu items:', error);
         }
@@ -73,6 +74,10 @@ const VoucherScreen = () => {
         fetchVouchers(selectedCategory);
     };
 
+
+    
+    
+
     return (
         <>
             <Header />
@@ -91,11 +96,14 @@ const VoucherScreen = () => {
                 {memberVouchers && (
                     <div className="product-sale-container">
                         {memberVouchers.map((memberVoucher) => (
+                            
                             <ProductSale
                                 key={memberVoucher.voucherDetailId}
                                 saleAmount={memberVoucher.discount}
                                 endDate={memberVoucher.endDate}
-                                bought={true} />
+                                bought={true} 
+                                voucherDetailId = {memberVoucher.voucherDetailId}
+                                />
                         ))}
                     </div>
                 )}
@@ -106,6 +114,7 @@ const VoucherScreen = () => {
                     options={categories.map(category => category.description)}
                     onClick2={handleDropdownChange}
                     onChange={handleDropdownChange} />
+                    
                 {allVouchers && (
                     <div className="product-sale-container">
                         {allVouchers.map((aV) => (
@@ -116,6 +125,8 @@ const VoucherScreen = () => {
                                 price={aV.price}
                                 infiniteUses={true}
                                 useCount={0}
+                                voucherDetailId = {aV.voucherDetailId}
+                                
                             />
                         ))}
                     </div>
@@ -130,6 +141,8 @@ const VoucherScreen = () => {
                                 price={v.voucherDetail.price}
                                 infiniteUses={true}
                                 useCount={0}
+                                voucherDetailId = {v.voucherDetail.voucherDetailId}
+                                
                             />
                         ))}
                     </div>

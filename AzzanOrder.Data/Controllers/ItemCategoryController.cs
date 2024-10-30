@@ -59,12 +59,27 @@ namespace AzzanOrder.Data.Controllers
             return itemCategory;
         }
 
+        [HttpGet("VoucherDetailId")]
+        public async Task<ActionResult<IEnumerable>> GetItemCategoryByVoucherDetail(int VoucherDetailId)
+        {
+            if (_context.ItemCategories == null)
+            {
+                return NotFound();
+            }
+            var voucherDetails = _context.Vouchers
+            .Where(v => v.VoucherDetailId == VoucherDetailId && v.IsActive == true)
+            .Include(vd => vd.ItemCategory)
+            .ToList();
+
+            return voucherDetails;
+        }
+
         // PUT: api/ItemCategory/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutItemCategory(int id, ItemCategory itemCategory)
+        [HttpPut("Update")]
+        public async Task<IActionResult> PutItemCategory(ItemCategory itemCategory)
         {
-            if (id != itemCategory.ItemCategoryId)
+            if (ItemCategoryExists(itemCategory.ItemCategoryId))
             {
                 return BadRequest();
             }
@@ -77,7 +92,7 @@ namespace AzzanOrder.Data.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!ItemCategoryExists(id))
+                if (!ItemCategoryExists(itemCategory.ItemCategoryId))
                 {
                     return NotFound();
                 }
@@ -92,17 +107,18 @@ namespace AzzanOrder.Data.Controllers
 
         // POST: api/ItemCategory
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPost]
+        [HttpPost("Add")]
         public async Task<ActionResult<ItemCategory>> PostItemCategory(ItemCategory itemCategory)
         {
           if (_context.ItemCategories == null)
           {
               return Problem("Entity set 'OrderingAssistSystemContext.ItemCategories'  is null.");
           }
-            _context.ItemCategories.Add(itemCategory);
+          ItemCategory ic = new ItemCategory() {ItemCategoryName = itemCategory.ItemCategoryName, Description = itemCategory.Description, Discount = itemCategory.Discount, Image = itemCategory.Image};
+            _context.ItemCategories.Add(ic);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetItemCategory", new { id = itemCategory.ItemCategoryId }, itemCategory);
+            return CreatedAtAction("GetItemCategory", new { id = ic.ItemCategoryId }, ic);
         }
 
         // DELETE: api/ItemCategory/5
