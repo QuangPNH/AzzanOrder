@@ -1,0 +1,86 @@
+﻿<div class="col-12">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Update Voucher</h5>
+        </div>
+        <div class="card-body">
+            <form action="@Url.Action("List", "Voucher")" method="post">
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Title</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" placeholder="Title">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Item Category</label>
+                    <div class="col-sm-10">
+                        <select class="form-select">
+                            <option selected>Select Item Category</option>
+                            <option value="1">Coffee</option>
+                            <option value="2">Tea</option>
+                            <option value="3">Juice</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Checkbox</label>
+                    <div class="col-sm-10">
+                        <label class="form-check m-0">
+                            <input type="checkbox" class="form-check-input" id="limitedCheckbox">
+                            <span class="form-check-label">Limited</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Start Date</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="startDate" data-inputmask-alias="datetime"
+                               data-inputmask-inputformat="dd/mm/yyyy" disabled />
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">End Date</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" id="endDate" data-inputmask-alias="datetime"
+                               data-inputmask-inputformat="dd/mm/yyyy" disabled />
+                        <span class="text-muted">DD/MM/YYYY format. Can be used for limited voucher only.</span>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Discount</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" placeholder="Discount">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Price</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" placeholder="Price">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <div class="col-sm-10 ms-sm-auto">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Enable/disable datetime fields based on checkbox state
+        const limitedCheckbox = document.getElementById('limitedCheckbox');
+        const startDate = document.getElementById('startDate');
+        const endDate = document.getElementById('endDate');
+
+        if (limitedCheckbox) {
+            limitedCheckbox.addEventListener('change', function () {
+                const isChecked = limitedCheckbox.checked;
+                startDate.disabled = !isChecked;
+                endDate.disabled = !isChecked;
+            });
+        }
+    });
+</script>

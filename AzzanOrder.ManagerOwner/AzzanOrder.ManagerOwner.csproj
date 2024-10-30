@@ -9,7 +9,6 @@
   <ItemGroup>
     <Folder Include="Views\Menu\" />
     <Folder Include="Views\Promotion\" />
-    <Folder Include="Views\Voucher\" />
   </ItemGroup>
 
 </Project>
