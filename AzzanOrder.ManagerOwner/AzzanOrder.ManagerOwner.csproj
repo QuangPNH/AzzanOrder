@@ -6,4 +6,9 @@
     <ImplicitUsings>enable</ImplicitUsings>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Folder Include="Views\Menu\" />
+    <Folder Include="Views\Promotion\" />
+  </ItemGroup>
+
 </Project>

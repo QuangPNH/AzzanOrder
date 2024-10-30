@@ -2,7 +2,7 @@
 
 namespace AzzanOrder.ManagerOwner.Controllers
 {
-	public class TableController : Controller
+	public class VoucherController : Controller
 	{
 		public IActionResult List()
 		{
@@ -49,7 +49,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 		}
 		public IActionResult Delete()
 		{
-			return RedirectToAction("List", "Table");
+			return RedirectToAction("List", "Voucher");
 		}
 	}
 }
