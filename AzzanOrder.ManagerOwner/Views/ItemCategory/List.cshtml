@@ -1,0 +1,57 @@
+﻿<h1 class="h3 mb-3">Item Category Management</h1>
+
+<div class="col-12">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">ListItemCategory</h5>
+        </div>
+        <div>
+            <a href="@Url.Action("Add", "ItemCategory")" class="btn btn-primary">Add New Item Category</a>
+        </div>
+
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th style="width:5%">No.</th>
+                    <th style="width:25%">Item Category Name</th>
+                    <th class="d-none d-md-table-cell" style="width:20%">Description</th>
+                    <th style="width:15%">Discount</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>1</td>
+                    <td>Coffee</td>
+                    <td class="d-none d-md-table-cell">Good drink</td>
+                    <td>5%</td>
+                    <td class="table-action">
+                        <a href="@Url.Action("Update", "ItemCategory")"><i class="align-middle" data-feather="edit-2"></i></a>
+                        <a href="@Url.Action("Delete", "ItemCategory")"><i class="align-middle" data-feather="trash"></i></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <div class="row mt-3">
+            <div class="col d-flex align-items-center">
+                <span id="response-info">Showing 0-0 out of 0 responses</span>
+            </div>
+            <div class="col d-flex justify-content-end">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination pagination-md mb-0">
+                        <li class="page-item"><a class="page-link" href="#"><i class="fas fa-angle-left"></i></a></li>
+                        <li class="page-item"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item active"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">4</a></li>
+                        <li class="page-item"><a class="page-link" href="#">5</a></li>
+                        <li class="page-item"><a class="page-link" href="#"><i class="fas fa-angle-right"></i></a></li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+
+
+    </div>
+</div>
