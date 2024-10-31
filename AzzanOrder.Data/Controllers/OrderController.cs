@@ -1,8 +1,7 @@
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AzzanOrder.Data.Models;
 using Newtonsoft.Json;
-using Microsoft.IdentityModel.Tokens;
 using RestSharp;
 
 namespace AzzanOrder.Data.Controllers
@@ -172,16 +171,18 @@ namespace AzzanOrder.Data.Controllers
             return Ok();
         }
 
+        //Code để list các banks
+        /*using (System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient())
+            {
+                var htmlData = await httpClient.GetStringAsync("https://api.vietqr.io/v2/banks");
+                var listBankData = JsonConvert.DeserializeObject<Api.Bank>(htmlData);
+            }*/
+
         //https://www.vietqr.io/danh-sach-api/link-tao-ma-nhanh/api-tao-ma-qr/
         //https://www.vietqr.io/en/danh-sach-api/link-tao-ma-nhanh/
         [HttpGet("QR/{price}")]
         public async Task<IActionResult> VietQR(int price)
         {
-            using (System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient())
-            {
-                var htmlData = await httpClient.GetStringAsync("https://api.vietqr.io/v2/banks");
-                var listBankData = JsonConvert.DeserializeObject<Api.Bank>(htmlData);
-            }
             var apiRequest = new Api.ApiRequest
             {
                 acqId = 970436, //Vietcombank
@@ -200,14 +201,11 @@ namespace AzzanOrder.Data.Controllers
             };
             request.AddHeader("Accept", "application/json");
             request.AddParameter("application/json", jsonRequest, ParameterType.RequestBody);
-
             var response = await restClient.ExecuteAsync(request);
             var content = response.Content;
-
             var dataResult = JsonConvert.DeserializeObject<Api.ApiResponse>(content);
             var image = Base64ToImage(dataResult.data.qrDataURL.Replace("data:image/png;base64,", ""));
             base64Image = image;
-
             return Ok(new { base64Image });
         }
 
