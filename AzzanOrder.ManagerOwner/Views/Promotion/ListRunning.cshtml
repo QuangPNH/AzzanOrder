@@ -6,8 +6,9 @@
 
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">Promotion Carousel</h5>
+            <h5 class="card-title">Carousel</h5>
         </div>
+        
         <div class="card-body">
             <div class="carousel-container">
                 <div class="small-image-container left">
@@ -30,9 +31,40 @@
                 </div>
             </div>
         </div>
+
+        <div class="card-header">
+            <h5 class="card-title">Banner</h5>
+        </div>
+        <section class="banner">
+            <div class="image-gallery">
+                @foreach (var promotion in Model)
+                {
+                    <div class="image-wrapper">
+                        <img src="@promotion.Image" alt="@promotion.Title" />
+                    </div>
+                }
+            </div>
+
+            <nav class="banner-navigation">
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <div class="dot-indicator @(i == 0 ? "active" : "")"></div>
+                }
+            </nav>
+        </section>
+        <!-- Banner component ends here -->
+
+        <div>
+            <a href="javascript:void(0);" class="btn btn-primary" onclick="toggleListAll()">View All Promotions</a>
+            <a href="@Url.Action("Add", "Promotion")" class="btn btn-primary">Add New Promotion</a>
+        </div>
+
+        <div id="listAllContainer" style="display:none;">
+            @Html.Partial("ListAll")
+        </div>
+
     </div>
 </div>
-
 
 @section Scripts {
     <script>
@@ -63,6 +95,27 @@
 
             document.querySelector('.small-image-container.right .small-image').src = promotions[rightIndex].image;
             document.querySelector('.small-image-container.right .small-image').alt = promotions[rightIndex].title;
+        }
+
+        function toggleListAll() {
+            const listAllContainer = document.getElementById('listAllContainer');
+            listAllContainer.style.display = listAllContainer.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function saveStatus() {
+            // Perform AJAX request to save status
+            fetch('@Url.Action("SaveStatus", "Promotion")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': '@@Antiforgery.GetTokens(HttpContext).RequestToken'
+                },
+                body: JSON.stringify({ /* your data here */ })
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                }
+            });
         }
     </script>
 }
@@ -139,5 +192,47 @@
             transform: translateX(35%);
         }
     }
-</style>
 
+    .banner {
+        width: 100vw; /* Full width of the viewport */
+        max-width: 100%;
+        height: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        padding: 0;
+    }
+
+    .image-gallery {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .image-wrapper img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+
+    .banner-navigation {
+        display: flex;
+        gap: 8px;
+        position: absolute;
+        bottom: 40px; /* Increased space from the bottom */
+        z-index: 2; /* Ensure dots are on top */
+    }
+
+    .dot-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: gray;
+    }
+
+    .dot-indicator.active {
+        background-color: white;
+    }
+</style>
