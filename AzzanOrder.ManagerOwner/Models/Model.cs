@@ -1,4 +1,4 @@
-﻿using AzzanOrder.Data.Models;
+﻿using AzzanOrder.ManagerOwner.Models;
 
 namespace AzzanOrder.ManagerOwner.Models
 {

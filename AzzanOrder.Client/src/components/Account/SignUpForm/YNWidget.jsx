@@ -1,12 +1,14 @@
 ﻿import React, { useState } from 'react';
 import Button from "./Button";
 
-function YNWidget({ title, onClose }) {
+function YNWidget({ title, onClose, func }) {
 
     const handleSubmit = async () => {
         try {
-            document.cookie = 'memberInfo=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;';
             onClose();
+            if (func) {
+                await func();
+            }
         } catch (error) {
             console.error('An error occurred:', error);
         }

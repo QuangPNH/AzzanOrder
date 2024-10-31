@@ -47,6 +47,26 @@ namespace AzzanOrder.Data.Controllers
             return order;
         }
 
+        [HttpGet("GetCustomerOrder/{id}")]
+        public async Task<ActionResult<IEnumerable<Order>>> GetGetCustomerOrder(int id)
+        {
+            if (_context.Orders == null)
+            {
+                return NotFound();
+            }
+            var orders = await _context.Orders.Where(
+                x => x.MemberId == id && 
+                x.OrderDate > DateTime.Now.AddHours(-1)
+                ).ToListAsync();
+
+            if (orders == null)
+            {
+                return NotFound();
+            }
+
+            return orders;
+        }
+
         [HttpGet("GetOrderByTableQr/{qr}/{id}")]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrderByTableQr(string qr, int id)
         {
@@ -62,7 +82,7 @@ namespace AzzanOrder.Data.Controllers
                 .Include(o => o.Table)
                 .Where(x => x.Table.Qr == qr
                             && x.Table.EmployeeId == id
-                //&& x.OrderDate > oneHourAgo
+                            && x.OrderDate > oneHourAgo
                 ).ToListAsync();
 
             if (orders == null || !orders.Any())
@@ -121,23 +141,13 @@ namespace AzzanOrder.Data.Controllers
                 {
                     return BadRequest("Order must contain at least one order detail.");
                 }
-
+                order.OrderDate = DateTime.Now;
                 // Add the order to the context
                 _context.Orders.Add(order);
 
                 // Save the order to generate the OrderId
                 await _context.SaveChangesAsync();
 
-                // Add the OrderId to each order detail and reset OrderDetailId
-                foreach (var orderDetail in order.OrderDetails)
-                {
-                    orderDetail.OrderId = order.OrderId;
-                    orderDetail.OrderDetailId = 0; // Ensure the ID is reset
-                    _context.OrderDetails.Add(orderDetail);
-                }
-
-                // Save the order details
-                await _context.SaveChangesAsync();
             }
             catch (Exception ex)
             {

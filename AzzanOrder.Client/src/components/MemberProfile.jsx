@@ -27,7 +27,7 @@ const MemberProfile = () => {
 
             setFormattedMemberInfo(JSON.parse(memberInfoCookie).phone);
         } else {
-            window.location.href = '';
+            window.location.href = '/';
         }
     }, []);
 

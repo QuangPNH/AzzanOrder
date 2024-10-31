@@ -47,8 +47,11 @@ const CartHeader = () => {
 
                 // Update the cookie with tableId if it's missing
                 if (!tableId && options.length > 0) {
-                    const newTableId = options[0].tableId; // Assuming the first option's tableId
-                    setCookie("tableqr", `${qr}/${id}/${newTableId}`, 7);
+                    const matchingTable = options.find(option => option.qr === qr && String(option.employeeId) === String(id));
+                    if (matchingTable) {
+                        const newTableId = matchingTable.tableId;
+                        setCookie("tableqr", `${qr}/${id}/${newTableId}`, 7);
+                    }
                 }
             };
             fetchData();
@@ -70,9 +73,9 @@ const CartHeader = () => {
         <div className="cartHeader">
             <img src="../src/assets/shoppingCart1.svg" style={{ width: '30px', height: '26px' }} />
             <p>Cart at table</p>
-            <div className="dropdown">
-                <div className="dropdown-toggle" onClick={toggleDropdown}>
-                    <p className="selected-option">{selectedOption}</p>
+            <div className="dropdown1">
+                <div className="dropdown-toggle1" onClick={toggleDropdown}>
+                    <p className="selected-option1">{selectedOption}</p>
                     <img
                         src="https://cdn.builder.io/api/v1/image/assets/TEMP/170034c8ccaf3722be922eaa999b1f02f19585d5b327ad61ff50748511ec2953?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8"
                         alt=""
@@ -80,7 +83,7 @@ const CartHeader = () => {
                     />
                 </div>
                 {isDropdownOpen && (
-                    <div className="dropdown-menu">
+                    <div className="dropdown-menu1">
                         {dropdownOptions.map((option, index) => (
                             <button key={index} onClick={() => handleOptionSelection(option.qr, option.tableId)}>
                                 {option.qr}
@@ -98,11 +101,11 @@ const CartHeader = () => {
                 .cartHeader p {
                     margin-left: 10px;
                 }
-                .dropdown {
+                .dropdown1 {
                     margin-left: auto; /* Push the dropdown to the right */
                     position: relative;
                 }
-                .dropdown-toggle {
+                .dropdown-toggle1 {
                     display: flex;
                     align-items: center;
                     cursor: pointer;
@@ -111,11 +114,11 @@ const CartHeader = () => {
                     width: 22px;
                     height: 22px;
                 }
-                .selected-option {
+                .selected-option1 {
                     margin-right: 10px;
                     color: var(--Azzan-Color, #bd3326);
                 }
-                .dropdown-menu {
+                .dropdown-menu1 {
                     display: flex;
                     flex-direction: column;
                     position: absolute;
@@ -130,14 +133,14 @@ const CartHeader = () => {
                     max-height: 100px; /* Limit the height of the dropdown */
                     overflow-y: auto; /* Make the dropdown scrollable */
                 }
-                .dropdown-menu button {
+                .dropdown-menu1 button {
                     margin-bottom: 5px;
                     background: none;
                     border: none;
                     cursor: pointer;
                     color: var(--Azzan-Color, #bd3326);
                 }
-                .dropdown-menu button:hover {
+                .dropdown-menu1 button:hover {
                     background-color: #f0f0f0;
                 }
             `}</style>

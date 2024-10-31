@@ -85,7 +85,7 @@ const Cart = () => {
     ));
 
     return (
-        <div style={{ background: 'white', border: '1px solid black', borderRadius: '20px', padding: '10px', maxHeight: '550px' }}>
+        <div style={{ background: 'white', border: '1px solid black', borderRadius: '20px', padding: '10px', maxHeight: '700px',width: '320px', overflowY: 'auto' }}>
 
             <CartHeader />
             <div style={{ background: 'white', maxHeight: '250px', overflowY: 'auto' }}>

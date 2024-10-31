@@ -1,9 +1,6 @@
-﻿using AzzanOrder.Data.Models;
-using AzzanOrder.ManagerOwner.Models;
+﻿using AzzanOrder.ManagerOwner.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Net;
-using System.Reflection;
 
 namespace AzzanOrder.ManagerOwner.Controllers
 {

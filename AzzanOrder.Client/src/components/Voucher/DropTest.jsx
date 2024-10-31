@@ -8,9 +8,11 @@ const DropTest = ({ options, onChange }) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const data = await fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId, '');
-            setItems(data);
-            setSelectedItem(); // Chọn mục đầu tiên
+            if (getCookie('memberInfo')) {
+                const data = await fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId, '');
+                setItems(data);
+                setSelectedItem(); // Chọn mục đầu tiên
+            }
         };
         fetchData();
     }, []);
