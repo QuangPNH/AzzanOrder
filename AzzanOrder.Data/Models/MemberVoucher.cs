@@ -10,6 +10,7 @@ namespace AzzanOrder.Data.Models
         public int? VoucherDetailId { get; set; }
         public int? OrderId { get; set; }
         public bool? IsActive { get; set; }
+        public int? Quantity { get; set; }
 
         public virtual Member? Member { get; set; }
         public virtual Order? Order { get; set; }

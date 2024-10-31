@@ -48,6 +48,13 @@ namespace AzzanOrder.Data.Controllers
 
             return Ok(memberVoucher);
         }
+        [HttpGet("memberId/voucherDetailId")]
+        public async Task<ActionResult> GetMemberVoucherByMemberAndVoucherDetail(int memberId, int voucherDetailId)
+        {
+            if (_context.VoucherDetails == null) { return NotFound(); }
+            var memberVoucher = await _context.MemberVouchers.FirstOrDefaultAsync(mv => mv.VoucherDetailId == voucherDetailId && mv.MemberId == memberId);
+            return Ok(memberVoucher);
+        }
 
         [HttpGet("memberId/itemCategoryId")]
         public async Task<ActionResult> GetMemberVoucherByMemberAndCategory(int memberId, int categoryId)
@@ -104,30 +111,24 @@ namespace AzzanOrder.Data.Controllers
             {
                 return Problem("Entity set 'OrderingAssistSystemContext.MemberVouchers'  is null.");
             }
-            //if (MemberVoucherExists(memberVoucher))
-            //{
-            //    return Conflict("You have this voucher");
-            //}
-            MemberVoucher mv = new MemberVoucher() { MemberId = memberVoucher.MemberId, VoucherDetailId = memberVoucher.VoucherDetailId, OrderId = memberVoucher.OrderId };
-            mv.IsActive = true;
-            _context.MemberVouchers.Add(mv);
-            try
+            if (MemberVoucherExists(memberVoucher))
             {
-                await _context.SaveChangesAsync();
+                var mv = _context.MemberVouchers.FirstOrDefault(mv => mv.MemberId == memberVoucher.MemberId && mv.VoucherDetailId == memberVoucher.VoucherDetailId );
+                mv.Quantity = mv.Quantity + 1;
+                _context.MemberVouchers.Update(mv);
             }
-            catch (DbUpdateException)
+            else
             {
-                if (MemberVoucherExists(memberVoucher))
-                {
-                    return Conflict();
-                }
-                else
-                {
-                    throw;
-                }
+                MemberVoucher mv = new MemberVoucher() { MemberId = memberVoucher.MemberId, VoucherDetailId = memberVoucher.VoucherDetailId, OrderId = memberVoucher.OrderId };
+                mv.IsActive = true;
+                mv.Quantity = 1;
+                _context.MemberVouchers.Add(mv);
+                
             }
+            await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetMemberVoucher", new { id = mv.MemberVoucherId }, mv);
+            return Ok(_context.MemberVouchers.FirstOrDefault(mv => mv.MemberId == memberVoucher.MemberId && mv.VoucherDetailId == memberVoucher.VoucherDetailId));
+            
         }
 
         // DELETE: api/MemberVouchers/5
@@ -148,15 +149,28 @@ namespace AzzanOrder.Data.Controllers
                 mv.IsActive = false;
                 _context.MemberVouchers.Update(mv);
             }
-            _context.MemberVouchers.Remove(mv);
-            await _context.SaveChangesAsync();
+            if (mv.Quantity > 0)
+            {
+                mv.Quantity = mv.Quantity - 1;
+                _context.MemberVouchers.Update(mv);
+            }
+            if (mv.Quantity <= 0)
+            {
+                _context.MemberVouchers.Remove(mv);
 
-            return Ok("Remove Success");
+            }
+            await _context.SaveChangesAsync();
+            return Ok(mv);
         }
 
         private bool MemberVoucherExists(MemberVoucher memberVoucher)
         {
-            return (_context.MemberVouchers?.Any(e => e.MemberId == memberVoucher.MemberId && e.VoucherDetailId == memberVoucher.VoucherDetailId)).GetValueOrDefault();
+            var a = _context.MemberVouchers.FirstOrDefault(e => e.MemberId == memberVoucher.MemberId && e.VoucherDetailId == memberVoucher.VoucherDetailId);
+            if(a != null)
+            {
+                return true;
+            }
+            return false;
         }
     }
 }
