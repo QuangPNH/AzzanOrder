@@ -1,4 +1,4 @@
-﻿namespace AzzanOrder.Data.Models
+﻿namespace AzzanOrder.ManagerOwner.Models
 {
     public class Api
     {

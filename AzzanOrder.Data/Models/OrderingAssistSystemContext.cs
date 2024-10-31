@@ -1,4 +1,6 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+
+using System;
 using System.Collections.Generic;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata;
@@ -35,14 +37,14 @@ namespace AzzanOrder.Data.Models
         public virtual DbSet<Voucher> Vouchers { get; set; } = null!;
         public virtual DbSet<VoucherDetail> VoucherDetails { get; set; } = null!;
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-            if (!optionsBuilder.IsConfigured)
-            {
-#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
-                optionsBuilder.UseSqlServer("server = NGUYENMINH; database = OrderingAssistSystem; user = sa; password = 123456;TrustServerCertificate=true;Trusted_Connection=true;");
-            }
-        }
+//        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+//        {
+//            if (!optionsBuilder.IsConfigured)
+//            {
+//#warning To protect potentially sensitive information in your connection string, you should move it out of source code. You can avoid scaffolding the connection string by using the Name= syntax to read it from configuration - see https://go.microsoft.com/fwlink/?linkid=2131148. For more guidance on storing connection strings, see http://go.microsoft.com/fwlink/?LinkId=723263.
+//                optionsBuilder.UseSqlServer("server = NGUYENMINH; database = OrderingAssistSystem; user = sa; password = 123456;TrustServerCertificate=true;Trusted_Connection=true;");
+//            }
+//        }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -119,14 +121,11 @@ namespace AzzanOrder.Data.Models
 
             modelBuilder.Entity<MemberVoucher>(entity =>
             {
-                entity.HasKey(e => new { e.MemberId, e.VoucherDetailId });
-
                 entity.ToTable("MemberVoucher");
 
                 entity.HasOne(d => d.Member)
                     .WithMany(p => p.MemberVouchers)
                     .HasForeignKey(d => d.MemberId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_MemberVoucher_Member");
 
                 entity.HasOne(d => d.Order)
@@ -137,7 +136,6 @@ namespace AzzanOrder.Data.Models
                 entity.HasOne(d => d.VoucherDetail)
                     .WithMany(p => p.MemberVouchers)
                     .HasForeignKey(d => d.VoucherDetailId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_MemberVoucher_VoucherDetail");
             });
 
@@ -281,7 +279,7 @@ namespace AzzanOrder.Data.Models
             modelBuilder.Entity<VoucherDetail>(entity =>
             {
                 entity.ToTable("VoucherDetail");
-               
+
                 entity.Property(e => e.EndDate).HasColumnType("datetime");
 
                 entity.Property(e => e.StartDate).HasColumnType("datetime");

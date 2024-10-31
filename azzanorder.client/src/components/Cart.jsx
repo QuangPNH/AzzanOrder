@@ -41,7 +41,7 @@ const Cart = () => {
     useEffect(() => {
         const calculateTotal = () => {
             let total = 0;
-            console.log(voucherList, "voucher ne");
+            // console.log(voucherList, "voucher ne");
             //TODO: Tính toán lại giá tiền khi áp dụng voucher.
             //
             cartData.forEach((item) => {
