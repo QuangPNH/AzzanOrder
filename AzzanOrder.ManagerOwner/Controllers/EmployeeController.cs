@@ -8,9 +8,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
     {
         private readonly string _apiUrl = "https://localhost:7183/api/";
 
-        public async Task<IActionResult> ListAsync()
+        public async Task<IActionResult> ListAsync(int? page)
         {
             List<Employee> employees = new List<Employee>();
+            int totalEmployees = 0;
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -20,6 +21,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     {
                         string data = await res.Content.ReadAsStringAsync();
                         employees = JsonConvert.DeserializeObject<List<Employee>>(data);
+                        totalEmployees = employees.Count(e => e.IsDelete == false);
                     }
                     else
                     {
@@ -34,9 +36,19 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 }
             }
 
+            employees = employees.Where(e => e.IsDelete == false).ToList();
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
+            int maxPageNav = 10;
+            int totalPages = (int)Math.Ceiling((double)totalEmployees / pageSize);
+
+            employees = employees.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             var viewModel = new Model
             {
-                employees = employees
+                anIntegerUsedForCountingNumberOfPageQueuedForTheList = totalPages,
+                anIntegerUsedForKnowingWhatTheCurrentPageOfTheList = pageNumber,
+                thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed = maxPageNav,
+                employees = employees,
             };
             return View(viewModel);
         }
@@ -45,6 +57,33 @@ namespace AzzanOrder.ManagerOwner.Controllers
         {
             return View();
         }
+
+
+
+        public async Task<IActionResult> AddAction(Employee employee)
+        {
+            //https://localhost:7183/api/Employee/Update
+            if (ModelState.IsValid)
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    using (HttpResponseMessage res = await client.PostAsJsonAsync(_apiUrl + "Employee/Add/", employee))
+                    {
+                        using (HttpContent content = res.Content)
+                        {
+                            string message = await res.Content.ReadAsStringAsync();
+                            Console.WriteLine(message);
+                            return RedirectToAction("List", "Employee");
+                        }
+                    }
+                }
+            }
+            return RedirectToAction("Add", "Employee");
+        }
+
+
+
+
 
         [HttpPost]
         [ValidateAntiForgeryToken]
@@ -55,7 +94,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 // Add logic to save the employee
                 return RedirectToAction("List");
             }
-
             return View(employee);
         }
 
@@ -73,7 +111,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 // Add logic to update the employee
                 return RedirectToAction("List");
             }
-
             return View(employee);
         }
 
@@ -83,25 +120,16 @@ namespace AzzanOrder.ManagerOwner.Controllers
         }*/
 
 
-        
-        public async Task<IActionResult> Delete(int id)
+
+        public async Task<IActionResult> DeleteAsync(int id)
         {
             using (HttpClient client = new HttpClient())
             {
-                HttpResponseMessage res = await client.DeleteAsync(_apiUrl + "Employee/" + id);
-                if (res.IsSuccessStatusCode)
-                {
-                    string mess = await res.Content.ReadAsStringAsync();
-                    ViewBag.error = mess;
-                    return RedirectToAction("List", "Employee");
-                }
-                else
-                {
-                    //// Handle the error response here
-                    //ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
-                    //return RedirectToAction("List", "Employee");
-                    return Conflict();
-                }
+                HttpResponseMessage res = await client.DeleteAsync(_apiUrl + "Employee/Delete/" + id);
+                string mess = await res.Content.ReadAsStringAsync();
+                ViewBag.error = mess;
+                Console.WriteLine("jhhdghjhgjahgdjhas " + mess);
+                return RedirectToAction("List", "Employee");
             }
         }
     }

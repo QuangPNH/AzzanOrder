@@ -11,7 +11,6 @@ const VoucherScreen = () => {
     const [allVouchers, setAllVouchers] = useState(false);
     const [point, setPoint] = useState(false);
     const [categories, setCategories] = useState([]);
-  
     const [memberVouchers, setMemberVouchers] = useState(false);
     useEffect(() => {
         fetchVouchers();
@@ -28,22 +27,26 @@ const VoucherScreen = () => {
         try {
             const response = await fetch(`https://localhost:7183/api/MemberVouchers/memberId?memberId=${memberId}`);
             const data = await response.json();
+           
+    
             setMemberVouchers(data);
-            // memberVouchers.forEach(memberVoucher => console.log(memberVoucher.voucherDetail.endDate));
+  
         } catch (error) {
             console.error('Error fetching menu items:', error);
         }
     };
-
+    
     const fetchVouchers = async (category = '') => {
         try {
             const response = category == '' ? await fetch(`https://localhost:7183/api/VoucherDetail`) : await fetch(`https://localhost:7183/api/VoucherDetail/categoryId?categoryId=${category}`);
             const data = await response.json();
             if (category == '') {
                 setAllVouchers(data);
+                data.forEach(d => console.log(d));
             } else {
                 setAllVouchers(false);
                 setVouchers(data);
+                
             }
         } catch (error) {
             console.error('Error fetching menu items:', error);
@@ -95,14 +98,15 @@ const VoucherScreen = () => {
                 )}
                 {memberVouchers && (
                     <div className="product-sale-container">
-                        {memberVouchers.map((memberVoucher) => (
+                        {memberVouchers.map((mv) => (
                             
                             <ProductSale
-                                key={memberVoucher.voucherDetailId}
-                                saleAmount={memberVoucher.discount}
-                                endDate={memberVoucher.endDate}
+                                key={mv.memberVoucherId}
+                                saleAmount={mv.discount}
+                                endDate={mv.endDate}
                                 bought={true} 
-                                voucherDetailId = {memberVoucher.voucherDetailId}
+                                voucherDetailId = {mv.voucherDetailId}
+                                infiniteUses={false}
                                 />
                         ))}
                     </div>
@@ -126,7 +130,6 @@ const VoucherScreen = () => {
                                 infiniteUses={true}
                                 useCount={0}
                                 voucherDetailId = {aV.voucherDetailId}
-                                
                             />
                         ))}
                     </div>
@@ -142,7 +145,6 @@ const VoucherScreen = () => {
                                 infiniteUses={true}
                                 useCount={0}
                                 voucherDetailId = {v.voucherDetail.voucherDetailId}
-                                
                             />
                         ))}
                     </div>

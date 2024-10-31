@@ -13,24 +13,11 @@ const formatDate = (dateString) => {
 
 const ProductSale = ({ saleAmount, endDate, price, infiniteUses, useCount , bought, voucherDetailId}) => {
     const formattedEndDate = formatDate(endDate); 
-     // Format the date
-//     const [category, setCategory] = useState([]);
-//     useEffect(() => {
-//         fetchCategory();
-// });
-// const fetchCategory = async () => {
-//     try {
-//         const response = await fetch(`https://localhost:7183/api/Category/${CategoryId}`);
-//         const data = await response.json();
-//         setCategory(data);
-//     } catch (error) {
-//         console.error('Error fetching menu items:', error);
-//     }
-// };
+    
     return (
         <div className="product-sale">
             <SaleHeader endDate={formattedEndDate} voucherDetailId={voucherDetailId}/>
-            <SaleContent saleAmount={saleAmount} price={price} infiniteUses={infiniteUses} useCount={useCount}  bought={bought} voucherDetailId={voucherDetailId}/>
+            <SaleContent saleAmount={saleAmount} price={price} infiniteUses={infiniteUses} useCount={useCount}  bought={bought} voucherDetailId={voucherDetailId} />
             <style jsx>{`
                 .product-sale {
                     display: flex; /* Make it a flex container */
