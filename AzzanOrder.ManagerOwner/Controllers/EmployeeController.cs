@@ -61,6 +61,33 @@ namespace AzzanOrder.ManagerOwner.Controllers
             return View();
         }
 
+
+
+        public async Task<IActionResult> AddAction(Employee employee)
+        {
+            //https://localhost:7183/api/Employee/Update
+            if (ModelState.IsValid)
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    using (HttpResponseMessage res = await client.PostAsJsonAsync(_apiUrl + "Employee/Add/", employee))
+                    {
+                        using (HttpContent content = res.Content)
+                        {
+                            string message = await res.Content.ReadAsStringAsync();
+                            Console.WriteLine(message);
+                            return RedirectToAction("List", "Employee");
+                        }
+                    }
+                }
+            }
+            return RedirectToAction("Add", "Employee");
+        }
+
+
+
+
+
         [HttpPost]
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> AddPost(Employee employee)
