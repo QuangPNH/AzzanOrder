@@ -58,7 +58,7 @@ const VoucherCart = ({onSelectVoucher}) => {
         <>
 
 
-            {/* <Category /> */}
+            {/* <Category />
             {
                 voucherDetail && (
                     <div>
@@ -72,7 +72,7 @@ const VoucherCart = ({onSelectVoucher}) => {
                     </div>
 
                 )
-            }
+            } */}
 
             <DropTest
                 onClick={handleDropdownChange}

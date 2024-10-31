@@ -1,17 +1,20 @@
 ﻿import React, { useState, useEffect } from 'react';
+import YNWidgetVoucher from './YNWidgetVoucher';
 
 
 
-
-const SaleContent = ({ saleAmount, price, infiniteUses, useCount, bought }) => {
+const SaleContent = ({ saleAmount, price, infiniteUses, useCount, bought, voucherDetailId }) => {
     const [vouchers, setVouchers] = useState([]);
 
-    useEffect(() => { voucherDetails(); }, []);
+    useEffect(() => { voucherDetails(voucherDetailId); }, []);
     const voucherDetails = async () => {
         try {
-            const response = await fetch('https://localhost:7183/api/VoucherDetail');
-            const data = await response.json();
-            setVouchers(data);
+            if (voucherDetailId != undefined) {
+                const response = await fetch(`https://localhost:7183/api/VoucherDetail/${voucherDetailId}`);
+                const data = await response.json();
+                setVouchers(data);
+            }
+
         } catch (error) {
             console.error('Error fetching menu items:', error);
         }
@@ -22,6 +25,9 @@ const SaleContent = ({ saleAmount, price, infiniteUses, useCount, bought }) => {
 
     //     </div>
     // );
+    const handleQrClick = () => {
+        console.log(voucherDetailId);
+    };
     return (
 
         <section className="sale-content">
@@ -45,7 +51,13 @@ const SaleContent = ({ saleAmount, price, infiniteUses, useCount, bought }) => {
 
             {bought ? (<div> </div>) : (<div className="sale-price">
                 <p>Price: <span className="price-value">{price} points</span></p>  {/* Dynamic price */}
-                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/66181310e2851f8fae57b02cad765f22e6988ffb6004f773591a0d8561aba4e0?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" alt="QR code" className="qr-code" />
+                <button className="qr-button" onClick={handleQrClick}>
+                    <img
+                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/66181310e2851f8fae57b02cad765f22e6988ffb6004f773591a0d8561aba4e0?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533"
+                        alt="QR code"
+                        className="qr-code"
+                    />
+                </button>
             </div>)}
 
             <style jsx>{`
@@ -56,7 +68,7 @@ const SaleContent = ({ saleAmount, price, infiniteUses, useCount, bought }) => {
                     display: flex;
                     flex-direction: column;
                     overflow: hidden;
-                    padding: 5px 0 5px 18px;
+                    padding: 25px 0 5px 18px;
                 }
                 .sale-info {
                     display: flex;
@@ -76,7 +88,7 @@ const SaleContent = ({ saleAmount, price, infiniteUses, useCount, bought }) => {
                     position: relative;
                     aspect-ratio: 1;
                     width: 24px;
-                    padding: 3px 5px 9px;
+                    padding: 0px 5px 9px;
                     justify-content: center;  /* Centers horizontally */
         align-items: center;  /* Centers vertically */
                 }
@@ -124,12 +136,33 @@ const SaleContent = ({ saleAmount, price, infiniteUses, useCount, bought }) => {
                 .price-value {
                     color: #f00;
                 }
-                .qr-code {
-                    aspect-ratio: 2.44;
-                    object-fit: contain;
-                    width: 44px;
-                    border-radius: 5px;
-                }
+                .qr-button {
+        background-color: transparent;
+        border: none;
+        cursor: pointer;
+        border-radius: 8px; /* Adjust as needed for rounded corners */
+      
+        transition: transform 0.2s ease, box-shadow 0.2s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: fit-content; /* Button wraps tightly around image */
+        height: fit-content;
+        padding: 1em 0 0 0; /* Remove padding to fit image closely */
+    }
+
+    .qr-button:hover {
+        transform: scale(1.05);
+       
+    }
+
+    .qr-button:active {
+        transform: scale(0.95);
+    }
+
+    .qr-code {
+        border-radius: 8px; /* Same as button for smooth edges */
+    }
             `}</style>
         </section>
     );
