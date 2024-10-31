@@ -12,16 +12,18 @@ namespace AzzanOrder.ManagerOwner.Controllers
             using (var httpClient = new HttpClient())
             {
                 var response = await httpClient.GetStringAsync("https://localhost:7183/api/Promotions/GetByDescription/carousel");
-                promotions = JsonConvert.DeserializeObject<List<Promotion>>(response);
+                promotions = JsonConvert.DeserializeObject<List<Promotion>>(response) ?? new List<Promotion>();
             }
 
             ViewBag.CurrentIndex = 0; // Initialize the current index
             return View(promotions);
         }
+
         public IActionResult ListAll()
         {
             return View();
         }
+
         public IActionResult Add()
         {
             return View();
@@ -30,7 +32,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
         // POST: Employee/Add
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddPost()
+        public IActionResult AddPost()
         {
             if (ModelState.IsValid)
             {
@@ -46,10 +48,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
             return View();
         }
 
-        // POST: Employee/Add
+        // POST: Employee/Update
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdatePost()
+        public IActionResult UpdatePost()
         {
             if (ModelState.IsValid)
             {
@@ -59,6 +61,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             // If model validation fails, redisplay the form with validation messages
             return View();
         }
+
         public IActionResult Delete()
         {
             return RedirectToAction("ListAll", "Promotion");

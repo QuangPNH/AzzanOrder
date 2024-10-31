@@ -1,4 +1,5 @@
-﻿@model List<Promotion>
+﻿@using Newtonsoft.Json
+@model List<Promotion>
 
 <div class="container">
     <h1 class="h3 mb-3">Running Promotions</h1>
@@ -32,33 +33,36 @@
     </div>
 </div>
 
+
 @section Scripts {
     <script>
-        let currentIndex = @ViewBag.CurrentIndex;
+        // Pass the Model data to JavaScript
+        const promotions = @Html.Raw(JsonConvert.SerializeObject(Model));
+        let currentIndex = @Html.Raw(JsonConvert.SerializeObject(ViewBag.CurrentIndex));
 
         function handleNext() {
-            currentIndex = (currentIndex + 1) % @Model.Count;
+            currentIndex = (currentIndex + 1) % promotions.length;
             updateCarousel();
         }
 
         function handlePrev() {
-            currentIndex = (currentIndex - 1 + @Model.Count) % @Model.Count;
+            currentIndex = (currentIndex - 1 + promotions.length) % promotions.length;
             updateCarousel();
         }
 
         function updateCarousel() {
-            const leftIndex = (currentIndex - 1 + @Model.Count) % @Model.Count;
-            const rightIndex = (currentIndex + 1) % @Model.Count;
+            const leftIndex = (currentIndex - 1 + promotions.length) % promotions.length;
+            const rightIndex = (currentIndex + 1) % promotions.length;
 
-            document.querySelector('.big-image').src = '@Model[currentIndex].Image';
-            document.querySelector('.big-image').alt = '@Model[currentIndex].Title';
-            document.querySelector('.promotion-details h2').innerText = '@Model[currentIndex].Title';
+            document.querySelector('.big-image').src = promotions[currentIndex].image;
+            document.querySelector('.big-image').alt = promotions[currentIndex].title;
+            document.querySelector('.promotion-details h2').innerText = promotions[currentIndex].title;
 
-            document.querySelector('.small-image-container.left .small-image').src = '@Model[leftIndex].Image';
-            document.querySelector('.small-image-container.left .small-image').alt = '@Model[leftIndex].Title';
+            document.querySelector('.small-image-container.left .small-image').src = promotions[leftIndex].image;
+            document.querySelector('.small-image-container.left .small-image').alt = promotions[leftIndex].title;
 
-            document.querySelector('.small-image-container.right .small-image').src = '@Model[rightIndex].Image';
-            document.querySelector('.small-image-container.right .small-image').alt = '@Model[rightIndex].Title';
+            document.querySelector('.small-image-container.right .small-image').src = promotions[rightIndex].image;
+            document.querySelector('.small-image-container.right .small-image').alt = promotions[rightIndex].title;
         }
     </script>
 }
@@ -122,7 +126,7 @@
         object-fit: cover;
     }
 
-    @media (max-width: 768px) {
+    @@media (max-width: 768px) {
         .small-image-container {
             width: 63%; /* 70% of 90% */
         }
@@ -136,3 +140,4 @@
         }
     }
 </style>
+
