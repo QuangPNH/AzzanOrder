@@ -1,18 +1,70 @@
 import React, { useState, useEffect } from 'react';
 
 
-function YNWidgetVoucher({ title, onClose }) {
+function YNWidgetVoucher({ title, onClose, voucherDetailId }) {
   useEffect(() => {
-    const fetchData = async () => {
-        const data = await fetchMember(JSON.parse(getCookie('memberInfo')).memberId);
-        setItems(data);
-        setSelectedItem(); // Chọn mục đầu tiên
-    };
-    fetchData();
+    fetchMember();
+    fetchVoucherDetail(voucherDetailId);
+    valid();
 }, []);
-// const fetchMember
+const [member, setMember] = useState();
+const [voucherDetail, setVoucherDetail] = useState();
+const fetchMember = async () => {
+  try{
+    const response = await fetch(`https://localhost:7183/api/Member/${JSON.parse(getCookie('memberInfo')).memberId}`);
+    const data = await response.json();
+    setMember(data);
+  } catch (error) {
+    console.error('Error adding member voucher:', error);
+}
+}
+const fetchVoucherDetail = async (voucherDetailId) => {
+  try{
+    const response = await fetch(`'https://localhost:7183/api/VoucherDetail/${voucherDetailId}'`);
+    const data = await response.json();
+    setVoucherDetail(data);
+  } catch (error) {
+    console.error('Error adding member voucher:', error);
+}
+}
+const valid = () => {
+  console.log(member.point); 
+  console.log(voucherDetail.price);
+}
+const addMemberVoucher = (voucherDetailId) => {
+  const memberVoucher = {
+      memberId: JSON.parse(getCookie('memberInfo')).memberId,         // Giá trị của memberId
+      voucherDetailId: voucherDetailId,  // Giá trị của voucherDetailId
+  };
+
+  fetchMemberVoucher(memberVoucher);
+  console.log(memberVoucher, "thong tin");
+};
+
+const fetchMemberVoucher = async (memberVoucher) => {
+  try {
+      const response = await fetch('https://localhost:7183/api/MemberVouchers/Add', {
+          method: 'POST', // Sử dụng phương thức POST để thêm dữ liệu
+          headers: {
+              'Content-Type': 'application/json', // Đặt Content-Type là JSON
+          },
+          body: JSON.stringify(memberVoucher), // Chuyển đối tượng thành chuỗi JSON
+      });
+
+      if (!response.ok) {
+          throw new Error('Failed to add member voucher');
+      }
+
+      const data = await response.json();
+      console.log(data); // Cập nhật danh sách vouchers
+  } catch (error) {
+      console.error('Error adding member voucher:', error);
+  }
+};
+
     const handleSubmit = async () => {
         try {
+
             onClose();
         } catch (error) {
             console.error('An error occurred:', error);
@@ -78,5 +130,9 @@ function YNWidgetVoucher({ title, onClose }) {
         </>
     );
 }
-
+export function getCookie(name) {
+  const value = `; ${document.cookie}`; // Add a leading semicolon for easier parsing
+  const parts = value.split(`; ${name}=`); // Split the cookie string to find the desired cookie
+  if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift()); // Return the cookie value
+}
 export default YNWidgetVoucher;
