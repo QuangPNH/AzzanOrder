@@ -1,4 +1,10 @@
-﻿<h1 class="h3 mb-3">Employee Management</h1>
+﻿@{
+    ViewData["Title"] = "List";
+}
+
+@model AzzanOrder.ManagerOwner.Models.Model
+
+<h1 class="h3 mb-3">Employee Management</h1>
 
 <div class="col-12">
     <div class="card">
@@ -22,18 +28,34 @@
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Vanessa Tucker</td>
-                    <td>864-348-0485</td>
-                    <td class="d-none d-md-table-cell">van@gmail.com</td>
-                    <td>Bartender</td>
-                    <td class="d-none d-md-table-cell">June 21, 1961</td>
-                    <td class="table-action">
-                        <a href="@Url.Action("Update", "Employee")"><i class="align-middle" data-feather="edit-2"></i></a>
-                        <a href="@Url.Action("Delete", "Employee")"><i class="align-middle" data-feather="trash"></i></a>
-                    </td>
-                </tr>
+                @foreach (var item in Model.employees)
+                {
+                    <tr>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EmployeeId)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.EmployeeName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Phone)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Gmail)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.Role.RoleName)
+                        </td>
+                        <td>
+                            @Html.DisplayFor(modelItem => item.BirthDate)
+                        </td>
+                        <td class="table-action">
+                            <a href="@Url.Action("Update", "Employee")"><i class="align-middle" data-feather="edit-2"></i></a>
+                            <a asp-action="Delete" asp-route-id="@item.EmployeeId"><i class="align-middle" data-feather="trash"></i></a>
+                            @* <a href="@Url.Action("Delete", "Employee")"><i class="align-middle" data-feather="trash"></i></a> *@
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
 

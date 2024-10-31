@@ -105,7 +105,7 @@
 					</li>
 
 					<li class="sidebar-item">
-						<a class="sidebar-link" href="@Url.Action("UpdateRunning", "Promotion")">
+						<a class="sidebar-link" href="@Url.Action("ListRunning", "Promotion")">
 							<i class="align-middle" data-feather="user"></i> <span class="align-middle">Promotion</span>
 						</a>
 					</li>
@@ -324,6 +324,9 @@
 	<script src="@Url.Content("~/js/app.js")"></script>
 	<script src="@Url.Content("~/js/datatables.js")"></script>
 
+
+
+	@RenderSection("Scripts", required: false)
 
 	<script>
 		$("#datatables-ajax").DataTable({

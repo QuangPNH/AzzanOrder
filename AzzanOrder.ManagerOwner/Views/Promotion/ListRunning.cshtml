@@ -1,0 +1,238 @@
+﻿@using Newtonsoft.Json
+@model List<Promotion>
+
+<div class="container">
+    <h1 class="h3 mb-3">Running Promotions</h1>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Carousel</h5>
+        </div>
+        
+        <div class="card-body">
+            <div class="carousel-container">
+                <div class="small-image-container left">
+                    <img class="small-image"
+                         alt="@Model[(ViewBag.CurrentIndex - 1 + Model.Count) % Model.Count].Title"
+                         src="@Model[(ViewBag.CurrentIndex - 1 + Model.Count) % Model.Count].Image"
+                         onclick="handlePrev()" />
+                </div>
+                <div class="big-image-container">
+                    <img class="big-image" alt="@Model[ViewBag.CurrentIndex].Title" src="@Model[ViewBag.CurrentIndex].Image" />
+                    <div class="promotion-details">
+                        <h2>@Model[ViewBag.CurrentIndex].Title</h2>
+                    </div>
+                </div>
+                <div class="small-image-container right">
+                    <img class="small-image"
+                         alt="@Model[(ViewBag.CurrentIndex + 1) % Model.Count].Title"
+                         src="@Model[(ViewBag.CurrentIndex + 1) % Model.Count].Image"
+                         onclick="handleNext()" />
+                </div>
+            </div>
+        </div>
+
+        <div class="card-header">
+            <h5 class="card-title">Banner</h5>
+        </div>
+        <section class="banner">
+            <div class="image-gallery">
+                @foreach (var promotion in Model)
+                {
+                    <div class="image-wrapper">
+                        <img src="@promotion.Image" alt="@promotion.Title" />
+                    </div>
+                }
+            </div>
+
+            <nav class="banner-navigation">
+                @for (int i = 0; i < Model.Count; i++)
+                {
+                    <div class="dot-indicator @(i == 0 ? "active" : "")"></div>
+                }
+            </nav>
+        </section>
+        <!-- Banner component ends here -->
+
+        <div>
+            <a href="javascript:void(0);" class="btn btn-primary" onclick="toggleListAll()">View All Promotions</a>
+            <a href="@Url.Action("Add", "Promotion")" class="btn btn-primary">Add New Promotion</a>
+        </div>
+
+        <div id="listAllContainer" style="display:none;">
+            @Html.Partial("ListAll")
+        </div>
+
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        // Pass the Model data to JavaScript
+        const promotions = @Html.Raw(JsonConvert.SerializeObject(Model));
+        let currentIndex = @Html.Raw(JsonConvert.SerializeObject(ViewBag.CurrentIndex));
+
+        function handleNext() {
+            currentIndex = (currentIndex + 1) % promotions.length;
+            updateCarousel();
+        }
+
+        function handlePrev() {
+            currentIndex = (currentIndex - 1 + promotions.length) % promotions.length;
+            updateCarousel();
+        }
+
+        function updateCarousel() {
+            const leftIndex = (currentIndex - 1 + promotions.length) % promotions.length;
+            const rightIndex = (currentIndex + 1) % promotions.length;
+
+            document.querySelector('.big-image').src = promotions[currentIndex].image;
+            document.querySelector('.big-image').alt = promotions[currentIndex].title;
+            document.querySelector('.promotion-details h2').innerText = promotions[currentIndex].title;
+
+            document.querySelector('.small-image-container.left .small-image').src = promotions[leftIndex].image;
+            document.querySelector('.small-image-container.left .small-image').alt = promotions[leftIndex].title;
+
+            document.querySelector('.small-image-container.right .small-image').src = promotions[rightIndex].image;
+            document.querySelector('.small-image-container.right .small-image').alt = promotions[rightIndex].title;
+        }
+
+        function toggleListAll() {
+            const listAllContainer = document.getElementById('listAllContainer');
+            listAllContainer.style.display = listAllContainer.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function saveStatus() {
+            // Perform AJAX request to save status
+            fetch('@Url.Action("SaveStatus", "Promotion")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': '@@Antiforgery.GetTokens(HttpContext).RequestToken'
+                },
+                body: JSON.stringify({ /* your data here */ })
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                }
+            });
+        }
+    </script>
+}
+
+<style>
+    .carousel-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 20vh;
+        overflow: hidden;
+    }
+
+    .big-image-container {
+        position: relative;
+        width: 70%;
+        z-index: 2;
+        border-radius: 12px;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    .big-image {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+
+    .promotion-details {
+        position: absolute;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.1);
+        color: white;
+        width: 100%;
+        padding: 10px;
+    }
+
+    .small-image-container {
+        position: absolute;
+        background: rgba(0, 0, 0, 0.3);
+        width: 56%; /* 70% of 80% */
+        z-index: 1;
+    }
+
+    .small-image-container.left {
+        left: 0;
+        transform: translateX(-30%);
+    }
+
+    .small-image-container.right {
+        right: 0;
+        transform: translateX(30%);
+    }
+
+    .small-image {
+        width: 100%;
+        cursor: pointer;
+        border-radius: 12px;
+        object-fit: cover;
+    }
+
+    @@media (max-width: 768px) {
+        .small-image-container {
+            width: 63%; /* 70% of 90% */
+        }
+
+        .small-image-container.left {
+            transform: translateX(-35%);
+        }
+
+        .small-image-container.right {
+            transform: translateX(35%);
+        }
+    }
+
+    .banner {
+        width: 100vw; /* Full width of the viewport */
+        max-width: 100%;
+        height: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        padding: 0;
+    }
+
+    .image-gallery {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .image-wrapper img {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+
+    .banner-navigation {
+        display: flex;
+        gap: 8px;
+        position: absolute;
+        bottom: 40px; /* Increased space from the bottom */
+        z-index: 2; /* Ensure dots are on top */
+    }
+
+    .dot-indicator {
+        width: 10px;
+        height: 10px;
+        border-radius: 50%;
+        background-color: gray;
+    }
+
+    .dot-indicator.active {
+        background-color: white;
+    }
+</style>
