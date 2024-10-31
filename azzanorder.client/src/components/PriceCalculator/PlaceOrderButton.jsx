@@ -54,13 +54,6 @@ const PlaceOrderButton = ({ amount }) => {
                 OrderDetails: orderDetails,
             };
         }
-
-        if (!getCookie('memberInfo')) {
-            setLogout(true);
-            return;
-        }
-
-        setProceedWithOrder(true);
         await fetchQRAndPostOrder(order);
     };
 
