@@ -62,9 +62,14 @@ namespace AzzanOrder.ManagerOwner.Controllers
             return View();
         }
 
-        public IActionResult Delete()
+        [HttpPost]
+        [ValidateAntiForgeryToken]
+        public IActionResult SaveStatus([FromBody] object data)
         {
-            return RedirectToAction("ListAll", "Promotion");
+            // Handle the save status logic here
+            // For example, update the database with the new status
+
+            return Ok();
         }
     }
 }

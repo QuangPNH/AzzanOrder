@@ -6,8 +6,9 @@
 
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">Promotion Carousel</h5>
+            <h5 class="card-title">Carousel</h5>
         </div>
+        
         <div class="card-body">
             <div class="carousel-container">
                 <div class="small-image-container left">
@@ -30,9 +31,20 @@
                 </div>
             </div>
         </div>
-    </div>
-</div>
 
+        <div>
+            <a href="javascript:void(0);" class="btn btn-primary" onclick="toggleListAll()">View All Promotions</a>
+            <a href="@Url.Action("Add", "Promotion")" class="btn btn-primary">Add New Promotion</a>
+        </div>
+
+        <div id="listAllContainer" style="display:none;">
+            @Html.Partial("ListAll")
+        </div>
+
+    </div>
+
+    
+</div>
 
 @section Scripts {
     <script>
@@ -63,6 +75,27 @@
 
             document.querySelector('.small-image-container.right .small-image').src = promotions[rightIndex].image;
             document.querySelector('.small-image-container.right .small-image').alt = promotions[rightIndex].title;
+        }
+
+        function toggleListAll() {
+            const listAllContainer = document.getElementById('listAllContainer');
+            listAllContainer.style.display = listAllContainer.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function saveStatus() {
+            // Perform AJAX request to save status
+            fetch('@Url.Action("SaveStatus", "Promotion")', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'RequestVerificationToken': '@@Antiforgery.GetTokens(HttpContext).RequestToken'
+                },
+                body: JSON.stringify({ /* your data here */ })
+            }).then(response => {
+                if (response.ok) {
+                    location.reload();
+                }
+            });
         }
     </script>
 }
@@ -140,4 +173,3 @@
         }
     }
 </style>
-
