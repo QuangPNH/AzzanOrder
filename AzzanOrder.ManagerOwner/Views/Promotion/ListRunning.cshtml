@@ -1,0 +1,138 @@
+﻿@model List<Promotion>
+
+<div class="container">
+    <h1 class="h3 mb-3">Running Promotions</h1>
+
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Promotion Carousel</h5>
+        </div>
+        <div class="card-body">
+            <div class="carousel-container">
+                <div class="small-image-container left">
+                    <img class="small-image"
+                         alt="@Model[(ViewBag.CurrentIndex - 1 + Model.Count) % Model.Count].Title"
+                         src="@Model[(ViewBag.CurrentIndex - 1 + Model.Count) % Model.Count].Image"
+                         onclick="handlePrev()" />
+                </div>
+                <div class="big-image-container">
+                    <img class="big-image" alt="@Model[ViewBag.CurrentIndex].Title" src="@Model[ViewBag.CurrentIndex].Image" />
+                    <div class="promotion-details">
+                        <h2>@Model[ViewBag.CurrentIndex].Title</h2>
+                    </div>
+                </div>
+                <div class="small-image-container right">
+                    <img class="small-image"
+                         alt="@Model[(ViewBag.CurrentIndex + 1) % Model.Count].Title"
+                         src="@Model[(ViewBag.CurrentIndex + 1) % Model.Count].Image"
+                         onclick="handleNext()" />
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script>
+        let currentIndex = @ViewBag.CurrentIndex;
+
+        function handleNext() {
+            currentIndex = (currentIndex + 1) % @Model.Count;
+            updateCarousel();
+        }
+
+        function handlePrev() {
+            currentIndex = (currentIndex - 1 + @Model.Count) % @Model.Count;
+            updateCarousel();
+        }
+
+        function updateCarousel() {
+            const leftIndex = (currentIndex - 1 + @Model.Count) % @Model.Count;
+            const rightIndex = (currentIndex + 1) % @Model.Count;
+
+            document.querySelector('.big-image').src = '@Model[currentIndex].Image';
+            document.querySelector('.big-image').alt = '@Model[currentIndex].Title';
+            document.querySelector('.promotion-details h2').innerText = '@Model[currentIndex].Title';
+
+            document.querySelector('.small-image-container.left .small-image').src = '@Model[leftIndex].Image';
+            document.querySelector('.small-image-container.left .small-image').alt = '@Model[leftIndex].Title';
+
+            document.querySelector('.small-image-container.right .small-image').src = '@Model[rightIndex].Image';
+            document.querySelector('.small-image-container.right .small-image').alt = '@Model[rightIndex].Title';
+        }
+    </script>
+}
+
+<style>
+    .carousel-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 20vh;
+        overflow: hidden;
+    }
+
+    .big-image-container {
+        position: relative;
+        width: 70%;
+        z-index: 2;
+        border-radius: 12px;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    .big-image {
+        width: 100%;
+        height: auto;
+        object-fit: cover;
+    }
+
+    .promotion-details {
+        position: absolute;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.1);
+        color: white;
+        width: 100%;
+        padding: 10px;
+    }
+
+    .small-image-container {
+        position: absolute;
+        background: rgba(0, 0, 0, 0.3);
+        width: 56%; /* 70% of 80% */
+        z-index: 1;
+    }
+
+    .small-image-container.left {
+        left: 0;
+        transform: translateX(-30%);
+    }
+
+    .small-image-container.right {
+        right: 0;
+        transform: translateX(30%);
+    }
+
+    .small-image {
+        width: 100%;
+        cursor: pointer;
+        border-radius: 12px;
+        object-fit: cover;
+    }
+
+    @media (max-width: 768px) {
+        .small-image-container {
+            width: 63%; /* 70% of 90% */
+        }
+
+        .small-image-container.left {
+            transform: translateX(-35%);
+        }
+
+        .small-image-container.right {
+            transform: translateX(35%);
+        }
+    }
+</style>
