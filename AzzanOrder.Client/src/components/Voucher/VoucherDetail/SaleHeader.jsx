@@ -1,9 +1,7 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
 
 const SaleHeader = ({voucherDetailId, endDate }) => {
-    //console.log(category,'header');
     const [categoriesByVd, setCategoriesByVd] = useState([]);
-    // console.log(voucherDetailId,"lo");
 
 
     useEffect(() => {
@@ -15,11 +13,9 @@ const SaleHeader = ({voucherDetailId, endDate }) => {
 
     const fetchVoucherBy = async (voucherDetailId) => {
         try {
-            console.log(categoriesByVd,"saleheader");
             const response = await fetch(`https://localhost:7183/api/ItemCategory/VoucherDetailId?VoucherDetailId=${voucherDetailId}`);
             const data = await response.json();
             setCategoriesByVd(data);
-            console.log(categoriesByVd, 'list');
         } catch (error) {
             console.error('Error fetching categories:', error);
         }

@@ -15,7 +15,7 @@ const VoucherCart = ({onSelectVoucher}) => {
     useEffect(() => {
         if (getCookie('memberInfo') != null) {
             fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId, 1);
-            setMemberVouchers([true]);
+            
         }
     }, []);
 
@@ -23,6 +23,7 @@ const VoucherCart = ({onSelectVoucher}) => {
         try {
             const response = categoryId != '' ? await fetch(`https://localhost:7183/api/MemberVouchers/memberId/itemCategoryId?memberId=${memberId}&categoryId=${categoryId}`) : await fetch(`https://localhost:7183/api/MemberVouchers/memberId?memberId=${memberId}`);
             const data = await response.json();
+            setMemberVouchers([true]);
             setMemberVouchers(data);
         } catch (error) {
             console.error('Error fetching menu items:', error);

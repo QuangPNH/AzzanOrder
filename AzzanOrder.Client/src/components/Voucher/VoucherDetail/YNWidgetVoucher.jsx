@@ -1,92 +1,106 @@
 import React, { useState, useEffect } from 'react';
 
 
-function YNWidgetVoucher({ title, onClose, voucherDetailId }) {
+function YNWidgetVoucher({ title, errorTitle, onClose, voucherDetailId }) {
+
+  const [member, setMember] = useState();
+  const [voucherDetail, setVoucherDetail] = useState();
   useEffect(() => {
     fetchMember();
     fetchVoucherDetail(voucherDetailId);
-    valid();
-}, []);
-const [member, setMember] = useState();
-const [voucherDetail, setVoucherDetail] = useState();
-const fetchMember = async () => {
-  try{
-    const response = await fetch(`https://localhost:7183/api/Member/${JSON.parse(getCookie('memberInfo')).memberId}`);
-    const data = await response.json();
-    setMember(data);
-  } catch (error) {
-    console.error('Error adding member voucher:', error);
-}
-}
-const fetchVoucherDetail = async (voucherDetailId) => {
-  try{
-    const response = await fetch(`'https://localhost:7183/api/VoucherDetail/${voucherDetailId}'`);
-    const data = await response.json();
-    setVoucherDetail(data);
-  } catch (error) {
-    console.error('Error adding member voucher:', error);
-}
-}
-const valid = () => {
-  console.log(member.point); 
-  console.log(voucherDetail.price);
-}
-const addMemberVoucher = (voucherDetailId) => {
-  const memberVoucher = {
-      memberId: JSON.parse(getCookie('memberInfo')).memberId,         // Giá trị của memberId
-      voucherDetailId: voucherDetailId,  // Giá trị của voucherDetailId
+  }, []);
+
+  const fetchMember = async () => {
+    try {
+      const response = await fetch(`https://localhost:7183/api/Member/${JSON.parse(getCookie('memberInfo')).memberId}`);
+      const data = await response.json();
+      setMember(data);
+    } catch (error) {
+      console.error('Error adding member voucher:', error);
+    }
+  };
+  const fetchVoucherDetail = async (voucherDetailId) => {
+    try {
+      const response = await fetch(`https://localhost:7183/api/VoucherDetail/${voucherDetailId}`);
+      const data = await response.json();
+      setVoucherDetail(data);
+    } catch (error) {
+      console.error('Error adding member voucher:', error);
+    }
+  };
+  const valid = () => {
+    console.log(member.point, "mem");
+    console.log(voucherDetail.price, "vou");
+  }
+  // const addMemberVoucher = (voucherDetailId) => {
+  //   const memberVoucher = {
+  //       memberId: JSON.parse(getCookie('memberInfo')).memberId,         // Giá trị của memberId
+  //       voucherDetailId: voucherDetailId,  // Giá trị của voucherDetailId
+  //   };
+
+  //   fetchMemberVoucher(memberVoucher);
+  //   console.log(memberVoucher, "thong tin");
+  // };
+
+  // const fetchMemberVoucher = async (memberVoucher) => {
+  //   try {
+  //       const response = await fetch('https://localhost:7183/api/MemberVouchers/Add', {
+  //           method: 'POST', // Sử dụng phương thức POST để thêm dữ liệu
+  //           headers: {
+  //               'Content-Type': 'application/json', // Đặt Content-Type là JSON
+  //           },
+  //           body: JSON.stringify(memberVoucher), // Chuyển đối tượng thành chuỗi JSON
+  //       });
+
+  //       if (!response.ok) {
+  //           throw new Error('Failed to add member voucher');
+  //       }
+
+  //       const data = await response.json();
+  //       console.log(data); // Cập nhật danh sách vouchers
+  //   } catch (error) {
+  //       console.error('Error adding member voucher:', error);
+  //   }
+  // };
+
+  const handleSubmit = async () => {
+    try {
+      valid();
+      onClose();
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
   };
 
-  fetchMemberVoucher(memberVoucher);
-  console.log(memberVoucher, "thong tin");
-};
+  const handleCancel = () => {
+    onClose(); // Close the pop-up
+  };
 
-const fetchMemberVoucher = async (memberVoucher) => {
-  try {
-      const response = await fetch('https://localhost:7183/api/MemberVouchers/Add', {
-          method: 'POST', // Sử dụng phương thức POST để thêm dữ liệu
-          headers: {
-              'Content-Type': 'application/json', // Đặt Content-Type là JSON
-          },
-          body: JSON.stringify(memberVoucher), // Chuyển đối tượng thành chuỗi JSON
-      });
+  return (
+    <>
+      {member && voucherDetail && (
+        member.point < voucherDetail.price ?
+          <section className="login-widget">
+            <form className="login-form" onSubmit={handleCancel}>
+              <h2 className="register-title">{errorTitle}</h2>
+              <div>
+                <button className="submit-button" type="submit">Ok</button>
+              </div>
+            </form>
+          </section> :
+          <section className="login-widget">
+            <form className="login-form" onSubmit={handleSubmit}>
+              <h2 className="register-title">{title}</h2>
+              <div>
+                <button className="submit-button" type="submit">Yes</button>
+                <button className="submit-button" type="reset" onClick={handleCancel}>Cancel </button>
+              </div>
+            </form>
+          </section>
 
-      if (!response.ok) {
-          throw new Error('Failed to add member voucher');
-      }
+      )}
 
-      const data = await response.json();
-      console.log(data); // Cập nhật danh sách vouchers
-  } catch (error) {
-      console.error('Error adding member voucher:', error);
-  }
-};
-
-    const handleSubmit = async () => {
-        try {
-
-            onClose();
-        } catch (error) {
-            console.error('An error occurred:', error);
-        }
-    };
-
-    const handleCancel = () => {
-        onClose(); // Close the pop-up
-    };
-
-    return (
-        <>
-            <section className="login-widget">
-                <form className="login-form" onSubmit={handleSubmit}>
-                    <h2 className="register-title">{title}</h2>
-                    <div>
-                        <button className="submit-button" type="submit">Yes</button>
-                        <button className="submit-button" type="reset"onClick={handleCancel}>Cancel </button>
-                    </div>
-                </form>
-            </section>
-            <style jsx>{`
+      <style jsx>{`
         .login-widget {
           border-radius: 0;
           display: flex;
@@ -127,8 +141,8 @@ const fetchMemberVoucher = async (memberVoucher) => {
           transition: background-color 0.3s ease-in-out;
         }
       `}</style>
-        </>
-    );
+    </>
+  );
 }
 export function getCookie(name) {
   const value = `; ${document.cookie}`; // Add a leading semicolon for easier parsing

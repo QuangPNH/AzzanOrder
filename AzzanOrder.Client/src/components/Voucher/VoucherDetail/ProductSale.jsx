@@ -13,7 +13,6 @@ const formatDate = (dateString) => {
 
 const ProductSale = ({ saleAmount, endDate, price, infiniteUses, useCount , bought, voucherDetailId}) => {
     const formattedEndDate = formatDate(endDate); 
-    
     return (
         <div className="product-sale">
             <SaleHeader endDate={formattedEndDate} voucherDetailId={voucherDetailId}/>
