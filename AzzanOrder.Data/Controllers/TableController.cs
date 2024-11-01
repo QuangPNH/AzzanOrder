@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AzzanOrder.Data.Models;
+using QRCoder;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 
 namespace AzzanOrder.Data.Controllers
 {
@@ -108,6 +107,37 @@ namespace AzzanOrder.Data.Controllers
             return CreatedAtAction("GetTable", new { id = tab.TableId }, tab);
         }
 
+        [HttpPost("AddTakeAwayTable")]
+        public async Task<IActionResult> AddTable(Table table)
+        {
+            if (table == null)
+            {
+                return BadRequest("Table is null.");
+            }
+
+            using var transaction = await _context.Database.BeginTransactionAsync();
+            try
+            {
+                // Enable identity insert
+                await _context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT [dbo].[Table] ON");
+
+                table.TableId = (int)(1000 + table.EmployeeId);
+                _context.Tables.Add(table);
+                await _context.SaveChangesAsync();
+
+                // Disable identity insert
+                await _context.Database.ExecuteSqlRawAsync("SET IDENTITY_INSERT [dbo].[Table].Table OFF");
+
+                await transaction.CommitAsync();
+
+                return Ok();
+            }
+            catch (Exception ex)
+            {
+                await transaction.RollbackAsync();
+                return StatusCode(500, $"Internal server error: {ex.Message}");
+            }
+        }
         // DELETE: api/Table/5
         [HttpDelete("Detele/{id}")]
         public async Task<IActionResult> DeleteTable(int id)
@@ -128,6 +158,20 @@ namespace AzzanOrder.Data.Controllers
             return Ok("Delete success");
         }
 
+        [HttpGet("GenerateQrCode/{qr}/{id}")]
+        public async Task<IActionResult> GenerateQrCode(string qr, int id)
+        {
+            string url = $"http://localhost:5173/?tableqr={qr}/{id}";
+
+            using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
+            {
+                QRCodeData qrCodeData = qrGenerator.CreateQrCode(url, QRCodeGenerator.ECCLevel.Q);
+                PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
+                byte[] qrCodeImage = qrCode.GetGraphic(20);
+                string base64Image = Convert.ToBase64String(qrCodeImage);
+                return Ok("data:image/png;base64,"+base64Image);
+            }
+        }
         private bool TableExists(int id)
         {
             return (_context.Tables?.Any(e => e.TableId == id)).GetValueOrDefault();

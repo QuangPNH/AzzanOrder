@@ -6,7 +6,7 @@ import {
 } from "react-router-dom";
 import "./index.css";
 import App from "./App";
-import Homepage from "./components/Homepage"
+import Homepage from "./components/Homepage";
 import MenuPage from "./components/Menu";
 import About from "./components/AboutUsPage";
 import Feedback from "./components/Feedback";
@@ -62,7 +62,7 @@ const router = createBrowserRouter([
     },
 ]);
 
-// Wrap your app with the Router component
+// Wrap your app with the Router component and PopupProvider
 const rootElement = document.getElementById('root');
 ReactDOM.createRoot(rootElement).render(
     <React.StrictMode>

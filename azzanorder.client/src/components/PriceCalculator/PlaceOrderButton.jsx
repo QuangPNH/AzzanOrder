@@ -2,11 +2,9 @@ import React, { useState } from "react";
 import { getCookie, setCookie } from '../Account/SignUpForm/Validate';
 import LogoutPage from '../Account/LogoutPage';
 
-const PlaceOrderButton = ({ amount }) => {
+const PlaceOrderButton = ({ amount, isTake, isCash }) => {
     const [qrDataURL, setQRDataURL] = useState(null);
     const [error, setError] = useState(null);
-    const [showLogout, setLogout] = useState(false);
-    const [proceedWithOrder, setProceedWithOrder] = useState(true);
 
     const handlePlaceOrder = async () => {
         console.log("amount:", amount);
@@ -16,6 +14,8 @@ const PlaceOrderButton = ({ amount }) => {
             setError("No item in cart");
             return;
         }
+
+        const memberIn = getCookie('memberInfo');
 
         const cartData = JSON.parse(cartDataString);
         const orderDetails = cartData.map(item => {
@@ -40,21 +40,29 @@ const PlaceOrderButton = ({ amount }) => {
         });
 
         let order = null;
-        if (getCookie('memberInfo')) {
+        const tableId = parseInt(getCookie('tableqr').split('/')[2]);
+
+        if (memberIn) {
             order = {
-                TableId: parseInt(getCookie('tableqr').split('/')[2]),
+                TableId: tableId,
                 Cost: amount,
-                MemberId: JSON.parse(getCookie('memberInfo')).memberId,
+                MemberId: JSON.parse(memberIn).memberId,
                 OrderDetails: orderDetails,
             };
         } else {
             order = {
-                TableId: parseInt(getCookie('tableqr').split('/')[2]),
+                TableId: tableId,
                 Cost: amount,
                 OrderDetails: orderDetails,
             };
         }
-        await fetchQRAndPostOrder(order);
+
+        if (isCash) {
+            order.tax = 1;
+            await postOrder(order);
+        } else {
+            await fetchQRAndPostOrder(order);
+        }
     };
 
     const fetchQRAndPostOrder = async (order) => {
@@ -117,27 +125,16 @@ const PlaceOrderButton = ({ amount }) => {
         setCookie('cartData', '', -1); // Call setCookie with negative days to delete
     };
 
-    //const handleClosePopup = (proceed) => {
-    //    setLogout(false);
-    //    if (proceed) {
-    //        setProceedWithOrder(true);
-    //        handlePlaceOrder();
-    //    }
-    //};
-
     return (
         <div>
             {error && <p style={{ color: "red" }}>{error}</p>}
-            {qrDataURL ? (
+            {qrDataURL && !isCash ? (
                 <img src={`data:image/png;base64,${qrDataURL}`} alt="QR Code" className="qr-image" style={{ width: '300px' }} />
             ) : (
                 <button className="place-order" onClick={handlePlaceOrder}>
                     Place Order
                 </button>
             )}
-            {/*{showLogout && (*/}
-            {/*    <LogoutPage isOpen={showLogout} handleClosePopup={handleClosePopup} func={deleteCookie} title={"You will get point for this if you log in"} />*/}
-            {/*)}*/}
             <style jsx>{`
                 .place-order {
                     border-radius: 10px;
