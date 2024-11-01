@@ -37,6 +37,10 @@ const NavItem = () => {
         }
     };
 
+    const handleLogout = () => {
+        setCookie('memberInfo', '', -1);
+    };
+
     const handleSignUpCheck = (result) => {
         if (result === 'fail') {
             setSignup(false);
@@ -54,7 +58,7 @@ const NavItem = () => {
         <div>
             <LoginPage isOpen={showLogin} handleClosePopup={() => setLogin(false)} onCheck={handleLoginCheck} />
             <SignUpPage isOpen={showSignup} handleClosePopup={() => setSignup(false)} onCheck={handleSignUpCheck} />
-            <LogoutPage isOpen={showLogout} handleClosePopup={() => setLogout(false)} />
+            <LogoutPage isOpen={showLogout} handleClosePopup={() => setLogout(false)} func={handleLogout} title={"You sure you want to log out ?"} />
             <div className="nav-items">
                 {!showRecentlyOrdered && (
                     <div className="nav-item1" onClick={() => setLogin(true)}>
