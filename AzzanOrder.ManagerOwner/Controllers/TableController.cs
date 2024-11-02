@@ -28,7 +28,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     if (tableRes.IsSuccessStatusCode)
                     {
                         string tableData = await tableRes.Content.ReadAsStringAsync();
-                        tables = JsonConvert.DeserializeObject<List<Table>>(tableData) ?? new List<Table>();
+                        var data = JsonConvert.DeserializeObject<List<Table>>(tableData) ?? new List<Table>();
+                        tables = data.Where(x => x.Status != null).ToList();
                     }
                     else
                     {
@@ -65,10 +66,18 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         HttpResponseMessage response = await client.PostAsync(_apiUrl + "Table/Add", content);
                         if (response.IsSuccessStatusCode)
                         {
-                            var createdTable = JsonConvert.DeserializeObject<Table>(await response.Content.ReadAsStringAsync());
-                            string qrCodeUrl = $"{_apiUrl}Table/GenerateQrCode/{createdTable.Qr}/{createdTable.EmployeeId}";
-                            ViewBag.QrCodeUrl = qrCodeUrl;
-                            return View(table);
+                            string qrCodeUrl = $"{_apiUrl}Table/GenerateQrCode/{table.Qr}/{table.EmployeeId}";
+                            HttpResponseMessage response1 = await client.GetAsync(qrCodeUrl);
+                            if (response1.IsSuccessStatusCode)
+                            {
+                                string qrCodeData = await response1.Content.ReadAsStringAsync();
+                                ViewBag.QrCodeUrl = qrCodeData;
+                                return View(table);
+                            }
+                            else
+                            {
+                                ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                            }
                         }
                         else
                         {
@@ -82,6 +91,102 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 }
             }
             return View(table);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Update(int id)
+        {
+            Table table = null;
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    HttpResponseMessage response = await client.GetAsync(_apiUrl + "Table/" + id);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string data = await response.Content.ReadAsStringAsync();
+                        table = JsonConvert.DeserializeObject<Table>(data);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                    }
+                }
+                catch (HttpRequestException)
+                {
+                    ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
+                }
+            }
+            return View(table);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> Update(Table table)
+        {
+            if (ModelState.IsValid)
+            {
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        table.EmployeeId = 1;
+                        table.Status = true;
+                        string json = JsonConvert.SerializeObject(table);
+                        StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
+
+                        HttpResponseMessage response = await client.PutAsync(_apiUrl + "Table/Update", content);
+                        if (response.IsSuccessStatusCode)
+                        {
+                            string qrCodeUrl = $"{_apiUrl}Table/GenerateQrCode/{table.Qr}/{table.EmployeeId}";
+                            HttpResponseMessage response1 = await client.GetAsync(qrCodeUrl);
+                            if (response1.IsSuccessStatusCode)
+                            {
+                                string qrCodeData = await response1.Content.ReadAsStringAsync();
+                                ViewBag.QrCodeUrl = qrCodeData;
+                                return View(table);
+                            }
+                            else
+                            {
+                                ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                            }
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                        }
+                    }
+                    catch (HttpRequestException)
+                    {
+                        ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
+                    }
+                }
+            }
+            return View(table);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    HttpResponseMessage response = await client.DeleteAsync(_apiUrl + "Table/Delete/" + id);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("List");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                    }
+                }
+                catch (HttpRequestException)
+                {
+                    ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
+                }
+            }
+            return RedirectToAction("List");
         }
     }
 }

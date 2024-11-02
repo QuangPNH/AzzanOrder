@@ -15,15 +15,22 @@
                 </div>
                 <div class="mb-3 row">
                     <div class="col-sm-10 ms-sm-auto">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        @if (ViewBag.QrCodeUrl == null)
+                        {
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("List", "Table")" class="btn btn-primary">Go to List</a>
+                        }
                     </div>
                 </div>
             </form>
             @if (ViewBag.QrCodeUrl != null)
             {
                 <div class="mt-3">
-                    <h4>QR Code</h4>
-                    <img src="@ViewBag.QrCodeUrl" alt="QR Code" />
+                    <h5>QR Code</h5>
+                    <img src="@ViewBag.QrCodeUrl" alt="QR Code" style="max-width:200px" />
                     <a href="@ViewBag.QrCodeUrl" download="QRCode.png" class="btn btn-success mt-2">Save QR Code</a>
                 </div>
             }
