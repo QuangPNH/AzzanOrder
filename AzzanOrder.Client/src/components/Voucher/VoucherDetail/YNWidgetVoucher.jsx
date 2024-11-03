@@ -28,10 +28,6 @@ function YNWidgetVoucher({ title, errorTitle, onClose, voucherDetailId }) {
       console.error('Error adding member voucher:', error);
     }
   };
-  const valid = () => {
-    console.log(member.point, "mem");
-    console.log(voucherDetail.price, "vou");
-  }
   // const addMemberVoucher = (voucherDetailId) => {
   //   const memberVoucher = {
   //       memberId: JSON.parse(getCookie('memberInfo')).memberId,         // Giá trị của memberId
@@ -62,14 +58,31 @@ function YNWidgetVoucher({ title, errorTitle, onClose, voucherDetailId }) {
   //       console.error('Error adding member voucher:', error);
   //   }
   // };
-
+  const apiUrl = 'https://localhost:7183/api/MemberVouchers/Add';
   const handleSubmit = async () => {
-    try {
-      valid();
-      onClose();
-    } catch (error) {
-      console.error('An error occurred:', error);
-    }
+    console.log(member.memberId);
+    fetch(apiUrl, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        MemberId: member.memberId, // ID thành viên
+        VoucherDetailId: voucherDetail.voucherDetailId, // ID chi tiết voucher
+    }) // Chuyển đổi đối tượng thành JSON
+    })
+      .then(response => {
+        if (!response.ok) {
+          throw new Error('Error in network response');
+        }
+        return response.json(); // Trả về JSON nếu phản hồi thành công
+      })
+      .then(result => {
+        console.log('Success:', result);
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
   };
 
   const handleCancel = () => {
@@ -79,6 +92,7 @@ function YNWidgetVoucher({ title, errorTitle, onClose, voucherDetailId }) {
   return (
     <>
       {member && voucherDetail && (
+
         member.point < voucherDetail.price ?
           <section className="login-widget">
             <form className="login-form" onSubmit={handleCancel}>

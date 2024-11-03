@@ -19,8 +19,8 @@ function getCartData() {
     }
 }
 
-function getVoucherList() {
-    const voucherListString = getCookie("voucherList");
+function getVoucher() {
+    const voucherListString = getCookie("voucher");
     if (!voucherListString) {
         return [];
     }
@@ -35,13 +35,13 @@ function getVoucherList() {
 
 const Cart = () => {
     const [cartData, setCartData] = useState(getCartData());
-    const [voucherList, setVoucherList] = useState(getVoucherList());  
+    const [voucher, setVoucher] = useState(getVoucher());  
     const [totalPrice, setTotalPrice] = useState(0);
 
     useEffect(() => {
         const calculateTotal = () => {
             let total = 0;
-            // console.log(voucherList, "voucher ne");
+            console.log(voucher, "voucher ne");
             //TODO: Tính toán lại giá tiền khi áp dụng voucher.
             //
             cartData.forEach((item) => {
@@ -59,17 +59,15 @@ const Cart = () => {
     };
 
     const handleSelectVoucher = (selectedItem) => {
-        const voucherSelectedList = [];
-        const found = voucherSelectedList.some(item => item.id === selectedItem.id);
+        // const voucherSelectedList = [];
+        // const found = voucherSelectedList.some(item => item.id === selectedItem.id);
 
-        // Nếu không tìm thấy, thêm đối tượng mới vào mảng
-        if (!found) {
-            voucherSelectedList.push(selectedItem);
-        }
-        setCookie("voucherList", JSON.stringify(voucherSelectedList), 7);
-        getCartData();
-        
-        console.log(selectedItem, "cart", cartData);
+        // // Nếu không tìm thấy, thêm đối tượng mới vào mảng
+        // if (!found) {
+        //     voucherSelectedList.push(selectedItem);
+        // }
+        setCookie("voucher", JSON.stringify(selectedItem), 7);
+        setVoucher(selectedItem);
     };
 
     const itemsInCart = cartData?.map((item, index) => (
@@ -81,6 +79,7 @@ const Cart = () => {
             price={item.price}
             quantity={item.quantity}
             onQuantityChange={handleQuantityChange}
+            // discount = {discount}
         />
     ));
 

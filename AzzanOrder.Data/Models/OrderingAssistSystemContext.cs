@@ -104,6 +104,11 @@ namespace AzzanOrder.Data.Models
             modelBuilder.Entity<ItemCategory>(entity =>
             {
                 entity.ToTable("ItemCategory");
+
+                entity.HasOne(d => d.Employee)
+                    .WithMany(p => p.ItemCategories)
+                    .HasForeignKey(d => d.EmployeeId)
+                    .HasConstraintName("FK_ItemCategory_Employee");
             });
 
             modelBuilder.Entity<Member>(entity =>
@@ -281,6 +286,11 @@ namespace AzzanOrder.Data.Models
                 entity.Property(e => e.EndDate).HasColumnType("datetime");
 
                 entity.Property(e => e.StartDate).HasColumnType("datetime");
+
+                entity.HasOne(d => d.Employee)
+                    .WithMany(p => p.VoucherDetails)
+                    .HasForeignKey(d => d.EmployeeId)
+                    .HasConstraintName("FK_VoucherDetail_Employee");
             });
 
             OnModelCreatingPartial(modelBuilder);
