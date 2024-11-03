@@ -1,11 +1,10 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AzzanOrder.Data.Models;
+using QRCoder;
+using System.Drawing;
+using System.Drawing.Imaging;
+using System.IO;
 
 namespace AzzanOrder.Data.Controllers
 {
@@ -107,9 +106,9 @@ namespace AzzanOrder.Data.Controllers
 
             return CreatedAtAction("GetTable", new { id = tab.TableId }, tab);
         }
-
+        
         // DELETE: api/Table/5
-        [HttpDelete("Detele/{id}")]
+        [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> DeleteTable(int id)
         {
             if (_context.Tables == null)
@@ -121,13 +120,27 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound("Table not exist");
             }
-            t.Status = false;
+            t.Status = null;
             _context.Tables.Update(t);
             await _context.SaveChangesAsync();
 
             return Ok("Delete success");
         }
 
+        [HttpGet("GenerateQrCode/{qr}/{id}")]
+        public async Task<IActionResult> GenerateQrCode(string qr, int id)
+        {
+            string url = $"http://localhost:5173/?tableqr={qr}/{id}";
+
+            using (QRCodeGenerator qrGenerator = new QRCodeGenerator())
+            {
+                QRCodeData qrCodeData = qrGenerator.CreateQrCode(url, QRCodeGenerator.ECCLevel.Q);
+                PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
+                byte[] qrCodeImage = qrCode.GetGraphic(20);
+                string base64Image = Convert.ToBase64String(qrCodeImage);
+                return Ok("data:image/png;base64,"+base64Image);
+            }
+        }
         private bool TableExists(int id)
         {
             return (_context.Tables?.Any(e => e.TableId == id)).GetValueOrDefault();

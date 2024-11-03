@@ -23,19 +23,56 @@ namespace AzzanOrder.Data.Controllers
 
         // GET: api/ItemCategory
         [HttpGet]
-		public async Task<ActionResult<IEnumerable<ItemCategory>>> GetItemCategories()
-		{
-			if (_context.ItemCategories == null)
-			{
-				return NotFound();
-			}
+        public async Task<ActionResult<IEnumerable<ItemCategory>>> GetItemCategories(int? id)
+        {
+            if (_context.ItemCategories == null)
+            {
+                return NotFound();
+            }
 
-			var itemCategories = await _context.ItemCategories
-				.Where(ic => !ic.Description.Contains("TOPPING"))
-				.ToListAsync();
+            var query = _context.ItemCategories
+                .Where(ic => !ic.Description.Contains("TOPPING"));
 
-			return itemCategories;
-		}
+            if (id.HasValue)
+            {
+                query = query.Where(ic =>
+                ic.EmployeeId == id.Value &&
+                ic.MenuCategories.Any(mc => mc.MenuItem.EmployeeId == id.Value));
+            }
+
+            var itemCategories = await query
+                .Include(ic => ic.MenuCategories)
+                .ThenInclude(mc => mc.MenuItem)
+                .ToListAsync();
+
+            if (itemCategories == null || !itemCategories.Any())
+            {
+                return NotFound();
+            }
+
+            // Remove MenuCategories that don't have MenuItems with the specified EmployeeId
+            if (id.HasValue)
+            {
+                foreach (var itemCategory in itemCategories)
+                {
+                    itemCategory.MenuCategories = itemCategory.MenuCategories
+                        .Where(mc => mc.MenuItem.EmployeeId == id.Value)
+                        .ToList();
+                }
+            }
+
+            return Ok(itemCategories);
+        }
+
+        [HttpGet("GetByManagerId/{id}")]
+        public async Task<ActionResult<IEnumerable<ItemCategory>>> GetByManagerId(int? id)
+        {
+            if (_context.ItemCategories == null)
+            {
+                return NotFound();
+            }
+            return await _context.ItemCategories.Where(x => x.EmployeeId == 1).ToListAsync();
+        }
 
         // GET: api/ItemCategory/5
         [HttpGet("{id}")]
@@ -79,12 +116,13 @@ namespace AzzanOrder.Data.Controllers
         [HttpPut("Update")]
         public async Task<IActionResult> PutItemCategory(ItemCategory itemCategory)
         {
-            if (ItemCategoryExists(itemCategory.ItemCategoryId))
+            var ic = await _context.ItemCategories.FindAsync(itemCategory.ItemCategoryId);
+            if (ic == null)
             {
-                return BadRequest();
+                return NotFound();
             }
-
-            _context.Entry(itemCategory).State = EntityState.Modified;
+            ic.ItemCategoryName = itemCategory.ItemCategoryName;
+            ic.Description = itemCategory.Description;
 
             try
             {
@@ -114,11 +152,19 @@ namespace AzzanOrder.Data.Controllers
           {
               return Problem("Entity set 'OrderingAssistSystemContext.ItemCategories'  is null.");
           }
-          ItemCategory ic = new ItemCategory() {ItemCategoryName = itemCategory.ItemCategoryName, Description = itemCategory.Description, Discount = itemCategory.Discount, Image = itemCategory.Image};
+          ItemCategory ic = new ItemCategory() 
+          {
+              ItemCategoryName = itemCategory.ItemCategoryName, 
+              Description = itemCategory.Description, 
+              Discount = itemCategory.Discount, 
+              Image = itemCategory.Image,
+              EmployeeId = itemCategory.EmployeeId,
+              IsDelete = itemCategory.IsDelete
+          };
             _context.ItemCategories.Add(ic);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetItemCategory", new { id = ic.ItemCategoryId }, ic);
+            return Ok();
         }
 
         // DELETE: api/ItemCategory/5
@@ -134,12 +180,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            var menuCategory = await _context.MenuCategories.Where(mc => mc.ItemCategoryId == itemCategory.ItemCategoryId).ToListAsync();
-            if (menuCategory.Count() > 0) {
-                return Conflict("Had exist data use this category");
-            }
-
-            _context.ItemCategories.Remove(itemCategory);
+            itemCategory.IsDelete = true;
             await _context.SaveChangesAsync();
 
             return NoContent();

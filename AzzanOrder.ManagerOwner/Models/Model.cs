@@ -7,9 +7,9 @@
         public int anIntegerUsedForKnowingWhatTheCurrentPageOfTheList { get; set; }
         public int thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed { get; set; }
         public IEnumerable<Employee> employees { get; set; }
+        public IEnumerable<Table> tables { get; set; }
+        public IEnumerable<ItemCategory> itemCategories { get; set; }
 
-
-        
         public About about { get; set; }
         public Bank bank { get; set; }
         public Employee employee { get; set; }

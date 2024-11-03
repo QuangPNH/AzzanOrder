@@ -1,58 +1,40 @@
-﻿<div class="col-12">
+﻿@model AzzanOrder.ManagerOwner.Models.Table
+
+<div class="col-12">
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">Add Table</h5>
+            <h5 class="card-title">Update Table</h5>
         </div>
         <div class="card-body">
-            <form action="@Url.Action("List", "Table")" method="post">
-                <div class="mb-3 row">
-                    <label class="col-form-label col-sm-2 text-sm-end">Employee ID</label>
-                    <div class="col-sm-10">
-                        <input type="ID" class="form-control" placeholder="ID" disabled>
-                    </div>
-                </div>
+            <form asp-action="Update" asp-controller="Table" method="post">
+                <input type="hidden" asp-for="TableId" />
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">QR code</label>
                     <div class="col-sm-10">
-                        <input type="qr" class="form-control" placeholder="QR code">
+                        <input asp-for="Qr" class="form-control" placeholder="QR code" />
                     </div>
                 </div>
-
-                <fieldset class="mb-3">
-                    <div class="row">
-                        <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Role</label>
-                        <div class="col-sm-10">
-                            <label class="form-check">
-                                <input name="status" type="radio" class="form-check-input" checked>
-                                <span class="form-check-label">Open</span>
-                            </label>
-                            <label class="form-check">
-                                <input name="status" type="radio" class="form-check-input">
-                                <span class="form-check-label">Closed</span>
-                            </label>
-                            <label class="form-check">
-                                <input name="status" type="radio" class="form-check-input">
-                                <span class="form-check-label">Another Status</span>
-                            </label>
-                        </div>
-                    </div>
-                </fieldset>
-
-                @* <div class="mb-3 row">
-                <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Image</label>
-                <div class="col-sm-10">
-                <input type="file">
-                <small class="form-check-label text-muted">Only png and jpg allowed.</small>
-
-                </div>
-                </div> Comment in case needed *@
-
                 <div class="mb-3 row">
                     <div class="col-sm-10 ms-sm-auto">
-                        <button type="submit" class="btn btn-primary">Submit</button>
+                        @if (ViewBag.QrCodeUrl == null)
+                        {
+                            <button type="submit" class="btn btn-primary">Submit</button>
+                        }
+                        else
+                        {
+                            <a href="@Url.Action("List", "Table")" class="btn btn-primary">Go to List</a>
+                        }
                     </div>
                 </div>
             </form>
+            @if (ViewBag.QrCodeUrl != null)
+            {
+                <div class="mt-3">
+                    <h5>QR Code</h5>
+                    <img src="@ViewBag.QrCodeUrl" alt="QR Code" style="max-width:200px" />
+                    <a href="@ViewBag.QrCodeUrl" download="QRCode.png" class="btn btn-success mt-2">Save QR Code</a>
+                </div>
+            }
         </div>
     </div>
 </div>

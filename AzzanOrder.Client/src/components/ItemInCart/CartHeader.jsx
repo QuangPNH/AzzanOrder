@@ -29,18 +29,34 @@ const fetchDropdownOptions = async (id) => {
     return [];
 };
 
-const CartHeader = () => {
+const CartHeader = ({ headerText }) => {
     // Extract tableqr cookie and parse it
     const tableqr = getCookie("tableqr");
-    const [selectedOption, setSelectedOption] = useState("");
+    const [selectedOption, setSelectedOption] = useState("QR_000");
     const [dropdownOptions, setDropdownOptions] = useState([]);
     const [isDropdownOpen, setIsDropdownOpen] = useState(false);
 
     useEffect(() => {
         if (tableqr) {
-            const [qr, id, tableId] = tableqr.split('/');
-            setSelectedOption(qr); // Ensure selectedOption is set to qr
+            const [qr, id] = tableqr.split('/');
+            const fetchData = async () => {
+                const options = await fetchDropdownOptions(id);
+                if (headerText) {
+                    setSelectedOption("QR_000");
+                    const matchingTable = options.find(option => option.qr === "QR_000" && String(option.employeeId) === String(id));
+                    if (matchingTable) {
+                        const newTableId = matchingTable.tableId;
+                        setCookie("tableqr", `QR_000/${id}/${newTableId}`, 7);
+                    }
+                }
+            };
+            fetchData();
+        }
+    }, [headerText]);
 
+    useEffect(() => {
+        if (tableqr) {
+            const [qr, id, tableId] = tableqr.split('/');
             const fetchData = async () => {
                 const options = await fetchDropdownOptions(id);
                 setDropdownOptions(options);

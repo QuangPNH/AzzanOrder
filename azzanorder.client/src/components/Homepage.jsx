@@ -26,21 +26,28 @@ const Homepage = () => {
     const id=new URLSearchParams(search).get("tableqr");
 
     useEffect(() => {
-        fetchMenuItems();
-        if (getCookie('memberInfo') != null) {
-            fetchRecentMenuItems(JSON.parse(getCookie('memberInfo')).memberId);
-            setShowRecentlyOrdered(true);
-        }
-        //deleteCookie('tableqr');
-        if (id) {
-            setCookie('tableqr', id, 1);
-            fetchOrderExits(id.split('/')[0], id.split('/')[1]);
-        }
-    }, []);
+        const memberInfo = getCookie('memberInfo');
+        const memberId = memberInfo ? JSON.parse(memberInfo).memberId : null;
 
-    const fetchMenuItems = async () => {
+        const fetchData = async () => {
+            await fetchMenuItems(id ? id.split('/')[1] : null);
+            if (memberId) {
+                await fetchRecentMenuItems(memberId, id ? id.split('/')[1] : null);
+                setShowRecentlyOrdered(true);
+            }
+            if (id) {
+                setCookie('tableqr', id, 1);
+                await fetchOrderExits(id.split('/')[0], id.split('/')[1]);
+            }
+        };
+
+        fetchData();
+    }, [id]);
+
+    const fetchMenuItems = async (manaId) => {
         try {
-            const response = await fetch('https://localhost:7183/api/MenuItem/top4');
+            const url = manaId ? `https://localhost:7183/api/MenuItem/top4?manaId=${manaId}` : 'https://localhost:7183/api/MenuItem/top4';
+            const response = await fetch(url);
             const data = await response.json();
             setMenuItems(data);
         } catch (error) {
@@ -59,9 +66,10 @@ const Homepage = () => {
         }
     };
 
-    const fetchRecentMenuItems = async (customerId) => {
+    const fetchRecentMenuItems = async (customerId, manaId) => {
         try {
-            const response = await fetch(`https://localhost:7183/api/MenuItem/RecentMenuItems/${customerId}`);
+            const url = manaId ? `https://localhost:7183/api/MenuItem/RecentMenuItems/${customerId}?manaId=${manaId}` : `https://localhost:7183/api/MenuItem/RecentMenuItems/${customerId}`;
+            const response = await fetch(url);
             const data = await response.json();
             setRecentMenuItems(data);
         } catch (error) {

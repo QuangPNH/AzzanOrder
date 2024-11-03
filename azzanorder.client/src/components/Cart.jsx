@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import ItemInCart from './ItemInCart/ItemInCart';
 import CartHeader from './ItemInCart/CartHeader';
 import PriceCalculator from './PriceCalculator/PriceCalculator';
@@ -37,6 +37,7 @@ const Cart = () => {
     const [cartData, setCartData] = useState(getCartData());
     const [voucher, setVoucher] = useState(getVoucher());  
     const [totalPrice, setTotalPrice] = useState(0);
+    const [headerText, setHeaderText] = useState(false);
 
     useEffect(() => {
         const calculateTotal = () => {
@@ -70,6 +71,14 @@ const Cart = () => {
         setVoucher(selectedItem);
     };
 
+    const handleTakeOutChange = (isTake) => {
+        if (isTake) {
+            setHeaderText(true);
+        } else {
+            setHeaderText(false);
+        }
+    };
+
     const itemsInCart = cartData?.map((item, index) => (
         <ItemInCart
             key={index}
@@ -84,9 +93,8 @@ const Cart = () => {
     ));
 
     return (
-        <div style={{ background: 'white', border: '1px solid black', borderRadius: '20px', padding: '10px', maxHeight: '700px',width: '320px', overflowY: 'auto' }}>
-
-            <CartHeader />
+        <div style={{ background: 'white', border: '1px solid black', borderRadius: '20px', padding: '10px', maxHeight: '700px', width: '320px', overflowY: 'auto' }}>
+            <CartHeader headerText={headerText} />
             <div style={{ background: 'white', maxHeight: '250px', overflowY: 'auto' }}>
                 {cartData.length > 0 ? (
                     itemsInCart
@@ -96,7 +104,7 @@ const Cart = () => {
             </div>
             <VoucherCart onSelectVoucher={handleSelectVoucher} />
             <div>
-                <PriceCalculator totalPrice={totalPrice} />
+                <PriceCalculator totalPrice={totalPrice} onTakeOutChange={handleTakeOutChange} />
             </div>
         </div>
     );
