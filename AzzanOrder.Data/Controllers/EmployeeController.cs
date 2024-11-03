@@ -28,7 +28,7 @@ namespace AzzanOrder.Data.Controllers
           {
               return NotFound();
           }
-            return await _context.Employees.ToListAsync();
+            return await _context.Employees.Include(e => e.Role).ToListAsync();
         }
 
         // GET: api/Employee/5

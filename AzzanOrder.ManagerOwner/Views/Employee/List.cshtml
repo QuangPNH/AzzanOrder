@@ -23,6 +23,7 @@
                     <th style="width:20%">Phone Number</th>
                     <th class="d-none d-md-table-cell" style="width:20%">Email</th>
                     <th style="width:10%">Role</th>
+                    <th style="width:10%">Gender</th>
                     <th class="d-none d-md-table-cell" style="width:20%">Date of Birth</th>
                     <th>Actions</th>
                 </tr>
@@ -45,6 +46,9 @@
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.Role.RoleName)
+                        </td>
+                        <td>
+                            @(item.Gender.HasValue && item.Gender.Value ? "Male" : "Female")
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.BirthDate)
