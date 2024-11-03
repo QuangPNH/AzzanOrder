@@ -23,13 +23,13 @@ namespace AzzanOrder.Data.Controllers
 
         // GET: api/Vouchers
         [HttpGet]
-        public async Task<ActionResult> GetVouchers()
+        public async Task<ActionResult> GetVouchers(int? id)
         {
             if (_context.Vouchers == null)
             {
                 return NotFound("List voucher is empty");
-            }
-            var vouchers = await _context.Vouchers.ToListAsync();
+            }            
+            var vouchers = await _context.VoucherDetails.Include(v => v.Vouchers).ThenInclude(ic => ic.ItemCategory).ToListAsync();
             return Ok(vouchers);
         }
         [HttpGet("CategoryId")]

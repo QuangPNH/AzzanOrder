@@ -1,43 +1,25 @@
-﻿<div class="col-12">
+﻿@model AzzanOrder.ManagerOwner.Models.ItemCategory
+<div class="col-12">
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">Add Item Category</h5>
+            <h5 class="card-title">Update Item Category</h5>
         </div>
         <div class="card-body">
-            <form action="@Url.Action("List", "ItemCategory")" method="post">
-                <div class="mb-3 row">
-                    <label class="col-form-label col-sm-2 text-sm-end">Item Category ID</label>
-                    <div class="col-sm-10">
-                        <input type="ID" class="form-control" placeholder="ID" disabled>
-                    </div>
-                </div>
+            <form asp-action="Update" method="post">
+                <input type="hidden" asp-for="ItemCategoryId" />
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Name</label>
                     <div class="col-sm-10">
-                        <input type="Name" class="form-control" placeholder="Name">
+                        <input type="text" asp-for="ItemCategoryName" class="form-control" placeholder="Name">
+                        <span asp-validation-for="ItemCategoryName" class="text-danger"></span>
                     </div>
                 </div>
 
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Description</label>
                     <div class="col-sm-10">
-                        <textarea class="form-control" placeholder="Description" rows="3"></textarea>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label class="col-form-label col-sm-2 text-sm-end">Discount</label>
-                    <div class="col-sm-10">
-                        <input type="Discount" class="form-control" placeholder="Discount">
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Image</label>
-                    <div class="col-sm-10">
-                        <input type="file">
-                        <small class="form-check-label text-muted">Only png and jpg allowed.</small>
-
+                        <textarea asp-for="Description" class="form-control" placeholder="Description" rows="3"></textarea>
+                        <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                 </div>
 
@@ -50,35 +32,3 @@
         </div>
     </div>
 </div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Choices.js
-        new Choices(document.querySelector(".choices-single"));
-        new Choices(document.querySelector(".choices-multiple"));
-        // Flatpickr
-        flatpickr(".flatpickr-minimum");
-        flatpickr(".flatpickr-datetime", {
-            enableTime: true,
-            dateFormat: "Y-m-d H:i",
-        });
-        flatpickr(".flatpickr-human", {
-            altInput: true,
-            altFormat: "F j, Y",
-            dateFormat: "Y-m-d",
-        });
-        flatpickr(".flatpickr-multiple", {
-            mode: "multiple",
-            dateFormat: "Y-m-d"
-        });
-        flatpickr(".flatpickr-range", {
-            mode: "range",
-            dateFormat: "Y-m-d"
-        });
-        flatpickr(".flatpickr-time", {
-            enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i",
-        });
-    });
-</script>
