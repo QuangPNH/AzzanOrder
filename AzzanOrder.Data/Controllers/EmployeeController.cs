@@ -39,7 +39,7 @@ namespace AzzanOrder.Data.Controllers
           {
               return NotFound();
           }
-            var employee = await _context.Employees.FindAsync(id);
+            var employee = await _context.Employees.Include(e => e.Role).FirstOrDefaultAsync(e => e.EmployeeId == id);
 
             if (employee == null)
             {

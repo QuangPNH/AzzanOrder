@@ -38,21 +38,16 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 }
             }
 
-            // Assuming totalEmployees is calculated before this point
-            employees = employees.Where(e => e.IsDelete == false).ToList();
-
-            int pageSize = 5;
-            int pageNumber = page ?? 1; // Get the page number from query or default to 1
-            int maxPageNav = 10; // Number of pagination buttons to show
-            totalEmployees = employees.Count(); // Ensure you get the total employees count after filtering
+            employees = employees.Where(e => e.IsDelete == false && !(e.Role.RoleName.ToLower() == "Magager".ToLower() || e.Role.RoleName.ToLower() == "Manager".ToLower())).ToList();
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
+            int maxPageNav = 10;
+            totalEmployees = employees.Count();
             int totalPages = (int)Math.Ceiling((double)totalEmployees / pageSize);
 
             // Paginate the employees
             employees = employees.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
 
-
-
-            Console.WriteLine("sdfsfsffs" + totalPages);
             var viewModel = new Model
             {
                 anIntegerUsedForCountingNumberOfPageQueuedForTheList = totalPages,
@@ -68,7 +63,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
         public async Task<IActionResult> Add()
         {
             List<Role> roles = new List<Role>();
-
             using (HttpClient client = new HttpClient())
             {
                 try
@@ -91,9 +85,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
                 }
             }
-
-            roles.RemoveAll(role => role.RoleName == "Magager");
-
+            roles.RemoveAll(role => role.RoleName.ToLower() == "Magager".ToLower() || role.RoleName.ToLower() == "Manager".ToLower());
 
             var viewModel = new Model
             {
@@ -170,31 +162,168 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     {
                         string message = await res.Content.ReadAsStringAsync();
                         Console.WriteLine(message);
-                        return RedirectToAction("List", "Employee");
+                        
                     }
                 }
             }
-
-            return RedirectToAction("Add", "Employee");
+            return RedirectToAction("List", "Employee");
         }
 
 
-        public IActionResult Update()
+        public async Task<IActionResult> Update(int id)
         {
-            return View();
+            Console.WriteLine("HJGJhbjhfrhsbdjfbjhsdfhbsdjfh " + id);
+
+            Employee employee = new Employee();
+            List<Role> roles = new List<Role>();
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    HttpResponseMessage res = await client.GetAsync(_apiUrl + "Employee/" + id);
+                    if (res.IsSuccessStatusCode)
+                    {
+                        string data = await res.Content.ReadAsStringAsync();
+                        employee = JsonConvert.DeserializeObject<Employee>(data);
+                    }
+                    else
+                    {
+                        // Handle the error response here
+                        ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                    }
+                }
+                catch (HttpRequestException e)
+                {
+                    // Handle the exception here
+                    ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
+                }
+            }
+
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    HttpResponseMessage res = await client.GetAsync(_apiUrl + "Role");
+                    if (res.IsSuccessStatusCode)
+                    {
+                        string data = await res.Content.ReadAsStringAsync();
+                        roles = JsonConvert.DeserializeObject<List<Role>>(data);
+                    }
+                    else
+                    {
+                        // Handle the error response here
+                        ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                    }
+                }
+                catch (HttpRequestException e)
+                {
+                    // Handle the exception here
+                    ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
+                }
+            }
+            roles.RemoveAll(role => role.RoleName == "Magager" || role.RoleName == "Manager");
+
+
+            var viewModel = new Model
+            {
+                roles = roles,
+                employee = employee
+            };
+
+            return View(viewModel);
         }
 
-        [HttpPost]
-        [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdatePost(Employee employee)
+        public async Task<IActionResult> UpdateAction(Employee employee, IFormFile employeeImage)
         {
+            // Convert uploaded image to Base64 if there is a new image
+            if (employeeImage != null && employeeImage.Length > 0)
+                employee.Image = await ImageToBase64Async(employeeImage);
+
+            // Fetch the manager information if needed
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    HttpResponseMessage res = await client.GetAsync(_apiUrl + "Employee/1");
+                    if (res.IsSuccessStatusCode)
+                    {
+                        string data = await res.Content.ReadAsStringAsync();
+                        employee.Manager = JsonConvert.DeserializeObject<Employee>(data);
+                    }
+                    else
+                    {
+                        // Handle error response
+                        ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                    }
+                }
+                catch (HttpRequestException e)
+                {
+                    // Handle exception
+                    ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
+                }
+            }
+
             if (ModelState.IsValid)
             {
-                // Add logic to update the employee
-                return RedirectToAction("List");
+                // Conditionally include Image property only if it's not null
+                var employeeToUpdate = new
+                {
+                    EmployeeId = employee.EmployeeId,
+                    EmployeeName = employee.EmployeeName,
+                    Gender = employee.Gender,
+                    Phone = employee.Phone,
+                    Gmail = employee.Gmail,
+                    BirthDate = employee.BirthDate,
+                    RoleId = employee.RoleId,
+                    HomeAddress = employee.HomeAddress,
+                    WorkAddress = employee.WorkAddress,
+                    ManagerId = employee.ManagerId,
+                    OwerId = employee.OwerId,
+                    IsDelete = employee.IsDelete
+                };
+
+                // Serialize to JSON and conditionally include "Image" if not null
+                var employeeJson = JsonConvert.SerializeObject(employeeToUpdate, new JsonSerializerSettings
+                {
+                    NullValueHandling = NullValueHandling.Ignore
+                });
+
+                if (employee.Image != null)
+                {
+                    // Add "Image" property manually if it's not null
+                    employeeJson = employeeJson.TrimEnd('}');
+                    employeeJson += $",\"Image\":\"{employee.Image}\"}}";
+                }
+
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        // Send update request with modified JSON content
+                        var content = new StringContent(employeeJson, System.Text.Encoding.UTF8, "application/json");
+                        HttpResponseMessage res = await client.PutAsync(_apiUrl + "Employee/Update", content);
+
+                        if (res.IsSuccessStatusCode)
+                        {
+                            string message = await res.Content.ReadAsStringAsync();
+                            Console.WriteLine(message);
+                            return RedirectToAction("List", "Employee");
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Update failed. Please try again.");
+                        }
+                    }
+                    catch (HttpRequestException e)
+                    {
+                        ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
+                    }
+                }
             }
-            return View(employee);
+            return RedirectToAction("List", "Employee");
         }
+
 
         /*public IActionResult Delete()
         {

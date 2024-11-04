@@ -54,7 +54,7 @@
                             @Html.DisplayFor(modelItem => item.BirthDate)
                         </td>
                         <td class="table-action">
-                            <a href="@Url.Action("Update", "Employee")"><i class="align-middle" data-feather="edit-2"></i></a>
+                            <a asp-action="Update" asp-route-id="@item.EmployeeId"><i class="align-middle" data-feather="edit-2"></i></a>
                             <a asp-action="Delete" asp-route-id="@item.EmployeeId"><i class="align-middle" data-feather="trash"></i></a>
                             @* <a href="@Url.Action("Delete", "Employee")"><i class="align-middle" data-feather="trash"></i></a> *@
                         </td>
