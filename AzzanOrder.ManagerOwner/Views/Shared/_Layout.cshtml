@@ -12,7 +12,6 @@
 	<link rel="preconnect" href="https://fonts.gstatic.com">
 	<link rel="shortcut icon" href="@Url.Content("~/img/icons/icon-48x48.png")" />
 
-
 	<link rel="canonical" href="index.html" />
 
 	<title>Ordering System Management</title>
@@ -279,7 +278,10 @@
 						</li>
 
 						<li class="nav-item">
-							<a class="nav-link" href="#">Log out</a>
+                            <a class="nav-link" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Log out</a>
+                            <form id="logout-form" action="@Url.Action("LogoutAction", "Home")" method="post" style="display: none;">
+                               @Html.AntiForgeryToken()
+                            </form>
 						</li>
 					</ul>
 				</div>

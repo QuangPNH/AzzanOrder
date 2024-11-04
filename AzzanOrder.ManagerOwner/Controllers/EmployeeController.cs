@@ -9,7 +9,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
     public class EmployeeController : Controller
     {
         private readonly string _apiUrl = "https://localhost:7183/api/";
-
         public async Task<IActionResult> ListAsync(int? page)
         {
             List<Employee> employees = new List<Employee>();
@@ -37,7 +36,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
                 }
             }
-
             employees = employees.Where(e => e.IsDelete == false && !(e.Role.RoleName.ToLower() == "Magager".ToLower() || e.Role.RoleName.ToLower() == "Manager".ToLower())).ToList();
             int pageSize = 10;
             int pageNumber = page ?? 1;
@@ -55,8 +53,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed = maxPageNav,
                 employees = employees,
             };
-
-
             return View(viewModel);
         }
 
@@ -108,8 +104,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 employee.Image = await ImageToBase64Async(employeeImage);
 
             //employee.EmployeeId;
-
-
 
             using (HttpClient client = new HttpClient())
             {
@@ -375,6 +369,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
             byte[] imageBytes = System.IO.File.ReadAllBytes(imagePath);
             return Convert.ToBase64String(imageBytes);
         }*/
+
+
     }
 
 }
