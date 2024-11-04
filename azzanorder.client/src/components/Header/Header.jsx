@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Logo from "./Logo";
 import Navigation from "./Navigation";
 import Navbar from "./Navbar"; // Assuming you have a Navbar component
+import { getCookie } from './Account/SignUpForm/Validate';
 
 const Header = () => {
     const [showNavbar, setShowNavbar] = useState(false);
@@ -11,6 +12,29 @@ const Header = () => {
         setShowNavbar((prevShow) => !prevShow);
     };
 
+    const [backgroundColor, setBackgroundColor] = useState('#f6b5b5'); // Default background color
+
+    useEffect(() => {
+        const tableqr = getCookie("tableqr");
+        if (tableqr) {
+            // Fetch the background color based on the tableqr value
+            const fetchBackgroundColor = async (manaId) => {
+                try {
+                    const url = `https://localhost:7183/api/Promotions/GetByDescription/color?manaId=${manaId}`
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    const data = await response.json();
+                    setBackgroundColor(data.description.split('/')[1]);
+                } catch (error) {
+                    console.error("Failed to fetch background color:", error);
+                }
+            };
+            fetchBackgroundColor();
+        }
+    }, []);
+
     return (
         <>
             <header className="header sticky">
@@ -19,7 +43,7 @@ const Header = () => {
                 {showNavbar && <Navbar />} {/* Render Navbar below Header when visible */}
                 <style jsx>{`
           .header {
-            background-color: #f6b5b5;
+            background-color: ${backgroundColor};
             display: flex;
             justify-content: space-between;
             align-items: center;
