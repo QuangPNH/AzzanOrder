@@ -287,6 +287,11 @@ namespace AzzanOrder.Data.Models
                 entity.Property(e => e.EndDate).HasColumnType("datetime");
 
                 entity.Property(e => e.StartDate).HasColumnType("datetime");
+
+                entity.HasOne(d => d.Employee)
+                    .WithMany(p => p.VoucherDetails)
+                    .HasForeignKey(d => d.EmployeeId)
+                    .HasConstraintName("FK_VoucherDetail_Employee");
             });
 
             OnModelCreatingPartial(modelBuilder);

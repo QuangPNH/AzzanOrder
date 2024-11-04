@@ -12,6 +12,7 @@ namespace AzzanOrder.Data.Models
             MenuItems = new HashSet<MenuItem>();
             Notifications = new HashSet<Notification>();
             Promotions = new HashSet<Promotion>();
+            VoucherDetails = new HashSet<VoucherDetail>();
         }
 
         public int EmployeeId { get; set; }
@@ -36,5 +37,6 @@ namespace AzzanOrder.Data.Models
         public virtual ICollection<MenuItem> MenuItems { get; set; }
         public virtual ICollection<Notification> Notifications { get; set; }
         public virtual ICollection<Promotion> Promotions { get; set; }
+        public virtual ICollection<VoucherDetail> VoucherDetails { get; set; }
     }
 }

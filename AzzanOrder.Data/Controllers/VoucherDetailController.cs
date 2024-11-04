@@ -108,7 +108,10 @@ namespace AzzanOrder.Data.Controllers
             {
                 return Problem("List voucher are null.");
             }
-            
+            if(voucherDetail.Price == null)
+            {
+                voucherDetail.Price = 0;
+            }
             _context.VoucherDetails.Add(voucherDetail);
             await _context.SaveChangesAsync();
 

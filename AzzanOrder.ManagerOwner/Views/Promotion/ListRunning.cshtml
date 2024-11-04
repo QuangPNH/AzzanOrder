@@ -1,10 +1,50 @@
 ﻿@using Newtonsoft.Json
 @model List<Promotion>
 
+@{
+    var logoLink = ViewBag.LogoLink ?? "/";
+    var backgroundColor = ViewBag.BackgroundColor ?? "#f6b5b5";
+}
+
+
 <div class="container">
     <h1 class="h3 mb-3">Running Promotions</h1>
 
     <div class="card">
+
+        <div class="card-header">
+            <h5 class="card-title">Header</h5>
+        </div>
+
+        <div class="header sticky" style="background-color: @backgroundColor;">
+            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/e7970bccea406727a92dffa6eaf3dad60f5580953085ae7d3a1cd0abb435e4e5?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8"
+                 alt="Company logo"
+                 class="logo"
+                 loading="lazy"
+                 onclick="window.location.href='@logoLink'" />
+        </div>
+
+        <div class="card-body">
+            <form id="promotionForm" enctype="multipart/form-data" method="post" action="@Url.Action("UploadImage", "Promotion")">
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Image</label>
+                    <div class="col-sm-10">
+                        <input type="file">
+                        <small class="form-check-label text-muted">Only png and jpg allowed.</small>
+
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="colorPicker" class="col-form-label col-sm-2 text-sm-end pt-sm-0">Pick a Color</label>
+                    <div class="col-sm-10">
+                        <input type="color" class="form-control form-control-color" id="colorPicker" name="colorPicker" value="@backgroundColor" />
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+
+
         <div class="card-header">
             <h5 class="card-title">Carousel</h5>
         </div>
@@ -62,7 +102,6 @@
         <div id="listAllContainer" style="display:none;">
             @Html.Partial("ListAll")
         </div>
-
     </div>
 </div>
 
