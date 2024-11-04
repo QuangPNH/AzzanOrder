@@ -5,61 +5,61 @@ import ShowMoreLink from './ShowMoreLink/ShowMoreLink';
 import ProductCard from './ProductCard/ProductCard';
 import Dropdown from './Dropdown/Dropdown';
 
-const Homepage = () => {
+const fetchCategoriesAndProducts = async (setCategories, setProducts) => {
+    try {
+        const response = await fetch('https://localhost:7183/api/ItemCategory');
+        const categories = await response.json();
+
+        const initialProducts = categories.reduce((acc, category) => {
+            acc[category.description] = category.menuCategories.map(mc => ({
+                menuItemId: mc.menuItem.menuItemId,
+                title: mc.menuItem.itemName,
+                price: mc.menuItem.price,
+                description: mc.menuItem.description,
+                imageBase64: mc.menuItem.image,
+                category: category.description
+            }));
+            return acc;
+        }, {});
+
+        setProducts(initialProducts);
+        setCategories(categories);
+    } catch (error) {
+        console.error('Error fetching categories and products:', error);
+    }
+};
+
+const Menu = () => {
     const [products, setProducts] = useState({});
     const [categories, setCategories] = useState([]);
     const categoryRefs = useRef({});
 
     useEffect(() => {
-        const fetchCategories = async () => {
-            try {
-                const response = await fetch('https://localhost:7183/api/ItemCategory');
-                const categories = await response.json();
-                const initialProducts = categories.reduce((acc, category) => {
-                    acc[category.description] = [];
-                    return acc;
-                }, {});
-                setProducts(initialProducts);
-                setCategories(categories);
-
-                // Fetch products for each category
-                categories.forEach(category => fetchProducts(category));
-            } catch (error) {
-                console.error('Error fetching categories:', error);
-            }
-        };
-
-        fetchCategories();
+        fetchCategoriesAndProducts(setCategories, setProducts);
     }, []);
-
-    const fetchProducts = async (category) => {
-        try {
-            const response = await fetch(`https://localhost:7183/api/MenuItem/Category/${category.description}`);
-            const data = await response.json();
-            setProducts(prevProducts => ({
-                ...prevProducts,
-                [category.description]: data
-            }));
-        } catch (error) {
-            console.error('Error fetching products:', error);
-        }
-    };
 
     const handleDropdownChange = (selectedCategory) => {
         if (categoryRefs.current[selectedCategory]) {
-            categoryRefs.current[selectedCategory].scrollIntoView({ behavior: 'smooth' });
+            const offset = -400; // Adjust this value to scroll further up or down
+            const elementPosition = categoryRefs.current[selectedCategory].getBoundingClientRect().top + window.scrollY;
+            const offsetPosition = elementPosition + offset;
+
+            window.scrollTo({
+                top: offsetPosition,
+                behavior: 'smooth'
+            });
         }
     };
+
     return (
         <>
             <Header />
             <Dropdown
-                options={categories?.map(category => category.description)}
                 onClick2={handleDropdownChange}
                 onChange={handleDropdownChange} />
             {categories?.map((category) => (
-                <div key={category.description} ref={el => categoryRefs.current[category.description] = el}>
-                    <ShowMoreLink title={category.description}/>
+                <div key={category.description} ref={el => categoryRefs.current[category.itemCategoryId] = el}>
+                    <ShowMoreLink title={category.description} />
                     <div className='product-grid'>
                         {products[category.description]?.map((product) => (
                             <ProductCard
@@ -104,4 +104,4 @@ const Homepage = () => {
     );
 };
 
-export default Homepage;
+export default Menu;

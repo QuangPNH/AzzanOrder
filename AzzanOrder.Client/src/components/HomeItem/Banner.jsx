@@ -1,17 +1,19 @@
 ﻿import React, { useEffect, useState } from 'react';
 import DotIndicator from './DotIndicator';
 import ImageWrapper from './ImageWrapper';
+import { getCookie } from '../Account/SignUpForm/Validate';
 
 const Banner = () => {
     const [promotions, setPromotions] = useState([]);
 
     useEffect(() => {
-        fetchImages();
+        fetchImages(getCookie('tableqr') ? getCookie('tableqr').split('/')[1] : null);
     }, []);
 
-    const fetchImages = async () => {
+    const fetchImages = async (manaId) => {
         try {
-            const response = await fetch('https://localhost:7183/api/Promotions/GetByDescription/banner');
+            const url = manaId ? `https://localhost:7183/api/Promotions/GetByDescription/banner?manaId=${manaId}` : 'https://localhost:7183/api/Promotions/GetByDescription/banner';
+            const response = await fetch(url);
             const data = await response.json();
             setPromotions(Array.isArray(data) ? data : []);
         } catch (error) {

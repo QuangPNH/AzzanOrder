@@ -125,17 +125,19 @@ namespace AzzanOrder.Data.Controllers
         }
         // GET: api/MenuItem/Top4
         [HttpGet("Top4")]
-        public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetTop4MenuItems()
+        public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetTop4MenuItems(int? id)
         {
-            var top4MenuItems = await _context.MenuItems
-                .Where(m =>
-                m.IsAvailable == true &&
-                m.MenuCategories.Any(mc =>
-                mc.EndDate == null &&
-                mc.StartDate == null ||
-                mc.EndDate > DateTime.Now &&
-                mc.StartDate < DateTime.Now &&
-                mc.IsForCombo == false))
+            var query = _context.MenuItems.Where(m => m.IsAvailable == true);
+
+            if (id.HasValue)
+            {
+                query = query.Where(m => m.EmployeeId == id.Value);
+            }
+
+            var top4MenuItems = await query
+                .Where(m => m.MenuCategories.Any(mc =>
+                    (mc.EndDate == null && mc.StartDate == null) ||
+                    (mc.EndDate > DateTime.Now && mc.StartDate < DateTime.Now && mc.IsForCombo == false)))
                 .OrderByDescending(m => m.OrderDetails.Count)
                 .Take(4)
                 .Select(m => new MenuItemDTO
@@ -146,31 +148,34 @@ namespace AzzanOrder.Data.Controllers
                     Description = m.Description,
                     Discount = m.Discount,
                     Category = m.MenuCategories.FirstOrDefault().ItemCategory.Description,
-                    ImageBase64 = m.Image
+                    ImageBase64 = m.Image,
+                    EmployeeId = m.EmployeeId
                 })
-            .ToListAsync();
-            
-            if (top4MenuItems == null)
+                .ToListAsync();
+
+            if (top4MenuItems == null || !top4MenuItems.Any())
             {
                 return NotFound();
             }
 
-            return top4MenuItems;
+            return Ok(top4MenuItems);
         }
         // GET: api/MenuItem/Category/{category}
         [HttpGet("Category/{categoryname}")]
-        public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetMenuItemsByCategory(string categoryname)
+        public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetMenuItemsByCategory(string categoryname, int? id)
         {
-            var menuItems = await _context.MenuItems
-                .Where(m =>
-                m.MenuCategories.Any(mc =>
+            var query = _context.MenuItems.Where(m => m.MenuCategories.Any(mc =>
                 mc.ItemCategory.Description.ToLower().Contains(categoryname.ToLower()) &&
-                mc.EndDate == null &&
-                mc.StartDate == null ||
-                mc.EndDate > DateTime.Now &&
-                mc.StartDate < DateTime.Now &&
-                mc.IsForCombo == false) &&
-                m.IsAvailable == true)
+                (mc.EndDate == null && mc.StartDate == null ||
+                mc.EndDate > DateTime.Now && mc.StartDate < DateTime.Now && mc.IsForCombo == false)) &&
+                m.IsAvailable == true);
+
+            if (id.HasValue)
+            {
+                query = query.Where(m => m.EmployeeId == id.Value);
+            }
+
+            var menuItems = await query
                 .Select(m => new MenuItemDTO
                 {
                     MenuItemId = m.MenuItemId,
@@ -179,35 +184,40 @@ namespace AzzanOrder.Data.Controllers
                     Category = m.MenuCategories.FirstOrDefault().ItemCategory.Description,
                     Description = m.Description,
                     Discount = m.Discount,
-                    ImageBase64 = m.Image
+                    ImageBase64 = m.Image,
+                    EmployeeId = m.EmployeeId
                 })
                 .ToListAsync();
 
-            if (menuItems == null)
+            if (menuItems == null || !menuItems.Any())
             {
                 return NotFound();
             }
 
-            return menuItems;
+            return Ok(menuItems);
         }
+
         // GET: api/MenuItem/RecentMenuItems/{customerId}
         [HttpGet("RecentMenuItems/{customerId}")]
-        public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetRecentMenuItems(int customerId)
+        public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetRecentMenuItems(int customerId, int? id)
         {
-            var recentMenuItems = await _context.OrderDetails
+            var query = _context.OrderDetails
                 .Where(od => od.Order.MemberId == customerId)
                 .OrderByDescending(od => od.Order.OrderDate)
                 .Select(od => od.MenuItem)
                 .Distinct()
                 .Take(4)
-                .Where(m =>
-                m.MenuCategories.Any(mc =>
-                mc.EndDate == null &&
-                mc.StartDate == null ||
-                mc.EndDate > DateTime.Now &&
-                mc.StartDate < DateTime.Now &&
-                mc.IsForCombo == false) &&
-                m.IsAvailable == true)
+                .Where(m => m.MenuCategories.Any(mc =>
+                    (mc.EndDate == null && mc.StartDate == null ||
+                    mc.EndDate > DateTime.Now && mc.StartDate < DateTime.Now && mc.IsForCombo == false)) &&
+                    m.IsAvailable == true);
+
+            if (id.HasValue)
+            {
+                query = query.Where(m => m.EmployeeId == id.Value);
+            }
+
+            var recentMenuItems = await query
                 .Select(m => new MenuItemDTO
                 {
                     MenuItemId = m.MenuItemId,
@@ -216,17 +226,17 @@ namespace AzzanOrder.Data.Controllers
                     Description = m.Description,
                     Category = m.MenuCategories.FirstOrDefault().ItemCategory.Description,
                     Discount = m.Discount,
-                    ImageBase64 = m.Image
+                    ImageBase64 = m.Image,
+                    EmployeeId = m.EmployeeId
                 })
                 .ToListAsync();
 
-            if (recentMenuItems == null)
+            if (recentMenuItems == null || !recentMenuItems.Any())
             {
                 return NotFound();
             }
 
-            return recentMenuItems;
+            return Ok(recentMenuItems);
         }
-
     }
 }

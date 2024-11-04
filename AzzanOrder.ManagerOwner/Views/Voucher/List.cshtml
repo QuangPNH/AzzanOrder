@@ -1,4 +1,6 @@
-﻿<h1 class="h3 mb-3">Voucher Management</h1>
+﻿@model IEnumerable<AzzanOrder.ManagerOwner.Models.VoucherDetail>
+
+<h1 class="h3 mb-3">Voucher Management</h1>
 
 <div class="col-12">
     <div class="card">
@@ -14,48 +16,40 @@
                 <tr>
                     <th style="width:5%">No.</th>
                     <th style="width:15%">Title</th>
-                    <th style="width:10%">Item Category</th>
+                    <th style="width:50%">Item Category</th>
                     <th style="width:5%">Discount</th>
                     <th class="d-none d-md-table-cell" style="width:10%">Price</th>
-                    <th style="width:10%">Is Active</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Sale or something</td>
-                    <td>Coffee</td>
-                    <td>5%</td>
-                    <td class="d-none d-md-table-cell">1000</td>
-                    <td>Yes</td>
-                    <td class="table-action">
-                        <a href="@Url.Action("Update", "Voucher")"><i class="align-middle" data-feather="edit-2"></i></a>
-                        <a href="@Url.Action("Delete", "Voucher")"><i class="align-middle" data-feather="trash"></i></a>
-                    </td>
-                </tr>
+                @for (int i = 0; i < Model.Count(); i++)
+                {
+                    var voucherDetail = Model.ElementAt(i);
+                    var vouchers = voucherDetail.Vouchers;
+                    <tr>
+                        <td>@(i + 1)</td>
+                        <td>@voucherDetail.Title</td>
+                        <td>
+                            @foreach (var voucher in vouchers)
+                            {
+                                <div>
+                                    @voucher.ItemCategory?.ItemCategoryName
+                                    <span class="@(voucher.IsActive == true ? "text-success ms-2" : "text-danger ms-2")">
+                                        @(voucher.IsActive == true ? "Active" : "Not Active")
+                                    </span>
+                                </div>
+                            }
+                        </td>
+                        <td>@voucherDetail.Discount%</td>
+                        <td class="d-none d-md-table-cell">@voucherDetail.Price</td>
+                        <td class="table-action">
+                            <a href="@Url.Action("Update", "Voucher", new { id = voucherDetail.VoucherDetailId })"><i class="align-middle" data-feather="edit-2"></i></a>
+                            <a href="@Url.Action("Delete", "Voucher", new { id = voucherDetail.VoucherDetailId })"><i class="align-middle" data-feather="trash"></i></a>
+                        </td>
+                    </tr>
+                }
             </tbody>
         </table>
-
-        <div class="row mt-3">
-            <div class="col d-flex align-items-center">
-                <span id="response-info">Showing 0-0 out of 0 responses</span>
-            </div>
-            <div class="col d-flex justify-content-end">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination pagination-md mb-0">
-                        <li class="page-item"><a class="page-link" href="#"><i class="fas fa-angle-left"></i></a></li>
-                        <li class="page-item"><a class="page-link" href="#">1</a></li>
-                        <li class="page-item active"><a class="page-link" href="#">2</a></li>
-                        <li class="page-item"><a class="page-link" href="#">3</a></li>
-                        <li class="page-item"><a class="page-link" href="#">4</a></li>
-                        <li class="page-item"><a class="page-link" href="#">5</a></li>
-                        <li class="page-item"><a class="page-link" href="#"><i class="fas fa-angle-right"></i></a></li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
-
-
     </div>
 </div>
