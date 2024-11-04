@@ -20,17 +20,28 @@ namespace AzzanOrder.Data.Controllers
         {
             _context = context;
         }
-
-        // GET: api/Vouchers
         [HttpGet]
-        public async Task<ActionResult> GetVouchers()
+        public async Task<ActionResult> GetAllVoucher()
         {
             if (_context.Vouchers == null)
             {
                 return NotFound("List voucher is empty");
             }
-            var vouchers = await _context.Vouchers.ToListAsync();
+            var vouchers = await _context.Vouchers.Include(v => v.ItemCategory).ThenInclude(v => v.MenuCategories).ToListAsync();
             return Ok(vouchers);
+        }
+        // GET: api/Vouchers
+        [HttpGet("voucherDetailId/menuItemId")]
+        public async Task<ActionResult> CheckVoucher(int voucherDetailid, int menuItemId)
+        {
+            if (_context.Vouchers == null)
+            {
+                return NotFound("List voucher is empty");
+            }
+            var vouchers = await _context.Vouchers.Where(v => v.VoucherDetailId == voucherDetailid).Include(v => v.ItemCategory).ThenInclude(v => v.MenuCategories).ToListAsync();
+            var check = vouchers.Any(v => v.ItemCategory.MenuCategories.Any(m => m.MenuItemId == menuItemId));
+            //var vouchers = await _context.VoucherDetails.Include(v => v.Vouchers).ThenInclude(ic => ic.ItemCategory).ToListAsync();
+            return Ok(check);
         }
         [HttpGet("CategoryId")]
         public async Task<IActionResult> GetVoucherByCategory(int categoryId)
@@ -92,7 +103,7 @@ namespace AzzanOrder.Data.Controllers
             Voucher v = new Voucher() { ItemCategoryId = voucher.ItemCategoryId, VoucherDetailId = voucher.VoucherDetailId, IsActive = true };
             _context.Vouchers.Add(v);
             await _context.SaveChangesAsync();
-            if(!(_context.Vouchers.Count() > count))
+            if (!(_context.Vouchers.Count() > count))
             {
                 return Problem("Add fails");
             }
@@ -107,8 +118,8 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            if(!VoucherExists(voucher))
-            { 
+            if (!VoucherExists(voucher))
+            {
                 return NotFound();
             }
             var v = _context.Vouchers.FirstOrDefault(v => v.VoucherDetailId == voucher.VoucherDetailId && v.ItemCategoryId == voucher.ItemCategoryId);

@@ -115,6 +115,10 @@ namespace AzzanOrder.Data.Controllers
             {
                 var mv = _context.MemberVouchers.FirstOrDefault(mv => mv.MemberId == memberVoucher.MemberId && mv.VoucherDetailId == memberVoucher.VoucherDetailId );
                 mv.Quantity = mv.Quantity + 1;
+                var member = _context.Members.FirstOrDefault(m => m.MemberId == memberVoucher.MemberId);
+                var voucherDetail = _context.VoucherDetails.FirstOrDefault(vD => vD.VoucherDetailId == memberVoucher.VoucherDetailId);
+                member.Point = member.Point - voucherDetail.Price;
+                _context.Members.Update(member);
                 _context.MemberVouchers.Update(mv);
             }
             else

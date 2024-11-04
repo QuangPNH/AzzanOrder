@@ -1,8 +1,22 @@
 import { useState, useEffect } from 'react';
 import DropdownItem from '../Dropdown/DropdownItem';
 
+function getVoucher() {
+    const v = getCookie("voucher");
+    if (!v) {
+        return [];
+    }
+    try {
+        const vou = JSON.parse(v);
+        return vou || [];
+    } catch (error) {
+        console.error("Error parsing cart data from cookie:", error);
+        return [];
+    }
+}
+
 const DropTest = ({ options, onChange }) => {
-    const [items, setItems] = useState([]);
+    const [items, setItems] = useState(getVoucher());
     const [isExpanded, setIsExpanded] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
 
@@ -11,11 +25,13 @@ const DropTest = ({ options, onChange }) => {
             if (getCookie('memberInfo')) {
                 const data = await fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId, '');
                 setItems(data);
-                setSelectedItem(); // Chọn mục đầu tiên
+                setSelectedItem(items); // Chọn mục đầu tiên
             }
         };
         fetchData();
     }, []);
+
+    
 
     const fetchMemberVouchers = async (memberId, categoryId) => {
         try {
