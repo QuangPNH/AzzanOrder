@@ -1,0 +1,35 @@
+﻿@model AzzanOrder.ManagerOwner.Models.Model
+
+<div class="container">
+    <div class="text-center mt-4">
+        <h1 class="h2">Enter OTP</h1>
+        <p class="lead">An OTP was sent to your phone. Please enter it below.</p>
+    </div>
+
+    <!-- Modal for OTP Entry -->
+    <div class="modal fade show" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="otpModalLabel">OTP Verification</h5>
+                </div>
+                <div class="modal-body">
+                    <form asp-action="VerifyOtp" asp-controller="Home" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">OTP</label>
+                            <input type="text" name="otp" class="form-control" placeholder="Enter OTP" required />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Verify OTP</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Auto-show the OTP modal on page load
+        document.addEventListener("DOMContentLoaded", function() {
+            new bootstrap.Modal(document.getElementById("otpModal")).show();
+        });
+    </script>
+</div>

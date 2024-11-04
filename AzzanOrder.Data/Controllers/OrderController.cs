@@ -234,10 +234,17 @@ namespace AzzanOrder.Data.Controllers
             }
         }
 
+        private string ImageToBase64(string imagePath)
+        {
+            byte[] imageBytes = System.IO.File.ReadAllBytes(imagePath);
+            return Convert.ToBase64String(imageBytes);
+        }
+
         private bool OrderExists(int id)
         {
             return (_context.Orders?.Any(e => e.OrderId == id)).GetValueOrDefault();
         }
+        
     }
 }
 

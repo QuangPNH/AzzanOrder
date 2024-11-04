@@ -28,7 +28,7 @@ namespace AzzanOrder.Data.Controllers
           {
               return NotFound();
           }
-            return await _context.Employees.ToListAsync();
+            return await _context.Employees.Include(e => e.Role).ToListAsync();
         }
 
         // GET: api/Employee/5
@@ -39,19 +39,55 @@ namespace AzzanOrder.Data.Controllers
           {
               return NotFound();
           }
-            var employee = await _context.Employees.FindAsync(id);
+            var employee = await _context.Employees.Include(e => e.Role).FirstOrDefaultAsync(e => e.EmployeeId == id);
 
             if (employee == null)
             {
                 return NotFound();
             }
-
             return employee;
         }
 
-        // PUT: api/Employee/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("Update")]
+
+        [HttpGet("Phone/{phone}")]
+        public async Task<ActionResult<Employee>> GetEmployeeByPhone(string phone)
+        {
+            if (_context.Employees == null)
+            {
+                return NotFound();
+            }
+            var employee = await _context.Employees.FirstOrDefaultAsync(m => m.Phone.Equals(phone));
+
+            if (employee == null)
+            {
+                return NotFound();
+            }
+            return employee;
+        }
+
+
+		[HttpGet("Manager/Phone/{phone}")]
+		public async Task<ActionResult<Employee>> GetManagerByPhone(string phone)
+		{
+			if (_context.Employees == null)
+			{
+				return NotFound();
+			}
+			var employee = await _context.Employees.FirstOrDefaultAsync(m => m.Phone.Equals(phone) && (m.Role.RoleName.ToLower() == "Manager".ToLower() || m.Role.RoleName.ToLower() == "Magager".ToLower()));
+
+			if (employee == null)
+			{
+				return NotFound();
+			}
+			return employee;
+		}
+
+
+
+
+		// PUT: api/Employee/5
+		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		[HttpPut("Update")]
         public async Task<IActionResult> PutEmployee(Employee employee)
         {
             if (!EmployeeExists(employee.EmployeeId))
@@ -76,7 +112,6 @@ namespace AzzanOrder.Data.Controllers
                     throw;
                 }
             }
-
             return Ok("Update success");
         }
 

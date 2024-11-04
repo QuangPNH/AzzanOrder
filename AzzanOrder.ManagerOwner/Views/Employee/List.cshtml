@@ -23,6 +23,7 @@
                     <th style="width:20%">Phone Number</th>
                     <th class="d-none d-md-table-cell" style="width:20%">Email</th>
                     <th style="width:10%">Role</th>
+                    <th style="width:10%">Gender</th>
                     <th class="d-none d-md-table-cell" style="width:20%">Date of Birth</th>
                     <th>Actions</th>
                 </tr>
@@ -47,10 +48,13 @@
                             @Html.DisplayFor(modelItem => item.Role.RoleName)
                         </td>
                         <td>
+                            @(item.Gender.HasValue && item.Gender.Value ? "Male" : "Female")
+                        </td>
+                        <td>
                             @Html.DisplayFor(modelItem => item.BirthDate)
                         </td>
                         <td class="table-action">
-                            <a href="@Url.Action("Update", "Employee")"><i class="align-middle" data-feather="edit-2"></i></a>
+                            <a asp-action="Update" asp-route-id="@item.EmployeeId"><i class="align-middle" data-feather="edit-2"></i></a>
                             <a asp-action="Delete" asp-route-id="@item.EmployeeId"><i class="align-middle" data-feather="trash"></i></a>
                             @* <a href="@Url.Action("Delete", "Employee")"><i class="align-middle" data-feather="trash"></i></a> *@
                         </td>
