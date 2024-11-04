@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import DropdownItem from '../Dropdown/DropdownItem';
 
-function getVoucherList() {
+function getVoucher() {
     const v = getCookie("voucher");
     if (!v) {
         return [];

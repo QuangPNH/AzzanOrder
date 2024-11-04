@@ -4,7 +4,7 @@ import ItemCheck from './ItemCheck';
 import PlaceOrderButton from './PlaceOrderButton';
 import { getCookie } from '../Account/SignUpForm/Validate';
 
-const PriceCalculator = ({ discount, totalPrice, onTakeOutChange }) => {
+const PriceCalculator = ({ discountPrice, totalPrice, onTakeOutChange }) => {
     const [trueTotalPrice, setTrueTotalPrice] = useState(totalPrice);
     const [error, setError] = useState(null);
     const [isTake, setIsTake] = useState(false);
@@ -28,7 +28,10 @@ const PriceCalculator = ({ discount, totalPrice, onTakeOutChange }) => {
         <section className="price-calculator">
             <div className="price-details">
                 <div className="price-list">
-                    <PriceItem label="Total:" value={`${trueTotalPrice} đ`} isTotal={true} />
+                    
+                    <PriceItem label="Total:" value={`${trueTotalPrice - discountPrice} đ`} isTotal={true} />
+                    <PriceItem label="Discount:" value={`${discountPrice} đ`} isTotal={true} />
+                    <PriceItem label="Final:" value={`${trueTotalPrice} đ`} isTotal={true} />
                     <ItemCheck label="Take Out" value={isTake} onChange={handleTakeOutChange} />
                     <ItemCheck label="Pay in cash" value={isCash} onChange={setIsCash} />
                 </div>
