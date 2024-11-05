@@ -12,20 +12,20 @@ const VoucherScreen = () => {
     const [point, setPoint] = useState(false);
     const [categories, setCategories] = useState([]);
     const [memberVouchers, setMemberVouchers] = useState(false);
+    const search = useLocation().search;
+    const id=new URLSearchParams(search).get("tableqr");
     useEffect(() => {
-        fetchVouchers();
-        fetchCategories();
+        fetchVouchers('', id.split('/')[1]);
+        fetchCategories(id.split('/')[1]);
         if (getCookie('memberInfo') != null) {
             fetchMembers(JSON.parse(getCookie('memberInfo')).memberId);
-            fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId);
-            
-            
+            fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId, id.split('/')[1]);     
         }
-        
     }, []);
-    const fetchMemberVouchers = async (memberId) => {
+    const fetchMemberVouchers = async (memberId, id) => {
         try {
-            const response = await fetch(`https://localhost:7183/api/MemberVouchers/memberId?memberId=${memberId}`);
+            const response = await fetch(`https://localhost:7183/api/MemberVouchers/memberId?memberId=${memberId}&employeeId=${id}`);
+            //dang sửa API cho phần này về việc voucher và một số thành phần cần có sự quản lý của từng employeeId
             const data = await response.json();
             setMemberVouchers([true]);
             setMemberVouchers(data);
@@ -34,9 +34,9 @@ const VoucherScreen = () => {
         }
     };
     
-    const fetchVouchers = async (category = '') => {
+    const fetchVouchers = async (category, id) => {
         try {
-            const response = category == '' ? await fetch(`https://localhost:7183/api/VoucherDetail`) : await fetch(`https://localhost:7183/api/VoucherDetail/categoryId?categoryId=${category}`);
+            const response = category == '' ? await fetch(`https://localhost:7183/api/VoucherDetail/${id}`) : await fetch(`https://localhost:7183/api/VoucherDetail/categoryId?categoryId=${category}&employeeId=${id}`);
             const data = await response.json();
             if (category == '') {
                 setAllVouchers(data);
@@ -64,7 +64,7 @@ const VoucherScreen = () => {
 
     const fetchCategories = async () => {
         try {
-            const response = await fetch('https://localhost:7183/api/ItemCategory');
+            const response = await fetch(`https://localhost:7183/api/ItemCategory?id=${id}`);
             const data = await response.json();
             setCategories(data);
         } catch (error) {

@@ -55,7 +55,7 @@ namespace AzzanOrder.Data.Controllers
                 return NotFound();
             }
             var orders = await _context.Orders.Where(
-                x => x.MemberId == id && 
+                x => x.MemberId == id &&
                 x.OrderDate > DateTime.Now.AddHours(-1)
                 ).ToListAsync();
 
@@ -191,14 +191,18 @@ namespace AzzanOrder.Data.Controllers
         //https://www.vietqr.io/danh-sach-api/link-tao-ma-nhanh/api-tao-ma-qr/
         //https://www.vietqr.io/en/danh-sach-api/link-tao-ma-nhanh/
         [HttpGet("QR/{price}")]
-        public async Task<IActionResult> VietQR(int price)
+        public async Task<IActionResult> VietQR(double price, int employeeId)
         {
+            var e = _context.Employees.FirstOrDefault(e => e.EmployeeId == employeeId);
+            var a = _context.Owners.Include(o => o.Bank).FirstOrDefault(o => o.OwnerId == e.OwerId);
+            
+
             var apiRequest = new Api.ApiRequest
             {
-                acqId = 970436, //Vietcombank
-                accountNo = 9967375046, //stk
-                accountName = "Cusine De La FPT", //ten tai khoan
-                amount = 500, //price
+                acqId = Convert.ToInt32(a.Bank.BankBin), //Vietcombank
+                accountNo = Convert.ToInt64(a.Bank.BankNumber), //stk
+                accountName = a.OwnerName, //ten tai khoan
+                amount = price * 1000, //price
                 format = "text",
                 template = "compact2"
             };

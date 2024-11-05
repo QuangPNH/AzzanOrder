@@ -39,34 +39,64 @@ const Cart = () => {
     const [totalPrice, setTotalPrice] = useState(0);
     const [discountPrice, setDiscountPrice] = useState(0);
     const [headerText, setHeaderText] = useState(false);
+    
+    // useEffect(() => {
+    //     const calculateTotal = async () => {
+    //         let total = 0;
+    //         //TODO: Tính toán lại giá tiền khi áp dụng voucher.
+    //         //
+    //         const legalCheckResults = await Promise.all(
+    //             cartData.map((item) => checkLegal(item))
+    //         );
+    //         cartData.forEach((item, index) => {
+    //             // let data = false;
+    //             // if (cartData != '') {
+    //             //     data = checkLegal(item);
+    //             //     console.log(data);
+    //             // }
+    //             const data = legalCheckResults[index];
+    //             if(data != false){
+    //                 setDiscountPrice( - item.price * voucher.discount / 100 * item.quantity);
+    //             }
+    //             console.log(discountPrice);
+    //             const toppingsPrice = item.options?.selectedToppings?.reduce((sum, topping) => sum + topping.price, 0) || 0;
+    //             total += (data != false ? item.price - item.price * voucher.discount / 100 + toppingsPrice : (item.price + toppingsPrice)) * item.quantity;
+    //         });
+    //         setTotalPrice(total);
+    //     };
+
+    //     calculateTotal();
+    // }, [cartData, voucher]);
     useEffect(() => {
         const calculateTotal = async () => {
             let total = 0;
-            //TODO: Tính toán lại giá tiền khi áp dụng voucher.
-            //
+            let totalDiscount = 0;
+    
             const legalCheckResults = await Promise.all(
                 cartData.map((item) => checkLegal(item))
             );
+    
             cartData.forEach((item, index) => {
-                // let data = false;
-                // if (cartData != '') {
-                //     data = checkLegal(item);
-                //     console.log(data);
-                // }
                 const data = legalCheckResults[index];
-                if(data != false){
-                    setDiscountPrice( - item.price * voucher.discount / 100 * item.quantity);
+                if (data) {
+                    // Tính số tiền giảm giá cho từng sản phẩm và nhân với số lượng
+                    const itemDiscount = (item.price * (voucher.discount / 100)) * item.quantity;
+                    totalDiscount += itemDiscount; // Cộng vào tổng số tiền giảm giá
                 }
-                console.log(discountPrice);
+    
+                // Tính tổng giá trị của giỏ hàng (bao gồm giá đã giảm nếu hợp lệ)
                 const toppingsPrice = item.options?.selectedToppings?.reduce((sum, topping) => sum + topping.price, 0) || 0;
-                total += (data != false ? item.price - item.price * voucher.discount / 100 + toppingsPrice : (item.price + toppingsPrice)) * item.quantity;
+                const discountedPricePerItem = data ? item.price * (1 - voucher.discount / 100) : item.price;
+                total += (discountedPricePerItem + toppingsPrice) * item.quantity;
             });
+    
             setTotalPrice(total);
+            setDiscountPrice(-totalDiscount); // Cập nhật tổng số tiền giảm giá
         };
-
+    
         calculateTotal();
     }, [cartData, voucher]);
-
+    
     const handleQuantityChange = (updatedCartData) => {
         setCartData(updatedCartData);
     };
