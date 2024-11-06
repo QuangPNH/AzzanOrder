@@ -60,7 +60,7 @@ const CartHeader = ({ headerText }) => {
             const fetchData = async () => {
                 const options = await fetchDropdownOptions(id);
                 setDropdownOptions(options);
-
+                setSelectedOption(qr);
                 // Update the cookie with tableId if it's missing
                 if (!tableId && options.length > 0) {
                     const matchingTable = options.find(option => option.qr === qr && String(option.employeeId) === String(id));
