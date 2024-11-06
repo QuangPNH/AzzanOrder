@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using System.Diagnostics;
 using System.Numerics;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
@@ -34,7 +35,17 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 
 
-
+		[HttpGet]
+		public async Task<IActionResult> Login()
+		{
+			HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson);
+			Console.WriteLine("sfdjhsbfjs " + empJson);
+			if (await CheckLogin())
+			{
+				return RedirectToAction("List", "Employee");
+			}
+			return View();
+		}
 
 
 		[HttpPost]
@@ -70,7 +81,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
                 otp = "123456"; // For testing only, remove this line in production
 
-				TempData["OTP"] = otp;
+				HttpContext.Session.SetString("OTP", otp);
 
 				/*// Send OTP via Twilio
                 var accountSid = "ACd5083d30edb839433981a766a0c2e2fd";
@@ -85,11 +96,18 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 				// Redirect to the OTP input page
 				var model = new AzzanOrder.ManagerOwner.Models.Model { employee = emp };
+
+				var empJson = JsonConvert.SerializeObject(emp);
+				HttpContext.Response.Cookies.Append("LoginInfo", empJson, new CookieOptions
+				{
+					Expires = DateTimeOffset.UtcNow.AddDays(30)
+				});
+
+
 				return View("OTPInput", model);
 			}
             else
             {
-				Console.WriteLine("Nooooo");
 				return RedirectToAction("Login", "Home");
             }
 		}
@@ -97,16 +115,18 @@ namespace AzzanOrder.ManagerOwner.Controllers
 		[HttpPost]
 		public IActionResult VerifyOtp(string otp)
 		{
+			var sessionOtp = HttpContext.Session.GetString("OTP");
 			// Check if the OTP matches
-			if (otp == TempData["OTP"]?.ToString())
+			if (otp == sessionOtp?.ToString())
 			{
 				TempData.Remove("OTP"); // Clear OTP after use
 				return RedirectToAction("List", "Employee");
 			}
 			else
 			{
+                var model = new AzzanOrder.ManagerOwner.Models.Model();
 				ModelState.AddModelError(string.Empty, "Invalid OTP. Please try again.");
-				return View("OTPInput"); // Return to OTP view if OTP is invalid
+				return View("OTPInput", model);
 			}
 		}
 
@@ -120,16 +140,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 
 
-        [HttpGet]
-        public async Task<IActionResult> Login()
-        {
-            if (await CheckEmployeeCookie())
-            {
-                return RedirectToAction("List", "Employee");
-            }
-
-            return View();
-        }
 
         public IActionResult Subscribe()
         {
@@ -145,7 +155,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 
 
-        private async Task<bool> CheckEmployeeCookie()
+        private async Task<bool> CheckLogin()
         {
             Employee emp = new Employee();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
