@@ -15,14 +15,18 @@ namespace AzzanOrder.ManagerOwner.Controllers
 			{
 				return RedirectToAction("Login", "Home");
 			}
-
-			List<Employee> employees = new List<Employee>();
+            Employee emp = new Employee();
+            if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
+			{
+				emp = JsonConvert.DeserializeObject<Employee>(empJson);
+			}
+				List<Employee> employees = new List<Employee>();
 			int totalEmployees = 0;
 			using (HttpClient client = new HttpClient())
 			{
 				try
 				{
-					HttpResponseMessage res = await client.GetAsync(_apiUrl + "Employee/");
+					HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Employee/managerId?managerId={emp.EmployeeId}");
 					if (res.IsSuccessStatusCode)
 					{
 						string data = await res.Content.ReadAsStringAsync();
@@ -111,31 +115,34 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 			if (employeeImage != null && employeeImage.Length > 0)
 				employee.Image = await ImageToBase64Async(employeeImage);
-
-			//employee.EmployeeId;
-
-			using (HttpClient client = new HttpClient())
-			{
-				try
-				{
-					HttpResponseMessage res = await client.GetAsync(_apiUrl + "Employee/1");
-					if (res.IsSuccessStatusCode)
-					{
-						string data = await res.Content.ReadAsStringAsync();
-						employee.Manager = JsonConvert.DeserializeObject<Employee>(data);
-					}
-					else
-					{
-						// Handle the error response here
-						ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
-					}
-				}
-				catch (HttpRequestException e)
-				{
-					// Handle the exception here
-					ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
-				}
-			}
+			
+            Employee emp = new Employee();
+            if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
+            {
+                emp = JsonConvert.DeserializeObject<Employee>(empJson);
+            }
+			//using (HttpClient client = new HttpClient())
+			//{
+			//	try
+			//	{
+			//		HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Employee/{emp.EmployeeId}");
+			//		if (res.IsSuccessStatusCode)
+			//		{
+			//			string data = await res.Content.ReadAsStringAsync();
+			//			employee.Manager = JsonConvert.DeserializeObject<Employee>(data);
+			//		}
+			//		else
+			//		{
+			//			// Handle the error response here
+			//			ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+			//		}
+			//	}
+			//	catch (HttpRequestException e)
+			//	{
+			//		// Handle the exception here
+			//		ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
+			//	}
+			//}
 
 			if (ModelState.IsValid)
 			{
@@ -152,8 +159,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
 				HomeAddress = employee.HomeAddress,
 				WorkAddress = employee.WorkAddress,
 				Image = employee.Image,
-				ManagerId = employee.ManagerId,
-				OwerId = employee.OwerId,
+				ManagerId = emp.EmployeeId,
+				OwerId = emp.OwerId,
 				IsDelete = false
 			};
 
@@ -249,32 +256,39 @@ namespace AzzanOrder.ManagerOwner.Controllers
 			if (employeeImage != null && employeeImage.Length > 0)
 				employee.Image = await ImageToBase64Async(employeeImage);
 
+            Employee emp = new Employee();
+            if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
+            {
+                emp = JsonConvert.DeserializeObject<Employee>(empJson);
+            }
+
 			// Fetch the manager information if needed
-			using (HttpClient client = new HttpClient())
-			{
-				try
-				{
-					HttpResponseMessage res = await client.GetAsync(_apiUrl + "Employee/1");
-					if (res.IsSuccessStatusCode)
-					{
-						string data = await res.Content.ReadAsStringAsync();
-						employee.Manager = JsonConvert.DeserializeObject<Employee>(data);
-					}
-					else
-					{
-						// Handle error response
-						ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
-					}
-				}
-				catch (HttpRequestException e)
-				{
-					// Handle exception
-					ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
-				}
-			}
+			//using (HttpClient client = new HttpClient())
+			//{
+			//	try
+			//	{
+			//		HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Employee/{emp.EmployeeId}");
+			//		if (res.IsSuccessStatusCode)
+			//		{
+			//			string data = await res.Content.ReadAsStringAsync();
+			//			employee.Manager = JsonConvert.DeserializeObject<Employee>(data);
+			//		}
+			//		else
+			//		{
+			//			// Handle error response
+			//			ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+			//		}
+			//	}
+			//	catch (HttpRequestException e)
+			//	{
+			//		// Handle exception
+			//		ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
+			//	}
+			//}
 
 			if (ModelState.IsValid)
 			{
+			}
 				// Conditionally include Image property only if it's not null
 				var employeeToUpdate = new
 				{
@@ -287,10 +301,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
 					RoleId = employee.RoleId,
 					HomeAddress = employee.HomeAddress,
 					WorkAddress = employee.WorkAddress,
-					ManagerId = employee.ManagerId,
-					OwerId = employee.OwerId,
-					IsDelete = employee.IsDelete
-				};
+                    ManagerId = emp.EmployeeId,
+                    OwerId = emp.OwerId,
+                    IsDelete = false
+                };
 
 				// Serialize to JSON and conditionally include "Image" if not null
 				var employeeJson = JsonConvert.SerializeObject(employeeToUpdate, new JsonSerializerSettings
@@ -329,7 +343,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 						ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
 					}
 				}
-			}
+			
 			return RedirectToAction("List", "Employee");
 		}
 
@@ -396,7 +410,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
 			Employee emp = new Employee();
 			if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
 			{
-				Console.WriteLine("sfdjhsbfjs " + empJson);
 				emp = JsonConvert.DeserializeObject<Employee>(empJson);
 				using (HttpClient client = new HttpClient())
 				{

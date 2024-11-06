@@ -54,7 +54,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            var orders = await _context.Orders.Where(
+            var orders = await _context.Orders.Include(o => o.OrderDetails).Where(
                 x => x.MemberId == id &&
                 x.OrderDate > DateTime.Now.AddHours(-1)
                 ).ToListAsync();

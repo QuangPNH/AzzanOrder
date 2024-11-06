@@ -106,13 +106,13 @@ const OrderTrackScreen = () => {
                         {customerOrder && (
                             <div style={{ marginTop: '20px' }}>
                                 <h2>Customer Order</h2>
-                                {customerOrder.orderDetails.map((orderDetail) => (
+                                {customerOrder.map((orderDetail) => (
                                     <OrderItem
-                                        key={orderDetail.orderDetailId}
-                                        imageSrc={orderDetail.menuItem?.image || 'default-image-url'}
-                                        title={orderDetail.menuItem?.itemName || 'Unknown Item'}
-                                        details={[orderDetail.description || 'No details']}
-                                        status={mapStatus(orderDetail.status)}
+                                        key={orderDetail.orderDetails.orderDetailId}
+                                        imageSrc={orderDetail.orderDetails.menuItem?.image || 'default-image-url'}
+                                        title={orderDetail.orderDetails.menuItem?.itemName || 'Unknown Item'}
+                                        details={[orderDetail.orderDetails.description || 'No details']}
+                                        status={mapStatus(orderDetail.orderDetails.status)}
                                     />
                                 ))}
                             </div>
