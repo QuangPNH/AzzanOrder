@@ -11,10 +11,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
 		private readonly string _apiUrl = "https://localhost:7183/api/";
 		public async Task<IActionResult> List(int? page)
 		{
-			Console.WriteLine("dsfsdfsfdsfd" + CheckLogin().Result);
-
-			HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson);
-			Console.WriteLine("sfdjhsbfjs " + empJson);
 			if (!await CheckLogin())
 			{
 				return RedirectToAction("Login", "Home");
@@ -67,6 +63,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 		public async Task<IActionResult> Add()
 		{
+			if (!await CheckLogin())
+			{
+				return RedirectToAction("Login", "Home");
+			}
 			List<Role> roles = new List<Role>();
 			using (HttpClient client = new HttpClient())
 			{
@@ -104,10 +104,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 		public async Task<IActionResult> AddAction(Employee employee, IFormFile employeeImage)
 		{
-			//https://localhost:7183/api/Employee/Update
-
-			//Console.WriteLine("HJGJhbjhfrhsbdjfbjhsdfhbsdjfh " + JsonConvert.SerializeObject(employee));
-
+			if (!await CheckLogin())
+			{
+				return RedirectToAction("Login", "Home");
+			}
 
 			if (employeeImage != null && employeeImage.Length > 0)
 				employee.Image = await ImageToBase64Async(employeeImage);
@@ -175,6 +175,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 		public async Task<IActionResult> Update(int id)
 		{
+			if (!await CheckLogin())
+			{
+				return RedirectToAction("Login", "Home");
+			}
 			Employee employee = new Employee();
 			List<Role> roles = new List<Role>();
 
@@ -237,6 +241,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 		public async Task<IActionResult> UpdateAction(Employee employee, IFormFile employeeImage)
 		{
+			if (!await CheckLogin())
+			{
+				return RedirectToAction("Login", "Home");
+			}
 			// Convert uploaded image to Base64 if there is a new image
 			if (employeeImage != null && employeeImage.Length > 0)
 				employee.Image = await ImageToBase64Async(employeeImage);
@@ -335,6 +343,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 		public async Task<IActionResult> DeleteAsync(int id)
 		{
+			if (!await CheckLogin())
+			{
+				return RedirectToAction("Login", "Home");
+			}
 			using (HttpClient client = new HttpClient())
 			{
 				HttpResponseMessage res = await client.DeleteAsync(_apiUrl + "Employee/Delete/" + id);
@@ -415,8 +427,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
 			}
 			return false;
 		}
-
 	}
-
 }
 
