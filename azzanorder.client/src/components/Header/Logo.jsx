@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { getCookie } from '../path/to/your/utility/functions'; // Adjust the import path as needed
+import { getCookie } from '../Account/SignUpForm/Validate';
 
 const Logo = () => {
     const [logoSrc, setLogoSrc] = useState('');

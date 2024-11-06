@@ -1,6 +1,6 @@
 ﻿import { useState, useEffect } from 'react';
 import DropdownItem from './DropdownItem';
-import { getCookie } from './Account/SignUpForm/Validate';
+import { getCookie } from '../Account/SignUpForm/Validate';
 
 const Dropdown = ({ options, onChange, onClick}) => {
     const [items, setItems] = useState([]);
