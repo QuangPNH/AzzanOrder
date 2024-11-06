@@ -122,7 +122,7 @@ namespace AzzanOrder.Data.Controllers
         }
         // GET: api/Promotions/GetByDescription/{description}
         [HttpGet("GetByDescription/{description}")]
-        public async Task<ActionResult<IEnumerable<PromotionDTO>>> GetPromotionsByDescription(string description, int? id)
+        public async Task<ActionResult> GetPromotionsByDescription(string description, int? id)
         {
             if (_context.Promotions == null)
             {
@@ -151,6 +151,11 @@ namespace AzzanOrder.Data.Controllers
             if (promotions == null || !promotions.Any())
             {
                 return NotFound();
+            }
+
+            if (promotions.Count == 1)
+            {
+                return Ok(promotions.First());
             }
 
             return Ok(promotions);

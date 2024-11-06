@@ -83,7 +83,7 @@ const Frame = () => {
 
                 .big-image {
                     width: 100%;
-                    height: auto;
+                    height: 20vh;
                     object-fit: cover;
                 }
 
@@ -115,6 +115,7 @@ const Frame = () => {
 
                 .small-image {
                     width: 100%;
+                    height: 18vh;
                     cursor: pointer;
                     border-radius: 12px;
                     object-fit: cover;

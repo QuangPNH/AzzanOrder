@@ -24,8 +24,8 @@ const ProductCard = ({ imageSrc, title, price, desc, cate, id }) => {
         }
         const existingItemIndex = parsedData.findIndex(item =>
             item.name === title &&
-            item.options.selectedSugar === '100' &&
-            item.options.selectedIce === '100' &&
+            item.options.selectedSugar === 'normal' &&
+            item.options.selectedIce === 'normal' &&
             JSON.stringify(item.options.toppings) !== null
         );
 
@@ -38,8 +38,8 @@ const ProductCard = ({ imageSrc, title, price, desc, cate, id }) => {
                 id: id,
                 name: title,
                 options: {
-                    selectedSugar: '100',
-                    selectedIce: '100'
+                    selectedSugar: 'normal',
+                    selectedIce: 'normal'
                 },
                 price: price,
                 quantity: 1

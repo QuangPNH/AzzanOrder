@@ -1,6 +1,8 @@
 ﻿using AzzanOrder.ManagerOwner.Models; // Update this line
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using System.Dynamic;
+using System.Reflection;
 
 namespace AzzanOrder.ManagerOwner.Controllers
 {
@@ -8,20 +10,110 @@ namespace AzzanOrder.ManagerOwner.Controllers
     {
         public async Task<IActionResult> ListRunning()
         {
-            List<Promotion> promotions = new List<Promotion>();
+            dynamic promotions = new ExpandoObject();
+            promotions.Logo = new Promotion();
+            promotions.BackgroundColor = "";
+            promotions.Carousel = new List<Promotion>();
+            promotions.Banner = new List<Promotion>();
+
             using (var httpClient = new HttpClient())
             {
-                var response = await httpClient.GetStringAsync("https://localhost:7183/api/Promotions/GetByDescription/carousel");
-                promotions = JsonConvert.DeserializeObject<List<Promotion>>(response) ?? new List<Promotion>();
-            }
+                try
+                {
+                    var logoResponse = await httpClient.GetStringAsync("https://localhost:7183/api/Promotions/GetByDescription/logo");
+                    promotions.Logo = JsonConvert.DeserializeObject<Promotion>(logoResponse);
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception if necessary
+                }
 
-            ViewBag.CurrentIndex = 0; // Initialize the current index
+                try
+                {
+                    var backgroundColorResponse = await httpClient.GetStringAsync("https://localhost:7183/api/Promotions/GetByDescription/color");
+                    var data = JsonConvert.DeserializeObject<Promotion>(backgroundColorResponse);
+                    promotions.BackgroundColor = data.Description.Split('/')[1];
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception if necessary
+                }
+
+                try
+                {
+                    var carouselResponse = await httpClient.GetStringAsync("https://localhost:7183/api/Promotions/GetByDescription/carousel");
+                    promotions.Carousel = JsonConvert.DeserializeObject<List<Promotion>>(carouselResponse);
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception if necessary
+                }
+
+                try
+                {
+                    var bannerResponse = await httpClient.GetStringAsync("https://localhost:7183/api/Promotions/GetByDescription/banner");
+                    promotions.Banner = JsonConvert.DeserializeObject<List<Promotion>>(bannerResponse);
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception if necessary
+                }
+            }
             return View(promotions);
         }
 
-        public IActionResult ListAll()
+        public async Task<IActionResult> ListAll()
         {
-            return View();
+            dynamic promotions = new ExpandoObject();
+            promotions.Logo = new Promotion();
+            promotions.BackgroundColor = "";
+            promotions.Carousel = new List<Promotion>();
+            promotions.Banner = new List<Promotion>();
+
+            using (var httpClient = new HttpClient())
+            {
+                try
+                {
+                    var logoResponse = await httpClient.GetStringAsync("https://localhost:7183/api/Promotions/GetByDescription/logo");
+                    promotions.Logo = JsonConvert.DeserializeObject<Promotion>(logoResponse);
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception if necessary
+                }
+
+                try
+                {
+                    var backgroundColorResponse = await httpClient.GetStringAsync("https://localhost:7183/api/Promotions/GetByDescription/color");
+                    var data = JsonConvert.DeserializeObject<Promotion>(backgroundColorResponse);
+                    promotions.BackgroundColor = data.Description.Split('/')[1];
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception if necessary
+                }
+
+                try
+                {
+                    var carouselResponse = await httpClient.GetStringAsync("https://localhost:7183/api/Promotions/GetByDescription/carousel");
+                    promotions.Carousel = JsonConvert.DeserializeObject<List<Promotion>>(carouselResponse);
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception if necessary
+                }
+
+                try
+                {
+                    var bannerResponse = await httpClient.GetStringAsync("https://localhost:7183/api/Promotions/GetByDescription/banner");
+                    promotions.Banner = JsonConvert.DeserializeObject<List<Promotion>>(bannerResponse);
+                }
+                catch (Exception ex)
+                {
+                    // Log the exception if necessary
+                }
+            }
+            return View(promotions);
         }
 
         public IActionResult Add()
