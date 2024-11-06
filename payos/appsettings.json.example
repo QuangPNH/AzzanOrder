@@ -1,0 +1,15 @@
+{
+  "Logging": {
+    "LogLevel": {
+      "Default": "Information",
+      "Microsoft.AspNetCore": "Warning"
+    }
+  },
+  "AllowedHosts": "*",
+  "AllowedMethods": "*",
+  "Environment":{
+    "PAYOS_CLIENT_ID": "",
+    "PAYOS_API_KEY": "",
+    "PAYOS_CHECKSUM_KEY": ""
+  }
+}

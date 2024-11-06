@@ -5,6 +5,7 @@ import { getCookie } from '../Account/SignUpForm/Validate';
 
 const Banner = () => {
     const [promotions, setPromotions] = useState([]);
+    const [activeIndex, setActiveIndex] = useState(0);
 
     useEffect(() => {
         fetchImages(getCookie('tableqr') ? getCookie('tableqr').split('/')[1] : null);
@@ -21,20 +22,20 @@ const Banner = () => {
         }
     };
 
-    const dots = promotions.map((_, index) => ({ active: index === 0 }));
+    const dots = promotions.map((_, index) => ({ active: index === activeIndex }));
 
     return (
         <>
             <section className="banner">
                 <div className="image-gallery">
                     {promotions?.map((image, index) => (
-                        <ImageWrapper key={index} src={image.image} alt={image.title} />
+                        <ImageWrapper key={index} src={image.image} alt={image.title} style={{ display: index === activeIndex ? 'block' : 'none' }} />
                     ))}
                 </div>
 
                 <nav className="banner-navigation">
                     {dots.map((dot, index) => (
-                        <DotIndicator key={index} active={dot.active} />
+                        <DotIndicator key={index} active={dot.active} onClick={() => setActiveIndex(index)} />
                     ))}
                 </nav>
             </section>
