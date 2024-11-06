@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzzanOrder.Data", "AzzanOrd
 EndProject
 Project("{54A90642-561A-4BB1-A94E-469ADEE60C69}") = "azzanorder.client", "AzzanOrder.Client\azzanorder.client.esproj", "{0DECF4C3-031B-4F81-8FE4-9531CAC4891E}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzzanOrder.ManagerOwner", "AzzanOrder.ManagerOwner\AzzanOrder.ManagerOwner.csproj", "{97DCED77-D198-4131-9E6E-3EAE1E319106}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzzanOrder.ManagerOwner", "AzzanOrder.ManagerOwner\AzzanOrder.ManagerOwner.csproj", "{97DCED77-D198-4131-9E6E-3EAE1E319106}"
+EndProject
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "payos-demo-dotnet-core", "payos\payos-demo-dotnet-core.csproj", "{1E80AD1B-42D8-4857-A220-36926763C729}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,6 +31,10 @@ Global
 		{97DCED77-D198-4131-9E6E-3EAE1E319106}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{97DCED77-D198-4131-9E6E-3EAE1E319106}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{97DCED77-D198-4131-9E6E-3EAE1E319106}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1E80AD1B-42D8-4857-A220-36926763C729}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{1E80AD1B-42D8-4857-A220-36926763C729}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{1E80AD1B-42D8-4857-A220-36926763C729}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{1E80AD1B-42D8-4857-A220-36926763C729}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

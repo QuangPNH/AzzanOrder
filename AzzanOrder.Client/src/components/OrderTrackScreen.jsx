@@ -52,7 +52,7 @@ const OrderTrackScreen = () => {
     };
 
     const allOrdersCompleted = orders && orders.length > 0 && orders.every(order =>
-        order.orderDetails.every(orderDetail => orderDetail.status === true)
+        order.orderDetails.every(orderDetail => orderDetail.orderDetails.status === true)
     );
 
     const updateMemberPoints = async (memberId) => {
@@ -90,12 +90,12 @@ const OrderTrackScreen = () => {
                             <React.Fragment key={order.orderId}>
                                 <h3>Order {orderIndex}</h3>
                                 {order.orderDetails.map((orderDetail, detailIndex) => (
-                                    <React.Fragment key={orderDetail.orderDetailId}>
+                                    <React.Fragment key={orderDetail.orderDetails.orderDetailId}>
                                         <OrderItem
-                                            imageSrc={orderDetail.menuItem?.image || 'default-image-url'}
-                                            title={orderDetail.menuItem?.itemName || 'Unknown Item'}
-                                            details={[orderDetail.description || 'No details']}
-                                            status={mapStatus(orderDetail.status)}
+                                            imageSrc={orderDetail.orderDetails.menuItem?.image || 'default-image-url'}
+                                            title={orderDetail.orderDetails.menuItem?.itemName || 'Unknown Item'}
+                                            details={[orderDetail.orderDetails.description || 'No details']}
+                                            status={mapStatus(orderDetail.orderDetails.status)}
                                         />
                                         {detailIndex < order.orderDetails.length - 1 && <div className="order-item-spacing" />}
                                     </React.Fragment>
@@ -106,13 +106,13 @@ const OrderTrackScreen = () => {
                         {customerOrder && (
                             <div style={{ marginTop: '20px' }}>
                                 <h2>Customer Order</h2>
-                                {customerOrder.orderDetails.map((orderDetail) => (
+                                {customerOrder.map((orderDetail) => (
                                     <OrderItem
-                                        key={orderDetail.orderDetailId}
-                                        imageSrc={orderDetail.menuItem?.image || 'default-image-url'}
-                                        title={orderDetail.menuItem?.itemName || 'Unknown Item'}
-                                        details={[orderDetail.description || 'No details']}
-                                        status={mapStatus(orderDetail.status)}
+                                        key={orderDetail.orderDetails.orderDetailId}
+                                        imageSrc={orderDetail.orderDetails.menuItem?.image || 'default-image-url'}
+                                        title={orderDetail.orderDetails.menuItem?.itemName || 'Unknown Item'}
+                                        details={[orderDetail.orderDetails.description || 'No details']}
+                                        status={mapStatus(orderDetail.orderDetails.status)}
                                     />
                                 ))}
                             </div>

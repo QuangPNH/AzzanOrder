@@ -196,7 +196,6 @@ namespace AzzanOrder.Data.Controllers
             var e = _context.Employees.FirstOrDefault(e => e.EmployeeId == employeeId);
             var a = _context.Owners.Include(o => o.Bank).FirstOrDefault(o => o.OwnerId == e.OwerId);
             
-
             var apiRequest = new Api.ApiRequest
             {
                 acqId = Convert.ToInt32(a.Bank.BankBin), //Vietcombank

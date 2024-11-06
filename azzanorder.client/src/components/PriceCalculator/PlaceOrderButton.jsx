@@ -41,7 +41,7 @@ const PlaceOrderButton = ({ amount, isTake, isCash }) => {
 
         let order = null;
         const tableId = parseInt(getCookie('tableqr').split('/')[2]);
-
+        //const tableId = parseInt(manaid.split('/')[2]);
         if (memberIn) {
             order = {
                 TableId: tableId,
@@ -61,7 +61,9 @@ const PlaceOrderButton = ({ amount, isTake, isCash }) => {
             order.tax = 1;
             await postOrder(order);
         }else{
-            await fetchQRAndPostOrder(order, manaid.split('/')[1]);
+            //await fetchQRAndPostOrder(order, manaid.split('/')[1]);
+            //window.location.href = "https://localhost:3002/?tableqr=QR_002/1&Price=1000&Item=OASItem&Message=Order";
+            window.location.href = "https://localhost:3002/?tableqr=" + getCookie("tableqr") + "&Price=" + order.Cost + "&Item=OASItem&Message=Order";
         }
     };
 
