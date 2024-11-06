@@ -2,7 +2,7 @@ import React, { useState, useEffect } from "react";
 import Logo from "./Logo";
 import Navigation from "./Navigation";
 import Navbar from "./Navbar"; // Assuming you have a Navbar component
-import { getCookie } from './Account/SignUpForm/Validate';
+import { getCookie } from '../Account/SignUpForm/Validate';
 
 const Header = () => {
     const [showNavbar, setShowNavbar] = useState(false);
@@ -20,13 +20,12 @@ const Header = () => {
             // Fetch the background color based on the tableqr value
             const fetchBackgroundColor = async (manaId) => {
                 try {
-                    const url = `https://localhost:7183/api/Promotions/GetByDescription/color?manaId=${manaId}`
+                    const url = manaId ? `https://localhost:7183/api/Promotions/GetByDescription/color?manaId=${manaId}` : `https://localhost:7183/api/Promotions/GetByDescription/color`;
                     const response = await fetch(url);
                     if (!response.ok) {
-                        throw new Error("Network response was not ok");
+                        const data = await response.json();
+                        setBackgroundColor(data.description.split('/')[1]);
                     }
-                    const data = await response.json();
-                    setBackgroundColor(data.description.split('/')[1]);
                 } catch (error) {
                     console.error("Failed to fetch background color:", error);
                 }
@@ -62,5 +61,9 @@ const Header = () => {
         </>
     );
 };
-
+function getCookie(name) {
+    const value = `; ${document.cookie}`; // Add a leading semicolon for easier parsing
+    const parts = value.split(`; ${name}=`); // Split the cookie string to find the desired cookie
+    if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift()); // Return the cookie value
+}
 export default Header;

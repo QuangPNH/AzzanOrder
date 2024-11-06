@@ -40,33 +40,6 @@ const Cart = () => {
     const [discountPrice, setDiscountPrice] = useState(0);
     const [headerText, setHeaderText] = useState(false);
     
-    // useEffect(() => {
-    //     const calculateTotal = async () => {
-    //         let total = 0;
-    //         //TODO: Tính toán lại giá tiền khi áp dụng voucher.
-    //         //
-    //         const legalCheckResults = await Promise.all(
-    //             cartData.map((item) => checkLegal(item))
-    //         );
-    //         cartData.forEach((item, index) => {
-    //             // let data = false;
-    //             // if (cartData != '') {
-    //             //     data = checkLegal(item);
-    //             //     console.log(data);
-    //             // }
-    //             const data = legalCheckResults[index];
-    //             if(data != false){
-    //                 setDiscountPrice( - item.price * voucher.discount / 100 * item.quantity);
-    //             }
-    //             console.log(discountPrice);
-    //             const toppingsPrice = item.options?.selectedToppings?.reduce((sum, topping) => sum + topping.price, 0) || 0;
-    //             total += (data != false ? item.price - item.price * voucher.discount / 100 + toppingsPrice : (item.price + toppingsPrice)) * item.quantity;
-    //         });
-    //         setTotalPrice(total);
-    //     };
-
-    //     calculateTotal();
-    // }, [cartData, voucher]);
     useEffect(() => {
         const calculateTotal = async () => {
             let total = 0;

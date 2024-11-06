@@ -22,27 +22,32 @@ namespace AzzanOrder.Data.Controllers
         }
 
         // GET: api/VoucherDetail
-        [HttpGet("employeeId")]
-        public async Task<ActionResult<IEnumerable<VoucherDetail>>> GetVoucherDetails(int employeeId)
+        [HttpGet]
+        public async Task<ActionResult<IEnumerable<VoucherDetail>>> GetVoucherDetails(int? employeeId)
         {
             if (_context.VoucherDetails == null)
             {
                 return NotFound();
             }
             //var a = await _context.VoucherDetails.Include(vd => vd.Vouchers.Where(v=>v.IsActive == true)).ToListAsync();
-            var b = await _context.MemberVouchers.Include(vd => vd.VoucherDetail).ThenInclude(vd => vd.Vouchers.Where(v => v.IsActive == true && v.VoucherDetail.EmployeeId == employeeId)).Select(mv => mv.VoucherDetail).ToListAsync();
+            var b = employeeId.HasValue 
+                ? await _context.MemberVouchers.Where(mv => mv.VoucherDetail.EmployeeId == employeeId).Include(vd => vd.VoucherDetail).ThenInclude(vd => vd.Vouchers.Where(v => v.IsActive == true)).Select(mv => mv.VoucherDetail).ToListAsync() 
+                : await _context.MemberVouchers.Include(vd => vd.VoucherDetail).ThenInclude(vd => vd.Vouchers.Where(v => v.IsActive == true)).Select(mv => mv.VoucherDetail).ToListAsync();
             return Ok(b);
         }
 
-        [HttpGet("categoryId/employeeId")]
-        public async Task<ActionResult> GetVoucherDetailByCategory(int categoryId, int employeeId)
+        [HttpGet("categoryId")]
+        public async Task<ActionResult> GetVoucherDetailByCategory(int categoryId, int? employeeId)
         {
             if (_context.VoucherDetails == null)
             { 
                 return NotFound(); 
             }
-            var voucherDetails = _context.Vouchers
+            var voucherDetails = employeeId.HasValue ? _context.Vouchers
     .Where(v => v.ItemCategoryId == categoryId && v.IsActive == true && v.VoucherDetail.EmployeeId == employeeId)  // L?c theo categoryId và IsActive
+    .Include(vd => vd.VoucherDetail)
+    .ToList() : _context.Vouchers
+    .Where(v => v.ItemCategoryId == categoryId && v.IsActive == true)  // L?c theo categoryId và IsActive
     .Include(vd => vd.VoucherDetail)
     .ToList();
 

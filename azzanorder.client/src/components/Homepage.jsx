@@ -26,6 +26,7 @@ const Homepage = () => {
     const id=new URLSearchParams(search).get("tableqr");
 
     useEffect(() => {
+        console.log(id, 'hello');
         const memberInfo = getCookie('memberInfo');
         const memberId = memberInfo ? JSON.parse(memberInfo).memberId : null;
 

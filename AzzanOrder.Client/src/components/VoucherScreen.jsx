@@ -5,25 +5,36 @@ import Dropdown from './Dropdown/Dropdown';
 import ProductSale from './Voucher/VoucherDetail/ProductSale';
 import PointsDisplay from './Voucher/PointDisplay';
 import VoucherList from './Voucher/VoucherList';
-
+import { useLocation } from "react-router-dom";
 const VoucherScreen = () => {
     const [vouchers, setVouchers] = useState([]);
     const [allVouchers, setAllVouchers] = useState(false);
     const [point, setPoint] = useState(false);
     const [categories, setCategories] = useState([]);
     const [memberVouchers, setMemberVouchers] = useState(false);
-    const search = useLocation().search;
-    const id=new URLSearchParams(search).get("tableqr");
+    const id = getCookie("tableqr");
     useEffect(() => {
-        fetchVouchers('', id.split('/')[1]);
-        fetchCategories(id.split('/')[1]);
-        if (getCookie('memberInfo') != null) {
-            fetchMembers(JSON.parse(getCookie('memberInfo')).memberId);
-            fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId, id.split('/')[1]);     
+        if (id) {
+          
+            fetchVouchers('', id.split('/')[1]);
+            fetchCategories(id.split('/')[1]);
+            if (getCookie('memberInfo') != null) {
+                fetchMembers(JSON.parse(getCookie('memberInfo')).memberId);
+                fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId, id.split('/')[1]);
+            }
+        } else {
+            console.log(id, 'hello');
+            fetchVouchers('', '');
+            fetchCategories('');
+            if (getCookie('memberInfo') != null) {
+                fetchMembers(JSON.parse(getCookie('memberInfo')).memberId);
+                fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId,'');
+            }
         }
     }, []);
     const fetchMemberVouchers = async (memberId, id) => {
         try {
+        
             const response = await fetch(`https://localhost:7183/api/MemberVouchers/memberId?memberId=${memberId}&employeeId=${id}`);
             //dang sửa API cho phần này về việc voucher và một số thành phần cần có sự quản lý của từng employeeId
             const data = await response.json();
@@ -33,17 +44,18 @@ const VoucherScreen = () => {
             console.error('Error fetching menu items:', error);
         }
     };
-    
+
     const fetchVouchers = async (category, id) => {
         try {
-            const response = category == '' ? await fetch(`https://localhost:7183/api/VoucherDetail/${id}`) : await fetch(`https://localhost:7183/api/VoucherDetail/categoryId?categoryId=${category}&employeeId=${id}`);
+            
+            const response = category == '' ? await fetch(`https://localhost:7183/api/VoucherDetail/?employeeId=${id}`) : await fetch(`https://localhost:7183/api/VoucherDetail/categoryId?categoryId=${category}&employeeId=${id}`);
             const data = await response.json();
             if (category == '') {
                 setAllVouchers(data);
             } else {
                 setAllVouchers(false);
                 setVouchers(data);
-                
+
             }
         } catch (error) {
             console.error('Error fetching menu items:', error);
@@ -56,13 +68,13 @@ const VoucherScreen = () => {
             const data = await response.json();
             setPoint(true);
             setPoint(data);
-            
+
         } catch (error) {
             console.error('Error fetching menu items:', error);
         }
     };
 
-    const fetchCategories = async () => {
+    const fetchCategories = async (id) => {
         try {
             const response = await fetch(`https://localhost:7183/api/ItemCategory?id=${id}`);
             const data = await response.json();
@@ -73,12 +85,15 @@ const VoucherScreen = () => {
     };
 
     const handleDropdownChange = (selectedCategory) => {
-        fetchVouchers(selectedCategory);
+        if(id){
+            fetchVouchers(selectedCategory, id.split('/')[1]);
+        }
+        fetchVouchers(selectedCategory, '');
     };
 
 
-    
-    
+
+
 
     return (
         <>
@@ -98,15 +113,15 @@ const VoucherScreen = () => {
                 {memberVouchers && (
                     <div className="product-sale-container">
                         {memberVouchers.map((mv) => (
-                            
+
                             <ProductSale
                                 key={mv.memberVoucherId}
                                 saleAmount={mv.discount}
                                 endDate={mv.endDate}
-                                bought={true} 
-                                voucherDetailId = {mv.voucherDetailId}
-                                infiniteUses={false}    
-                                />
+                                bought={true}
+                                voucherDetailId={mv.voucherDetailId}
+                                infiniteUses={false}
+                            />
                         ))}
                     </div>
                 )}
@@ -117,7 +132,7 @@ const VoucherScreen = () => {
                     options={categories.map(category => category.description)}
                     onClick2={handleDropdownChange}
                     onChange={handleDropdownChange} />
-                    
+
                 {allVouchers && (
                     <div className="product-sale-container">
                         {allVouchers.map((aV) => (
@@ -128,7 +143,7 @@ const VoucherScreen = () => {
                                 price={aV.price}
                                 infiniteUses={true}
                                 useCount={0}
-                                voucherDetailId = {aV.voucherDetailId}
+                                voucherDetailId={aV.voucherDetailId}
                             />
                         ))}
                     </div>
@@ -143,7 +158,7 @@ const VoucherScreen = () => {
                                 price={v.voucherDetail.price}
                                 infiniteUses={true}
                                 useCount={0}
-                                voucherDetailId = {v.voucherDetail.voucherDetailId}
+                                voucherDetailId={v.voucherDetail.voucherDetailId}
                             />
                         ))}
                     </div>
