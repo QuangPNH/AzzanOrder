@@ -36,7 +36,7 @@ namespace AzzanOrder.Data.Controllers
             if (id.HasValue)
             {
                 query = query.Where(ic =>
-                ic.EmployeeId == id.Value && 
+                ic.EmployeeId == id.Value ||
                 ic.MenuCategories.Any(mc => mc.MenuItem.EmployeeId == id.Value));
             }
 

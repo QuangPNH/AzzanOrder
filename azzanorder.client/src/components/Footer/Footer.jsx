@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ContactInfo from "./ContactInfo";
 import Copyright from "./Copyright";
-import { getCookie } from './Account/SignUpForm/Validate';
+// import { getCookie } from './Account/SignUpForm/Validate';
 
 const Footer = () => {
     const [backgroundColor, setBackgroundColor] = useState('#f6b5b5'); // Default background color
@@ -95,5 +95,9 @@ const Footer = () => {
         </footer>
     );
 };
-
+function getCookie(name) {
+    const value = `; ${document.cookie}`; // Add a leading semicolon for easier parsing
+    const parts = value.split(`; ${name}=`); // Split the cookie string to find the desired cookie
+    if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift()); // Return the cookie value
+}
 export default Footer;

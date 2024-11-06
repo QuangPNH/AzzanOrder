@@ -40,10 +40,6 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            if (employeeId.HasValue)
-            {
-
-            }
             var memberVoucher = employeeId.HasValue 
                 ? await _context.MemberVouchers.Where(mv => mv.MemberId == memberId && mv.IsActive == true && mv.VoucherDetail.EmployeeId == employeeId).Include(mv => mv.VoucherDetail).ThenInclude(mv => mv.Vouchers).Select(mv => mv.VoucherDetail).ToListAsync() 
                 : await _context.MemberVouchers.Where(mv => mv.MemberId == memberId && mv.IsActive == true).Include(mv => mv.VoucherDetail).ThenInclude(mv => mv.Vouchers).Select(mv => mv.VoucherDetail).ToListAsync();
