@@ -26,8 +26,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
             return View();
         }
 
-
-        public IActionResult Privacy()
+		//00867f56a5a886a975463d3ec7941061
+		public IActionResult Privacy()
         {
             return View();
         }
@@ -63,28 +63,35 @@ namespace AzzanOrder.ManagerOwner.Controllers
 				}
 			}
 
-			if (emp != null)
-			{
-				// Generate OTP and store it in TempData for validation
-				string otp = new Random().Next(100000, 999999).ToString();
+            if (emp != null)
+            {
+
+                string otp = new Random().Next(100000, 999999).ToString();
+
+                otp = "123456"; // For testing only, remove this line in production
+
 				TempData["OTP"] = otp;
 
-				// Send OTP via Twilio
-				var accountSid = "ACd5083d30edb839433981a766a0c2e2fd";
-				var authToken = "00867f56a886a975463d3ec7941061";
-				TwilioClient.Init(accountSid, authToken);
-				var messageOptions = new CreateMessageOptions(new PhoneNumber("+84388536414"))
-				{
-					From = new PhoneNumber("+19096555985"),
-					Body = "Your OTP is " + otp
-				};
-				MessageResource.Create(messageOptions);
+				/*// Send OTP via Twilio
+                var accountSid = "ACd5083d30edb839433981a766a0c2e2fd";
+                var authToken = "";
+                TwilioClient.Init(accountSid, authToken);
+                var messageOptions = new CreateMessageOptions(new PhoneNumber("+84388536414"))
+                {
+                    From = new PhoneNumber("+19096555985"),
+                    Body = "Your OTP is " + otp
+                };
+                MessageResource.Create(messageOptions);*/
 
 				// Redirect to the OTP input page
-				return View("OTPInput", emp);
+				var model = new AzzanOrder.ManagerOwner.Models.Model { employee = emp };
+				return View("OTPInput", model);
 			}
-
-			return RedirectToAction("Login", "Home");
+            else
+            {
+				Console.WriteLine("Nooooo");
+				return RedirectToAction("Login", "Home");
+            }
 		}
 
 		[HttpPost]
