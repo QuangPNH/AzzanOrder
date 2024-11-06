@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import ContactInfo from "./ContactInfo";
 import Copyright from "./Copyright";
-// import { getCookie } from './Account/SignUpForm/Validate';
+import { getCookie } from '../Account/SignUpForm/Validate';
 
 const Footer = () => {
     const [backgroundColor, setBackgroundColor] = useState('#f6b5b5'); // Default background color
@@ -12,13 +12,12 @@ const Footer = () => {
             // Fetch the background color based on the tableqr value
             const fetchBackgroundColor = async (manaId) => {
                 try {
-                    const url = `https://localhost:7183/api/Promotions/GetByDescription/color?manaId=${manaId}`
+                    const url = manaId ? `https://localhost:7183/api/Promotions/GetByDescription/color?manaId=${manaId}` : `https://localhost:7183/api/Promotions/GetByDescription/color`;
                     const response = await fetch(url);
-                    if (!response.ok) {
-                        throw new Error("Network response was not ok");
+                    if (response.ok) {
+                        const data = await response.json();
+                        setBackgroundColor(data.description.split('/')[1]);
                     }
-                    const data = await response.json();
-                    setBackgroundColor(data.description.split('/')[1]);
                 } catch (error) {
                     console.error("Failed to fetch background color:", error);
                 }
