@@ -1,12 +1,12 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import DropTest from './Voucher/DropTest';
 
 
-const VoucherCart = ({onSelectVoucher}) => {
+const VoucherCart = ({ onSelectVoucher }) => {
     const handleDropdownChange = (selectedItem) => {
-        
         onSelectVoucher(selectedItem);
     };
+
     return (
         <>
             <DropTest

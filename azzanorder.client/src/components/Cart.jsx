@@ -40,27 +40,31 @@ const Cart = () => {
     const [discountPrice, setDiscountPrice] = useState(0);
     const [headerText, setHeaderText] = useState(false);
     const id = getCookie("tableqr");
+
     useEffect(() => {
         const calculateTotal = async () => {
             let total = 0;
             let totalDiscount = 0;
 
+       
+                
 
             const legalCheckResults = await Promise.all(
                 id ? cartData.map((item) => checkLegal(item, id.split('/')[1])) : cartData.map((item) => checkLegal(item, ''))
             );
-
+            
             cartData.forEach((item, index) => {
                 const data = legalCheckResults[index];
                 if (data) {
                     // Tính số tiền giảm giá cho từng sản phẩm và nhân với số lượng
-                    const itemDiscount = (item.price * (voucher.discount / 100)) * item.quantity;
+                    const itemDiscount = voucher!= '' ? (item.price * (voucher.discount / 100)) * item.quantity : 0;
                     totalDiscount += itemDiscount; // Cộng vào tổng số tiền giảm giá
+                    
                 }
 
                 // Tính tổng giá trị của giỏ hàng (bao gồm giá đã giảm nếu hợp lệ)
                 const toppingsPrice = item.options?.selectedToppings?.reduce((sum, topping) => sum + topping.price, 0) || 0;
-                const discountedPricePerItem = data ? item.price * (1 - voucher.discount / 100) : item.price;
+                const discountedPricePerItem = data && voucher != '' ? item.price * (1 - voucher.discount / 100) : item.price;
                 total += (discountedPricePerItem + toppingsPrice) * item.quantity;
             });
 
@@ -85,14 +89,7 @@ const Cart = () => {
         }
     };
     const handleSelectVoucher = (selectedItem) => {
-        // const voucherSelectedList = [];
-        // const found = voucherSelectedList.some(item => item.id === selectedItem.id);
-
-        // // Nếu không tìm thấy, thêm đối tượng mới vào mảng
-        // if (!found) {
-        //     voucherSelectedList.push(selectedItem);
-        // }
-        setCookie("voucher", JSON.stringify(selectedItem), 7);
+        // setCookie("voucher", JSON.stringify(selectedItem), 7);
         setVoucher(selectedItem);
 
     };
