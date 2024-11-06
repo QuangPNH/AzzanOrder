@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -6,7 +8,17 @@ builder.Services.AddControllersWithViews();
 // Register HttpClient
 builder.Services.AddHttpClient();
 
+builder.Services.AddSession(opt => opt.IdleTimeout = TimeSpan.FromMinutes(15));
+
 var app = builder.Build();
+
+
+
+
+
+app.UseSession();
+
+
 
 // Configure the HTTP request pipeline.
 if (!app.Environment.IsDevelopment())
