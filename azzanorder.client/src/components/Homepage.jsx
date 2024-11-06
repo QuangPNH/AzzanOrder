@@ -24,9 +24,11 @@ const Homepage = () => {
     const [showRecentlyOrdered, setShowRecentlyOrdered] = useState(false);
     const search = useLocation().search;
     const id=new URLSearchParams(search).get("tableqr");
+    const status=new URLSearchParams(search).get("status");
 
     useEffect(() => {
         console.log(id, 'hello');
+        console.log(status, 'maow');
         const memberInfo = getCookie('memberInfo');
         const memberId = memberInfo ? JSON.parse(memberInfo).memberId : null;
 
@@ -40,8 +42,10 @@ const Homepage = () => {
                 setCookie('tableqr', id, 1);
                 await fetchOrderExits(id.split('/')[0], id.split('/')[1]);
             }
-        };
 
+
+
+        };
         fetchData();
     }, [id]);
 
