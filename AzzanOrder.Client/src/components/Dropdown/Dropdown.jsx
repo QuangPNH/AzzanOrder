@@ -1,5 +1,6 @@
 ﻿import { useState, useEffect } from 'react';
 import DropdownItem from './DropdownItem';
+import { getCookie } from '../Account/SignUpForm/Validate';
 
 const Dropdown = ({ options, onChange, onClick}) => {
     const [items, setItems] = useState([]);
@@ -8,7 +9,7 @@ const Dropdown = ({ options, onChange, onClick}) => {
 
     useEffect(() => {
         const fetchData = async () => {
-            const data = await fetchLabels();
+            const data = await fetchLabels(getCookie("tableqr") ? getCookie("tableqr").split('/')[1] : null);
             setItems(data);
             
             setSelectedItem();
@@ -17,9 +18,10 @@ const Dropdown = ({ options, onChange, onClick}) => {
         console.log(items);
     }, []);
 
-    const fetchLabels = async () => {
+    const fetchLabels = async (id) => {
         try {
-            const response = await fetch('https://localhost:7183/api/ItemCategory');
+            const url = id ? `https://localhost:7183/api/ItemCategory?id=${id}` : 'https://localhost:7183/api/ItemCategory';
+            const response = await fetch(url);
             const data = await response.json();
             return data;
         } catch (error) {

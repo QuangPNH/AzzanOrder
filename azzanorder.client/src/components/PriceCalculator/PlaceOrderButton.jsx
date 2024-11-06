@@ -1,14 +1,14 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { getCookie, setCookie } from '../Account/SignUpForm/Validate';
 import LogoutPage from '../Account/LogoutPage';
+import { useLocation } from "react-router-dom";
 
 const PlaceOrderButton = ({ amount, isTake, isCash }) => {
     const [qrDataURL, setQRDataURL] = useState(null);
     const [error, setError] = useState(null);
+    const manaid= getCookie("tableqr");
 
     const handlePlaceOrder = async () => {
-        console.log("amount:", amount);
-
         const cartDataString = getCookie("cartData");
         if (!cartDataString) {
             setError("No item in cart");
@@ -60,14 +60,15 @@ const PlaceOrderButton = ({ amount, isTake, isCash }) => {
         if (isCash) {
             order.tax = 1;
             await postOrder(order);
-        } else {
-            await fetchQRAndPostOrder(order);
+        }else{
+            await fetchQRAndPostOrder(order, manaid.split('/')[1]);
         }
     };
 
-    const fetchQRAndPostOrder = async (order) => {
+    const fetchQRAndPostOrder = async (order, manaid) => {
         try {
-            const response = await fetch(`https://localhost:7183/api/Order/QR/${amount}`, {
+            console.log(manaid, 'id');
+            const response = await fetch(`https://localhost:7183/api/Order/QR/${amount}?employeeId=${manaid}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",

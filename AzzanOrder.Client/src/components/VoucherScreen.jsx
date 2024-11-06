@@ -5,27 +5,37 @@ import Dropdown from './Dropdown/Dropdown';
 import ProductSale from './Voucher/VoucherDetail/ProductSale';
 import PointsDisplay from './Voucher/PointDisplay';
 import VoucherList from './Voucher/VoucherList';
-
+import { useLocation } from "react-router-dom";
 const VoucherScreen = () => {
     const [vouchers, setVouchers] = useState([]);
     const [allVouchers, setAllVouchers] = useState(false);
     const [point, setPoint] = useState(false);
     const [categories, setCategories] = useState([]);
     const [memberVouchers, setMemberVouchers] = useState(false);
+    const manaId = getCookie("tableqr");
     useEffect(() => {
-        fetchVouchers();
-        fetchCategories();
-        if (getCookie('memberInfo') != null) {
-            fetchMembers(JSON.parse(getCookie('memberInfo')).memberId);
-            fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId);
-            
-            
+        if (manaId) {
+          
+            fetchVouchers('', manaId.split('/')[1]);
+            fetchCategories(manaId.split('/')[1]);
+            if (getCookie('memberInfo') != null) {
+                fetchMembers(JSON.parse(getCookie('memberInfo')).memberId);
+                fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId, manaId.split('/')[1]);
+            }
+        } else {
+            fetchVouchers('', '');
+            fetchCategories('');
+            if (getCookie('memberInfo') != null) {
+                fetchMembers(JSON.parse(getCookie('memberInfo')).memberId);
+                fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId,'');
+            }
         }
-        
     }, []);
-    const fetchMemberVouchers = async (memberId) => {
+    const fetchMemberVouchers = async (memberId, manaId) => {
         try {
-            const response = await fetch(`https://localhost:7183/api/MemberVouchers/memberId?memberId=${memberId}`);
+        
+            const response = await fetch(`https://localhost:7183/api/MemberVouchers/memberId?memberId=${memberId}&employeeId=${manaId}`);
+            //dang sửa API cho phần này về việc voucher và một số thành phần cần có sự quản lý của từng employeeId
             const data = await response.json();
             setMemberVouchers([true]);
             setMemberVouchers(data);
@@ -33,17 +43,18 @@ const VoucherScreen = () => {
             console.error('Error fetching menu items:', error);
         }
     };
-    
-    const fetchVouchers = async (category = '') => {
+
+    const fetchVouchers = async (category, manaId) => {
         try {
-            const response = category == '' ? await fetch(`https://localhost:7183/api/VoucherDetail`) : await fetch(`https://localhost:7183/api/VoucherDetail/categoryId?categoryId=${category}`);
+            
+            const response = category == '' ? await fetch(`https://localhost:7183/api/VoucherDetail/?employeeId=${manaId}`) : await fetch(`https://localhost:7183/api/VoucherDetail/categoryId?categoryId=${category}&employeeId=${manaId}`);
             const data = await response.json();
             if (category == '') {
                 setAllVouchers(data);
             } else {
                 setAllVouchers(false);
                 setVouchers(data);
-                
+
             }
         } catch (error) {
             console.error('Error fetching menu items:', error);
@@ -56,15 +67,15 @@ const VoucherScreen = () => {
             const data = await response.json();
             setPoint(true);
             setPoint(data);
-            
+
         } catch (error) {
             console.error('Error fetching menu items:', error);
         }
     };
 
-    const fetchCategories = async () => {
+    const fetchCategories = async (manaId) => {
         try {
-            const response = await fetch('https://localhost:7183/api/ItemCategory');
+            const response = await fetch(`https://localhost:7183/api/ItemCategory?id=${manaId}`);
             const data = await response.json();
             setCategories(data);
         } catch (error) {
@@ -73,12 +84,15 @@ const VoucherScreen = () => {
     };
 
     const handleDropdownChange = (selectedCategory) => {
-        fetchVouchers(selectedCategory);
+        if(manaId){
+            fetchVouchers(selectedCategory, manaId.split('/')[1]);
+        }
+        fetchVouchers(selectedCategory, '');
     };
 
 
-    
-    
+
+
 
     return (
         <>
@@ -98,15 +112,15 @@ const VoucherScreen = () => {
                 {memberVouchers && (
                     <div className="product-sale-container">
                         {memberVouchers.map((mv) => (
-                            
+
                             <ProductSale
                                 key={mv.memberVoucherId}
                                 saleAmount={mv.discount}
                                 endDate={mv.endDate}
-                                bought={true} 
-                                voucherDetailId = {mv.voucherDetailId}
-                                infiniteUses={false}    
-                                />
+                                bought={true}
+                                voucherDetailId={mv.voucherDetailId}
+                                infiniteUses={false}
+                            />
                         ))}
                     </div>
                 )}
@@ -117,7 +131,7 @@ const VoucherScreen = () => {
                     options={categories.map(category => category.description)}
                     onClick2={handleDropdownChange}
                     onChange={handleDropdownChange} />
-                    
+
                 {allVouchers && (
                     <div className="product-sale-container">
                         {allVouchers.map((aV) => (
@@ -128,7 +142,7 @@ const VoucherScreen = () => {
                                 price={aV.price}
                                 infiniteUses={true}
                                 useCount={0}
-                                voucherDetailId = {aV.voucherDetailId}
+                                voucherDetailId={aV.voucherDetailId}
                             />
                         ))}
                     </div>
@@ -143,7 +157,7 @@ const VoucherScreen = () => {
                                 price={v.voucherDetail.price}
                                 infiniteUses={true}
                                 useCount={0}
-                                voucherDetailId = {v.voucherDetail.voucherDetailId}
+                                voucherDetailId={v.voucherDetail.voucherDetailId}
                             />
                         ))}
                     </div>

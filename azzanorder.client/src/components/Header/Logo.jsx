@@ -1,6 +1,30 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { getCookie } from '../Account/SignUpForm/Validate';
 
 const Logo = () => {
+    const [logoSrc, setLogoSrc] = useState('');
+
+    useEffect(() => {
+        const tableqr = getCookie("tableqr");
+        if (tableqr) {
+            // Fetch the logo URL based on the tableqr value
+            const fetchLogoSrc = async (manaId) => {
+                try {
+                    const url = manaId ? `https://localhost:7183/api/Promotions/GetByDescription/logo?manaId=${manaId}` : 'https://localhost:7183/api/Promotions/GetByDescription/logo';
+                    const response = await fetch(url);
+                    if (!response.ok) {
+                        throw new Error("Network response was not ok");
+                    }
+                    const data = await response.json();
+                    setLogoSrc(data.image);
+                } catch (error) {
+                    console.error("Failed to fetch logo URL:", error);
+                }
+            };
+            fetchLogoSrc();
+        }
+    }, []);
+
     const handleLogoClick = () => {
         window.location.href = '/';
     };
@@ -8,7 +32,7 @@ const Logo = () => {
     return (
         <>
             <img
-                src="https://cdn.builder.io/api/v1/image/assets/TEMP/e7970bccea406727a92dffa6eaf3dad60f5580953085ae7d3a1cd0abb435e4e5?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8"
+                src={logoSrc || "https://cdn.builder.io/api/v1/image/assets/TEMP/e7970bccea406727a92dffa6eaf3dad60f5580953085ae7d3a1cd0abb435e4e5?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8"}
                 alt="Company logo"
                 className="logo"
                 loading="lazy"

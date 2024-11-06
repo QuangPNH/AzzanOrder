@@ -13,6 +13,7 @@ namespace AzzanOrder.Data.Models
         public int BankId { get; set; }
         public string? BankName { get; set; }
         public string? BankNumber { get; set; }
+        public string? BankBin { get; set; }
 
         public virtual ICollection<Owner> Owners { get; set; }
     }

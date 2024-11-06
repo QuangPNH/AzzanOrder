@@ -1,21 +1,23 @@
-﻿import React from 'react';
+﻿import React, { useEffect } from 'react';
 import LineSeperator from './LineSeperator';
 
-const AboutUs = ({ aboutUsData }) => {  // Accepting aboutUsData as a prop
+const AboutUs = ({ title, content  }) => {  // Accepting aboutUsData as a prop
+    useEffect(()=> {
+        console.log(title);
+        console.log(content);
+    });
     return (
-        <section className="about-us">
-            {aboutUsData.map((item, index) => (
-                <div key={index} className="about-us__item">  {/* Individual item container */}
-                    <h2 className="about-us__title">{item.title}</h2>
-                    <LineSeperator width={120} />
-                    <LineSeperator width={80} />
+        <>
+        <div className="about-us__item">  {/* Individual item container */}
+                    <h2 className="about-us__title">{title}</h2>
+                    <LineSeperator width={30} />
                     <p className="about-us__description">
-                        {item.content.split('\n').map((text, idx) => (
+                        {content.split('\n').map((text, idx) => (
                             <span key={idx}>{text}<br /></span>
                         ))}
                     </p>
                 </div>
-            ))}
+            
             <style jsx>{`
                 .about-us {
                     display: flex;
@@ -28,7 +30,7 @@ const AboutUs = ({ aboutUsData }) => {  // Accepting aboutUsData as a prop
                     flex-direction: column;  /* Stacks the items vertically */
                     margin-bottom: 40px;    /* Adds space between each item */
                     width: 100%;            /* Full width for each item */
-                    max-width: 600px;       /* Optional: limits width for readability */
+                    max-width: 100%;       /* Optional: limits width for readability */
                     text-align: center;      /* Center align the content */
                 }
                 .about-us__title {
@@ -47,7 +49,7 @@ const AboutUs = ({ aboutUsData }) => {  // Accepting aboutUsData as a prop
                     text-align: center;      /* Center align the description */
                 }
             `}</style>
-        </section>
+        </>
     );
 };
 

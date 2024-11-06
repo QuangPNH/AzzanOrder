@@ -19,23 +19,31 @@ const DropTest = ({ options, onChange }) => {
     const [items, setItems] = useState(getVoucher());
     const [isExpanded, setIsExpanded] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
-
+    const id = getCookie("tableqr");
     useEffect(() => {
         const fetchData = async () => {
             if (getCookie('memberInfo')) {
-                const data = await fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId, '');
-                setItems(data);
-                setSelectedItem(items); // Chọn mục đầu tiên
+                if (id) {
+                    const data = await fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId, '', id.split('/')[1]);
+                    setItems(data);
+                    setSelectedItem(items); // Chọn mục đầu tiên
+                }
+                else {
+                    const data = await fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId, '', '');
+                    setItems(data);
+                    setSelectedItem(items); // Chọn mục đầu tiên
+                }
+
             }
         };
         fetchData();
     }, []);
 
-    
 
-    const fetchMemberVouchers = async (memberId, categoryId) => {
+
+    const fetchMemberVouchers = async (memberId, categoryId, id) => {
         try {
-            const response = categoryId != '' ? await fetch(`https://localhost:7183/api/MemberVouchers/memberId/itemCategoryId?memberId=${memberId}&categoryId=${categoryId}`) : await fetch(`https://localhost:7183/api/MemberVouchers/memberId?memberId=${memberId}`);
+            const response = categoryId != '' ? await fetch(`https://localhost:7183/api/MemberVouchers/memberId/itemCategoryId?memberId=${memberId}&categoryId=${categoryId}&employeeId=${id}`) : await fetch(`https://localhost:7183/api/MemberVouchers/memberId?memberId=${memberId}&employeeId=${id}`);
             const data = await response.json();
             return data;
 
