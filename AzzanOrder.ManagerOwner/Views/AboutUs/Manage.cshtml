@@ -1,0 +1,29 @@
+﻿<div class="col-12">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">AboutUsManager</h5>
+        </div>
+        @* <div>
+            <a href="@Url.Action("Add", "AboutUs")" class="btn btn-primary">Add New Voucher</a>
+        </div> *@
+
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th style="width:10%">Title</th>
+                    <th style="width:70%">Content</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <td>About Us</td>
+                    <td>About Us</td>
+                    <td class="table-action">
+                        <a href="@Url.Action("Update", "AboutUs")"><i class="align-middle" data-feather="edit-2"></i></a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>

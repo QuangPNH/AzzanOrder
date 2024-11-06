@@ -1,3 +1,15 @@
 ﻿@{
-    Layout = "_Layout";
+    var path = Context.Request.Path.ToString().ToLower();
+    if (path.Contains("/aboutus") || path.Contains("/manager"))
+    {
+        Layout = "_LayoutOwner";
+    }
+    else if (path.Contains("/login") || path.Contains("/subscribe"))
+    {
+        Layout = "_LayoutEmpty";
+    }
+    else
+    {
+        Layout = "_LayoutManager";
+    }
 }
