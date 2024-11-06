@@ -12,18 +12,17 @@ const VoucherScreen = () => {
     const [point, setPoint] = useState(false);
     const [categories, setCategories] = useState([]);
     const [memberVouchers, setMemberVouchers] = useState(false);
-    const id = getCookie("tableqr");
+    const manaId = getCookie("tableqr");
     useEffect(() => {
-        if (id) {
+        if (manaId) {
           
-            fetchVouchers('', id.split('/')[1]);
-            fetchCategories(id.split('/')[1]);
+            fetchVouchers('', manaId.split('/')[1]);
+            fetchCategories(manaId.split('/')[1]);
             if (getCookie('memberInfo') != null) {
                 fetchMembers(JSON.parse(getCookie('memberInfo')).memberId);
-                fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId, id.split('/')[1]);
+                fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId, manaId.split('/')[1]);
             }
         } else {
-            console.log(id, 'hello');
             fetchVouchers('', '');
             fetchCategories('');
             if (getCookie('memberInfo') != null) {
@@ -32,10 +31,10 @@ const VoucherScreen = () => {
             }
         }
     }, []);
-    const fetchMemberVouchers = async (memberId, id) => {
+    const fetchMemberVouchers = async (memberId, manaId) => {
         try {
         
-            const response = await fetch(`https://localhost:7183/api/MemberVouchers/memberId?memberId=${memberId}&employeeId=${id}`);
+            const response = await fetch(`https://localhost:7183/api/MemberVouchers/memberId?memberId=${memberId}&employeeId=${manaId}`);
             //dang sửa API cho phần này về việc voucher và một số thành phần cần có sự quản lý của từng employeeId
             const data = await response.json();
             setMemberVouchers([true]);
@@ -45,10 +44,10 @@ const VoucherScreen = () => {
         }
     };
 
-    const fetchVouchers = async (category, id) => {
+    const fetchVouchers = async (category, manaId) => {
         try {
             
-            const response = category == '' ? await fetch(`https://localhost:7183/api/VoucherDetail/?employeeId=${id}`) : await fetch(`https://localhost:7183/api/VoucherDetail/categoryId?categoryId=${category}&employeeId=${id}`);
+            const response = category == '' ? await fetch(`https://localhost:7183/api/VoucherDetail/?employeeId=${manaId}`) : await fetch(`https://localhost:7183/api/VoucherDetail/categoryId?categoryId=${category}&employeeId=${manaId}`);
             const data = await response.json();
             if (category == '') {
                 setAllVouchers(data);
@@ -74,9 +73,9 @@ const VoucherScreen = () => {
         }
     };
 
-    const fetchCategories = async (id) => {
+    const fetchCategories = async (manaId) => {
         try {
-            const response = await fetch(`https://localhost:7183/api/ItemCategory?id=${id}`);
+            const response = await fetch(`https://localhost:7183/api/ItemCategory?id=${manaId}`);
             const data = await response.json();
             setCategories(data);
         } catch (error) {
@@ -85,8 +84,8 @@ const VoucherScreen = () => {
     };
 
     const handleDropdownChange = (selectedCategory) => {
-        if(id){
-            fetchVouchers(selectedCategory, id.split('/')[1]);
+        if(manaId){
+            fetchVouchers(selectedCategory, manaId.split('/')[1]);
         }
         fetchVouchers(selectedCategory, '');
     };

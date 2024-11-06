@@ -32,13 +32,16 @@ namespace AzzanOrder.Data.Controllers
         }
         // GET: api/Vouchers
         [HttpGet("voucherDetailId/menuItemId")]
-        public async Task<ActionResult> CheckVoucher(int voucherDetailid, int menuItemId)
+        public async Task<ActionResult> CheckVoucher(int voucherDetailid, int menuItemId, int? employeeId)
         {
             if (_context.Vouchers == null)
             {
                 return NotFound("List voucher is empty");
             }
-            var vouchers = await _context.Vouchers.Where(v => v.VoucherDetailId == voucherDetailid).Include(v => v.ItemCategory).ThenInclude(v => v.MenuCategories).ToListAsync();
+      
+            var vouchers = employeeId.HasValue 
+                ? await _context.Vouchers.Where(v => v.VoucherDetailId == voucherDetailid && v.VoucherDetail.EmployeeId == employeeId).Include(v => v.ItemCategory).ThenInclude(v => v.MenuCategories).ToListAsync()
+                : await _context.Vouchers.Where(v => v.VoucherDetailId == voucherDetailid).Include(v => v.ItemCategory).ThenInclude(v => v.MenuCategories).ToListAsync();
             var check = vouchers.Any(v => v.ItemCategory.MenuCategories.Any(m => m.MenuItemId == menuItemId));
             //var vouchers = await _context.VoucherDetails.Include(v => v.Vouchers).ThenInclude(ic => ic.ItemCategory).ToListAsync();
             return Ok(check);

@@ -6,8 +6,7 @@ import { useLocation } from "react-router-dom";
 const PlaceOrderButton = ({ amount, isTake, isCash }) => {
     const [qrDataURL, setQRDataURL] = useState(null);
     const [error, setError] = useState(null);
-    const search = useLocation().search;
-    const id=new URLSearchParams(search).get("tableqr");
+    const manaid= getCookie("tableqr");
 
     const handlePlaceOrder = async () => {
         const cartDataString = getCookie("cartData");
@@ -62,14 +61,14 @@ const PlaceOrderButton = ({ amount, isTake, isCash }) => {
             order.tax = 1;
             await postOrder(order);
         }else{
-            await fetchQRAndPostOrder(order, id.split('/')[1]);
+            await fetchQRAndPostOrder(order, manaid.split('/')[1]);
         }
     };
 
-    const fetchQRAndPostOrder = async (order, id) => {
+    const fetchQRAndPostOrder = async (order, manaid) => {
         try {
-            console.log(id, 'id');
-            const response = await fetch(`https://localhost:7183/api/Order/QR/${amount}?employeeId=${id}`, {
+            console.log(manaid, 'id');
+            const response = await fetch(`https://localhost:7183/api/Order/QR/${amount}?employeeId=${manaid}`, {
                 method: "GET",
                 headers: {
                     "Content-Type": "application/json",
