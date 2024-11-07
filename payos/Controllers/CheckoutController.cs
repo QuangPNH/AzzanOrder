@@ -3,6 +3,7 @@ using Microsoft.AspNetCore.Mvc;
 using Net.payOS.Types;
 using Net.payOS;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
+using Newtonsoft.Json;
 
 public class CheckoutController : Controller
 {
@@ -17,7 +18,7 @@ public class CheckoutController : Controller
 
 	//https://localhost:3002/?tableqr=QR_002/1&Price=1000&Item=OASItem&Message=Order
 	[HttpGet("/")]
-	public async Task<IActionResult> IndexAsync([FromQuery] string tableqr,[FromQuery] string Item,[FromQuery] decimal Price,[FromQuery] string Message)
+	public async Task<IActionResult> IndexAsync([FromQuery] string tableqr,[FromQuery] string Item,[FromQuery] double Price,[FromQuery] string Message)
 	{
 		Console.WriteLine("sfsdfsf " + tableqr);
 		Console.WriteLine("Item: " + Item);
@@ -25,19 +26,19 @@ public class CheckoutController : Controller
 		Console.WriteLine("Message: " + Message);
 
 		// Save the 'tableqr' value to a cookie
-		if (!string.IsNullOrEmpty(tableqr))
-		{
-			Response.Cookies.Append("tableqr", tableqr, new CookieOptions
-			{
-				HttpOnly = true, // Makes the cookie accessible only through HTTP, not JavaScript
-				Expires = DateTimeOffset.UtcNow.AddDays(1) // Set the cookie expiration time
-			});
-		}
+		//if (!string.IsNullOrEmpty(tableqr))
+		//{
+		//	Response.Cookies.Append("tableqr", tableqr, new CookieOptions
+		//	{
+		//		HttpOnly = true, // Makes the cookie accessible only through HTTP, not JavaScript
+		//		Expires = DateTimeOffset.UtcNow.AddDays(1) // Set the cookie expiration time
+		//	});
+		//}m
 
 		try
 		{
 			int orderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff"));
-			ItemData item = new ItemData(Item, 1, 1000);
+			ItemData item = new ItemData(Item, 1, (int)Price*2);
 			List<ItemData> items = new List<ItemData> { item };
 
 			// Get the current request's base URL
@@ -46,7 +47,7 @@ public class CheckoutController : Controller
 
 			PaymentData paymentData = new PaymentData(
 				orderCode,
-				1000,
+				(int)Price,
 				Message + orderCode,
 				items,
 				$"{baseUrl}/cancel",
@@ -74,9 +75,33 @@ public class CheckoutController : Controller
 	}
 
 	[HttpGet("/success")]
-	public IActionResult Success()
+	public async Task<ActionResult> Success([FromQuery] int memberId)
 	{
 		HttpContext.Request.Cookies.TryGetValue("tableqr", out string tableqr);
-		return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=success");
+		//var _apiUrl = $"https://localhost:7183/api/Member/";
+
+  //      using (HttpClient client = new HttpClient())
+  //      {
+  //          try
+  //          {
+  //              HttpResponseMessage res = await client.GetAsync(_apiUrl + memberId);
+  //              if (res.IsSuccessStatusCode)
+  //              {
+  //                  string data = await res.Content.ReadAsStringAsync();
+  //                  roles = JsonConvert.DeserializeObject<List<Role>>(data);
+  //              }
+  //              else
+  //              {
+  //                  // Handle the error response here
+  //                  ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+  //              }
+  //          }
+  //          catch (HttpRequestException e)
+  //          {
+  //              // Handle the exception here
+  //              ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
+  //          }
+  //      }
+        return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=success");
 	}
 }

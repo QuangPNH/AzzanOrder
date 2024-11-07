@@ -39,6 +39,7 @@ const Homepage = () => {
                 setShowRecentlyOrdered(true);
             }
             if (id) {
+                setCookie('tableqr','', -1);
                 setCookie('tableqr', id, 1);
                 await fetchOrderExits(id.split('/')[0], id.split('/')[1]);
             }
