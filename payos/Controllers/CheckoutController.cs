@@ -25,14 +25,14 @@ public class CheckoutController : Controller
 		Console.WriteLine("Message: " + Message);
 
 		// Save the 'tableqr' value to a cookie
-		if (!string.IsNullOrEmpty(tableqr))
-		{
-			Response.Cookies.Append("tableqr", tableqr, new CookieOptions
-			{
-				HttpOnly = true, // Makes the cookie accessible only through HTTP, not JavaScript
-				Expires = DateTimeOffset.UtcNow.AddDays(1) // Set the cookie expiration time
-			});
-		}
+		//if (!string.IsNullOrEmpty(tableqr))
+		//{
+		//	Response.Cookies.Append("tableqr", tableqr, new CookieOptions
+		//	{
+		//		HttpOnly = true, // Makes the cookie accessible only through HTTP, not JavaScript
+		//		Expires = DateTimeOffset.UtcNow.AddDays(1) // Set the cookie expiration time
+		//	});
+		//}
 
 		try
 		{
