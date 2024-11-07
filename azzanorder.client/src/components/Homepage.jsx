@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useLocation } from "react-router-dom";
-
+import { postOrder } from './PriceCalculator/PlaceOrderButton'
+import { calculateTotal } from './Cart'
 /*
     **import biến PriceCalculator từ file PriceCalculator
     **phải có export từ hàm PriceCalculator
@@ -27,8 +28,6 @@ const Homepage = () => {
     const status=new URLSearchParams(search).get("status");
 
     useEffect(() => {
-        console.log(id, 'hello');
-        console.log(status, 'maow');
         const memberInfo = getCookie('memberInfo');
         const memberId = memberInfo ? JSON.parse(memberInfo).memberId : null;
 
@@ -48,6 +47,13 @@ const Homepage = () => {
         };
         fetchData();
     }, [id]);
+
+    useEffect(() => {
+        if (status == "success") {
+            const { total, totalDiscount } = calculateTotal();
+            postOrder(total);
+        }
+    }, [status]);
 
     const fetchMenuItems = async (manaId) => {
         try {
