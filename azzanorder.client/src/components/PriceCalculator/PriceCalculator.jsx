@@ -14,7 +14,6 @@ const PriceCalculator = ({ discountPrice, totalPrice, onTakeOutChange }) => {
         const cartDataString = getCookie("memberInfo");
         if (!cartDataString) {
             setError("Order while login will give you points");
-            return;
         }
         setTrueTotalPrice(totalPrice);
     }, [totalPrice]);
