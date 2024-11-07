@@ -101,6 +101,6 @@ public class CheckoutController : Controller
   //              ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
   //          }
   //      }
-        return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=fail");
+        return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=success");
 	}
 }

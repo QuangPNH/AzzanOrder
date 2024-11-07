@@ -52,6 +52,15 @@ const Homepage = () => {
         fetchData();
     }, [id, status]);
 
+    useEffect(() => {
+        if (status == "fail") {
+            const processOrder = async () => {
+                const { total, totalDiscount } = await calculateTotal();
+                await postOrder(total);
+            }
+            processOrder();
+        }
+    }, [status]);
 
     const fetchMenuItems = async (manaId) => {
         try {
