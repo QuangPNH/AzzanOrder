@@ -53,6 +53,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 		{
             bool isManager;
 			Employee emp = null;
+            Owner owner = null;
 			using (HttpClient client = new HttpClient())
 			{
 				try
@@ -74,10 +75,66 @@ namespace AzzanOrder.ManagerOwner.Controllers
 				}
 			}
 
-            if (emp != null)
+            if (emp == null)
             {
+				using (HttpClient client = new HttpClient())
+				{
+					try
+					{
+						HttpResponseMessage res = await client.GetAsync(_apiUrl + "Owner/Phone/" + employee.Phone);
+						if (res.IsSuccessStatusCode)
+						{
+							string data = await res.Content.ReadAsStringAsync();
+							owner = JsonConvert.DeserializeObject<Owner>(data);
+						}
+						else
+						{
+							ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+						}
+					}
+					catch (HttpRequestException e)
+					{
+						ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
+					}
+				}
+				if (owner == null)
+				{
+					return RedirectToAction("Login", "Home");
+				}
+				else
+				{
+					string otp = new Random().Next(000000, 999999).ToString();
 
-                string otp = new Random().Next(100000, 999999).ToString();
+					otp = "123456"; // For testing only, remove this line in production
+
+					HttpContext.Session.SetString("OTP", otp);
+
+					/*// Send OTP via Twilio
+					var accountSid = "ACd5083d30edb839433981a766a0c2e2fd";
+					var authToken = "";
+					TwilioClient.Init(accountSid, authToken);
+					var messageOptions = new CreateMessageOptions(new PhoneNumber("+84388536414"))
+					{
+						From = new PhoneNumber("+19096555985"),
+						Body = "Your OTP is " + otp
+					};
+					MessageResource.Create(messageOptions);*/
+
+					// Redirect to the OTP input page
+					var model = new AzzanOrder.ManagerOwner.Models.Model { owner = owner, employee = emp };
+
+					var ownerJson = JsonConvert.SerializeObject(owner);
+					HttpContext.Response.Cookies.Append("LoginInfo", ownerJson, new CookieOptions
+					{
+						Expires = DateTimeOffset.UtcNow.AddDays(30)
+					});
+
+					return View("OTPInput", model);
+					
+				}
+            }
+            else { 
+                string otp = new Random().Next(000000, 999999).ToString();
 
                 otp = "123456"; // For testing only, remove this line in production
 
@@ -103,13 +160,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
 					Expires = DateTimeOffset.UtcNow.AddDays(30)
 				});
 
-
 				return View("OTPInput", model);
 			}
-            else
-            {
-				return RedirectToAction("Login", "Home");
-            }
 		}
 
 		[HttpPost]
@@ -119,8 +171,26 @@ namespace AzzanOrder.ManagerOwner.Controllers
 			// Check if the OTP matches
 			if (otp == sessionOtp?.ToString())
 			{
-				TempData.Remove("OTP"); // Clear OTP after use
-				return RedirectToAction("List", "Employee");
+				TempData.Remove("OTP");
+				try
+				{
+					HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string loginInfoJson);
+					var loginInfo = JsonConvert.DeserializeObject<Employee>(loginInfoJson);
+					if (loginInfo.RoleId != null)
+					{
+						return RedirectToAction("List", "Employee");
+					}
+					else
+					{
+						return RedirectToAction("Index", "Home");
+					}
+				}
+				catch
+				{
+					
+				}
+
+				return View("OTPInput");
 			}
 			else
 			{

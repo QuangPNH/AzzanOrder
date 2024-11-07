@@ -49,9 +49,26 @@ namespace AzzanOrder.Data.Controllers
             return owner;
         }
 
-        // PUT: api/Owner/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("Update")]
+		[HttpGet("Phone/{phone}")]
+		public async Task<ActionResult<Owner>> GetOwnerByPhone(string phone)
+		{
+			if (_context.Owners == null)
+			{
+				return NotFound();
+			}
+			var owner = await _context.Owners.Where(o => o.IsDelete == false).FirstOrDefaultAsync(o => o.Phone.Equals(phone));
+
+			if (owner == null)
+			{
+				return NotFound();
+			}
+
+			return owner;
+		}
+
+		// PUT: api/Owner/5
+		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		[HttpPut("Update")]
         public async Task<IActionResult> PutOwner(Owner owner)
         {
             if (OwnerExists(owner.OwnerId))
