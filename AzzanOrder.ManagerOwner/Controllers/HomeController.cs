@@ -210,14 +210,29 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 
 
-
         public IActionResult Subscribe()
         {
-            // Handle the subscribe logic here
             return View();
         }
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+		public IActionResult SubscribeMonthlyAction()
+		{
+
+			return View();
+		}
+
+		public IActionResult SubscribeYearlyAction()
+		{
+			return View();
+		}
+
+		public IActionResult SubscribeForeverAction()
+		{
+			return View();
+		}
+
+
+		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
