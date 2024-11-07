@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useLocation } from "react-router-dom";
-
+import { postOrder } from './PriceCalculator/PlaceOrderButton'
+import { calculateTotal } from './Cart'
 /*
     **import biến PriceCalculator từ file PriceCalculator
     **phải có export từ hàm PriceCalculator
@@ -11,7 +12,7 @@ import ShowMoreLink from './ShowMoreLink/ShowMoreLink';
 import ProductCard from './ProductCard/ProductCard';
 import Navbar from './HomeItem/Navbar';
 import Frame from './HomeItem/Frame';
-import { getCookie } from './Account/SignUpForm/Validate';
+import { getCookie, setCookie } from './Account/SignUpForm/Validate';
 
     // Rest of the code...
 import Cart from './Cart';
@@ -27,8 +28,6 @@ const Homepage = () => {
     const status=new URLSearchParams(search).get("status");
 
     useEffect(() => {
-        console.log(id, 'hello');
-        console.log(status, 'maow');
         const memberInfo = getCookie('memberInfo');
         const memberId = memberInfo ? JSON.parse(memberInfo).memberId : null;
 
@@ -49,6 +48,13 @@ const Homepage = () => {
         };
         fetchData();
     }, [id]);
+
+    useEffect(() => {
+        if (status == "success") {
+            const { total, totalDiscount } = calculateTotal();
+            postOrder(total);
+        }
+    }, [status]);
 
     const fetchMenuItems = async (manaId) => {
         try {
@@ -181,14 +187,6 @@ const Homepage = () => {
         //<MenuMainPage />
     );
 };
-
-
-function setCookie(name, value, days) {
-    const expires = new Date(Date.now() + days * 864e5).toUTCString(); // Calculate expiration date
-    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; // Set cookie
-  }
-
-
 
   function deleteCookie(name) {
     setCookie(name, '', -1); // Call setCookie with negative days to delete

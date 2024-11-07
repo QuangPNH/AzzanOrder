@@ -3,20 +3,14 @@ import { getCookie, setCookie } from '../Account/SignUpForm/Validate';
 import LogoutPage from '../Account/LogoutPage';
 import { useLocation } from "react-router-dom";
 
-const PlaceOrderButton = ({ amount, isTake, isCash }) => {
-    const [qrDataURL, setQRDataURL] = useState(null);
-    const [error, setError] = useState(null);
-    const manaid= getCookie("tableqr");
-
-    const handlePlaceOrder = async () => {
+export async function postOrder(amount, isCash) {
+    try {
         const cartDataString = getCookie("cartData");
         if (!cartDataString) {
-            setError("No item in cart");
-            return;
+            throw new Error("No item in cart");
         }
 
         const memberIn = getCookie('memberInfo');
-
         const cartData = JSON.parse(cartDataString);
         const orderDetails = cartData.map(item => {
             const { selectedIce, selectedSugar, toppings } = item.options || {};
@@ -39,93 +33,68 @@ const PlaceOrderButton = ({ amount, isTake, isCash }) => {
             };
         });
 
-        let order = null;
-        const tableId = parseInt(getCookie('tableqr').split('/')[2]);
-        //const tableId = parseInt(manaid.split('/')[2]);
+        const cookieValue = getCookie('tableqr');
+        const tableId = cookieValue
+            ? parseInt(cookieValue.split('/')[2] ?? 0)
+            : null;
+
+        let order = {
+            TableId: tableId,
+            Cost: amount,
+            OrderDetails: orderDetails,
+        };
+
         if (memberIn) {
-            order = {
-                TableId: tableId,
-                Cost: amount,
-                MemberId: JSON.parse(memberIn).memberId,
-                OrderDetails: orderDetails,
-            };
-        } else {
-            order = {
-                TableId: tableId,
-                Cost: amount,
-                OrderDetails: orderDetails,
-            };
+            order.MemberId = JSON.parse(memberIn).memberId;
         }
 
         if (isCash) {
             order.tax = 1;
-            await postOrder(order);
-        }else{
-            //await fetchQRAndPostOrder(order, manaid.split('/')[1]);
-            //window.location.href = "https://localhost:3002/?tableqr=QR_002/1&Price=1000&Item=OASItem&Message=Order";
-            window.location.href = "https://localhost:3002/?tableqr=" + getCookie("tableqr") + "&Price=" + order.Cost + "&Item=OASItem&Message=Order";
         }
-    };
 
-    const fetchQRAndPostOrder = async (order, manaid) => {
-        try {
-            console.log(manaid, 'id');
-            const response = await fetch(`https://localhost:7183/api/Order/QR/${amount}?employeeId=${manaid}`, {
-                method: "GET",
-                headers: {
-                    "Content-Type": "application/json",
-                },
+        const response = await fetch("https://localhost:7183/api/Order", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify(order),
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const data = await response.json();
+        console.log("Order created successfully:", data);
+
+        if (getCookie('memberInfo')) {
+            await fetch(`https://localhost:7183/api/Members/UpdatePoints/${JSON.parse(getCookie('memberInfo')).memberId}/${amount / 1000}`, {
+                method: 'PUT'
             });
+            deleteCookie();
+        }
 
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
+        return data;
+    } catch (error) {
+        console.error("Error creating order:", error);
+        throw error;
+    }
+}
 
-            const data = await response.json();
+const PlaceOrderButton = ({ amount, isTake, isCash }) => {
+    const [qrDataURL, setQRDataURL] = useState(null);
+    const [error, setError] = useState(null);
 
-            if (data && data.base64Image) {
-                setQRDataURL(data.base64Image);
+    const handlePlaceOrder = async () => {
+        try {
+            if (isCash) {
+                await postOrder(amount, isCash);
             } else {
-                console.error("QR code data is missing in the response:", data);
-                throw new Error("QR code data is missing in the response");
-            }
-
-            await postOrder(order);
-        } catch (error) {
-            console.error("Error fetching QR code:", error);
-        }
-    };
-
-    const postOrder = async (order) => {
-        try {
-            const response = await fetch("https://localhost:7183/api/Order", {
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(order),
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const data = await response.json();
-            console.log("Order created successfully:", data);
-
-            if (getCookie('memberInfo')) {
-                await fetch(`https://localhost:7183/api/Members/UpdatePoints/${JSON.parse(getCookie('memberInfo')).memberId}/${amount / 1000}`, {
-                    method: 'PUT'
-                });
-                deleteCookie();
+                window.location.href = "https://localhost:3002/?tableqr=" + getCookie("tableqr") + "&Price=" + amount + "&Item=OASItem&Message=Order";
             }
         } catch (error) {
-            console.error("Error creating order:", error);
+            setError(error.message);
         }
-    };
-
-    const deleteCookie = () => {
-        setCookie('cartData', '', -1); // Call setCookie with negative days to delete
     };
 
     return (
@@ -163,5 +132,7 @@ const PlaceOrderButton = ({ amount, isTake, isCash }) => {
         </div>
     );
 };
-
+const deleteCookie = () => {
+        setCookie('cartData', '', -1); // Call setCookie with negative days to delete
+    };
 export default PlaceOrderButton;

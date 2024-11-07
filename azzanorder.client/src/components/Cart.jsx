@@ -7,6 +7,7 @@ import VoucherCart from './VoucherCart';
 
 function getCartData() {
     const cartDataString = getCookie("cartData");
+    console.log("sdfgssdfgsfd" + cartDataString);
     if (!cartDataString) {
         return [];
     }
@@ -33,6 +34,45 @@ function getVoucher() {
     }
 }
 
+export const calculateTotal = async () => {
+    const cartData = getCartData();
+    const voucher = getVoucher();
+    const id = getCookie("tableqr");
+
+    let total = 0;
+    let totalDiscount = 0;
+
+    const legalCheckResults = await Promise.all(
+        id ? cartData.map((item) => checkLegal(item, id.split('/')[1], voucher)) : cartData.map((item) => checkLegal(item, '', voucher))
+    );
+
+    cartData.forEach((item, index) => {
+        const data = legalCheckResults[index];
+        if (data) {
+            // Calculate discount for each item and multiply by quantity
+            const itemDiscount = voucher != '' ? (item.price * (voucher.discount / 100)) * item.quantity : 0;
+            totalDiscount += itemDiscount; // Add to total discount
+        }
+
+        // Calculate total cart value (including discounted price if applicable)
+        const toppingsPrice = item.options?.selectedToppings?.reduce((sum, topping) => sum + topping.price, 0) || 0;
+        const discountedPricePerItem = data && voucher != '' ? item.price * (1 - voucher.discount / 100) : item.price;
+        total += (discountedPricePerItem + toppingsPrice) * item.quantity;
+    });
+
+    return { total, totalDiscount: -totalDiscount }; // Return total and total discount
+};
+
+const checkLegal = async (item, id, voucher) => {
+    try {
+        const response = await fetch(`https://localhost:7183/api/Vouchers/voucherDetailId/menuItemId?voucherDetailid=${voucher.voucherDetailId}&menuItemId=${item.id}&employeeId=${id}`);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
+    }
+};
+
 const Cart = () => {
     const [cartData, setCartData] = useState(getCartData());
     const [voucher, setVoucher] = useState(getVoucher());
@@ -42,64 +82,27 @@ const Cart = () => {
     const id = getCookie("tableqr");
 
     useEffect(() => {
-        const calculateTotal = async () => {
-            let total = 0;
-            let totalDiscount = 0;
-
-       
-                
-
-            const legalCheckResults = await Promise.all(
-                id ? cartData.map((item) => checkLegal(item, id.split('/')[1])) : cartData.map((item) => checkLegal(item, ''))
-            );
-            
-            cartData.forEach((item, index) => {
-                const data = legalCheckResults[index];
-                if (data) {
-                    // Tính số tiền giảm giá cho từng sản phẩm và nhân với số lượng
-                    const itemDiscount = voucher!= '' ? (item.price * (voucher.discount / 100)) * item.quantity : 0;
-                    totalDiscount += itemDiscount; // Cộng vào tổng số tiền giảm giá
-                    
-                }
-
-                // Tính tổng giá trị của giỏ hàng (bao gồm giá đã giảm nếu hợp lệ)
-                const toppingsPrice = item.options?.selectedToppings?.reduce((sum, topping) => sum + topping.price, 0) || 0;
-                const discountedPricePerItem = data && voucher != '' ? item.price * (1 - voucher.discount / 100) : item.price;
-                total += (discountedPricePerItem + toppingsPrice) * item.quantity;
-            });
-
+        const fetchTotal = async () => {
+            const { total, totalDiscount } = await calculateTotal();
             setTotalPrice(total);
-            setDiscountPrice(-totalDiscount); // Cập nhật tổng số tiền giảm giá
+            setDiscountPrice(totalDiscount);
         };
 
-        calculateTotal();
-    }, [cartData, voucher]);
+        fetchTotal();
+    }, [cartData, voucher, id]);
 
     const handleQuantityChange = (updatedCartData) => {
         setCartData(updatedCartData);
     };
 
-    const checkLegal = async (item, id) => {
-        try {
-            const response = await fetch(`https://localhost:7183/api/Vouchers/voucherDetailId/menuItemId?voucherDetailid=${voucher.voucherDetailId}&menuItemId=${item.id}&employeeId=${id}`);
-            const data = await response.json();
-            return data;
-        } catch (error) {
-            console.error('Error fetching notifications:', error);
-        }
-    };
     const handleSelectVoucher = (selectedItem) => {
-        // setCookie("voucher", JSON.stringify(selectedItem), 7);
         setVoucher(selectedItem);
+    };
 
-    };
     const handleTakeOutChange = (isTake) => {
-        if (isTake) {
-            setHeaderText(true);
-        } else {
-            setHeaderText(false);
-        }
+        setHeaderText(isTake);
     };
+
     const itemsInCart = cartData?.map((item, index) => (
         <ItemInCart
             key={index}
@@ -109,13 +112,11 @@ const Cart = () => {
             price={item.price}
             quantity={item.quantity}
             onQuantityChange={handleQuantityChange}
-        // discount = {discount}
         />
     ));
 
     return (
         <div style={{ background: 'white', border: '1px solid black', borderRadius: '20px', padding: '10px', maxHeight: '700px', width: '320px', overflowY: 'auto' }}>
-
             <CartHeader headerText={headerText} />
             <div style={{ background: 'white', maxHeight: '250px', overflowY: 'auto' }}>
                 {cartData.length > 0 ? (

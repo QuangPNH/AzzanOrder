@@ -63,14 +63,13 @@ public class CheckoutController : Controller
 			Console.WriteLine(exception);
 			return Redirect("/");
 		}
-
 	}
 
 	[HttpGet("/cancel")]
 	public IActionResult Cancel()
 	{
 		//return Redirect("http://localhost:5173/");
-		HttpContext.Request.Cookies.TryGetValue("tableqr", out string tableqr);
+		HttpContext.Request.Cookies.TryGetValue("tableqrPayOs", out string tableqr);
 		return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=fail");
 	}
 

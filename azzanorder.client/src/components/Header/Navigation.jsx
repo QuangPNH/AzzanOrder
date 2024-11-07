@@ -32,7 +32,9 @@ const Navigation = ({ toggleNavbar }) => {
     ]);
 
     useEffect(() => {
-        if (getCookie('memberInfo') != null) {
+        const memberInfo = getCookie('memberInfo');
+        if (memberInfo) {
+            const memberInfo1 = JSON.parse(memberInfo);
             setShowProfile(true);
             const phoneNumber = JSON.parse(getCookie('memberInfo')).phone;
             fetchData(phoneNumber, setImage, setNavItems, navItems);
