@@ -49,9 +49,12 @@ const Homepage = () => {
     }, [id]);
 
     useEffect(() => {
-        if (status == "success") {
-            const { total, totalDiscount } = calculateTotal();
-            postOrder(total);
+        if (status == "fail") {
+            const processOrder = async () => {
+                const { total, totalDiscount } = await calculateTotal();
+                await postOrder(total);
+            }
+            processOrder();
         }
     }, [status]);
 
