@@ -7,6 +7,7 @@ import VoucherCart from './VoucherCart';
 
 function getCartData() {
     const cartDataString = getCookie("cartData");
+    console.log("sdfgssdfgsfd" + cartDataString);
     if (!cartDataString) {
         return [];
     }

@@ -27,7 +27,7 @@ public class CheckoutController : Controller
 		// Save the 'tableqr' value to a cookie
 		if (!string.IsNullOrEmpty(tableqr))
 		{
-			Response.Cookies.Append("tableqr", tableqr, new CookieOptions
+			Response.Cookies.Append("tableqrPayOs", tableqr, new CookieOptions
 			{
 				HttpOnly = true, // Makes the cookie accessible only through HTTP, not JavaScript
 				Expires = DateTimeOffset.UtcNow.AddDays(1) // Set the cookie expiration time
@@ -62,21 +62,20 @@ public class CheckoutController : Controller
 			Console.WriteLine(exception);
 			return Redirect("/");
 		}
-
 	}
 
 	[HttpGet("/cancel")]
 	public IActionResult Cancel()
 	{
 		//return Redirect("http://localhost:5173/");
-		HttpContext.Request.Cookies.TryGetValue("tableqr", out string tableqr);
+		HttpContext.Request.Cookies.TryGetValue("tableqrPayOs", out string tableqr);
 		return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=fail");
 	}
 
 	[HttpGet("/success")]
 	public IActionResult Success()
 	{
-		HttpContext.Request.Cookies.TryGetValue("tableqr", out string tableqr);
+		HttpContext.Request.Cookies.TryGetValue("tableqrPayOs", out string tableqr);
 		return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=success");
 	}
 }
