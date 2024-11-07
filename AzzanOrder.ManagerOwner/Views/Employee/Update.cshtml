@@ -11,7 +11,7 @@
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Employee ID</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" value="@Model.employee.EmployeeId" disabled>
+                        <input asp-for="employee.EmployeeId" class="form-control" readonly>
                     </div>
                 </div>
 
@@ -40,14 +40,31 @@
                     <div class="row">
                         <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Gender</label>
                         <div class="col-sm-10">
-                            <label class="form-check">
-                                <input asp-for="employee.Gender" type="radio" class="form-check-input" value="Male" checked="@Model.employee.Gender == " Male"">
-                                <span class="form-check-label">Male</span>
-                            </label>
-                            <label class="form-check">
-                                <input asp-for="employee.Gender" type="radio" class="form-check-input" value="Female" checked="@Model.employee.Gender == " Female"">
-                                <span class="form-check-label">Female</span>
-                            </label>
+                            
+                                @{
+                                    if(Model.employee.Gender == true)
+                                    {
+                                    <label class="form-check">
+                                        <input asp-for="employee.Gender" type="radio" class="form-check-input" value=true checked>
+                                        <span class="form-check-label">Male</span>
+                                    </label>
+                                    <label class="form-check">
+                                        <input asp-for="employee.Gender" type="radio" class="form-check-input" value=false >
+                                        <span class="form-check-label">Female</span>
+                                    </label>
+                                    }else{
+                                    <label class="form-check">
+                                        <input asp-for="employee.Gender" type="radio" class="form-check-input" value=true>
+                                        <span class="form-check-label">Male</span>
+                                    </label>
+                                    <label class="form-check">
+                                        <input asp-for="employee.Gender" type="radio" class="form-check-input" value=false checked>
+                                        <span class="form-check-label">Female</span>
+                                    </label>
+                                    }
+                                }                     
+                           
+                            
                         </div>
                     </div>
                 </fieldset>
@@ -83,7 +100,7 @@
                                 <label class="form-check">
                                     @if (item.RoleId == Model.employee.RoleId)
                                     {
-                                        <input asp-for="employee.RoleId" type="radio" class="form-check-input" value="@item.RoleId" checked="checked">
+                                        <input asp-for="employee.RoleId" type="radio" class="form-check-input" value="@item.RoleId" checked>
                                     }
                                     else
                                     {
@@ -96,7 +113,6 @@
                         </div>
                     </div>
                 </fieldset>
-
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Image</label>
                     <div class="col-sm-10">

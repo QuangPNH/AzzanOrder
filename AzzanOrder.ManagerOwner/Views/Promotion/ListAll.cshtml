@@ -1,36 +1,526 @@
-﻿<div class="col-12">
-    <div class="card">
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th style="width:5%">On Carousel</th>
-                    <th style="width:5%">On Banner</th>
-                    <th style="width:25%">Title</th>
-                    <th class="d-none d-md-table-cell" style="width:30%">Description</th>
-                    <th style="width:30%">Image</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                <tr>
-                    <td>
-                        <input name="promotionPlace" type="radio" class="form-check-input" checked>
-                    </td>
-                    <td>
-                        <input name="promotionPlace" type="radio" class="form-check-input">
-                    </td>
-                    <td>Sale or something</td>
-                    <td class="d-none d-md-table-cell">Big sale!!</td>
-                    <td>Image</td>
-                    <td class="table-action">
-                        <a href="@Url.Action("Update", "Promotion")"><i class="align-middle" data-feather="edit-2"></i></a>
-                    </td>
-                </tr>
-            </tbody>
-        </table>
+﻿@using Newtonsoft.Json
+@model dynamic
 
-        <div>
-            <a href="javascript:void(0);" class="btn btn-primary" onclick="saveStatus()">Save Status</a>
+@{
+    var logo = Model.Logo;
+
+    var backgroundColor = Model.BackgroundColor;
+
+    var carousel = Model.Carousel;
+
+    var banner = Model.Banner;
+
+    var placeholderImage = "https://s6.imgcdn.dev/gl4Iv.png";
+}
+<div>
+    <a href="@Url.Action("Add", "Promotion")" class="btn btn-primary">Add New Promotion</a>
+</div>
+<header class="header">
+    <div>
+        <img src="@(string.IsNullOrEmpty(logo.Image) ? placeholderImage : logo.Image)" class="logo">
+        <a href="@Url.Action("Update", "Promotion",new { id = logo.PromotionId })" class="align-middle me-2">
+            <i data-feather="edit"></i>
+        </a>
+    </div>
+    <nav class="navigation">
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/aae56868fdcb862e605ea9a58584175c78f8bec2f1376557a9d660d8863bf323?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="Navigation item 1" class="nav-item" loading="lazy">
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/189297da07ec9868357cb4291401ef50667416493bf889bffb02c9cca138ebca?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="Navigation item 2" class="nav-item nav-item-last" loading="lazy">
+    </nav>
+</header>
+<div class="page-container">
+    <nav class="redirect-bar-header">
+        <div class="redirect-bar-navigation">
+            <div class="nav-item2">
+                <div class="icon-wrapper">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/4248bf27bbf27f1c483ff23778eaba7c542de4e8e12b9707e9f5dfec6988ba65?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" alt="Menu icon" class="icon">
+                </div>
+                <span class="label">Menu</span>
+            </div>
+            <div class="nav-item2">
+                <div class="icon-wrapper">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/7a853134f70b6e70ec8c0b2dd80275ee6662820bbc34ce628dce07c644383e1b?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" alt="About Us icon" class="icon">
+                </div>
+                <span class="label">About Us</span>
+            </div>
+            <div class="nav-item2">
+                <div class="icon-wrapper">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/77b7958b81123b01b3263f4d163a20b07db78de7b2898a7f38789ad7f4172289?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" alt="Order icon" class="icon">
+                </div>
+                <span class="label">Order</span>
+            </div>
+            <div class="nav-item2">
+                <div class="icon-wrapper">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/d896ad111b7b0d08a8da0eef1536518980ea24bf8935c612f44c1ad667772f3c?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" alt="Voucher icon" class="icon">
+                </div>
+                <span class="label">Voucher</span>
+            </div>
+        </div>
+    </nav>
+    <section class="recently-ordered-section">
+        <h2 class="section-title">LIMITED COMBO</h2>
+    </section>
+    <div class="card-body">
+        <div class="carousel-container">
+            <div class="small-image-container left">
+                <img class="small-image"
+                     alt="@carousel[0]?.Title"
+                     src="@(string.IsNullOrEmpty(carousel[0]?.Image) ? placeholderImage : carousel[0]?.Image)"
+                     onclick="handlePrev()" />
+            </div>
+            <div class="big-image-container">
+                <img class="big-image" alt="@carousel[1]?.Title" src="@(string.IsNullOrEmpty(carousel[1]?.Image) ? placeholderImage : carousel[1]?.Image)" />
+                <div class="promotion-details">
+                    <h2>@carousel[1]?.Title</h2>
+                    <a id="edit-link" href="@Url.Action("Update", "Promotion",new { id = carousel[1].PromotionId })" class="align-middle me-2">
+                        <i data-feather="edit"></i>
+                    </a>
+                </div>
+            </div>
+            <div class="small-image-container right">
+                <img class="small-image"
+                     alt="@carousel[2]?.Title"
+                     src="@(string.IsNullOrEmpty(carousel[2]?.Image) ? placeholderImage : carousel[2]?.Image)"
+                     onclick="handleNext()" />
+            </div>
         </div>
     </div>
+    <section class="recently-ordered-section">
+        <h2 class="section-title">RECENTLY ORDERED</h2>
+    </section>
+    <div class="product-grid">
+        <div class="product-card">
+            <img src="@placeholderImage" class="product-image">
+            <h2 class="product-title">Café Ðen/ Café Nâu</h2>
+            <div class="price-tag">
+                <span class="price">10000đ</span>
+                <button class="add-to-cart" aria-label="Add to cart">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
+                </button>
+            </div>
+        </div>
+        <div class="product-card">
+            <img src="@placeholderImage" class="product-image">
+            <h2 class="product-title">Café Ðen/ Café Nâu</h2>
+            <div class="price-tag">
+                <span class="price">10000đ</span>
+                <button class="add-to-cart" aria-label="Add to cart">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
+                </button>
+            </div>
+        </div>
+        <div class="product-card">
+            <img src="@placeholderImage" class="product-image">
+            <h2 class="product-title">Café Ðen/ Café Nâu</h2>
+            <div class="price-tag">
+                <span class="price">10000đ</span>
+                <button class="add-to-cart" aria-label="Add to cart">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
+                </button>
+            </div>
+        </div>
+        <div class="product-card">
+            <img src="@placeholderImage" class="product-image">
+            <h2 class="product-title">Café Ðen/ Café Nâu</h2>
+            <div class="price-tag">
+                <span class="price">10000đ</span>
+                <button class="add-to-cart" aria-label="Add to cart">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
+                </button>
+            </div>
+        </div>
+    </div>
+    <section class="recently-ordered-section">
+        <h2 class="section-title">HOT ITEMS</h2>
+    </section>
+    <div class="product-grid">
+        <div class="product-card">
+            <img src="@placeholderImage" class="product-image">
+            <h2 class="product-title">Café Ðen/ Café Nâu</h2>
+            <div class="price-tag">
+                <span class="price">10000đ</span>
+                <button class="add-to-cart" aria-label="Add to cart">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
+                </button>
+            </div>
+        </div>
+        <div class="product-card">
+            <img src="@placeholderImage" class="product-image">
+            <h2 class="product-title">Café Ðen/ Café Nâu</h2>
+            <div class="price-tag">
+                <span class="price">10000đ</span>
+                <button class="add-to-cart" aria-label="Add to cart">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
+                </button>
+            </div>
+        </div>
+        <div class="product-card">
+            <img src="@placeholderImage" class="product-image">
+            <h2 class="product-title">Café Ðen/ Café Nâu</h2>
+            <div class="price-tag">
+                <span class="price">10000đ</span>
+                <button class="add-to-cart" aria-label="Add to cart">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
+                </button>
+            </div>
+        </div>
+        <div class="product-card">
+            <img src="@placeholderImage" class="product-image">
+            <h2 class="product-title">Café Ðen/ Café Nâu</h2>
+            <div class="price-tag">
+                <span class="price">10000đ</span>
+                <button class="add-to-cart" aria-label="Add to cart">
+                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
+                </button>
+            </div>
+        </div>
+    </div>
+    <section class="banner">
+        <div class="image-gallery">
+            @foreach (var promotion in banner)
+            {
+                <i class="align-middle me-2" data-feather="edit"></i>
+                <div class="image-wrapper">
+                    <img src="@(string.IsNullOrEmpty(promotion.Image) ? placeholderImage : promotion.Image)" alt="@promotion.Title" />
+                </div>
+            }
+        </div>
+
+        <nav class="banner-navigation">
+            @for (int i = 0; i < banner.Count; i++)
+            {
+                <div class="dot-indicator @(i == 0 ? "active" : "")"></div>
+            }
+        </nav>
+    </section>
 </div>
+<footer class="footer1">
+    <div class="footer-content">
+        <div class="contact-info">
+            <div class="contact-item">
+                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/c3aac47b727a6612500a96595a3b4d9dea0e4aefb355edcbc066da9019801d47?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="contact-icon">
+                <span class="contact-text">Hotline: 0967375045</span>
+            </div>
+            <div class="contact-item">
+                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/958d2628ee54563e2bd440632e1f0ac71b655aba4be5db360de18f694a6593ec?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="contact-icon">
+                <span class="contact-text">Mail: dungthhe170357@fpt.edu.vn</span>
+            </div>
+            <div class="contact-item">
+                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/259d79add37fc95f3d1523bdcd472dc9158a67373e6e6ef3b90165fe08b90b77?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="contact-icon">
+                <span class="contact-text">Contact</span>
+            </div>
+        </div>
+        <address class="address">2G7G+8F3, Thạch Hoà, Thạch Thất, Hà Nội, Vietnam</address>
+        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/01b1ac975c883874a9251382d0fac643e51155a65744cab318a1afa1ef964ae8?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="Company logo" class="company-logo">
+    </div>
+</footer>
+@section Scripts {
+    <script>
+        let currentIndex = 1;
+        const promotions = @Html.Raw(JsonConvert.SerializeObject(Model.Carousel));
+
+        function handleNext() {
+            currentIndex = (currentIndex + 1) % promotions.length;
+            updateCarousel();
+        }
+
+        function handlePrev() {
+            currentIndex = (currentIndex - 1 + promotions.length) % promotions.length;
+            updateCarousel();
+        }
+
+        function updateCarousel() {
+            const leftIndex = (currentIndex - 1 + promotions.length) % promotions.length;
+            const rightIndex = (currentIndex + 1) % promotions.length;
+            const editLink = document.getElementById('edit-link');
+
+            document.querySelector('.big-image').src = promotions[currentIndex].Image;
+            document.querySelector('.big-image').alt = promotions[currentIndex].Title;
+            editLink.href = `/Promotion/Update?id=${promotions[currentIndex].PromotionId}`;
+            document.querySelector('.promotion-details h2').innerText = promotions[currentIndex].Title;
+
+            document.querySelector('.small-image-container.left .small-image').src = promotions[leftIndex].Image;
+            document.querySelector('.small-image-container.left .small-image').alt = promotions[leftIndex].Title;
+
+            document.querySelector('.small-image-container.right .small-image').src = promotions[rightIndex].Image;
+            document.querySelector('.small-image-container.right .small-image').alt = promotions[rightIndex].Title;
+        }
+
+        function toggleListAll() {
+            const listAllContainer = document.getElementById('listAllContainer');
+            listAllContainer.style.display = listAllContainer.style.display === 'none' ? 'block' : 'none';
+        }
+
+        function updateBannerImages(images, activeIndex) {
+            images.forEach((image, index) => {
+                image.style.display = index === activeIndex ? 'block' : 'none';
+            });
+        }
+
+        function updateDots(dots, activeIndex) {
+            dots.forEach((dot, index) => {
+                dot.classList.toggle('active', index === activeIndex);
+            });
+        }
+
+        function initializeBanner() {
+            const images = document.querySelectorAll('.image-wrapper img');
+            const dots = document.querySelectorAll('.dot-indicator');
+            let activeIndex = 0;
+
+            // Initial display setup
+            updateBannerImages(images, activeIndex);
+            updateDots(dots, activeIndex);
+
+            // Add click event listeners to dots
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    activeIndex = index;
+                    updateBannerImages(images, activeIndex);
+                    updateDots(dots, activeIndex);
+                });
+            });
+        }
+        document.addEventListener('DOMContentLoaded', initializeBanner);
+    </script>
+}
+<style>
+    .carousel-container {
+        position: relative;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        width: 100%;
+        height: 20vh;
+        overflow: hidden;
+    }
+
+    .big-image-container {
+        position: relative;
+        width: 70%;
+        z-index: 2;
+        border-radius: 12px;
+        overflow: hidden;
+        text-align: center;
+    }
+
+    .big-image {
+        width: 100%;
+        height: 20vh;
+        object-fit: cover;
+    }
+
+    .promotion-details {
+        position: absolute;
+        bottom: 0;
+        background: rgba(0, 0, 0, 0.1);
+        color: white;
+        width: 100%;
+        padding: 10px;
+    }
+
+    .small-image-container {
+        position: absolute;
+        background: rgba(0, 0, 0, 0.3);
+        width: 56%; /* 70% of 80% */
+        z-index: 1;
+    }
+
+        .small-image-container.left {
+            left: 0;
+            transform: translateX(-30%);
+        }
+
+        .small-image-container.right {
+            right: 0;
+            transform: translateX(30%);
+        }
+
+    .small-image {
+        width: 100%;
+        height: 18vh;
+        cursor: pointer;
+        border-radius: 12px;
+        object-fit: cover;
+    }
+
+    .banner {
+        width: 100vw;
+        max-width: 100%;
+        height: 300px;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        position: relative;
+        padding: 0;
+    }
+
+    .image-gallery {
+        width: 100%;
+        height: 100%;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .image-wrapper img {
+        position: absolute;
+        inset: 0;
+        height: 100%;
+        width: 100%;
+        object-fit: cover;
+        object-position: center;
+    }
+
+    .banner-navigation {
+        display: flex;
+        gap: 8px;
+        position: absolute;
+        bottom: 40px; /* Increased space from the bottom */
+        z-index: 2; /* Ensure dots are on top */
+    }
+
+    .dot-indicator {
+        background-color: #f0f9ff; /* Light color for inactive dots */
+        border-radius: 50%;
+        width: 8px; /* Smaller size for inactive dots */
+        height: 8px; /* Smaller size for inactive dots */
+        transition: background-color 0.3s, width 0.3s; /* Smooth transition for active state */
+        cursor: pointer; /* Change cursor to pointer on hover */
+    }
+
+        .dot-indicator.active {
+            background-color: #4c5a61; /* Darker color for active dot */
+            width: 19px; /* Larger size for active dot */
+        }
+    .header {
+        background-color: #f6b5b5;
+        width: 400px;
+        height: 64px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .product-card {
+        background-color: #f9f9f9;
+        max-width: 154px;
+    }
+
+    .product-image {
+        width: 100%;
+    }
+
+    .price-tag {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .price {
+        color: #000;
+    }
+
+    .cart-icon {
+        width: 23px;
+    }
+
+    .logo {
+        width: 126px;
+    }
+
+    .nav-item {
+        width: 40px;
+    }
+
+    .nav-item-last {
+        width: 38px;
+    }
+
+    .page-container {
+        width: 400px;
+    }
+
+    .section-title {
+        white-space: nowrap;
+        font-size: 20px;
+        font-weight: 700;
+        text-align: center;
+    }
+    .redirect-bar-header {
+        margin: auto;
+        margin-top: 30px;
+        margin-bottom: 20px;
+        background-color: rgba(255, 255, 255, 0.4);
+        max-width: 328px;
+    }
+
+    .redirect-bar-navigation {
+        display: flex;
+    }
+
+    .nav-item2 {
+        box-shadow: 0 4px 4px rgba(0, 0, 0, 0.25);
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        width: 82px;
+    }
+
+    .icon-wrapper {
+        background-color: rgba(224, 242, 254, 0.7);
+        padding: 10px;
+    }
+
+    .label {
+        margin-top: 12px;
+    }
+
+    .product-grid {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: 20px;
+        width: 400px;
+    }
+
+    .product-title {
+        color: #000;
+        font-size: 14px;
+    }
+    .footer1 {
+        padding-top: 22px;
+        background-color: #f6b5b5;
+        width: 400px;
+    }
+
+    .footer-content {
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start;
+        color: #000;
+    }
+
+    .contact-info {
+        display: flex;
+        flex-direction: column;
+        margin-left: 16px;
+        gap: 10px;
+    }
+
+    .address {
+        margin-left: 16px;
+        margin-top: 10px;
+        color: rgba(0, 0, 0, 0.6);
+        font-size: 14px;
+    }
+
+    .company-logo {
+        width: 201px;
+        align-self: center;
+    }
+
+    .copyright {
+        background-color: #553434;
+        font-size: 14px;
+        color: #fff;
+    }
+</style>

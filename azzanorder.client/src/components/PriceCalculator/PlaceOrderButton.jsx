@@ -23,10 +23,10 @@ const PlaceOrderButton = ({ amount, isTake, isCash }) => {
             const descriptionParts = [];
 
             if (selectedIce) {
-                descriptionParts.push(`${selectedIce}% Ice`);
+                descriptionParts.push(`${selectedIce} Ice`);
             }
             if (selectedSugar) {
-                descriptionParts.push(`${selectedSugar}% Sugar`);
+                descriptionParts.push(`${selectedSugar} Sugar`);
             }
             if (toppings && toppings.length > 0) {
                 descriptionParts.push(...toppings);

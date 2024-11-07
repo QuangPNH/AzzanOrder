@@ -105,15 +105,15 @@ const ItemDetail = ({ closeModal, imageSrc, key, title, price, cate, desc, id })
                 onQuantityChange={setCurrentQuantity}
             />
 
-            {desc.includes('drink') && (
+            {!desc.includes('food') && (
                 <>
                     <div>
-                        <CustomItem title="Lượng đường:" />
+                        <CustomItem title="Sugar amount:" />
                         <AmountBar selectedValue={selectedSugar} onStepClick={setSelectedSugar} />
                     </div>
 
                     <div>
-                        <CustomItem title="Lượng đá:" />
+                        <CustomItem title="Ice amount:" />
                         <AmountBar selectedValue={selectedIce} onStepClick={setSelectedIce} />
                     </div>
                 </>

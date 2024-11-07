@@ -24,21 +24,30 @@ namespace AzzanOrder.Data.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Employee>>> GetEmployees()
         {
-          if (_context.Employees == null)
-          {
-              return NotFound();
-          }
+            if (_context.Employees == null)
+            {
+                return NotFound();
+            }
             return await _context.Employees.Include(e => e.Role).ToListAsync();
         }
-
+        [HttpGet("managerId")]
+        public async Task<ActionResult> GetEmployeesByManagerId(int managerId)
+        {
+            if (_context.Employees == null)
+            {
+                return NotFound();
+            }
+            var a = await _context.Employees.Where(e => e.ManagerId == managerId).Include(e => e.Role).ToListAsync();
+            return Ok(a);
+        }
         // GET: api/Employee/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Employee>> GetEmployee(int id)
         {
-          if (_context.Employees == null)
-          {
-              return NotFound();
-          }
+            if (_context.Employees == null)
+            {
+                return NotFound();
+            }
             var employee = await _context.Employees.Include(e => e.Role).FirstOrDefaultAsync(e => e.EmployeeId == id);
 
             if (employee == null)
@@ -66,28 +75,28 @@ namespace AzzanOrder.Data.Controllers
         }
 
 
-		[HttpGet("Manager/Phone/{phone}")]
-		public async Task<ActionResult<Employee>> GetManagerByPhone(string phone)
-		{
-			if (_context.Employees == null)
-			{
-				return NotFound();
-			}
-			var employee = await _context.Employees.FirstOrDefaultAsync(m => m.Phone.Equals(phone) && (m.Role.RoleName.ToLower() == "Manager".ToLower() || m.Role.RoleName.ToLower() == "Magager".ToLower()));
+        [HttpGet("Manager/Phone/{phone}")]
+        public async Task<ActionResult<Employee>> GetManagerByPhone(string phone)
+        {
+            if (_context.Employees == null)
+            {
+                return NotFound();
+            }
+            var employee = await _context.Employees.FirstOrDefaultAsync(m => m.Phone.Equals(phone) && (m.Role.RoleName.ToLower() == "Manager".ToLower() || m.Role.RoleName.ToLower() == "Magager".ToLower()));
 
-			if (employee == null)
-			{
-				return NotFound();
-			}
-			return employee;
-		}
-
-
+            if (employee == null)
+            {
+                return NotFound();
+            }
+            return employee;
+        }
 
 
-		// PUT: api/Employee/5
-		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-		[HttpPut("Update")]
+
+
+        // PUT: api/Employee/5
+        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+        [HttpPut("Update")]
         public async Task<IActionResult> PutEmployee(Employee employee)
         {
             if (!EmployeeExists(employee.EmployeeId))
@@ -120,10 +129,10 @@ namespace AzzanOrder.Data.Controllers
         [HttpPost("Add")]
         public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
         {
-          if (_context.Employees == null)
-          {
-              return Problem("Entity set 'OrderingAssistSystemContext.Employees'  is null.");
-          }
+            if (_context.Employees == null)
+            {
+                return Problem("Entity set 'OrderingAssistSystemContext.Employees'  is null.");
+            }
 
             if (!_context.Roles.Any() && employee.Role != null)
             {

@@ -130,7 +130,6 @@ const Homepage = () => {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    padding: 0 20px;
                     width: 100%;
                     box-sizing: border-box;
                 }

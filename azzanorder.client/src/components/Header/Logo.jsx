@@ -32,7 +32,7 @@ const Logo = () => {
     return (
         <>
             <img
-                src={logoSrc || "https://cdn.builder.io/api/v1/image/assets/TEMP/e7970bccea406727a92dffa6eaf3dad60f5580953085ae7d3a1cd0abb435e4e5?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8"}
+                src={logoSrc || "https://s6.imgcdn.dev/gl4Iv.png"}
                 alt="Company logo"
                 className="logo"
                 loading="lazy"

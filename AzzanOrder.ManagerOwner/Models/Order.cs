@@ -26,3 +26,4 @@ namespace AzzanOrder.ManagerOwner.Models
         public virtual ICollection<OrderDetail> OrderDetails { get; set; }
     }
 }
+

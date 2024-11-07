@@ -2,11 +2,9 @@
 import AmountIcon from './AmountIcon';
 
 const progressSteps = [
-    { value: '0', label: '0%' },
-    { value: '30', label: '30%' },
-    { value: '50', label: '50%' },
-    { value: '80', label: '80%' },
-    { value: '100', label: '100%' }
+    { value: 'less', label: 'less' },
+    { value: 'normal', label: 'normal' },
+    { value: 'more', label: 'more' }
 ];
 
 function AmountBar({ selectedValue, onStepClick, compact }) {
