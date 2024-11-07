@@ -52,7 +52,7 @@ const OrderTrackScreen = () => {
     };
 
     const allOrdersCompleted = orders && orders.length > 0 && orders.every(order =>
-        order.orderDetails.every(orderDetail => orderDetail.orderDetails.status === true)
+        order.orderDetails.every(orderDetail => orderDetail.status == true)
     );
 
     const updateMemberPoints = async (memberId) => {
@@ -88,14 +88,14 @@ const OrderTrackScreen = () => {
                     <div style={{ marginTop: '20px', maxHeight: '400px', overflowY: 'auto' }}>
                         {orders.map((order, orderIndex) => (
                             <React.Fragment key={order.orderId}>
-                                <h3>Order {orderIndex}</h3>
+                                <h3>Order {orderIndex +1}</h3>
                                 {order.orderDetails.map((orderDetail, detailIndex) => (
-                                    <React.Fragment key={orderDetail.orderDetails.orderDetailId}>
+                                    <React.Fragment key={orderDetail.orderDetailId}>
                                         <OrderItem
-                                            imageSrc={orderDetail.orderDetails.menuItem?.image || 'default-image-url'}
-                                            title={orderDetail.orderDetails.menuItem?.itemName || 'Unknown Item'}
-                                            details={[orderDetail.orderDetails.description || 'No details']}
-                                            status={mapStatus(orderDetail.orderDetails.status)}
+                                            imageSrc={orderDetail.menuItem?.image || 'default-image-url'}
+                                            title={orderDetail.menuItem?.itemName || 'Unknown Item'}
+                                            details={[orderDetail.description || 'No details']}
+                                            status={mapStatus(orderDetail.status)}
                                         />
                                         {detailIndex < order.orderDetails.length - 1 && <div className="order-item-spacing" />}
                                     </React.Fragment>

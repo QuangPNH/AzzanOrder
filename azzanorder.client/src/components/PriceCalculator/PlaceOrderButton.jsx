@@ -71,9 +71,9 @@ export async function postOrder(amount, isCash) {
             await fetch(`https://localhost:7183/api/Members/UpdatePoints/${JSON.parse(getCookie('memberInfo')).memberId}/${amount / 1000}`, {
                 method: 'PUT'
             });
-            deleteCookie();
+            
         }
-
+        deleteCookie('cartData');
         return data;
     } catch (error) {
         console.error("Error creating order:", error);

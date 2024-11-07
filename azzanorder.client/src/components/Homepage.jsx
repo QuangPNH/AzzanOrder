@@ -38,6 +38,7 @@ const Homepage = () => {
                 setShowRecentlyOrdered(true);
             }
             if (id) {
+                setCookie('tableqr','', -1);
                 setCookie('tableqr', id, 1);
                 await fetchOrderExits(id.split('/')[0], id.split('/')[1]);
             }
@@ -49,9 +50,12 @@ const Homepage = () => {
     }, [id]);
 
     useEffect(() => {
-        if (status == "success") {
-            const { total, totalDiscount } = calculateTotal();
-            postOrder(total);
+        if (status == "fail") {
+            const processOrder = async () => {
+                const { total, totalDiscount } = await calculateTotal();
+                await postOrder(total);
+            }
+            processOrder();
         }
     }, [status]);
 

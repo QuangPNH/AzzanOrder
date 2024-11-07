@@ -3,8 +3,6 @@ export function getCookie(name) {
     const parts = value.split(`; ${name}=`); // Split the cookie string to find the desired cookie
     let cook = "";
     if (parts.length === 2) {
-        cook = decodeURIComponent(parts.pop().split(';').shift());
-        console.log(cook);
         return decodeURIComponent(parts.pop().split(';').shift()); // Return the cookie value
     }
 }
