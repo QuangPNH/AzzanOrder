@@ -38,7 +38,8 @@ public class CheckoutController : Controller
 			Response.Cookies.Append("tableqrPayOs", tableqr, new CookieOptions
 			{
 				HttpOnly = true, // Makes the cookie accessible only through HTTP, not JavaScript
-				Expires = DateTimeOffset.UtcNow.AddDays(1) // Set the cookie expiration time
+				Expires = DateTimeOffset.UtcNow.AddDays(1), // Set the cookie expiration time
+				SameSite = SameSiteMode.None // For cross-site usage
 			});
 		}
 
