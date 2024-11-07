@@ -17,7 +17,7 @@ public class CheckoutController : Controller
 
 	//https://localhost:3002/?tableqr=QR_002/1&Price=1000&Item=OASItem&Message=Order
 	[HttpGet("/")]
-	public async Task<IActionResult> IndexAsync([FromQuery] string tableqr,[FromQuery] string Item,[FromQuery] decimal Price,[FromQuery] string Message)
+	public async Task<IActionResult> IndexAsync([FromQuery] string tableqr,[FromQuery] string Item,[FromQuery] int Price,[FromQuery] string Message)
 	{
 		Console.WriteLine("sfsdfsf " + tableqr);
 		Console.WriteLine("Item: " + Item);
@@ -46,7 +46,7 @@ public class CheckoutController : Controller
 
 			PaymentData paymentData = new PaymentData(
 				orderCode,
-				1000,
+				Price,
 				Message + orderCode,
 				items,
 				$"{baseUrl}/cancel",
