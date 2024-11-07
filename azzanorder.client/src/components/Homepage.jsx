@@ -14,7 +14,7 @@ import Navbar from './HomeItem/Navbar';
 import Frame from './HomeItem/Frame';
 import { getCookie, setCookie } from './Account/SignUpForm/Validate';
 
-    // Rest of the code...
+// Rest of the code...
 import Cart from './Cart';
 import { del } from 'framer-motion/client';
 import Banner from './HomeItem/Banner';
@@ -24,8 +24,8 @@ const Homepage = () => {
     const [recentMenuItems, setRecentMenuItems] = useState([]);
     const [showRecentlyOrdered, setShowRecentlyOrdered] = useState(false);
     const search = useLocation().search;
-    const id=new URLSearchParams(search).get("tableqr");
-    const status=new URLSearchParams(search).get("status");
+    const id = new URLSearchParams(search).get("tableqr");
+    const status = new URLSearchParams(search).get("status");
 
     useEffect(() => {
         const memberInfo = getCookie('memberInfo');
@@ -38,16 +38,19 @@ const Homepage = () => {
                 setShowRecentlyOrdered(true);
             }
             if (id) {
-                setCookie('tableqr','', -1);
+                setCookie('tableqr', '', -1);
                 setCookie('tableqr', id, 1);
                 await fetchOrderExits(id.split('/')[0], id.split('/')[1]);
             }
-
-
+            if (status == "success") {
+                const { total } = calculateTotal();
+                console.log(total, "total");
+                postOrder(total);
+            }
 
         };
         fetchData();
-    }, [id]);
+    }, [id, status]);
 
     useEffect(() => {
         if (status == "fail") {
@@ -118,7 +121,7 @@ const Homepage = () => {
                             </div>
                         </div>
                     )}
-                    
+
                     <ShowMoreLink title="HOT ITEMS" />
                     <div className='product-grid'>
                         {menuItems?.map((menuItem) => (
@@ -158,7 +161,7 @@ const Homepage = () => {
     }
                 `}
                 </style>
-                
+
             </div>
             <Footer />
         </>
@@ -191,8 +194,8 @@ const Homepage = () => {
     );
 };
 
-  function deleteCookie(name) {
+function deleteCookie(name) {
     setCookie(name, '', -1); // Call setCookie with negative days to delete
-  }
+}
 
 export default Homepage;

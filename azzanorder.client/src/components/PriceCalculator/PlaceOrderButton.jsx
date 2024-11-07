@@ -8,7 +8,7 @@ export async function postOrder(amount, isCash) {
         const cartDataString = getCookie("cartData");
         if (!cartDataString) {
             throw new Error("No item in cart");
-        }
+                    }
 
         const memberIn = getCookie('memberInfo');
         const cartData = JSON.parse(cartDataString);
@@ -33,16 +33,16 @@ export async function postOrder(amount, isCash) {
             };
         });
 
-        const cookieValue = getCookie('tableqr');
+                const cookieValue = getCookie('tableqr');
         const tableId = cookieValue
             ? parseInt(cookieValue.split('/')[2] ?? 0)
             : null;
-
+        
         let order = {
-            TableId: tableId,
-            Cost: amount,
-            OrderDetails: orderDetails,
-        };
+                TableId: tableId,
+                Cost: amount,
+                OrderDetails: orderDetails,
+            };
 
         if (memberIn) {
             order.MemberId = JSON.parse(memberIn).memberId;
@@ -50,22 +50,22 @@ export async function postOrder(amount, isCash) {
 
         if (isCash) {
             order.tax = 1;
-        }
+            }
 
-        const response = await fetch("https://localhost:7183/api/Order", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json",
-            },
-            body: JSON.stringify(order),
-        });
+            const response = await fetch("https://localhost:7183/api/Order", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify(order),
+            });
 
-        if (!response.ok) {
-            throw new Error(`HTTP error! status: ${response.status}`);
-        }
+            if (!response.ok) {
+                throw new Error(`HTTP error! status: ${response.status}`);
+            }
 
-        const data = await response.json();
-        console.log("Order created successfully:", data);
+            const data = await response.json();
+            console.log("Order created successfully:", data);
 
         if (getCookie('memberInfo')) {
             await fetch(`https://localhost:7183/api/Members/UpdatePoints/${JSON.parse(getCookie('memberInfo')).memberId}/${amount / 1000}`, {
@@ -95,7 +95,7 @@ const PlaceOrderButton = ({ amount, isTake, isCash }) => {
         } catch (error) {
             setError(error.message);
         }
-    };
+        };
 
     return (
         <div>
