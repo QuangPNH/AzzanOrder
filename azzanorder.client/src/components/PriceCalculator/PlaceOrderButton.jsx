@@ -40,11 +40,7 @@ const PlaceOrderButton = ({ amount, isTake, isCash }) => {
         });
 
         let order = null;
-        const cookieValue = getCookie('tableqr');
-const tableId = cookieValue 
-    ? parseInt(cookieValue.split('/')[2] ?? 0) 
-    : null;
-
+        const tableId = parseInt(getCookie('tableqr').split('/')[2]);
         //const tableId = parseInt(manaid.split('/')[2]);
         if (memberIn) {
             order = {

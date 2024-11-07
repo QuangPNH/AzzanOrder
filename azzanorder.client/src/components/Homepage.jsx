@@ -11,7 +11,7 @@ import ShowMoreLink from './ShowMoreLink/ShowMoreLink';
 import ProductCard from './ProductCard/ProductCard';
 import Navbar from './HomeItem/Navbar';
 import Frame from './HomeItem/Frame';
-import { getCookie } from './Account/SignUpForm/Validate';
+import { getCookie, setCookie } from './Account/SignUpForm/Validate';
 
     // Rest of the code...
 import Cart from './Cart';
@@ -180,14 +180,6 @@ const Homepage = () => {
         //<MenuMainPage />
     );
 };
-
-
-function setCookie(name, value, days) {
-    const expires = new Date(Date.now() + days * 864e5).toUTCString(); // Calculate expiration date
-    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; // Set cookie
-  }
-
-
 
   function deleteCookie(name) {
     setCookie(name, '', -1); // Call setCookie with negative days to delete
