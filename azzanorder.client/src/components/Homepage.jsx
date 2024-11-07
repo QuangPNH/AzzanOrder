@@ -42,24 +42,19 @@ const Homepage = () => {
                 setCookie('tableqr', id, 1);
                 await fetchOrderExits(id.split('/')[0], id.split('/')[1]);
             }
-            if (status == "success") {
-                const { total } = calculateTotal();
-                console.log(total, "total");
-                postOrder(total);
-            }
-
         };
-        fetchData();
-    }, [id, status]);
-
-    useEffect(() => {
-        if (status == "fail") {
+        if (status == "success") {
             const processOrder = async () => {
                 const { total, totalDiscount } = await calculateTotal();
                 await postOrder(total);
             }
             processOrder();
         }
+        fetchData();
+    }, [id, status]);
+
+    useEffect(() => {
+        
     }, [status]);
 
     const fetchMenuItems = async (manaId) => {

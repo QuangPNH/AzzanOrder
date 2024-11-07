@@ -215,6 +215,8 @@ namespace AzzanOrder.Data.Models
             {
                 entity.ToTable("OrderDetail");
 
+                entity.Property(e => e.Description).HasMaxLength(50);
+
                 entity.HasOne(d => d.MenuItem)
                     .WithMany(p => p.OrderDetails)
                     .HasForeignKey(d => d.MenuItemId)
