@@ -51,7 +51,7 @@ export async function postOrder(amount, isCash) {
         if (isCash) {
             order.tax = 1;
             }
-
+            console.log(JSON.stringify(order));
             const response = await fetch("https://localhost:7183/api/Order", {
                 method: "POST",
                 headers: {
@@ -73,7 +73,7 @@ export async function postOrder(amount, isCash) {
             });
             
         }
-        deleteCookie('cartData');
+        deleteCookie();
         return data;
     } catch (error) {
         console.error("Error creating order:", error);
