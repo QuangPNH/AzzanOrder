@@ -99,7 +99,7 @@ public class CheckoutController : Controller
         {
             return RedirectToAction("Subscribe", "Home");
         }
-        return RedirectToAction("Index", "Home");
+        return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=success");
     }
 
 
