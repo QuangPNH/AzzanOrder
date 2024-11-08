@@ -1,14 +1,15 @@
 ﻿import React, { useState, useEffect } from 'react';
+import { getCookie } from '../Account/SignUpForm/Validate';
 
 const Frame = () => {
     const [promotions, setPromotions] = useState([]);
     const [currentIndex, setCurrentIndex] = useState(0);
 
     useEffect(() => {
-        // Fetch promotions from API
-        const fetchPromotions = async () => {
+        const fetchPromotions = async (manaId) => {
             try {
-                const response = await fetch('https://localhost:7183/api/Promotions/GetByDescription/carousel'); // Replace with your API endpoint
+                const url = manaId ? `https://localhost:7183/api/Promotions/GetByDescription/carousel?manaId=${manaId}` : 'https://localhost:7183/api/Promotions/GetByDescription/carousel';
+                const response = await fetch(url);
                 const data = await response.json();
                 setPromotions(data);
             } catch (error) {
@@ -16,7 +17,7 @@ const Frame = () => {
             }
         };
 
-        fetchPromotions();
+        fetchPromotions(getCookie('tableqr') ? getCookie('tableqr').split('/')[1] : null);
     }, []);
 
     const handleNext = () => {
@@ -82,7 +83,7 @@ const Frame = () => {
 
                 .big-image {
                     width: 100%;
-                    height: auto;
+                    height: 20vh;
                     object-fit: cover;
                 }
 
@@ -114,6 +115,7 @@ const Frame = () => {
 
                 .small-image {
                     width: 100%;
+                    height: 18vh;
                     cursor: pointer;
                     border-radius: 12px;
                     object-fit: cover;

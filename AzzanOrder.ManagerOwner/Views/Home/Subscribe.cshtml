@@ -1,225 +1,177 @@
-﻿
+﻿@model AzzanOrder.ManagerOwner.Models.Model
+
 <div class="container-fluid p-0">
 
     <div class="mb-3">
-        <h1 class="h3 d-inline align-middle">Plans &amp; Pricing</h1><a class="badge bg-primary ms-2" href="https://adminkit.io/pricing/"
-                                                                        target="_blank">Pro Component <i class="fas fa-fw fa-external-link-alt"></i></a>
+        <h1 class="h3 d-inline align-middle">ㅤ</h1>
     </div>
 
     <div class="row">
         <div class="col-md-10 col-xl-8 mx-auto">
-            <h1 class="text-center">We have a plan for everyone</h1>
-            <p class="lead text-center mb-4">Whether you're a business or an individual, 14-day trial no credit card required.</p>
+            <h1 class="text-center">OAS subscription</h1>
+            <p class="lead text-center mb-4">Manage your cafe shop at ease right now!!!</p>
 
-            <div class="row justify-content-center mt-3 mb-2">
-                <div class="col-auto">
-                    <nav class="nav btn-group">
-                        <a href="#monthly" class="btn btn-outline-primary active" data-bs-toggle="tab">Monthly billing</a>
-                        <a href="#annual" class="btn btn-outline-primary" data-bs-toggle="tab">Annual billing</a>
-                    </nav>
-                </div>
-            </div>
-
-            <div class="tab-content">
-                <div class="tab-pane fade show active" id="monthly">
-                    <div class="row py-4">
-                        <div class="col-sm-4 mb-3 mb-md-0">
-                            <div class="card text-center h-100">
-                                <div class="card-body d-flex flex-column">
-                                    <div class="mb-4">
-                                        <h5>Free</h5>
-                                        <span class="display-4">$0</span>
-                                    </div>
-                                    <h6>Includes:</h6>
-                                    <ul class="list-unstyled">
-                                        <li class="mb-2">
-                                            1 users
-                                        </li>
-                                        <li class="mb-2">
-                                            5 projects
-                                        </li>
-                                        <li class="mb-2">
-                                            5 GB storage
-                                        </li>
-                                    </ul>
-                                    <div class="mt-auto">
-                                        <a href="#" class="btn btn-lg btn-outline-primary">Sign up</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4 mb-3 mb-md-0">
-                            <div class="card text-center h-100">
-                                <div class="card-body d-flex flex-column">
-                                    <div class="mb-4">
-                                        <h5>Standard</h5>
-                                        <span class="display-4">$19</span>
-                                        <span>/mo</span>
-                                    </div>
-                                    <h6>Includes:</h6>
-                                    <ul class="list-unstyled">
-                                        <li class="mb-2">
-                                            5 users
-                                        </li>
-                                        <li class="mb-2">
-                                            50 projects
-                                        </li>
-                                        <li class="mb-2">
-                                            50 GB storage
-                                        </li>
-                                        <li class="mb-2">
-                                            Security policy
-                                        </li>
-                                        <li class="mb-2">
-                                            Weekly backups
-                                        </li>
-                                    </ul>
-                                    <div class="mt-auto">
-                                        <a href="#" class="btn btn-lg btn-primary">Try it for free</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4 mb-3 mb-md-0">
-                            <div class="card text-center h-100">
-                                <div class="card-body d-flex flex-column">
-                                    <div class="mb-4">
-                                        <h5>Plus</h5>
-                                        <span class="display-4">$39</span>
-                                        <span>/mo</span>
-                                    </div>
-                                    <h6>Includes:</h6>
-                                    <ul class="list-unstyled">
-                                        <li class="mb-2">
-                                            Unlimited users
-                                        </li>
-                                        <li class="mb-2">
-                                            Unlimited projects
-                                        </li>
-                                        <li class="mb-2">
-                                            250 GB storage
-                                        </li>
-                                        <li class="mb-2">
-                                            Priority support
-                                        </li>
-                                        <li class="mb-2">
-                                            Security policy
-                                        </li>
-                                        <li class="mb-2">
-                                            Daily backups
-                                        </li>
-                                        <li class="mb-2">
-                                            Custom CSS
-                                        </li>
-                                    </ul>
-                                    <div class="mt-auto">
-                                        <a href="#" class="btn btn-lg btn-outline-primary">Try it for free</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Register as an owner</h5>
+                        <h5 class="card-title">Become the boss of your shop</h5>
                     </div>
-                </div>
-                <div class="tab-pane fade" id="annual">
-                    <div class="row py-4">
-                        <div class="col-sm-4 mb-3 mb-md-0">
-                            <div class="card text-center h-100">
-                                <div class="card-body d-flex flex-column">
-                                    <div class="mb-4">
-                                        <h5>Free</h5>
-                                        <span class="display-4">$0</span>
+                    <div class="card-body">
+                        <form asp-action="SubscribeAction" asp-controller="Home" method="post" enctype="multipart/form-data">
+                            <div class="mb-3 row">
+                                <label class="col-form-label col-sm-2 text-sm-end">Name</label>
+                                <div class="col-sm-10">
+                                    <input asp-for="owner.OwnerName" class="form-control" placeholder="Name">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-form-label col-sm-2 text-sm-end">Phone</label>
+                                <div class="col-sm-10">
+                                    <input asp-for="owner.Phone" class="form-control" placeholder="Phone">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-form-label col-sm-2 text-sm-end">Email</label>
+                                <div class="col-sm-10">
+                                    <input asp-for="owner.Gmail" class="form-control" placeholder="Email">
+                                </div>
+                            </div>
+
+                            <fieldset class="mb-3">
+                                <div class="row">
+                                    <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Gender</label>
+                                    <div class="col-sm-10">
+                                        <label class="form-check">
+                                            <input asp-for="owner.Gender" type="radio" class="form-check-input" value=true>
+                                            <span class="form-check-label">Male</span>
+                                        </label>
+                                        <label class="form-check">
+                                            <input asp-for="owner.Gender" type="radio" class="form-check-input" value=false>
+                                            <span class="form-check-label">Female</span>
+                                        </label>
                                     </div>
-                                    <h6>Includes:</h6>
-                                    <ul class="list-unstyled">
-                                        <li class="mb-2">
-                                            1 users
-                                        </li>
-                                        <li class="mb-2">
-                                            5 projects
-                                        </li>
-                                        <li class="mb-2">
-                                            5 GB storage
-                                        </li>
-                                    </ul>
-                                    <div class="mt-auto">
-                                        <a href="#" class="btn btn-lg btn-outline-primary">Sign up</a>
+                                </div>
+                            </fieldset>
+
+                            <div class="mb-3 row">
+                                <label class="col-form-label col-sm-2 text-sm-end">Birthday</label>
+                                <div class="col-sm-10">
+                                    <input asp-for="owner.BirthDate" class="form-control" data-inputmask-alias="datetime"
+                                           data-inputmask-inputformat="dd/mm/yyyy" />
+                                    <span class="text-muted">DD/MM/YYYY format.</span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Image</label>
+                                <div class="col-sm-10">
+                                    <input asp-for="owner.Image" name="employeeImage" type="file" accept=".png, .jpg">
+                                    <small class="form-check-label text-muted">Only png and jpg allowed.</small>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-form-label col-sm-2 text-sm-end">Select Bank</label>
+                                <div class="col-sm-10">
+                                    <select asp-for="bankDatum.code" class="form-select">
+                                        <option value="">-- Select a Bank --</option>
+                                        @foreach (var bank in Model.bankDatums)
+                                        {
+                                            <option value="@bank.code">@bank.shortName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-form-label col-sm-2 text-sm-end">PayOS client ID</label>
+                                <div class="col-sm-10">
+                                    <input asp-for="owner.Gmail" class="form-control" placeholder="PAYOS_CLIENT_ID">
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-form-label col-sm-2 text-sm-end">PayOS client ID</label>
+                                <div class="col-sm-10">
+                                    <input asp-for="owner.Gmail" class="form-control" placeholder="PAYOS_API_KEY">
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-form-label col-sm-2 text-sm-end">PayOS checksum key</label>
+                                <div class="col-sm-10">
+                                    <input asp-for="owner.Gmail" class="form-control" placeholder="PAYOS_CHECKSUM_KEY">
+                                </div>
+                            </div>
+
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="monthly">
+                                    <div class="row py-4">
+                                        <div class="col-sm-4 mb-3 mb-md-0">
+                                            <div class="card text-center h-100">
+                                                <div class="card-body d-flex flex-column">
+                                                    <div class="mb-4">
+                                                        <h5>Monthly</h5>
+                                                        <span class="display-4">30.000đ</span>
+                                                        <span>/mo</span>
+                                                    </div>
+                                                    <ul class="list-unstyled">
+                                                        <li class="mb-2">
+                                                            Cheapest!
+                                                        </li>
+                                                    </ul>
+                                                    <div class="mt-auto">
+                                                        <button type="submit" class="btn btn-primary" name="pack" value="monthly">Purchase</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4 mb-3 mb-md-0">
+                                            <div class="card text-center h-100">
+                                                <div class="card-body d-flex flex-column">
+                                                    <div class="mb-4">
+                                                        <h5>Yearly</h5>
+                                                        <span class="display-4">300.000đ</span>
+                                                        <span>/year</span>
+                                                    </div>
+                                                    <ul class="list-unstyled">
+                                                        <li class="mb-2">
+                                                            Moderate
+                                                        </li>
+                                                    </ul>
+                                                    <div class="mt-auto">
+                                                        <button type="submit" class="btn btn-outline-primary" name="pack" value="yearly">Purchase</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4 mb-3 mb-md-0">
+                                            <div class="card text-center h-100">
+                                                <div class="card-body d-flex flex-column">
+                                                    <div class="mb-4">
+                                                        <h5>Forever!!</h5>
+                                                        <span class="display-4">3.000.000đ</span>
+                                                    </div>
+                                                    <ul class="list-unstyled">
+                                                        <li class="mb-2">
+                                                            Best value!
+                                                        </li>
+                                                    </ul>
+                                                    <div class="mt-auto">
+                                                        <button type="submit" class="btn btn-outline-primary" name="pack" value="forever">Purchase</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
-                        </div>
-                        <div class="col-sm-4 mb-3 mb-md-0">
-                            <div class="card text-center h-100">
-                                <div class="card-body d-flex flex-column">
-                                    <div class="mb-4">
-                                        <h5>Standard</h5>
-                                        <span class="display-4">$199</span>
-                                        <span class="text-small4">/mo</span>
-                                    </div>
-                                    <h6>Includes:</h6>
-                                    <ul class="list-unstyled">
-                                        <li class="mb-2">
-                                            5 users
-                                        </li>
-                                        <li class="mb-2">
-                                            50 projects
-                                        </li>
-                                        <li class="mb-2">
-                                            50 GB storage
-                                        </li>
-                                        <li class="mb-2">
-                                            Security policy
-                                        </li>
-                                        <li class="mb-2">
-                                            Weekly backups
-                                        </li>
-                                    </ul>
-                                    <div class="mt-auto">
-                                        <a href="#" class="btn btn-lg btn-primary">Try it for free</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4 mb-3 mb-md-0">
-                            <div class="card text-center h-100">
-                                <div class="card-body d-flex flex-column">
-                                    <div class="mb-4">
-                                        <h5>Plus</h5>
-                                        <span class="display-4">$399</span>
-                                        <span>/mo</span>
-                                    </div>
-                                    <h6>Includes:</h6>
-                                    <ul class="list-unstyled">
-                                        <li class="mb-2">
-                                            Unlimited users
-                                        </li>
-                                        <li class="mb-2">
-                                            Unlimited projects
-                                        </li>
-                                        <li class="mb-2">
-                                            250 GB storage
-                                        </li>
-                                        <li class="mb-2">
-                                            Priority support
-                                        </li>
-                                        <li class="mb-2">
-                                            Security policy
-                                        </li>
-                                        <li class="mb-2">
-                                            Daily backups
-                                        </li>
-                                        <li class="mb-2">
-                                            Custom CSS
-                                        </li>
-                                    </ul>
-                                    <div class="mt-auto">
-                                        <a href="#" class="btn btn-lg btn-outline-primary">Try it for free</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        </form>
                     </div>
                 </div>
             </div>
+            
 
             <hr />
 
@@ -230,10 +182,9 @@
                 <div class="col-md-5 col-sm-6 ms-auto">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="h6 card-title">Do I need a credit card to sign up?</h5>
+                            <h5 class="h6 card-title">How do I pay?</h5>
                             <p class="mb-0">
-                                Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet
-                                adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+                                Easy and fast with online banking.
                             </p>
                         </div>
                     </div>
@@ -243,30 +194,7 @@
                         <div class="card-body">
                             <h5 class="h6 card-title">Do you offer a free trial?</h5>
                             <p class="mb-0">
-                                Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet
-                                adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-5 col-sm-6 ms-auto">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="h6 card-title">What if I decide to cancel my plan?</h5>
-                            <p class="mb-0">
-                                Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet
-                                adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
-                            </p>
-                        </div>
-                    </div>
-                </div>
-                <div class="col-md-5 col-sm-6 me-auto">
-                    <div class="card">
-                        <div class="card-body">
-                            <h5 class="h6 card-title">Can I cancel at anytime?</h5>
-                            <p class="mb-0">
-                                Etiam rhoncus. Maecenas tempus, tellus eget condimentum rhoncus, sem quam semper libero, sit amet
-                                adipiscing sem neque sed ipsum. Nam quam nunc, blandit vel, luctus pulvinar, hendrerit id, lorem.
+                                Unfortunately no. But you can try our cheapest plan. It's dirt cheap!
                             </p>
                         </div>
                     </div>
@@ -274,5 +202,4 @@
             </div>
         </div>
     </div>
-
 </div>

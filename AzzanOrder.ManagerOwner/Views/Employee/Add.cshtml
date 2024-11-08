@@ -1,242 +1,149 @@
 ﻿@model AzzanOrder.ManagerOwner.Models.Model
 
 <div class="col-12">
-   <div class="card">
-       <div class="card-header">
-           <h5 class="card-title">Add Employee</h5>
-       </div>
-       <div class="card-body">
-           @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Add Employee</h5>
+        </div>
+        <div class="card-body">
+            @addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
 
-           <div class="col-12">
-               <div class="card">
-                   <div class="card-header">
-                       <h5 class="card-title">Add Employee</h5>
-                   </div>
-                   <div class="card-body">
-                        <form asp-action="AddAction" asp-controller="Employee" method="post">
-                           <div class="mb-3 row">
-                               <label class="col-form-label col-sm-2 text-sm-end">Name</label>
-                               <div class="col-sm-10">
-                                   <input asp-for="employee.EmployeeName" class="form-control" placeholder="Name">
-                               </div>
-                           </div>
-                           <div class="mb-3 row">
-                               <label class="col-form-label col-sm-2 text-sm-end">Phone</label>
-                               <div class="col-sm-10">
-                                   <input asp-for="employee.Phone" class="form-control" placeholder="Phone">
-                               </div>
-                           </div>
-                           <div class="mb-3 row">
-                               <label class="col-form-label col-sm-2 text-sm-end">Email</label>
-                               <div class="col-sm-10">
-                                   <input asp-for="employee.Gmail" class="form-control" placeholder="Email">
-                               </div>
-                           </div>
+            <div class="col-12">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="card-title">Add Employee</h5>
+                    </div>
+                    <div class="card-body">
+                        <form asp-action="AddAction" asp-controller="Employee" method="post" enctype="multipart/form-data">
+                            <div class="mb-3 row">
+                                <label class="col-form-label col-sm-2 text-sm-end">Name</label>
+                                <div class="col-sm-10">
+                                    <input asp-for="employee.EmployeeName" class="form-control" placeholder="Name">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-form-label col-sm-2 text-sm-end">Phone</label>
+                                <div class="col-sm-10">
+                                    <input asp-for="employee.Phone" class="form-control" placeholder="Phone">
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-form-label col-sm-2 text-sm-end">Email</label>
+                                <div class="col-sm-10">
+                                    <input asp-for="employee.Gmail" class="form-control" placeholder="Email">
+                                </div>
+                            </div>
 
-                           <fieldset class="mb-3">
-                               <div class="row">
-                                   <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Gender</label>
-                                   <div class="col-sm-10">
-                                       <label class="form-check">
-                                           <input asp-for="employee.Gender" type="radio" class="form-check-input" value="Male" checked>
-                                           <span class="form-check-label">Male</span>
-                                       </label>
-                                       <label class="form-check">
-                                           <input asp-for="employee.Gender" type="radio" class="form-check-input" value="Female">
-                                           <span class="form-check-label">Female</span>
-                                       </label>
-                                   </div>
-                               </div>
-                           </fieldset>
-
-                           <div class="mb-3 row">
-                               <label class="col-form-label col-sm-2 text-sm-end">Birthday</label>
-                               <div class="col-sm-10">
-                                   <input asp-for="employee.BirthDate" class="form-control" data-inputmask-alias="datetime"
-                                          data-inputmask-inputformat="dd/mm/yyyy" />
-                                   <span class="text-muted">DD/MM/YYYY format.</span>
-                               </div>
-                           </div>
-
-                           <div class="mb-3 row">
-                               <label class="col-form-label col-sm-2 text-sm-end">Home Address</label>
-                               <div class="col-sm-10">
-                                   <textarea asp-for="employee.HomeAddress" class="form-control" placeholder="Home Address" rows="3"></textarea>
-                               </div>
-                           </div>
-                           <div class="mb-3 row">
-                               <label class="col-form-label col-sm-2 text-sm-end">Work Address</label>
-                               <div class="col-sm-10">
-                                   <textarea asp-for="employee.WorkAddress" class="form-control" placeholder="Work Address" rows="3"></textarea>
-                               </div>
-                           </div>
-                           <fieldset class="mb-3">
-                               <div class="row">
-                                   <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Role</label>
-                                   <div class="col-sm-10">
-                                       <label class="form-check">
-                                           <input asp-for="employee.Role" type="radio" class="form-check-input" value="Staff" checked>
-                                           <span class="form-check-label">Staff</span>
-                                       </label>
-                                       <label class="form-check">
-                                           <input asp-for="employee.Role" type="radio" class="form-check-input" value="Bartender">
-                                           <span class="form-check-label">Bartender</span>
-                                       </label>
-                                       <label class="form-check">
-                                           <input asp-for="employee.Role" type="radio" class="form-check-input" value="Manager" disabled>
-                                           <span class="form-check-label">Manager</span>
-                                       </label>
-                                   </div>
-                               </div>
-                           </fieldset>
-
-                           <div class="mb-3 row">
-                               <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Image</label>
-                               <div class="col-sm-10">
-                                   <input asp-for="employee.Image" type="file" accept=".png, .jpg">
-                                   <small class="form-check-label text-muted">Only png and jpg allowed.</small>
-                               </div>
-                           </div>
-
-                           <div class="mb-3 row">
-                               <div class="col-sm-10 ms-sm-auto">
-                                   <button type="submit" class="btn btn-primary">Submit</button>
-                               </div>
-                           </div>
-                            <form action="@Url.Action("AddAction", "Employee")" method="post">
-                                <div class="mb-3 row">
-                                    <label class="col-form-label col-sm-2 text-sm-end">Name</label>
+                            <fieldset class="mb-3">
+                                <div class="row">
+                                    <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Gender</label>
                                     <div class="col-sm-10">
-                                        <input asp-for="employee.EmployeeName" class="form-control" placeholder="Name">
+                                        <label class="form-check">
+                                            <input asp-for="employee.Gender" type="radio" class="form-check-input" value=true>
+                                            <span class="form-check-label">Male</span>
+                                        </label>
+                                        <label class="form-check">
+                                            <input asp-for="employee.Gender" type="radio" class="form-check-input" value=false>
+                                            <span class="form-check-label">Female</span>
+                                        </label>
                                     </div>
                                 </div>
-                                <div class="mb-3 row">
-                                    <label class="col-form-label col-sm-2 text-sm-end">Phone</label>
-                                    <div class="col-sm-10">
-                                        <input asp-for="employee.Phone" class="form-control" placeholder="Phone">
-                                    </div>
-                                </div>
-                                <div class="mb-3 row">
-                                    <label class="col-form-label col-sm-2 text-sm-end">Email</label>
-                                    <div class="col-sm-10">
-                                        <input asp-for="employee.Gmail" class="form-control" placeholder="Email">
-                                    </div>
-                                </div>
+                            </fieldset>
 
-                                <fieldset class="mb-3">
-                                    <div class="row">
-                                        <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Gender</label>
-                                        <div class="col-sm-10">
+                            <div class="mb-3 row">
+                                <label class="col-form-label col-sm-2 text-sm-end">Birthday</label>
+                                <div class="col-sm-10">
+                                    <input asp-for="employee.BirthDate" class="form-control" data-inputmask-alias="datetime"
+                                           data-inputmask-inputformat="dd/mm/yyyy" />
+                                    <span class="text-muted">DD/MM/YYYY format.</span>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-form-label col-sm-2 text-sm-end">Home Address</label>
+                                <div class="col-sm-10">
+                                    <textarea asp-for="employee.HomeAddress" class="form-control" placeholder="Home Address" rows="3"></textarea>
+                                </div>
+                            </div>
+                            <div class="mb-3 row">
+                                <label class="col-form-label col-sm-2 text-sm-end">Work Address</label>
+                                <div class="col-sm-10">
+                                    <textarea asp-for="employee.WorkAddress" class="form-control" placeholder="Work Address" rows="3"></textarea>
+                                </div>
+                            </div>
+
+                            <fieldset class="mb-3">
+                                <div class="row">
+                                    <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Role</label>
+                                    <div class="col-sm-10">
+
+                                        @foreach (var item in Model.roles)
+                                        {
                                             <label class="form-check">
-                                                <input asp-for="employee.Gender" type="radio" class="form-check-input" value="Male" checked>
-                                                <span class="form-check-label">Male</span>
+                                                <input asp-for="employee.RoleId" type="radio" class="form-check-input" value="@item.RoleId">
+                                                <span class="form-check-label">@item.RoleName</span>
                                             </label>
-                                            <label class="form-check">
-                                                <input asp-for="employee.Gender" type="radio" class="form-check-input" value="Female">
-                                                <span class="form-check-label">Female</span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </fieldset>
+                                        }
 
-                                <div class="mb-3 row">
-                                    <label class="col-form-label col-sm-2 text-sm-end">Birthday</label>
-                                    <div class="col-sm-10">
-                                        <input asp-for="employee.BirthDate" class="form-control" data-inputmask-alias="datetime"
-                                               data-inputmask-inputformat="dd/mm/yyyy" />
-                                        <span class="text-muted">DD/MM/YYYY format.</span>
                                     </div>
                                 </div>
+                            </fieldset>
 
-                                <div class="mb-3 row">
-                                    <label class="col-form-label col-sm-2 text-sm-end">Home Address</label>
-                                    <div class="col-sm-10">
-                                        <textarea asp-for="employee.HomeAddress" class="form-control" placeholder="Home Address" rows="3"></textarea>
-                                    </div>
+                            <div class="mb-3 row">
+                                <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Image</label>
+                                <div class="col-sm-10">
+                                    <input asp-for="employee.Image" name="employeeImage" type="file" accept=".png, .jpg">
+                                    <small class="form-check-label text-muted">Only png and jpg allowed.</small>
                                 </div>
-                                <div class="mb-3 row">
-                                    <label class="col-form-label col-sm-2 text-sm-end">Work Address</label>
-                                    <div class="col-sm-10">
-                                        <textarea asp-for="employee.WorkAddress" class="form-control" placeholder="Work Address" rows="3"></textarea>
-                                    </div>
-                                </div>
-                                <fieldset class="mb-3">
-                                    <div class="row">
-                                        <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Role</label>
-                                        <div class="col-sm-10">
-                                            <label class="form-check">
-                                                <input asp-for="employee.Role" type="radio" class="form-check-input" value="Staff" checked>
-                                                <span class="form-check-label">Staff</span>
-                                            </label>
-                                            <label class="form-check">
-                                                <input asp-for="employee.Role" type="radio" class="form-check-input" value="Bartender">
-                                                <span class="form-check-label">Bartender</span>
-                                            </label>
-                                            <label class="form-check">
-                                                <input asp-for="employee.Role" type="radio" class="form-check-input" value="Manager" disabled>
-                                                <span class="form-check-label">Manager</span>
-                                            </label>
-                                        </div>
-                                    </div>
-                                </fieldset>
+                            </div>
 
-                                <div class="mb-3 row">
-                                    <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Image</label>
-                                    <div class="col-sm-10">
-                                        <input asp-for="employee.Image" type="file" accept=".png, .jpg">
-                                        <small class="form-check-label text-muted">Only png and jpg allowed.</small>
-                                    </div>
+                            <div class="mb-3 row">
+                                <div class="col-sm-10 ms-sm-auto">
+                                    <button type="submit" class="btn btn-primary">Submit</button>
                                 </div>
-
-                                <div class="mb-3 row">
-                                    <div class="col-sm-10 ms-sm-auto">
-                                        <button type="submit" class="btn btn-primary">Submit</button>
-                                    </div>
-                                </div>
-                            </form>
-                       </form>
-                   </div>
-               </div>
-           </div>
-       </div>
-   </div>
-</div>
+                            </div>
+                        </form>
                     </div>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
+</div>
+                </div>
+            </div>
 
-            <script>
-                document.addEventListener("DOMContentLoaded", function () {
-                    // Choices.js
-                    new Choices(document.querySelector(".choices-single"));
-                    new Choices(document.querySelector(".choices-multiple"));
-                    // Flatpickr
-                    flatpickr(".flatpickr-minimum");
-                    flatpickr(".flatpickr-datetime", {
-                        enableTime: true,
-                        dateFormat: "Y-m-d H:i",
-                    });
-                    flatpickr(".flatpickr-human", {
-                        altInput: true,
-                        altFormat: "F j, Y",
-                        dateFormat: "Y-m-d",
-                    });
-                    flatpickr(".flatpickr-multiple", {
-                        mode: "multiple",
-                        dateFormat: "Y-m-d"
-                    });
-                    flatpickr(".flatpickr-range", {
-                        mode: "range",
-                        dateFormat: "Y-m-d"
-                    });
-                    flatpickr(".flatpickr-time", {
-                        enableTime: true,
-                        noCalendar: true,
-                        dateFormat: "H:i",
-                    });
-                });
-            </script>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Choices.js
+        new Choices(document.querySelector(".choices-single"));
+        new Choices(document.querySelector(".choices-multiple"));
+        // Flatpickr
+        flatpickr(".flatpickr-minimum");
+        flatpickr(".flatpickr-datetime", {
+            enableTime: true,
+            dateFormat: "Y-m-d H:i",
+        });
+        flatpickr(".flatpickr-human", {
+            altInput: true,
+            altFormat: "F j, Y",
+            dateFormat: "Y-m-d",
+        });
+        flatpickr(".flatpickr-multiple", {
+            mode: "multiple",
+            dateFormat: "Y-m-d"
+        });
+        flatpickr(".flatpickr-range", {
+            mode: "range",
+            dateFormat: "Y-m-d"
+        });
+        flatpickr(".flatpickr-time", {
+            enableTime: true,
+            noCalendar: true,
+            dateFormat: "H:i",
+        });
+    });
+</script>
         </div>
     </div>
 </div>
@@ -276,162 +183,64 @@
         document.addEventListener("DOMContentLoaded", function () {
             // Choices.js
             new Choices(document.querySelector(".choices-single"));
-            new Choices(document.querySelector(".choices-multiple"));
-            // Flatpickr
-            flatpickr(".flatpickr-minimum");
-            flatpickr(".flatpickr-datetime", {
-                enableTime: true,
-                dateFormat: "Y-m-d H:i",
-            });
-            flatpickr(".flatpickr-human", {
-                altInput: true,
-                altFormat: "F j, Y",
-                dateFormat: "Y-m-d",
-            });
-            flatpickr(".flatpickr-multiple", {
-                mode: "multiple",
-                dateFormat: "Y-m-d"
-            });
-            flatpickr(".flatpickr-range", {
-                mode: "range",
-                dateFormat: "Y-m-d"
-            });
-            flatpickr(".flatpickr-time", {
-                enableTime: true,
-                noCalendar: true,
-                dateFormat: "H:i",
-            });
-        });
-    </script>
-</script><div class="col-12">
-    <div class="card">
-        <div class="card-header">
-            <h5 class="card-title">Add Employee</h5>
-        </div>
-        <div class="card-body">
-            <form action="@Url.Action("List", "Employee")" method="post">
-                <div class="mb-3 row">
-                    <label class="col-form-label col-sm-2 text-sm-end">Name</label>
-                    <div class="col-sm-10">
-                        <input type="text" name="Name" class="form-control" placeholder="Name" required>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label class="col-form-label col-sm-2 text-sm-end">Phone</label>
-                    <div class="col-sm-10">
-                        <input type="tel" name="Phone" class="form-control" placeholder="Phone" required>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label class="col-form-label col-sm-2 text-sm-end">Email</label>
-                    <div class="col-sm-10">
-                        <input type="email" name="Email" class="form-control" placeholder="Email" required>
-                    </div>
-                </div>
-
-                <fieldset class="mb-3">
-                    <div class="row">
-                        <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Gender</label>
-                        <div class="col-sm-10">
-                            <label class="form-check">
-                                <input name="Gender" type="radio" class="form-check-input" value="Male" checked>
-                                <span class="form-check-label">Male</span>
-                            </label>
-                            <label class="form-check">
-                                <input name="Gender" type="radio" class="form-check-input" value="Female">
-                                <span class="form-check-label">Female</span>
-                            </label>
-                        </div>
-                    </div>
-                </fieldset>
-
-                <div class="mb-3 row">
-                    <label class="col-form-label col-sm-2 text-sm-end">Birthday</label>
-                    <div class="col-sm-10">
-                        <input type="text" name="Birthday" class="form-control" data-inputmask-alias="datetime"
-                               data-inputmask-inputformat="dd/mm/yyyy" required />
-                        <span class="text-muted">DD/MM/YYYY format.</span>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <label class="col-form-label col-sm-2 text-sm-end">Home Address</label>
-                    <div class="col-sm-10">
-                        <textarea name="HomeAddress" class="form-control" placeholder="Home Address" rows="3" required></textarea>
-                    </div>
-                </div>
-                <div class="mb-3 row">
-                    <label class="col-form-label col-sm-2 text-sm-end">Work Address</label>
-                    <div class="col-sm-10">
-                        <textarea name="WorkAddress" class="form-control" placeholder="Work Address" rows="3" required></textarea>
-                    </div>
-                </div>
-                <fieldset class="mb-3">
-                    <div class="row">
-                        <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Role</label>
-                        <div class="col-sm-10">
-                            <label class="form-check">
-                                <input name="Role" type="radio" class="form-check-input" value="Staff" checked>
-                                <span class="form-check-label">Staff</span>
-                            </label>
-                            <label class="form-check">
-                                <input name="Role" type="radio" class="form-check-input" value="Bartender">
-                                <span class="form-check-label">Bartender</span>
-                            </label>
-                            <label class="form-check">
-                                <input name="Role" type="radio" class="form-check-input" value="Manager" disabled>
-                                <span class="form-check-label">Manager</span>
-                            </label>
-                        </div>
-                    </div>
-                </fieldset>
-
-                <div class="mb-3 row">
-                    <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Image</label>
-                    <div class="col-sm-10">
-                        <input type="file" name="Image" accept=".png, .jpg">
-                        <small class="form-check-label text-muted">Only png and jpg allowed.</small>
-                    </div>
-                </div>
-
-                <div class="mb-3 row">
-                    <div class="col-sm-10 ms-sm-auto">
-                        <button type="submit" class="btn btn-primary">Submit</button>
-                    </div>
-                </div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Choices.js
-        new Choices(document.querySelector(".choices-single"));
         new Choices(document.querySelector(".choices-multiple"));
         // Flatpickr
         flatpickr(".flatpickr-minimum");
         flatpickr(".flatpickr-datetime", {
             enableTime: true,
-            dateFormat: "Y-m-d H:i",
-        });
+        dateFormat: "Y-m-d H:i",
+                        });
         flatpickr(".flatpickr-human", {
             altInput: true,
-            altFormat: "F j, Y",
-            dateFormat: "Y-m-d",
-        });
+        altFormat: "F j, Y",
+        dateFormat: "Y-m-d",
+                        });
         flatpickr(".flatpickr-multiple", {
             mode: "multiple",
-            dateFormat: "Y-m-d"
-        });
+        dateFormat: "Y-m-d"
+                        });
         flatpickr(".flatpickr-range", {
             mode: "range",
-            dateFormat: "Y-m-d"
-        });
+        dateFormat: "Y-m-d"
+                        });
         flatpickr(".flatpickr-time", {
             enableTime: true,
-            noCalendar: true,
-            dateFormat: "H:i",
-        });
-    });
+        noCalendar: true,
+        dateFormat: "H:i",
+                        });
+                    });
 </script>
+</script><div class="col-12">
+
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            // Choices.js
+            new Choices(document.querySelector(".choices-single"));
+        new Choices(document.querySelector(".choices-multiple"));
+        // Flatpickr
+        flatpickr(".flatpickr-minimum");
+        flatpickr(".flatpickr-datetime", {
+            enableTime: true,
+        dateFormat: "Y-m-d H:i",
+                    });
+        flatpickr(".flatpickr-human", {
+            altInput: true,
+        altFormat: "F j, Y",
+        dateFormat: "Y-m-d",
+                    });
+        flatpickr(".flatpickr-multiple", {
+            mode: "multiple",
+        dateFormat: "Y-m-d"
+                    });
+        flatpickr(".flatpickr-range", {
+            mode: "range",
+        dateFormat: "Y-m-d"
+                    });
+        flatpickr(".flatpickr-time", {
+            enableTime: true,
+        noCalendar: true,
+        dateFormat: "H:i",
+                    });
+                });
+    </script>

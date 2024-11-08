@@ -1,25 +1,49 @@
 import { useState, useEffect } from 'react';
 import DropdownItem from '../Dropdown/DropdownItem';
 
+function getVoucher() {
+    const v = getCookie("voucher");
+    if (!v) {
+        return [];
+    }
+    try {
+        let vou = JSON.parse(v);
+        return vou || [];
+    } catch (error) {
+        console.error("Error parsing cart data from cookie:", error);
+        return [];
+    }
+}
+
 const DropTest = ({ options, onChange }) => {
-    const [items, setItems] = useState([]);
+    const [items, setItems] = useState(getVoucher());
     const [isExpanded, setIsExpanded] = useState(false);
     const [selectedItem, setSelectedItem] = useState(null);
-
+    const id = getCookie("tableqr");
     useEffect(() => {
         const fetchData = async () => {
             if (getCookie('memberInfo')) {
-                const data = await fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId, '');
-                setItems(data);
-                setSelectedItem(); // Chọn mục đầu tiên
+                if (id) {
+                    const data = await fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId, '', id.split('/')[1]);
+                    setItems(data);
+                   // Chọn mục đầu tiên
+                }
+                else {
+                    const data = await fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId, '', '');
+                    setItems(data);
+                    // Chọn mục đầu tiên
+                }
+                items != '' ? setSelectedItem(items) : setSelectedItem(); 
             }
         };
         fetchData();
     }, []);
 
-    const fetchMemberVouchers = async (memberId, categoryId) => {
+
+
+    const fetchMemberVouchers = async (memberId, categoryId, id) => {
         try {
-            const response = categoryId != '' ? await fetch(`https://localhost:7183/api/MemberVouchers/memberId/itemCategoryId?memberId=${memberId}&categoryId=${categoryId}`) : await fetch(`https://localhost:7183/api/MemberVouchers/memberId?memberId=${memberId}`);
+            const response = categoryId != '' ? await fetch(`https://localhost:7183/api/MemberVouchers/memberId/itemCategoryId?memberId=${memberId}&categoryId=${categoryId}&employeeId=${id}`) : await fetch(`https://localhost:7183/api/MemberVouchers/memberId?memberId=${memberId}&employeeId=${id}`);
             const data = await response.json();
             return data;
 
@@ -53,12 +77,27 @@ const DropTest = ({ options, onChange }) => {
         setIsExpanded(!isExpanded);
     };
 
+    // const handleSelectItem = (item) => {
+    //     setSelectedItem(item);
+    //     setIsExpanded(false);
+    //     onChange(item); // Gửi cả item thay vì chỉ description
+    // };
     const handleSelectItem = (item) => {
-        setSelectedItem(item);
-        setIsExpanded(false);
-        onChange(item); // Gửi cả item thay vì chỉ description
+        if (selectedItem && selectedItem.voucherDetailId == item.voucherDetailId) {
+            // Nếu người dùng click vào voucher đã chọn, xóa cookie và đặt lại trạng thái
+            deleteCookie("voucher");
+            setSelectedItem(null); // Đặt lại selectedItem là null khi không chọn voucher
+            onChange(null); // Thông báo với parent component rằng không có voucher nào được chọn
+            setIsExpanded(false); // Đóng dropdown
+        } else {
+            // Nếu người dùng chọn một voucher khác
+            setSelectedItem(item); // Cập nhật voucher đã chọn
+            setCookie("voucher", JSON.stringify(item), 7); // Lưu voucher đã chọn vào cookie
+            onChange(item); // Thông báo với parent component voucher đã chọn
+            setIsExpanded(false); // Đóng dropdown
+        }
     };
-
+    
     return (
         <>
             <div className="dropdown">
@@ -79,6 +118,7 @@ const DropTest = ({ options, onChange }) => {
                                 key={index}
                                 label={item.title + " Sale " + item.discount + "%"}
                                 onClick={() => handleSelectItem(item)}
+                                iconSrc={selectedItem && selectedItem.voucherDetailId == item.voucherDetailId ? 'https://img.icons8.com/ios-filled/50/000000/checkmark.png' : ''} // Hiển thị dấu tích nếu là voucher đã chọn
                             />
                         ))}
                     </div>
@@ -124,5 +164,8 @@ function getCookie(name) {
     const value = `; ${document.cookie}`; // Add a leading semicolon for easier parsing
     const parts = value.split(`; ${name}=`); // Split the cookie string to find the desired cookie
     if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift()); // Return the cookie value
+}
+function deleteCookie(name) {
+    setCookie(name, '', -1);
 }
 export default DropTest;

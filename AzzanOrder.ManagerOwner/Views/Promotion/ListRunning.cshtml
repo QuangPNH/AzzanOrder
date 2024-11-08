@@ -1,32 +1,70 @@
 ﻿@using Newtonsoft.Json
-@model List<Promotion>
+@model dynamic
+
+@{
+    var logo = Model.Logo;
+    var backgroundColor = Model.BackgroundColor;
+    var carousel = Model.Carousel;
+    var banner = Model.Banner;
+    var placeholderImage = "https://s6.imgcdn.dev/gl4Iv.png";
+}
 
 <div class="container">
     <h1 class="h3 mb-3">Running Promotions</h1>
 
     <div class="card">
         <div class="card-header">
+            <h5 class="card-title">Header</h5>
+        </div>
+
+        <div class="header sticky" style="background-color: @backgroundColor">
+            <img src="@(string.IsNullOrEmpty(logo.Image) ? placeholderImage : logo.Image)"
+                 alt="Company logo"
+                 class="logo"
+                 loading="lazy" />
+        </div>
+
+        <div class="card-body">
+            <form id="promotionForm" enctype="multipart/form-data" method="post" action="@Url.Action("UploadImage", "Promotion")">
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Image</label>
+                    <div class="col-sm-10">
+                        <input type="file">
+                        <small class="form-check-label text-muted">Only png and jpg allowed.</small>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label for="colorPicker" class="col-form-label col-sm-2 text-sm-end pt-sm-0">Pick a Color</label>
+                    <div class="col-sm-10">
+                        <input type="color" class="form-control form-control-color" id="colorPicker" name="colorPicker" value="@backgroundColor" />
+                    </div>
+                </div>
+                <button type="submit" class="btn btn-primary">Submit</button>
+            </form>
+        </div>
+
+        <div class="card-header">
             <h5 class="card-title">Carousel</h5>
         </div>
-        
+
         <div class="card-body">
             <div class="carousel-container">
                 <div class="small-image-container left">
                     <img class="small-image"
-                         alt="@Model[(ViewBag.CurrentIndex - 1 + Model.Count) % Model.Count].Title"
-                         src="@Model[(ViewBag.CurrentIndex - 1 + Model.Count) % Model.Count].Image"
+                         alt="@carousel[0]?.Title"
+                         src="@(string.IsNullOrEmpty(carousel[0]?.Image) ? placeholderImage : carousel[0]?.Image)"
                          onclick="handlePrev()" />
                 </div>
                 <div class="big-image-container">
-                    <img class="big-image" alt="@Model[ViewBag.CurrentIndex].Title" src="@Model[ViewBag.CurrentIndex].Image" />
+                    <img class="big-image" alt="@carousel[1]?.Title" src="@(string.IsNullOrEmpty(carousel[1]?.Image) ? placeholderImage : carousel[1]?.Image)" />
                     <div class="promotion-details">
-                        <h2>@Model[ViewBag.CurrentIndex].Title</h2>
+                        <h2>@carousel[1]?.Title</h2>
                     </div>
                 </div>
                 <div class="small-image-container right">
                     <img class="small-image"
-                         alt="@Model[(ViewBag.CurrentIndex + 1) % Model.Count].Title"
-                         src="@Model[(ViewBag.CurrentIndex + 1) % Model.Count].Image"
+                         alt="@carousel[2]?.Title"
+                         src="@(string.IsNullOrEmpty(carousel[2]?.Image) ? placeholderImage : carousel[2]?.Image)"
                          onclick="handleNext()" />
                 </div>
             </div>
@@ -37,16 +75,16 @@
         </div>
         <section class="banner">
             <div class="image-gallery">
-                @foreach (var promotion in Model)
+                @foreach (var promotion in banner)
                 {
                     <div class="image-wrapper">
-                        <img src="@promotion.Image" alt="@promotion.Title" />
+                        <img src="@(string.IsNullOrEmpty(promotion.Image) ? placeholderImage : promotion.Image)" alt="@promotion.Title" />
                     </div>
                 }
             </div>
 
             <nav class="banner-navigation">
-                @for (int i = 0; i < Model.Count; i++)
+                @for (int i = 0; i < banner.Count; i++)
                 {
                     <div class="dot-indicator @(i == 0 ? "active" : "")"></div>
                 }
@@ -62,15 +100,13 @@
         <div id="listAllContainer" style="display:none;">
             @Html.Partial("ListAll")
         </div>
-
     </div>
 </div>
 
 @section Scripts {
     <script>
-        // Pass the Model data to JavaScript
-        const promotions = @Html.Raw(JsonConvert.SerializeObject(Model));
-        let currentIndex = @Html.Raw(JsonConvert.SerializeObject(ViewBag.CurrentIndex));
+        let currentIndex = 1;
+        const promotions = @Html.Raw(JsonConvert.SerializeObject(Model.Carousel));
 
         function handleNext() {
             currentIndex = (currentIndex + 1) % promotions.length;
@@ -86,36 +122,20 @@
             const leftIndex = (currentIndex - 1 + promotions.length) % promotions.length;
             const rightIndex = (currentIndex + 1) % promotions.length;
 
-            document.querySelector('.big-image').src = promotions[currentIndex].image;
-            document.querySelector('.big-image').alt = promotions[currentIndex].title;
-            document.querySelector('.promotion-details h2').innerText = promotions[currentIndex].title;
+            document.querySelector('.big-image').src = promotions[currentIndex].Image;
+            document.querySelector('.big-image').alt = promotions[currentIndex].Title;
+            document.querySelector('.promotion-details h2').innerText = promotions[currentIndex].Title;
 
-            document.querySelector('.small-image-container.left .small-image').src = promotions[leftIndex].image;
-            document.querySelector('.small-image-container.left .small-image').alt = promotions[leftIndex].title;
+            document.querySelector('.small-image-container.left .small-image').src = promotions[leftIndex].Image;
+            document.querySelector('.small-image-container.left .small-image').alt = promotions[leftIndex].Title;
 
-            document.querySelector('.small-image-container.right .small-image').src = promotions[rightIndex].image;
-            document.querySelector('.small-image-container.right .small-image').alt = promotions[rightIndex].title;
+            document.querySelector('.small-image-container.right .small-image').src = promotions[rightIndex].Image;
+            document.querySelector('.small-image-container.right .small-image').alt = promotions[rightIndex].Title;
         }
 
         function toggleListAll() {
             const listAllContainer = document.getElementById('listAllContainer');
             listAllContainer.style.display = listAllContainer.style.display === 'none' ? 'block' : 'none';
-        }
-
-        function saveStatus() {
-            // Perform AJAX request to save status
-            fetch('@Url.Action("SaveStatus", "Promotion")', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'RequestVerificationToken': '@@Antiforgery.GetTokens(HttpContext).RequestToken'
-                },
-                body: JSON.stringify({ /* your data here */ })
-            }).then(response => {
-                if (response.ok) {
-                    location.reload();
-                }
-            });
         }
     </script>
 }
@@ -179,7 +199,7 @@
         object-fit: cover;
     }
 
-    @@media (max-width: 768px) {
+    media (max-width: 768px) {
         .small-image-container {
             width: 63%; /* 70% of 90% */
         }

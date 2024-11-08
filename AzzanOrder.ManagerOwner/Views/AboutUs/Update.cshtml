@@ -1,0 +1,36 @@
+﻿<div class="col-12">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Update About Us</h5>
+        </div>
+        <div class="card-body">
+            <form action="@Url.Action("Manage", "AboutUs")" method="post">
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">About Us ID</label>
+                    <div class="col-sm-10">
+                        <input type="ID" class="form-control" placeholder="ID" disabled>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Name</label>
+                    <div class="col-sm-10">
+                        <input type="Name" class="form-control" placeholder="Name">
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Content</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" placeholder="Content" rows="10"></textarea>
+                    </div>
+                </div>
+                
+                <div class="mb-3 row">
+                    <div class="col-sm-10 ms-sm-auto">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

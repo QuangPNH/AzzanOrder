@@ -1,4 +1,4 @@
-﻿namespace AzzanOrder.Data.DTO
+﻿namespace AzzanOrder.ManagerOwner.DTOs
 {
     public class MemberVoucherDTO
     {

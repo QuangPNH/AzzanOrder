@@ -34,13 +34,15 @@ namespace AzzanOrder.Data.Controllers
 
         // GET: api/MemberVouchers/5
         [HttpGet("memberId")]
-        public async Task<ActionResult> GetMemberVoucher(int memberId)
+        public async Task<ActionResult> GetMemberVoucher(int memberId, int? employeeId)
         {
             if (_context.MemberVouchers == null)
             {
                 return NotFound();
             }
-            var memberVoucher = await _context.MemberVouchers.Where(mv => mv.MemberId == memberId && mv.IsActive == true).Include(mv => mv.VoucherDetail).ThenInclude(mv => mv.Vouchers).Select(mv => mv.VoucherDetail).ToListAsync();
+            var memberVoucher = employeeId.HasValue 
+                ? await _context.MemberVouchers.Where(mv => mv.MemberId == memberId && mv.IsActive == true && mv.VoucherDetail.EmployeeId == employeeId).Include(mv => mv.VoucherDetail).ThenInclude(mv => mv.Vouchers).Select(mv => mv.VoucherDetail).ToListAsync() 
+                : await _context.MemberVouchers.Where(mv => mv.MemberId == memberId && mv.IsActive == true).Include(mv => mv.VoucherDetail).ThenInclude(mv => mv.Vouchers).Select(mv => mv.VoucherDetail).ToListAsync();
             if (memberVoucher == null)
             {
                 return NotFound();
@@ -115,6 +117,10 @@ namespace AzzanOrder.Data.Controllers
             {
                 var mv = _context.MemberVouchers.FirstOrDefault(mv => mv.MemberId == memberVoucher.MemberId && mv.VoucherDetailId == memberVoucher.VoucherDetailId );
                 mv.Quantity = mv.Quantity + 1;
+                var member = _context.Members.FirstOrDefault(m => m.MemberId == memberVoucher.MemberId);
+                var voucherDetail = _context.VoucherDetails.FirstOrDefault(vD => vD.VoucherDetailId == memberVoucher.VoucherDetailId);
+                member.Point = member.Point - voucherDetail.Price;
+                _context.Members.Update(member);
                 _context.MemberVouchers.Update(mv);
             }
             else

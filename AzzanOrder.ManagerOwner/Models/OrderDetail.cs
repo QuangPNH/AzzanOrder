@@ -9,6 +9,8 @@ namespace AzzanOrder.ManagerOwner.Models
         public int? Quantity { get; set; }
         public int? MenuItemId { get; set; }
         public int? OrderId { get; set; }
+        public bool? Status { get; set; }
+        public string? Description { get; set; }
 
         public virtual MenuItem? MenuItem { get; set; }
         public virtual Order? Order { get; set; }

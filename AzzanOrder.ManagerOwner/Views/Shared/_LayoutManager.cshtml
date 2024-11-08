@@ -1,0 +1,341 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge">
+	<meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+	<meta name="description" content="Responsive Admin &amp; Dashboard Template based on Bootstrap 5">
+	<meta name="author" content="AdminKit">
+	<meta name="keywords" content="adminkit, bootstrap, bootstrap 5, admin, dashboard, template, responsive, css, sass, html, theme, front-end, ui kit, web">
+
+	<link rel="preconnect" href="https://fonts.gstatic.com">
+	<link rel="shortcut icon" href="@Url.Content("~/img/icons/icon-48x48.png")" />
+
+	<link rel="canonical" href="index.html" />
+
+	<title>Ordering System Management</title>
+
+	<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&amp;display=swap" rel="stylesheet">
+
+	<link rel="stylesheet" href="@Url.Content("~/css/light.css")" />
+@* 	<script src="js/settings.js"></script>
+	<style>body {
+			opacity: 0;
+		}
+	</style> *@
+	<!-- END SETTINGS -->
+<script async src="https://www.googletagmanager.com/gtag/js?id=UA-120946860-10"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'UA-120946860-10', { 'anonymize_ip': true });
+</script></head>
+<!--
+  HOW TO USE: 
+  data-theme: default (default), dark, light, colored
+  data-layout: fluid (default), boxed
+  data-sidebar-position: left (default), right
+  data-sidebar-layout: default (default), compact
+-->
+
+<body data-theme="default" data-layout="fluid" data-sidebar-position="left" data-sidebar-layout="default">
+	<div class="wrapper">
+		@* Navbar *@
+		<nav id="sidebar" class="sidebar js-sidebar">
+			<div class="sidebar-content js-simplebar">
+				<a class="sidebar-brand" href="index.html">
+					<span class="sidebar-brand-text align-middle">
+						AdminKit
+						<sup><small class="badge bg-primary text-uppercase">Pro</small></sup>
+					</span>
+					<svg class="sidebar-brand-icon align-middle" width="32px" height="32px" viewBox="0 0 24 24" fill="none" stroke="#FFFFFF" stroke-width="1.5"
+						stroke-linecap="square" stroke-linejoin="miter" color="#FFFFFF" style="margin-left: -3px">
+						<path d="M12 4L20 8.00004L12 12L4 8.00004L12 4Z"></path>
+						<path d="M20 12L12 16L4 12"></path>
+						<path d="M20 16L12 20L4 16"></path>
+					</svg>
+				</a>
+
+				<div class="sidebar-user">
+					<div class="d-flex justify-content-center">
+						<div class="flex-grow-1 ps-2">
+							<div class="sidebar-user-title">Charles Hall</div>
+							<div class="sidebar-user-subtitle">Manager</div>
+						</div>
+					</div>
+				</div>
+
+				<ul class="sidebar-nav">
+					<li class="sidebar-header">
+						Pages
+					</li>
+
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="@Url.Action("List", "Employee")">
+							<i class="align-middle" data-feather="user"></i> <span class="align-middle">Employee</span>
+						</a>
+					</li>
+
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="@Url.Action("List", "Table")">
+							<i class="align-middle" data-feather="user"></i> <span class="align-middle">Table</span>
+						</a>
+					</li>
+
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="@Url.Action("List", "Menu")">
+							<i class="align-middle" data-feather="user"></i> <span class="align-middle">Menu</span>
+						</a>
+					</li>
+
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="@Url.Action("List", "ItemCategory")">
+							<i class="align-middle" data-feather="user"></i> <span class="align-middle">Item Category</span>
+						</a>
+					</li>
+
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="@Url.Action("List", "Voucher")">
+							<i class="align-middle" data-feather="user"></i> <span class="align-middle">Voucher</span>
+						</a>
+					</li>
+
+					<li class="sidebar-item">
+						<a class="sidebar-link" href="@Url.Action("ListAll", "Promotion")">
+							<i class="align-middle" data-feather="user"></i> <span class="align-middle">Promotion</span>
+						</a>
+					</li>
+				
+				</ul>
+
+				<div class="sidebar-cta">
+					<div class="sidebar-cta-content">
+						<strong class="d-inline-block mb-2">Weekly Sales Report</strong>
+						<div class="mb-3 text-sm">
+							Your weekly sales report is ready for download!
+						</div>
+
+						<div class="d-grid">
+							<a href="https://adminkit.io/" class="btn btn-outline-primary" target="_blank">Download</a>
+						</div>
+					</div>
+				</div>
+			</div>
+		</nav>
+
+		<div class="main">
+			@* Header *@
+			<nav class="navbar navbar-expand navbar-light navbar-bg">
+				<a class="sidebar-toggle js-sidebar-toggle">
+					<i class="hamburger align-self-center"></i>
+				</a>
+
+				<form class="d-none d-sm-inline-block">
+					<div class="input-group input-group-navbar">
+						<input type="text" class="form-control" placeholder="Search…" aria-label="Search">
+						<button class="btn" type="button">
+							<i class="align-middle" data-feather="search"></i>
+						</button>
+					</div>
+				</form>
+
+				<ul class="navbar-nav d-none d-lg-flex">
+					<li class="nav-item px-2 dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="megaDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
+							aria-expanded="false">
+							Mega Menu
+						</a>
+						<div class="dropdown-menu dropdown-menu-start dropdown-mega" aria-labelledby="megaDropdown">
+							<div class="d-md-flex align-items-start justify-content-start">
+								<div class="dropdown-mega-list">
+									<div class="dropdown-header">UI Elements</div>
+									<a class="dropdown-item" href="#">Alerts</a>
+									<a class="dropdown-item" href="#">Buttons</a>
+									<a class="dropdown-item" href="#">Cards</a>
+									<a class="dropdown-item" href="#">Carousel</a>
+									<a class="dropdown-item" href="#">General</a>
+									<a class="dropdown-item" href="#">Grid</a>
+									<a class="dropdown-item" href="#">Modals</a>
+									<a class="dropdown-item" href="#">Tabs</a>
+									<a class="dropdown-item" href="#">Typography</a>
+								</div>
+								<div class="dropdown-mega-list">
+									<div class="dropdown-header">Forms</div>
+									<a class="dropdown-item" href="#">Layouts</a>
+									<a class="dropdown-item" href="#">Basic Inputs</a>
+									<a class="dropdown-item" href="#">Input Groups</a>
+									<a class="dropdown-item" href="#">Advanced Inputs</a>
+									<a class="dropdown-item" href="#">Editors</a>
+									<a class="dropdown-item" href="#">Validation</a>
+									<a class="dropdown-item" href="#">Wizard</a>
+								</div>
+								<div class="dropdown-mega-list">
+									<div class="dropdown-header">Tables</div>
+									<a class="dropdown-item" href="#">Basic Tables</a>
+									<a class="dropdown-item" href="#">Responsive Table</a>
+									<a class="dropdown-item" href="#">Table with Buttons</a>
+									<a class="dropdown-item" href="#">Column Search</a>
+									<a class="dropdown-item" href="#">Muulti Selection</a>
+									<a class="dropdown-item" href="#">Ajax Sourced Data</a>
+								</div>
+							</div>
+						</div>
+					</li>
+
+					<li class="nav-item dropdown">
+						<a class="nav-link dropdown-toggle" href="#" id="resourcesDropdown" role="button" data-bs-toggle="dropdown" aria-haspopup="true"
+							aria-expanded="false">
+							Resources
+						</a>
+						<div class="dropdown-menu" aria-labelledby="resourcesDropdown">
+							<a class="dropdown-item" href="https://adminkit.io/" target="_blank"><i class="align-middle me-1" data-feather="home"></i>
+								Homepage</a>
+							<a class="dropdown-item" href="https://adminkit.io/docs/" target="_blank"><i class="align-middle me-1" data-feather="book-open"></i>
+								Documentation</a>
+							<a class="dropdown-item" href="https://adminkit.io/docs/getting-started/changelog/" target="_blank"><i class="align-middle me-1"
+									data-feather="edit"></i> Changelog</a>
+						</div>
+					</li>
+				</ul>
+
+				<div class="navbar-collapse collapse">
+					<ul class="navbar-nav navbar-align">
+						<li class="nav-item dropdown">
+							<a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">
+								<div class="position-relative">
+									<i class="align-middle" data-feather="bell"></i>
+									<span class="indicator">4</span>
+								</div>
+							</a>
+							<div class="dropdown-menu dropdown-menu-lg dropdown-menu-end py-0" aria-labelledby="alertsDropdown">
+								<div class="dropdown-menu-header">
+									4 New Notifications
+								</div>
+								<div class="list-group">
+									<a href="#" class="list-group-item">
+										<div class="row g-0 align-items-center">
+											<div class="col-2">
+												<i class="text-danger" data-feather="alert-circle"></i>
+											</div>
+											<div class="col-10">
+												<div class="text-dark">Update completed</div>
+												<div class="text-muted small mt-1">Restart server 12 to complete the update.</div>
+												<div class="text-muted small mt-1">30m ago</div>
+											</div>
+										</div>
+									</a>
+									<a href="#" class="list-group-item">
+										<div class="row g-0 align-items-center">
+											<div class="col-2">
+												<i class="text-warning" data-feather="bell"></i>
+											</div>
+											<div class="col-10">
+												<div class="text-dark">Lorem ipsum</div>
+												<div class="text-muted small mt-1">Aliquam ex eros, imperdiet vulputate hendrerit et.</div>
+												<div class="text-muted small mt-1">2h ago</div>
+											</div>
+										</div>
+									</a>
+									<a href="#" class="list-group-item">
+										<div class="row g-0 align-items-center">
+											<div class="col-2">
+												<i class="text-primary" data-feather="home"></i>
+											</div>
+											<div class="col-10">
+												<div class="text-dark">Login from 192.186.1.8</div>
+												<div class="text-muted small mt-1">5h ago</div>
+											</div>
+										</div>
+									</a>
+									<a href="#" class="list-group-item">
+										<div class="row g-0 align-items-center">
+											<div class="col-2">
+												<i class="text-success" data-feather="user-plus"></i>
+											</div>
+											<div class="col-10">
+												<div class="text-dark">New connection</div>
+												<div class="text-muted small mt-1">Christina accepted your request.</div>
+												<div class="text-muted small mt-1">14h ago</div>
+											</div>
+										</div>
+									</a>
+								</div>
+								<div class="dropdown-menu-footer">
+									<a href="#" class="text-muted">Show all notifications</a>
+								</div>
+							</div>
+						</li>
+
+						<li class="nav-item">
+							<a class="nav-icon js-fullscreen d-none d-lg-block" href="#">
+								<div class="position-relative">
+									<i class="align-middle" data-feather="maximize"></i>
+								</div>
+							</a>
+						</li>
+
+						<li class="nav-item">
+                            <a class="nav-link" href="#" onclick="event.preventDefault(); document.getElementById('logout-form').submit();">Log out</a>
+                            <form id="logout-form" action="@Url.Action("LogoutAction", "Home")" method="post" style="display: none;">
+                               @Html.AntiForgeryToken()
+                            </form>
+						</li>
+					</ul>
+				</div>
+			</nav>
+
+			@* Main *@
+			<main class="content">
+				@RenderBody()
+			</main>
+
+			@* Footer *@
+			<footer class="footer">
+				<div class="container-fluid">
+					<div class="row text-muted">
+						<div class="col-6 text-start">
+							<p class="mb-0">
+								<a href="https://adminkit.io/" target="_blank" class="text-muted"><strong>AdminKit</strong></a> &copy;
+							</p>
+						</div>
+						<div class="col-6 text-end">
+							<ul class="list-inline">
+								<li class="list-inline-item">
+									<a class="text-muted" href="#">Support</a>
+								</li>
+								<li class="list-inline-item">
+									<a class="text-muted" href="#">Help Center</a>
+								</li>
+								<li class="list-inline-item">
+									<a class="text-muted" href="#">Privacy</a>
+								</li>
+								<li class="list-inline-item">
+									<a class="text-muted" href="#">Terms</a>
+								</li>
+							</ul>
+						</div>
+					</div>
+				</div>
+			</footer>
+		</div>
+	</div>
+
+	<script src="@Url.Content("~/js/app.js")"></script>
+	<script src="@Url.Content("~/js/datatables.js")"></script>
+
+
+
+	@RenderSection("Scripts", required: false)
+
+	<script>
+		$("#datatables-ajax").DataTable({
+			"ajax": "@Url.Content("~/tables-datatables-ajax.json")"
+		});
+	</script>
+
+	<</body>
+
+</html>

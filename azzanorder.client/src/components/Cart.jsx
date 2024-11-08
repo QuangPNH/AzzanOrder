@@ -7,6 +7,7 @@ import VoucherCart from './VoucherCart';
 
 function getCartData() {
     const cartDataString = getCookie("cartData");
+    console.log("sdfgssdfgsfd" + cartDataString);
     if (!cartDataString) {
         return [];
     }
@@ -19,57 +20,87 @@ function getCartData() {
     }
 }
 
-function getVoucherList() {
-    const voucherListString = getCookie("voucherList");
-    if (!voucherListString) {
+function getVoucher() {
+    const v = getCookie("voucher");
+    if (!v) {
         return [];
     }
     try {
-        const voucherList = JSON.parse(voucherListString);
-        return voucherList || [];
+        const vou = JSON.parse(v);
+        return vou || [];
     } catch (error) {
         console.error("Error parsing cart data from cookie:", error);
         return [];
     }
 }
 
+export const calculateTotal = async () => {
+    const cartData = getCartData();
+    const voucher = getVoucher();
+    const id = getCookie("tableqr");
+
+    let total = 0;
+    let totalDiscount = 0;
+
+    const legalCheckResults = await Promise.all(
+        id ? cartData.map((item) => checkLegal(item, id.split('/')[1], voucher)) : cartData.map((item) => checkLegal(item, '', voucher))
+    );
+
+    cartData.forEach((item, index) => {
+        const data = legalCheckResults[index];
+        if (data) {
+            // Calculate discount for each item and multiply by quantity
+            const itemDiscount = voucher != '' ? (item.price * (voucher.discount / 100)) * item.quantity : 0;
+            totalDiscount += itemDiscount; // Add to total discount
+        }
+
+        // Calculate total cart value (including discounted price if applicable)
+        const toppingsPrice = item.options?.selectedToppings?.reduce((sum, topping) => sum + topping.price, 0) || 0;
+        const discountedPricePerItem = data && voucher != '' ? item.price * (1 - voucher.discount / 100) : item.price;
+        total += (discountedPricePerItem + toppingsPrice) * item.quantity;
+    });
+
+    return { total, totalDiscount: -totalDiscount }; // Return total and total discount
+};
+
+const checkLegal = async (item, id, voucher) => {
+    try {
+        const response = await fetch(`https://localhost:7183/api/Vouchers/voucherDetailId/menuItemId?voucherDetailid=${voucher.voucherDetailId}&menuItemId=${item.id}&employeeId=${id}`);
+        const data = await response.json();
+        return data;
+    } catch (error) {
+        console.error('Error fetching notifications:', error);
+    }
+};
+
 const Cart = () => {
     const [cartData, setCartData] = useState(getCartData());
-    const [voucherList, setVoucherList] = useState(getVoucherList());  
+    const [voucher, setVoucher] = useState(getVoucher());
     const [totalPrice, setTotalPrice] = useState(0);
+    const [discountPrice, setDiscountPrice] = useState(0);
+    const [headerText, setHeaderText] = useState(false);
+    const id = getCookie("tableqr");
 
     useEffect(() => {
-        const calculateTotal = () => {
-            let total = 0;
-            // console.log(voucherList, "voucher ne");
-            //TODO: Tính toán lại giá tiền khi áp dụng voucher.
-            //
-            cartData.forEach((item) => {
-                const toppingsPrice = item.options?.selectedToppings?.reduce((sum, topping) => sum + topping.price, 0) || 0;
-                total += (item.price + toppingsPrice) * item.quantity;
-            });
+        const fetchTotal = async () => {
+            const { total, totalDiscount } = await calculateTotal();
             setTotalPrice(total);
+            setDiscountPrice(totalDiscount);
         };
 
-        calculateTotal();
-    }, [cartData]);
+        fetchTotal();
+    }, [cartData, voucher, id]);
 
     const handleQuantityChange = (updatedCartData) => {
         setCartData(updatedCartData);
     };
 
     const handleSelectVoucher = (selectedItem) => {
-        const voucherSelectedList = [];
-        const found = voucherSelectedList.some(item => item.id === selectedItem.id);
+        setVoucher(selectedItem);
+    };
 
-        // Nếu không tìm thấy, thêm đối tượng mới vào mảng
-        if (!found) {
-            voucherSelectedList.push(selectedItem);
-        }
-        setCookie("voucherList", JSON.stringify(voucherSelectedList), 7);
-        getCartData();
-        
-        console.log(selectedItem, "cart", cartData);
+    const handleTakeOutChange = (isTake) => {
+        setHeaderText(isTake);
     };
 
     const itemsInCart = cartData?.map((item, index) => (
@@ -85,9 +116,8 @@ const Cart = () => {
     ));
 
     return (
-        <div style={{ background: 'white', border: '1px solid black', borderRadius: '20px', padding: '10px', maxHeight: '700px',width: '320px', overflowY: 'auto' }}>
-
-            <CartHeader />
+        <div style={{ background: 'white', border: '1px solid black', borderRadius: '20px', padding: '10px', maxHeight: '700px', width: '320px', overflowY: 'auto' }}>
+            <CartHeader headerText={headerText} />
             <div style={{ background: 'white', maxHeight: '250px', overflowY: 'auto' }}>
                 {cartData.length > 0 ? (
                     itemsInCart
@@ -97,7 +127,7 @@ const Cart = () => {
             </div>
             <VoucherCart onSelectVoucher={handleSelectVoucher} />
             <div>
-                <PriceCalculator totalPrice={totalPrice} />
+                <PriceCalculator totalPrice={totalPrice} discountPrice={discountPrice} onTakeOutChange={handleTakeOutChange} />
             </div>
         </div>
     );

@@ -120,34 +120,46 @@ namespace AzzanOrder.Data.Controllers
         {
             return (_context.Promotions?.Any(e => e.PromotionId == id)).GetValueOrDefault();
         }
-		// GET: api/Promotions/GetByDescription/{description}
-		[HttpGet("GetByDescription/{description}")]
-		public async Task<ActionResult<IEnumerable<PromotionDTO>>> GetPromotionsByDescription(string description)
-		{
-			if (_context.Promotions == null)
-			{
-				return NotFound();
-			}
+        // GET: api/Promotions/GetByDescription/{description}
+        [HttpGet("GetByDescription/{description}")]
+        public async Task<ActionResult> GetPromotionsByDescription(string description, int? id)
+        {
+            if (_context.Promotions == null)
+            {
+                return NotFound();
+            }
 
-			var promotions = await _context.Promotions.Where(p => p.Description.Contains(description))
-				.Select(m => new PromotionDTO
-				{
-					PromotionId = m.PromotionId,
-					Title = m.Title,
-					Description = m.Description,
-					Image = m.Image,
-					EmployeeId = m.EmployeeId
-				})
-				.ToListAsync();
+            var query = _context.Promotions.AsQueryable();
 
+            if (id.HasValue)
+            {
+                query = query.Where(p => p.EmployeeId == id.Value);
+            }
 
-			if (promotions == null || !promotions.Any())
-			{
-				return NotFound();
-			}
+            var promotions = await query
+                .Where(p => p.Description.Contains(description))
+                .Select(m => new PromotionDTO
+                {
+                    PromotionId = m.PromotionId,
+                    Title = m.Title,
+                    Description = m.Description,
+                    Image = m.Image,
+                    EmployeeId = m.EmployeeId
+                })
+                .ToListAsync();
 
-			return Ok(promotions);
-		}
+            if (promotions == null || !promotions.Any())
+            {
+                return NotFound();
+            }
+
+            if (promotions.Count == 1)
+            {
+                return Ok(promotions.First());
+            }
+
+            return Ok(promotions);
+        }
 
         [HttpPut("ImageAdd/{id}")]
         public async Task<IActionResult> PutImage(int id,[FromBody] string img)

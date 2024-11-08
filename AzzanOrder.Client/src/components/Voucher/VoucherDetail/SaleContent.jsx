@@ -1,32 +1,34 @@
 ﻿import React, { useState, useEffect } from 'react';
 import BuyVoucher from './BuyVoucher';
-
 const SaleContent = ({ saleAmount, price, infiniteUses, useCount, bought, voucherDetailId }) => {
     const [vouchers, setVouchers] = useState([]);
     const [showLogout, setLogout] = useState(false);
-    const [quantityV, setQuantityV] = useState();
+    const [quantityV, setQuantityV] = useState(false);
 
-    useEffect(() => { voucherDetails(voucherDetailId); quantity(); }, []);
-    const voucherDetails = async (voucherDetailId) => {
-        try {
-            if (voucherDetailId != undefined) {
-                const response = await fetch(`https://localhost:7183/api/VoucherDetail/${voucherDetailId}`);
-                const data = await response.json();
-                setVouchers(data);
-            }
+    useEffect(() => {
+        // voucherDetails(voucherDetailId); 
+        quantity();
+    }, []);
+    // const voucherDetails = async (voucherDetailId) => {
+    //     try {
+    //         if (voucherDetailId != '') {
+    //             const response = await fetch(`https://localhost:7183/api/VoucherDetail/${voucherDetailId}`);
+    //             const data = await response.json();
+    //             setVouchers(data);
+    //         }
 
-        } catch (error) {
-            console.error('Error fetching menu items:', error);
-        }
-    };
+    //     } catch (error) {
+    //         console.error('Error fetching menu items:', error);
+    //     }
+    // };
 
     const quantity = async () => {
         try {
             const response = await fetch(`https://localhost:7183/api/MemberVouchers/memberId/voucherDetailId?memberId=${JSON.parse(getCookie('memberInfo')).memberId}&voucherDetailId=${voucherDetailId}`)
             const data = await response.json();
             setQuantityV(data);
-            console.log(data.quantity, "so luong ne");
-        }catch (error) {
+            // console.log(data, 'quantity');
+        } catch (error) {
             console.error('Error fetching menu items:', error);
         }
     }
@@ -37,7 +39,7 @@ const SaleContent = ({ saleAmount, price, infiniteUses, useCount, bought, vouche
     //     </div>
     // );
 
-        
+
 
 
     // point && (
@@ -53,41 +55,41 @@ const SaleContent = ({ saleAmount, price, infiniteUses, useCount, bought, vouche
 
     return (
         <>
-        <BuyVoucher isOpen={showLogout} handleClosePopup={() => setLogout(false)} points={price} />
-        <section className="sale-content">
-            <div className="sale-info">
-                <div className="sale-percentage">Sale <span className="discount">{saleAmount}%</span></div>
-                
-                    <div className="sale-icon-wrapper">
-                        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/e2eac9604a81877b92936d217befed7bedb4e1a3b5ae5a5bae1e56c9c943e889?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" alt="" className="sale-icon-bg" />
-                        {infiniteUses ? (
-                            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/b3126d40803d317ccbc4a81359fffa8e4a11814bc0316903ab7e68fd911c1ce9?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" alt="Infinite Sale icon" className="sale-icon" />
-                        ) : (
-                            quantityV && (
-                            <div className="sale-uses">x{quantityV.quantity}</div>
-                            )
-                        )}
+            <BuyVoucher isOpen={showLogout} handleClosePopup={() => setLogout(false)} points={price} voucherDetailId={voucherDetailId}/>
+                <section className="sale-content">
+                    <div className="sale-info">
+                        <div className="sale-percentage">Sale <span className="discount">{saleAmount}%</span></div>
+
+                        <div className="sale-icon-wrapper">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/e2eac9604a81877b92936d217befed7bedb4e1a3b5ae5a5bae1e56c9c943e889?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" alt="" className="sale-icon-bg" />
+                            {infiniteUses ? (
+                                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/b3126d40803d317ccbc4a81359fffa8e4a11814bc0316903ab7e68fd911c1ce9?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" alt="Infinite Sale icon" className="sale-icon" />
+                            ) : (
+                                quantityV && (
+                                    <div className="sale-uses" >x{quantityV.quantity}</div>
+                                )
+                            )}
+
+                        </div>
 
                     </div>
-            
-            </div>
-            <p className="sale-warning">
-                <em><strong className="warning-text">Warning:</strong> This voucher only use in web.</em>
-            </p>
+                    <p className="sale-warning">
+                        <em><strong className="warning-text">Warning:</strong> This voucher only use in web.</em>
+                    </p>
 
-            {bought ? (<div> </div>) : (<div className="sale-price">
-                <p>Price: <span className="price-value">{price} points</span></p>  {/* Dynamic price */}
-                <button className="qr-button" onClick={() => setLogout(true)}>
-                    
-                    <img
-                        src="https://cdn.builder.io/api/v1/image/assets/TEMP/66181310e2851f8fae57b02cad765f22e6988ffb6004f773591a0d8561aba4e0?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533"
-                        alt="QR code"
-                        className="qr-code"
-                    />
-                </button>
-            </div>)}
+                    {bought ? (<div> </div>) : (<div className="sale-price">
+                        <p>Price: <span className="price-value">{price} points</span></p>  {/* Dynamic price */}
+                        <button className="qr-button" onClick={() => setLogout(true)}>
 
-            <style jsx>{`
+                            <img
+                                src="https://cdn.builder.io/api/v1/image/assets/TEMP/66181310e2851f8fae57b02cad765f22e6988ffb6004f773591a0d8561aba4e0?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533"
+                                alt="QR code"
+                                className="qr-code"
+                            />
+                        </button>
+                    </div>)}
+                        
+                    <style jsx>{`
                 .sale-content {
                     border-radius: 0 10px 10px 0;
                     width: 50em;
@@ -191,9 +193,13 @@ const SaleContent = ({ saleAmount, price, infiniteUses, useCount, bought, vouche
         border-radius: 8px; /* Same as button for smooth edges */
     }
             `}</style>
-        </section>
+                </section>
+            
+
+
+
         </>
-        
+
     );
 };
 function getCookie(name) {

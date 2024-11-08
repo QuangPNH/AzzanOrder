@@ -1,0 +1,94 @@
+﻿<div class="col-12">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Add Menu Item</h5>
+        </div>
+        <div class="card-body">
+            <form action="@Url.Action("ListItem", "Menu")" method="post">
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Name</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" placeholder="Name">
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Item Category</label>
+                    <div class="col-sm-10">
+                        <div class="col-12 col-md-6 col-lg-12 col-xl-6 col-xxl-4">
+                            <p class="mb-0">Dividers:</p>
+                            <div class="dropdown-menu mb-2" style="position:static;display:block;">
+                                <a class="dropdown-item" href="#">Coffee</a>
+                                <a class="dropdown-item" href="#">Tea</a>
+                                <a class="dropdown-item" href="#">Juice</a>
+                                <div class="dropdown-divider"></div>
+                                <a class="dropdown-item" href="#" data-bs-toggle="modal" data-bs-target="#addItemCategoryModal">Add New Category</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Price</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" placeholder="Price">
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Description</label>
+                    <div class="col-sm-10">
+                        <textarea class="form-control" placeholder="Description" rows="3"></textarea>
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Discount</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" placeholder="Discount">
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Image</label>
+                    <div class="col-sm-10">
+                        <input type="file" accept=".png, .jpg">
+                        <small class="form-check-label text-muted">Only png and jpg allowed.</small>
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Checkbox</label>
+                    <div class="col-sm-10">
+                        <label class="form-check m-0">
+                            <input type="checkbox" class="form-check-input">
+                            <span class="form-check-label">Is Available?</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <div class="col-sm-10 ms-sm-auto">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal for adding new item category -->
+<div class="modal fade" id="addItemCategoryModal" tabindex="-1" aria-labelledby="addItemCategoryModalLabel" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addItemCategoryModalLabel">Add Item Category</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+                @Html.Partial("Add", "ItemCategory")
+            </div>
+        </div>
+    </div>
+</div>
+

@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { useLocation } from "react-router-dom";
-
+import { postOrder } from './PriceCalculator/PlaceOrderButton'
+import { calculateTotal } from './Cart'
 /*
     **import biến PriceCalculator từ file PriceCalculator
     **phải có export từ hàm PriceCalculator
@@ -11,9 +12,9 @@ import ShowMoreLink from './ShowMoreLink/ShowMoreLink';
 import ProductCard from './ProductCard/ProductCard';
 import Navbar from './HomeItem/Navbar';
 import Frame from './HomeItem/Frame';
-import { getCookie } from './Account/SignUpForm/Validate';
+import { getCookie, setCookie } from './Account/SignUpForm/Validate';
 
-    // Rest of the code...
+// Rest of the code...
 import Cart from './Cart';
 import { del } from 'framer-motion/client';
 import Banner from './HomeItem/Banner';
@@ -23,24 +24,43 @@ const Homepage = () => {
     const [recentMenuItems, setRecentMenuItems] = useState([]);
     const [showRecentlyOrdered, setShowRecentlyOrdered] = useState(false);
     const search = useLocation().search;
-    const id=new URLSearchParams(search).get("tableqr");
+    const id = new URLSearchParams(search).get("tableqr");
+    const status = new URLSearchParams(search).get("status");
 
     useEffect(() => {
-        fetchMenuItems();
-        if (getCookie('memberInfo') != null) {
-            fetchRecentMenuItems(JSON.parse(getCookie('memberInfo')).memberId);
-            setShowRecentlyOrdered(true);
-        }
-        //deleteCookie('tableqr');
-        if (id) {
-            setCookie('tableqr', id, 1);
-            fetchOrderExits(id.split('/')[0], id.split('/')[1]);
-        }
-    }, []);
+        const memberInfo = getCookie('memberInfo');
+        const memberId = memberInfo ? JSON.parse(memberInfo).memberId : null;
 
-    const fetchMenuItems = async () => {
+        const fetchData = async () => {
+            await fetchMenuItems(id ? id.split('/')[1] : null);
+            if (memberId) {
+                await fetchRecentMenuItems(memberId, id ? id.split('/')[1] : null);
+                setShowRecentlyOrdered(true);
+            }
+            if (id) {
+                setCookie('tableqr', '', -1);
+                setCookie('tableqr', id, 1);
+                await fetchOrderExits(id.split('/')[0], id.split('/')[1]);
+            }
+        };
+        if (status == "success") {
+            const processOrder = async () => {
+                const { total, totalDiscount } = await calculateTotal();
+                await postOrder(total);
+            }
+            processOrder();
+        }
+        fetchData();
+    }, [id, status]);
+
+    useEffect(() => {
+        
+    }, [status]);
+
+    const fetchMenuItems = async (manaId) => {
         try {
-            const response = await fetch('https://localhost:7183/api/MenuItem/top4');
+            const url = manaId ? `https://localhost:7183/api/MenuItem/top4?manaId=${manaId}` : 'https://localhost:7183/api/MenuItem/top4';
+            const response = await fetch(url);
             const data = await response.json();
             setMenuItems(data);
         } catch (error) {
@@ -59,9 +79,10 @@ const Homepage = () => {
         }
     };
 
-    const fetchRecentMenuItems = async (customerId) => {
+    const fetchRecentMenuItems = async (customerId, manaId) => {
         try {
-            const response = await fetch(`https://localhost:7183/api/MenuItem/RecentMenuItems/${customerId}`);
+            const url = manaId ? `https://localhost:7183/api/MenuItem/RecentMenuItems/${customerId}?manaId=${manaId}` : `https://localhost:7183/api/MenuItem/RecentMenuItems/${customerId}`;
+            const response = await fetch(url);
             const data = await response.json();
             setRecentMenuItems(data);
         } catch (error) {
@@ -95,7 +116,7 @@ const Homepage = () => {
                             </div>
                         </div>
                     )}
-                    
+
                     <ShowMoreLink title="HOT ITEMS" />
                     <div className='product-grid'>
                         {menuItems?.map((menuItem) => (
@@ -117,7 +138,6 @@ const Homepage = () => {
                     display: flex;
                     flex-direction: column;
                     align-items: center;
-                    padding: 0 20px;
                     width: 100%;
                     box-sizing: border-box;
                 }
@@ -136,7 +156,7 @@ const Homepage = () => {
     }
                 `}
                 </style>
-                
+
             </div>
             <Footer />
         </>
@@ -169,16 +189,8 @@ const Homepage = () => {
     );
 };
 
-
-function setCookie(name, value, days) {
-    const expires = new Date(Date.now() + days * 864e5).toUTCString(); // Calculate expiration date
-    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; // Set cookie
-  }
-
-
-
-  function deleteCookie(name) {
+function deleteCookie(name) {
     setCookie(name, '', -1); // Call setCookie with negative days to delete
-  }
+}
 
 export default Homepage;

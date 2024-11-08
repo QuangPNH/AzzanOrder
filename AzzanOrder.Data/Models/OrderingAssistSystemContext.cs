@@ -60,6 +60,10 @@ namespace AzzanOrder.Data.Models
             {
                 entity.ToTable("Bank");
 
+                entity.Property(e => e.BankBin)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
+
                 entity.Property(e => e.BankNumber)
                     .HasMaxLength(50)
                     .IsUnicode(false);
@@ -104,6 +108,11 @@ namespace AzzanOrder.Data.Models
             modelBuilder.Entity<ItemCategory>(entity =>
             {
                 entity.ToTable("ItemCategory");
+
+                entity.HasOne(d => d.Employee)
+                    .WithMany(p => p.ItemCategories)
+                    .HasForeignKey(d => d.EmployeeId)
+                    .HasConstraintName("FK_ItemCategory_Employee");
             });
 
             modelBuilder.Entity<Member>(entity =>
@@ -206,6 +215,8 @@ namespace AzzanOrder.Data.Models
             {
                 entity.ToTable("OrderDetail");
 
+                entity.Property(e => e.Description).HasMaxLength(50);
+
                 entity.HasOne(d => d.MenuItem)
                     .WithMany(p => p.OrderDetails)
                     .HasForeignKey(d => d.MenuItemId)
@@ -281,6 +292,11 @@ namespace AzzanOrder.Data.Models
                 entity.Property(e => e.EndDate).HasColumnType("datetime");
 
                 entity.Property(e => e.StartDate).HasColumnType("datetime");
+
+                entity.HasOne(d => d.Employee)
+                    .WithMany(p => p.VoucherDetails)
+                    .HasForeignKey(d => d.EmployeeId)
+                    .HasConstraintName("FK_VoucherDetail_Employee");
             });
 
             OnModelCreatingPartial(modelBuilder);

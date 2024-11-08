@@ -20,7 +20,7 @@ namespace AzzanOrder.ManagerOwner.Models
         public string? Gmail { get; set; }
         public DateTime? BirthDate { get; set; }
         public string? Address { get; set; }
-        public int? Point { get; set; }
+        public double? Point { get; set; }
         public string? Image { get; set; }
         public bool? IsDelete { get; set; }
 
