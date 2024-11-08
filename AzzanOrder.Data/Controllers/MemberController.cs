@@ -179,7 +179,7 @@ namespace AzzanOrder.Data.Controllers
             member.Point += point; // Assuming the member has a Points property
             await _context.SaveChangesAsync();
 
-            return NoContent();
+            return Ok(member);
         }
 
         // POST: api/Member
