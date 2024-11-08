@@ -86,7 +86,8 @@ public class CheckoutController : Controller
             return Redirect("https://localhost:7093/Home/Subscribe");
         }
 
-        return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=cancel");
+        //return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=cancel");
+        return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=success");
     }
 
 

@@ -23,9 +23,17 @@ namespace AzzanOrder.ManagerOwner.Controllers
         }
 
 
-        public IActionResult Index()
+        public async Task<IActionResult> IndexAsync()
         {
-            return View();
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+
+            if ((await authorizeLogin.CheckLogin()).Equals("owner"))
+            {
+                return View();
+            }
+            {
+                return RedirectToAction("Login", "Home");
+            }
         }
 
         //00867f56a5a886a975463d3ec7941061
@@ -41,7 +49,14 @@ namespace AzzanOrder.ManagerOwner.Controllers
         {
             HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson);
             Console.WriteLine("sfdjhsbfjs " + empJson);
-            if (await CheckLogin())
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+
+            Console.WriteLine("ssdsdjjsc " + await authorizeLogin.CheckLogin());
+            if ((await authorizeLogin.CheckLogin()).Equals("owner"))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if ((await authorizeLogin.CheckLogin()).Equals("manager"))
             {
                 return RedirectToAction("List", "Employee");
             }
@@ -52,7 +67,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
         [HttpPost]
         public async Task<IActionResult> LoginAction(Employee employee)
         {
-            bool isManager;
             Employee emp = null;
             Owner owner = null;
             using (HttpClient client = new HttpClient())
@@ -211,8 +225,14 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 
 
-        public async Task<IActionResult> SubscribeAsync()
+        public async Task<IActionResult> Subscribe()
         {
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+            if ((await authorizeLogin.CheckLogin()).Equals("owner"))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
             Api.Bank theBank = new Api.Bank();
             using (System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient())
             {
@@ -256,44 +276,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
-        }
-
-
-
-        private async Task<bool> CheckLogin()
-        {
-            Employee emp = new Employee();
-            if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
-            {
-                emp = JsonConvert.DeserializeObject<Employee>(empJson);
-                using (HttpClient client = new HttpClient())
-                {
-                    try
-                    {
-                        HttpResponseMessage res = await client.GetAsync(_apiUrl + "Employee/Phone/" + emp.Phone);
-                        if (res.IsSuccessStatusCode)
-                        {
-                            string data = await res.Content.ReadAsStringAsync();
-                            emp = JsonConvert.DeserializeObject<Employee>(data);
-                        }
-                        else
-                        {
-                            // Handle the error response here
-                            ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
-                        }
-                    }
-                    catch (HttpRequestException e)
-                    {
-                        // Handle the exception here
-                        ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
-                    }
-                }
-            }
-            if (emp.Phone != null)
-            {
-                return true;
-            }
-            return false;
         }
     }
 }

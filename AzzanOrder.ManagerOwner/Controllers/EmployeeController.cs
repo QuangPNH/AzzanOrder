@@ -11,10 +11,12 @@ namespace AzzanOrder.ManagerOwner.Controllers
 		private readonly string _apiUrl = "https://localhost:7183/api/";
 		public async Task<IActionResult> List(int? page)
 		{
-			if (!await CheckLogin())
-			{
-				return RedirectToAction("Login", "Home");
-			}
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+            if (!(await authorizeLogin.CheckLogin()).Equals("manager"))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+
             Employee emp = new Employee();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
 			{
@@ -67,11 +69,12 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 		public async Task<IActionResult> Add()
 		{
-			if (!await CheckLogin())
-			{
-				return RedirectToAction("Login", "Home");
-			}
-			List<Role> roles = new List<Role>();
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+            if (!(await authorizeLogin.CheckLogin()).Equals("manager"))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            List<Role> roles = new List<Role>();
 			using (HttpClient client = new HttpClient())
 			{
 				try
@@ -108,12 +111,13 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 		public async Task<IActionResult> AddAction(Employee employee, IFormFile employeeImage)
 		{
-			if (!await CheckLogin())
-			{
-				return RedirectToAction("Login", "Home");
-			}
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+            if (!(await authorizeLogin.CheckLogin()).Equals("manager"))
+            {
+                return RedirectToAction("Login", "Home");
+            }
 
-			if (employeeImage != null && employeeImage.Length > 0)
+            if (employeeImage != null && employeeImage.Length > 0)
 				employee.Image = await ImageToBase64Async(employeeImage);
 			
             Employee emp = new Employee();
@@ -182,11 +186,12 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 		public async Task<IActionResult> Update(int id)
 		{
-			if (!await CheckLogin())
-			{
-				return RedirectToAction("Login", "Home");
-			}
-			Employee employee = new Employee();
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+            if (!(await authorizeLogin.CheckLogin()).Equals("manager"))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            Employee employee = new Employee();
 			List<Role> roles = new List<Role>();
 
 			using (HttpClient client = new HttpClient())
@@ -248,12 +253,13 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 		public async Task<IActionResult> UpdateAction(Employee employee, IFormFile employeeImage)
 		{
-			if (!await CheckLogin())
-			{
-				return RedirectToAction("Login", "Home");
-			}
-			// Convert uploaded image to Base64 if there is a new image
-			if (employeeImage != null && employeeImage.Length > 0)
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+            if (!(await authorizeLogin.CheckLogin()).Equals("manager"))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            // Convert uploaded image to Base64 if there is a new image
+            if (employeeImage != null && employeeImage.Length > 0)
 				employee.Image = await ImageToBase64Async(employeeImage);
 
             Employee emp = new Employee();
@@ -357,11 +363,12 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 		public async Task<IActionResult> DeleteAsync(int id)
 		{
-			if (!await CheckLogin())
-			{
-				return RedirectToAction("Login", "Home");
-			}
-			using (HttpClient client = new HttpClient())
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+            if (!(await authorizeLogin.CheckLogin()).Equals("manager"))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            using (HttpClient client = new HttpClient())
 			{
 				HttpResponseMessage res = await client.DeleteAsync(_apiUrl + "Employee/Delete/" + id);
 				string mess = await res.Content.ReadAsStringAsync();
@@ -402,44 +409,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
             byte[] imageBytes = System.IO.File.ReadAllBytes(imagePath);
             return Convert.ToBase64String(imageBytes);
         }*/
-
-
-
-		private async Task<bool> CheckLogin()
-		{
-			Employee emp = new Employee();
-			if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
-			{
-				emp = JsonConvert.DeserializeObject<Employee>(empJson);
-				using (HttpClient client = new HttpClient())
-				{
-					try
-					{
-						HttpResponseMessage res = await client.GetAsync(_apiUrl + "Employee/Phone/" + emp.Phone);
-						if (res.IsSuccessStatusCode)
-						{
-							string data = await res.Content.ReadAsStringAsync();
-							emp = JsonConvert.DeserializeObject<Employee>(data);
-						}
-						else
-						{
-							// Handle the error response here
-							ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
-						}
-					}
-					catch (HttpRequestException e)
-					{
-						// Handle the exception here
-						ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
-					}
-				}
-			}
-			if (emp.Phone != null)
-			{
-				return true;
-			}
-			return false;
-		}
 	}
 }
 
