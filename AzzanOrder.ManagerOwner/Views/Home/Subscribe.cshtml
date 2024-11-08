@@ -8,32 +8,33 @@
 
     <div class="row">
         <div class="col-md-10 col-xl-8 mx-auto">
-            <h1 class="text-center">OAS subcription</h1>
-            <p class="lead text-center mb-4">Manage your cafe shop at ease right now!!!!</p>
+            <h1 class="text-center">OAS subscription</h1>
+            <p class="lead text-center mb-4">Manage your cafe shop at ease right now!!!</p>
 
             <div class="col-12">
                 <div class="card">
                     <div class="card-header">
-                        <h5 class="card-title">Register your infos!</h5>
+                        <h5 class="card-title">Register as an owner</h5>
+                        <h5 class="card-title">Become the boss of your shop</h5>
                     </div>
                     <div class="card-body">
-                        <form asp-action="AddAction" asp-controller="Employee" method="post" enctype="multipart/form-data">
+                        <form asp-action="SubscribeAction" asp-controller="Home" method="post" enctype="multipart/form-data">
                             <div class="mb-3 row">
                                 <label class="col-form-label col-sm-2 text-sm-end">Name</label>
                                 <div class="col-sm-10">
-                                    <input asp-for="employee.EmployeeName" class="form-control" placeholder="Name">
+                                    <input asp-for="owner.OwnerName" class="form-control" placeholder="Name">
                                 </div>
                             </div>
                             <div class="mb-3 row">
                                 <label class="col-form-label col-sm-2 text-sm-end">Phone</label>
                                 <div class="col-sm-10">
-                                    <input asp-for="employee.Phone" class="form-control" placeholder="Phone">
+                                    <input asp-for="owner.Phone" class="form-control" placeholder="Phone">
                                 </div>
                             </div>
                             <div class="mb-3 row">
                                 <label class="col-form-label col-sm-2 text-sm-end">Email</label>
                                 <div class="col-sm-10">
-                                    <input asp-for="employee.Gmail" class="form-control" placeholder="Email">
+                                    <input asp-for="owner.Gmail" class="form-control" placeholder="Email">
                                 </div>
                             </div>
 
@@ -42,11 +43,11 @@
                                     <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Gender</label>
                                     <div class="col-sm-10">
                                         <label class="form-check">
-                                            <input asp-for="employee.Gender" type="radio" class="form-check-input" value=true>
+                                            <input asp-for="owner.Gender" type="radio" class="form-check-input" value=true>
                                             <span class="form-check-label">Male</span>
                                         </label>
                                         <label class="form-check">
-                                            <input asp-for="employee.Gender" type="radio" class="form-check-input" value=false>
+                                            <input asp-for="owner.Gender" type="radio" class="form-check-input" value=false>
                                             <span class="form-check-label">Female</span>
                                         </label>
                                     </div>
@@ -56,105 +57,121 @@
                             <div class="mb-3 row">
                                 <label class="col-form-label col-sm-2 text-sm-end">Birthday</label>
                                 <div class="col-sm-10">
-                                    <input asp-for="employee.BirthDate" class="form-control" data-inputmask-alias="datetime"
+                                    <input asp-for="owner.BirthDate" class="form-control" data-inputmask-alias="datetime"
                                            data-inputmask-inputformat="dd/mm/yyyy" />
                                     <span class="text-muted">DD/MM/YYYY format.</span>
                                 </div>
                             </div>
 
                             <div class="mb-3 row">
-                                <label class="col-form-label col-sm-2 text-sm-end">Home Address</label>
-                                <div class="col-sm-10">
-                                    <textarea asp-for="employee.HomeAddress" class="form-control" placeholder="Home Address" rows="3"></textarea>
-                                </div>
-                            </div>
-                            <div class="mb-3 row">
-                                <label class="col-form-label col-sm-2 text-sm-end">Work Address</label>
-                                <div class="col-sm-10">
-                                    <textarea asp-for="employee.WorkAddress" class="form-control" placeholder="Work Address" rows="3"></textarea>
-                                </div>
-                            </div>
-
-                            <div class="mb-3 row">
                                 <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Image</label>
                                 <div class="col-sm-10">
-                                    <input asp-for="employee.Image" name="employeeImage" type="file" accept=".png, .jpg">
+                                    <input asp-for="owner.Image" name="employeeImage" type="file" accept=".png, .jpg">
                                     <small class="form-check-label text-muted">Only png and jpg allowed.</small>
                                 </div>
                             </div>
 
                             <div class="mb-3 row">
-                                <div class="col-sm-10 ms-sm-auto">
-                                    <button type="submit" class="btn btn-primary">Submit</button>
+                                <label class="col-form-label col-sm-2 text-sm-end">Select Bank</label>
+                                <div class="col-sm-10">
+                                    <select asp-for="bankDatum.code" class="form-select">
+                                        <option value="">-- Select a Bank --</option>
+                                        @foreach (var bank in Model.bankDatums)
+                                        {
+                                            <option value="@bank.code">@bank.shortName</option>
+                                        }
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-form-label col-sm-2 text-sm-end">PayOS client ID</label>
+                                <div class="col-sm-10">
+                                    <input asp-for="owner.Gmail" class="form-control" placeholder="PAYOS_CLIENT_ID">
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-form-label col-sm-2 text-sm-end">PayOS client ID</label>
+                                <div class="col-sm-10">
+                                    <input asp-for="owner.Gmail" class="form-control" placeholder="PAYOS_API_KEY">
+                                </div>
+                            </div>
+
+                            <div class="mb-3 row">
+                                <label class="col-form-label col-sm-2 text-sm-end">PayOS checksum key</label>
+                                <div class="col-sm-10">
+                                    <input asp-for="owner.Gmail" class="form-control" placeholder="PAYOS_CHECKSUM_KEY">
+                                </div>
+                            </div>
+
+                            <div class="tab-content">
+                                <div class="tab-pane fade show active" id="monthly">
+                                    <div class="row py-4">
+                                        <div class="col-sm-4 mb-3 mb-md-0">
+                                            <div class="card text-center h-100">
+                                                <div class="card-body d-flex flex-column">
+                                                    <div class="mb-4">
+                                                        <h5>Monthly</h5>
+                                                        <span class="display-4">30.000đ</span>
+                                                        <span>/mo</span>
+                                                    </div>
+                                                    <ul class="list-unstyled">
+                                                        <li class="mb-2">
+                                                            Cheapest!
+                                                        </li>
+                                                    </ul>
+                                                    <div class="mt-auto">
+                                                        <button type="submit" class="btn btn-primary" name="pack" value="monthly">Purchase</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4 mb-3 mb-md-0">
+                                            <div class="card text-center h-100">
+                                                <div class="card-body d-flex flex-column">
+                                                    <div class="mb-4">
+                                                        <h5>Yearly</h5>
+                                                        <span class="display-4">300.000đ</span>
+                                                        <span>/year</span>
+                                                    </div>
+                                                    <ul class="list-unstyled">
+                                                        <li class="mb-2">
+                                                            Moderate
+                                                        </li>
+                                                    </ul>
+                                                    <div class="mt-auto">
+                                                        <button type="submit" class="btn btn-outline-primary" name="pack" value="yearly">Purchase</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-sm-4 mb-3 mb-md-0">
+                                            <div class="card text-center h-100">
+                                                <div class="card-body d-flex flex-column">
+                                                    <div class="mb-4">
+                                                        <h5>Forever!!</h5>
+                                                        <span class="display-4">3.000.000đ</span>
+                                                    </div>
+                                                    <ul class="list-unstyled">
+                                                        <li class="mb-2">
+                                                            Best value!
+                                                        </li>
+                                                    </ul>
+                                                    <div class="mt-auto">
+                                                        <button type="submit" class="btn btn-outline-primary" name="pack" value="forever">Purchase</button>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
                                 </div>
                             </div>
                         </form>
                     </div>
                 </div>
             </div>
-
-            <div class="tab-content">
-                <div class="tab-pane fade show active" id="monthly">
-                    <div class="row py-4">
-                        <div class="col-sm-4 mb-3 mb-md-0">
-                            <div class="card text-center h-100">
-                                <div class="card-body d-flex flex-column">
-                                    <div class="mb-4">
-                                        <h5>Monthly</h5>
-                                        <span class="display-4">30.000đ</span>
-                                        <span>/mo</span>
-                                    </div>
-                                    <ul class="list-unstyled">
-                                        <li class="mb-2">
-                                            Cheapest!
-                                        </li>
-                                    </ul>
-                                    <div class="mt-auto">
-                                        <a href="@Url.Action("SubscribeMonthlyAction", "Home")" class="btn btn-lg btn-primary">Purchase</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4 mb-3 mb-md-0">
-                            <div class="card text-center h-100">
-                                <div class="card-body d-flex flex-column">
-                                    <div class="mb-4">
-                                        <h5>Yearly</h5>
-                                        <span class="display-4">300.000đ</span>
-                                        <span>/year</span>
-                                    </div>
-                                    <ul class="list-unstyled">
-                                        <li class="mb-2">
-                                            Moderate
-                                        </li>
-                                    </ul>
-                                    <div class="mt-auto">
-                                        <a href ="@Url.Action("SubcribeYearlyAction", "Home")" class="btn btn-lg btn-outline-primary">Purchase</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="col-sm-4 mb-3 mb-md-0">
-                            <div class="card text-center h-100">
-                                <div class="card-body d-flex flex-column">
-                                    <div class="mb-4">
-                                        <h5>Forever!!</h5>
-                                        <span class="display-4">3.000.000đ</span>
-                                    </div>
-                                    <ul class="list-unstyled">
-                                        <li class="mb-2">
-                                            Best value!
-                                        </li>
-                                    </ul>
-                                    <div class="mt-auto">
-                                        <a href="@Url.Action("SubcribeForeverAction", "Home")" class="btn btn-lg btn-outline-primary">Purchase</a>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
+            
 
             <hr />
 
@@ -177,7 +194,7 @@
                         <div class="card-body">
                             <h5 class="h6 card-title">Do you offer a free trial?</h5>
                             <p class="mb-0">
-                                Unfortunately no. You can use our cheapest plan. It's dirt cheap!
+                                Unfortunately no. But you can try our cheapest plan. It's dirt cheap!
                             </p>
                         </div>
                     </div>
