@@ -202,7 +202,7 @@ namespace AzzanOrder.Data.Controllers
                 acqId = Convert.ToInt32(a.Bank.BankBin), //Vietcombank
                 accountNo = Convert.ToInt64(a.Bank.BankNumber), //stk
                 accountName = a.OwnerName, //ten tai khoan
-                amount = price * 1000, //price
+                amount = price, //price
                 format = "text",
                 template = "compact2"
             };
