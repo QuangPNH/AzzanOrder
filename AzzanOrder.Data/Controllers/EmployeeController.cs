@@ -48,7 +48,22 @@ namespace AzzanOrder.Data.Controllers
 
             return employee;
         }
+        [HttpGet("Phone/{phone}")]
+        public async Task<ActionResult<Employee>> GetEmployeeByPhone(string phone)
+        {
+            if (_context.Employees == null)
+            {
+                return NotFound();
+            }
+            var employee = await _context.Employees.Where(e => e.Phone == phone).FirstOrDefaultAsync();
 
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            return employee;
+        }
         // PUT: api/Employee/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("Update")]
