@@ -36,13 +36,14 @@ public class CheckoutController : Controller
                 Expires = DateTimeOffset.UtcNow.AddDays(1)
             });
         }
-
-        Response.Cookies.Append("ItemType", Item, new CookieOptions
+        if (!string.IsNullOrEmpty(Item))
         {
-            HttpOnly = true,
-            Expires = DateTimeOffset.UtcNow.AddDays(1)
-        });
-
+            Response.Cookies.Append("ItemType", Item, new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTimeOffset.UtcNow.AddDays(1)
+            });
+        }
         try
         {
             int orderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff"));
@@ -82,7 +83,7 @@ public class CheckoutController : Controller
 
         if (itemType.Contains("Subscribe"))
         {
-            return RedirectToAction("Subscribe", "Home");
+            return Redirect("https://localhost:7093/Home/Subscribe");
         }
 
         return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=cancel");
@@ -97,7 +98,7 @@ public class CheckoutController : Controller
 
         if (itemType.Contains("Subscribe"))
         {
-            return RedirectToAction("Subscribe", "Home");
+            return Redirect("https://localhost:7093/Home/Index");
         }
         return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=success");
     }
