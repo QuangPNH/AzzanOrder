@@ -223,6 +223,29 @@ namespace AzzanOrder.Data.Controllers
             return Ok(new { base64Image });
         }
 
+        [HttpGet("PendingOrder")]
+        public async Task<ActionResult<IEnumerable<Order>>> GetPendingOrder()
+        {
+            if (_context.Orders == null)
+            {
+                return NotFound();
+            }
+            var orders = await _context.Orders
+                .Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.MenuItem)
+                .Include(o => o.Table)
+                .Where(x => x.Status == false
+                            //&& x.OrderDate > DateTime.Now.AddHours(-1)
+                ).ToListAsync();
+
+            if (orders == null || !orders.Any())
+            {
+                return NotFound();
+            }
+
+            return orders;
+        }
+
         private string Base64ToImage(string base64String)
         {
             byte[] imageBytes = Convert.FromBase64String(base64String);
