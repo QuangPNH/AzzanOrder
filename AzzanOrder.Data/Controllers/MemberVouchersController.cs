@@ -138,7 +138,7 @@ namespace AzzanOrder.Data.Controllers
         }
 
         // DELETE: api/MemberVouchers/5
-        [HttpDelete("Delete/MemberVoucherId")]
+        [HttpDelete("Delete/{MemberVoucherId}")]
         public async Task<IActionResult> DeleteMemberVoucher(int MemberVoucherId)
         {
             if (_context.MemberVouchers == null)

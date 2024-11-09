@@ -167,8 +167,8 @@ namespace AzzanOrder.Data.Controllers
             return Ok(member);
         }
 
-        [HttpPut("UpdatePoints/{memberId}/{point}")]
-        public async Task<IActionResult> UpdatePoints(int memberId, int point)
+        [HttpGet("UpdatePoints/memberId/point")]
+        public async Task<IActionResult> UpdatePoints(int memberId, double point)
         {
             var member = await _context.Members.FindAsync(memberId);
             if (member == null)
