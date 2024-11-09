@@ -2,10 +2,6 @@
 import { useLocation } from "react-router-dom";
 import { postOrder } from './PriceCalculator/PlaceOrderButton'
 import { calculateTotal } from './Cart'
-/*
-    **import biến PriceCalculator từ file PriceCalculator
-    **phải có export từ hàm PriceCalculator
-*/
 import Footer from '../components/Footer/Footer';
 import Header from '../components/Header/Header';
 import ShowMoreLink from './ShowMoreLink/ShowMoreLink';
@@ -13,8 +9,6 @@ import ProductCard from './ProductCard/ProductCard';
 import Navbar from './HomeItem/Navbar';
 import Frame from './HomeItem/Frame';
 import { getCookie, setCookie } from './Account/SignUpForm/Validate';
-
-// Rest of the code...
 import Cart from './Cart';
 import { del } from 'framer-motion/client';
 import Banner from './HomeItem/Banner';
@@ -52,9 +46,42 @@ const Homepage = () => {
         }
         fetchData();
     }, [id, status]);
-
     useEffect(() => {
-        
+        if ('serviceWorker' in navigator) {
+            console.log('Service worker supported');
+            navigator.serviceWorker.register('/service-worker.js')
+                .then(registration => {
+                    console.log('ServiceWorker registration successful with scope: ', registration.scope);
+                    // Check notification permission and display welcome notification
+                    if (Notification.permission === "granted") {
+                        registration.showNotification("Hello", {
+                            body: "Welcome to our site!",
+                            icon: "/path/to/icon.png"
+                        });
+                    } else if (Notification.permission !== "denied") {
+                        Notification.requestPermission().then(permission => {
+                            if (permission === "granted") {
+                                registration.showNotification("Hello", {
+                                    body: "Welcome to our site!",
+                                    icon: "/path/to/icon.png"
+                                });
+                            }
+                        });
+                    }
+                })
+                .catch(error => {
+                    console.log('ServiceWorker registration failed: ', error);
+                });
+        } else {
+            console.log('Service worker not supported');
+        }
+    }, []);
+
+    window.addEventListener('load', () => {
+        console.log('Window loaded');
+    });
+    useEffect(() => {
+
     }, [status]);
 
     const fetchMenuItems = async (manaId) => {
@@ -133,64 +160,38 @@ const Homepage = () => {
                     </div>
                     <Banner />
                 </div>
-                <style jsx>{`
-                .page-container {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    width: 100%;
-                    box-sizing: border-box;
-                }
+                <style jsx>{`  
+               .page-container {  
+                   display: flex;  
+                   flex-direction: column;  
+                   align-items: center;  
+                   width: 100%;  
+                   box-sizing: border-box;  
+               }  
 
-                .product-grid {
-                    display: flex;
-                    flex-wrap: wrap;
-                    justify-content: center; /* Center-align the grid */
-                    gap: 20px;
-                    width: 100%;
-                    max-width: 1200px; /* Set a max-width to avoid stretching */
-                }
-                .product-grid > * {
-      flex: 1 1 calc(50% - 20px); /* Ensures 2 items per row */
-      box-sizing: border-box;
-    }
-                `}
+               .product-grid {  
+                   display: flex;  
+                   flex-wrap: wrap;  
+                   justify-content: center; /* Center-align the grid */  
+                   gap: 20px;  
+                   width: 100%;  
+                   max-width: 1200px; /* Set a max-width to avoid stretching */  
+               }  
+               .product-grid > * {  
+     flex: 1 1 calc(50% - 20px); /* Ensures 2 items per row */  
+     box-sizing: border-box;  
+   }  
+               `}
                 </style>
 
             </div>
             <Footer />
         </>
-        /*
-        <div>
-            <div style={{ display: 'flex' }}>
-                <input placeholder='Search Food with Category using Generative AI' onChange={(e) => handleChangeSearch(e)} />
-                <button style={{ marginLeft: '20px' }} onClick={() => handleClick()}>Search</button>
-            </div>
-                .product-grid > * {
-                    flex: 1 1 calc(50% - 20px);
-                    box-sizing: border-box;
-                }
-            {
-                loading == true && (aiResponse == '') ?
-                    <p style={{ margin: '30px 0' }}>Loading ...</p>
-                    :
-                    <div style={{ margin: '30px 0' }}>
-                        <p>{aiResponse}</p>
-                    </div>
-            }
-        </div>
-        */
-        //<MenuButton title="Menu" imageurl='../src/assets/book.svg' />
-        //<ProductCard imageSrc="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" title="Product Title" price="1000" />
-        //<ShowMoreLink title="Recently Ordered" url='https://google.com' />
-
-        //<WarningWindow />
-        //<MenuMainPage />
     );
 };
 
 function deleteCookie(name) {
-    setCookie(name, '', -1); // Call setCookie with negative days to delete
+    setCookie(name, '', -1); // Call setCookie with negative days to delete  
 }
 
 export default Homepage;
