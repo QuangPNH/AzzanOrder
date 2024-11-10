@@ -28,7 +28,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            return await _context.Owners.Where(o => o.IsDelete == false).ToListAsync();
+            return await _context.Owners.Where(o => o.IsDelete == false).Include(o => o.Bank).ToListAsync();
         }
 
         // GET: api/Owner/5
@@ -39,7 +39,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            var owner = await _context.Owners.Where(o => o.IsDelete == false).FirstOrDefaultAsync(o => o.OwnerId == id);
+            var owner = await _context.Owners.Where(o => o.IsDelete == false).Include(o => o.Bank).FirstOrDefaultAsync(o => o.OwnerId == id);
 
             if (owner == null)
             {

@@ -255,19 +255,28 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
             if (model.owner != null)
             {
-            // Prepare the query parameters with Owner details
-            var ownerParams = new Dictionary<string, string>
+                // Prepare the query parameters with Owner details
+                var ownerParams = new Dictionary<string, string>
             {
             { "Price", "0" }, // Adjust price based on pack
             { "Item", "Subscribe" + char.ToUpper(pack[0]) + pack.Substring(1) + "Pack" },      // e.g., SubscribeMonthlyPack
             { "Message", char.ToUpper(pack[0]) + pack.Substring(1) + "Pack" },
             { "OwnerName", model.owner.OwnerName ?? string.Empty },
-            { "OwnerEmail", model.owner.Gmail ?? string.Empty },
-            { "OwnerEmail", model.owner.Gmail ?? string.Empty },
-            { "OwnerEmail", model.owner.Gmail ?? string.Empty },
-            { "OwnerEmail", model.owner.Gmail ?? string.Empty },
-            { "OwnerEmail", model.owner.Gmail ?? string.Empty },
-            };
+            { "Gender", model.owner.Gender.HasValue ? (model.owner.Gender.Value ? "Male" : "Female") : string.Empty },
+            { "Phone", model.owner.Phone ?? string.Empty },
+            { "Gmail", model.owner.Gmail ?? string.Empty },
+            { "BirthDate", model.owner.BirthDate.HasValue ? model.owner.BirthDate.Value.ToString("yyyy-MM-dd") : string.Empty },
+            { "BankId", model.owner.BankId?.ToString() ?? string.Empty },
+            { "Image", model.owner.Image ?? string.Empty },
+            { "IsDelete", model.owner.IsDelete.HasValue ? model.owner.IsDelete.Value.ToString() : string.Empty },
+            { "SubscriptionStartDate", model.owner.SubscriptionStartDate.ToString("yyyy-MM-dd") },
+            { "SubscribeEndDate", model.owner.SubscribeEndDate.ToString("yyyy-MM-dd") },
+
+            // Bank details
+            { "PAYOS_CLIENT_ID", model.owner.Bank.PAYOS_CLIENT_ID ?? string.Empty },
+            { "PAYOS_API_KEY", model.owner.Bank.PAYOS_API_KEY ?? string.Empty },
+            { "PAYOS_CHECKSUM_KEY", model.owner.Bank.PAYOS_CHECKSUM_KEY ?? string.Empty }
+        };
 
                 // Construct the URL with the query parameters
                 redirectUrl += string.Join("&", ownerParams.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));

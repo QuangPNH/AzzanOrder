@@ -106,7 +106,23 @@ const PlaceOrderButton = ({ amount, isTake, isCash }) => {
             if (isCash) {
                 await postOrder(amount, isCash);
             } else {
-                window.location.href = "https://localhost:3002/?tableqr=" + getCookie("tableqr") + "&Price=" + amount + "&Item=OASItem&Message=Order";
+                const bank = {
+                    PAYOS_CLIENT_ID: "c3ab25b3-a36b-44bc-8a15-0a2406de4642",
+                    PAYOS_API_KEY: "5e6bd626-9e42-4e4b-8b8a-6858d1f7615a",
+                    PAYOS_CHECKSUM_KEY: "bf84f6e8550cecf8ef0cf8c0b3eca70a37dd2ceb610efb6c3cc01d25148d637b"
+                };
+                //Set owner PayOs
+                fetch("https://localhost:3002/?tableqr=" + getCookie("tableqr") + "&Price=" + amount + "&Item=OASItem&Message=Order", {
+                    method: "POST",
+                    headers: {
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify(bank)
+                }).then(response => response.text()) // Expect a text response (the URL as a string)
+                .then(url => {
+                    // Redirect to the URL returned by the server
+                    window.location.href = url;
+                });
             }
         } catch (error) {
             setError(error.message);

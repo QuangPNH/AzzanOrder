@@ -26,6 +26,16 @@ builder.Services.AddCors(options =>
             policy.WithOrigins("*").AllowAnyHeader().AllowAnyMethod();
         });
 });
+
+builder.Services.AddCors(options =>
+{
+    options.AddDefaultPolicy(builder =>
+    {
+        builder.AllowAnyOrigin()
+               .AllowAnyMethod()
+               .AllowAnyHeader();
+    });
+});
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.

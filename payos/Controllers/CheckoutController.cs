@@ -4,30 +4,40 @@ using Net.payOS.Types;
 using Net.payOS;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
+using payos.Models;
 
 public class CheckoutController : Controller
 {
-	private readonly PayOS _payOS;
-	private readonly IHttpContextAccessor _httpContextAccessor;
+    private PayOS _payOS;
+    private readonly IHttpContextAccessor _httpContextAccessor;
 
-	public CheckoutController(PayOS payOS, IHttpContextAccessor httpContextAccessor)
-	{
-		_payOS = payOS;
-		_httpContextAccessor = httpContextAccessor;
-	}
+    public CheckoutController(PayOS payOS, IHttpContextAccessor httpContextAccessor)
+    {
+        _payOS = payOS;
+        _httpContextAccessor = httpContextAccessor;
+    }
+
 
 
     //https://localhost:3002/?tableqr=QR_002/1&Price=1000.00&Item=OASItem&Message=Order
     //https://localhost:3002/?Price=30000&Item=SubscribeMontlyPack&Message=MonthyPack
     //http://localhost:3002/?Price=30000&Item=SubscribeMonthlyPack&Message=MonthlyPack&OwnerName=&OwnerEmail=
-    [HttpGet("/")]
-    public async Task<IActionResult> IndexAsync([FromQuery] string? tableqr, [FromQuery] string? Item, [FromQuery] double? Price, [FromQuery] string? Message)
+    //Normal payment
+    [HttpPost("/")]
+    public async Task<string> Index([FromBody]Bank bank, [FromQuery] string tableqr, [FromQuery] string Item, [FromQuery] double Price, [FromQuery] string Message)
     {
+        _payOS = new PayOS(bank.PAYOS_CLIENT_ID ?? "", bank.PAYOS_API_KEY ?? "", bank.PAYOS_CHECKSUM_KEY ?? "");
+        Console.WriteLine("PAYOS_CLIENT_ID: " + bank.PAYOS_CLIENT_ID);
+        if (_payOS == null)
+        {
+            return "Payment credentials not set.";
+        }
+
         Console.WriteLine("tableqr: " + tableqr);
         Console.WriteLine("Item: " + Item);
         Console.WriteLine("Price: " + Price);
         Console.WriteLine("Message: " + Message);
-        // Save 'tableqr' and 'Item' to cookies
+        
         if (!string.IsNullOrEmpty(tableqr))
         {
             Response.Cookies.Append("tableqrPayOs", tableqr, new CookieOptions
@@ -36,21 +46,16 @@ public class CheckoutController : Controller
                 Expires = DateTimeOffset.UtcNow.AddDays(1)
             });
         }
-        if (!string.IsNullOrEmpty(Item))
-        {
-            Response.Cookies.Append("ItemType", Item, new CookieOptions
-            {
-                HttpOnly = true,
-                Expires = DateTimeOffset.UtcNow.AddDays(1)
-            });
-        }
+
         try
         {
             int orderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff"));
             ItemData item = new ItemData(Item, 1, 1000);
             List<ItemData> items = new List<ItemData> { item };
+
             var request = _httpContextAccessor.HttpContext.Request;
             var baseUrl = $"{request.Scheme}://{request.Host}";
+
             PaymentData paymentData = new PaymentData(
                 orderCode,
                 (int)Price,
@@ -62,15 +67,122 @@ public class CheckoutController : Controller
 
             CreatePaymentResult createPayment = await _payOS.createPaymentLink(paymentData);
 
+            //return Redirect(createPayment.checkoutUrl);
+            return createPayment.checkoutUrl;
+        }
+        catch (System.Exception exception)
+        {
+            Console.WriteLine(exception);
+            return exception.ToString();
+        }
+    }
+
+
+
+
+
+    //Subscription payment
+    [HttpPost("/Subscribe")]
+    public async Task<IActionResult> Subscribe(
+        [FromQuery] string? Item,
+        [FromQuery] double? Price,
+        [FromQuery] string? Message,
+        [FromQuery] string? OwnerName,
+        [FromQuery] bool? Gender,
+        [FromQuery] string? Phone,
+        [FromQuery] string? Gmail,
+        [FromQuery] DateTime? BirthDate,
+        [FromQuery] int? BankId,
+        [FromQuery] string? Image,
+        [FromQuery] bool? IsDelete,
+        [FromQuery] string? PAYOS_CLIENT_ID,
+        [FromQuery] string? PAYOS_API_KEY,
+        [FromQuery] string? PAYOS_CHECKSUM_KEY)
+    {
+        // Log query parameters for debugging purposes
+        Console.WriteLine("Item: " + Item);
+        Console.WriteLine("Price: " + Price);
+        Console.WriteLine("Message: " + Message);
+        Console.WriteLine("OwnerName: " + OwnerName);
+        Console.WriteLine("Gender: " + (Gender.HasValue ? (Gender.Value ? "Male" : "Female") : "Not Specified"));
+        Console.WriteLine("Phone: " + Phone);
+        Console.WriteLine("Gmail: " + Gmail);
+        Console.WriteLine("BirthDate: " + BirthDate);
+        Console.WriteLine("BankId: " + BankId);
+        Console.WriteLine("Image: " + Image);
+        Console.WriteLine("IsDelete: " + IsDelete);
+        Console.WriteLine("PAYOS_CLIENT_ID: " + PAYOS_CLIENT_ID);
+        Console.WriteLine("PAYOS_API_KEY: " + PAYOS_API_KEY);
+        Console.WriteLine("PAYOS_CHECKSUM_KEY: " + PAYOS_CHECKSUM_KEY);
+
+
+        Owner owner = new Owner
+        {
+            OwnerName = OwnerName,
+            Gender = Gender, // Assuming true = Male, false = Female
+            Phone = Phone,
+            Gmail = Gmail,
+            BirthDate = BirthDate,
+            Image = Image,
+            IsDelete = false,
+            /*SubscriptionStartDate = DateTime.UtcNow,
+            SubscribeEndDate = DateTime.UtcNow.AddMonths(1),*/
+            Bank = new Bank
+            {
+                PAYOS_CLIENT_ID = "your-client-id",
+                PAYOS_API_KEY = "your-api-key",
+                PAYOS_CHECKSUM_KEY = "your-checksum-key"
+            }
+        };
+
+
+        // Initialize the _payOS instance with API keys if provided
+
+
+        if (!string.IsNullOrEmpty(Item))
+        {
+            Response.Cookies.Append("ItemType", Item, new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTimeOffset.UtcNow.AddDays(1)
+            });
+        }
+
+        try
+        {
+            // Generate a unique order code
+            int orderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff"));
+
+            // Create the item list with the provided item data
+            ItemData item = new ItemData(Item, 1, 1000);
+            List<ItemData> items = new List<ItemData> { item };
+
+            // Get the base URL of the current request
+            var request = _httpContextAccessor.HttpContext.Request;
+            var baseUrl = $"{request.Scheme}://{request.Host}";
+
+            // Set up the payment data, including the additional owner information in the message if needed
+            PaymentData paymentData = new PaymentData(
+                orderCode,
+                (int)Price.GetValueOrDefault(),
+                Message + orderCode,
+                items,
+                $"{baseUrl}/cancel",
+                $"{baseUrl}/success"
+            );
+
+            // Create the payment link
+            CreatePaymentResult createPayment = await _payOS.createPaymentLink(paymentData);
+
             return Redirect(createPayment.checkoutUrl);
         }
         catch (System.Exception exception)
         {
             Console.WriteLine(exception);
-            //return Redirect("/");
             return View();
         }
     }
+
 
 
 
@@ -102,6 +214,7 @@ public class CheckoutController : Controller
         }
         return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=success");
     }
+
 
 
     //var _apiUrl = $"https://localhost:7183/api/Member/";
