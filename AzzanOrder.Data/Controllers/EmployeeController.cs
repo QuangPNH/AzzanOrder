@@ -28,7 +28,7 @@ namespace AzzanOrder.Data.Controllers
           {
               return NotFound();
           }
-            return await _context.Employees.ToListAsync();
+            return await _context.Employees.Include(e => e.Role).ToListAsync();
         }
 
         // GET: api/Employee/5
@@ -40,6 +40,43 @@ namespace AzzanOrder.Data.Controllers
               return NotFound();
           }
             var employee = await _context.Employees.FindAsync(id);
+
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            return employee;
+        }
+
+        // GET: api/Employee/5
+        [HttpGet("Employee/Phone/{Phone}")]
+        public async Task<ActionResult<Employee>> GetEmployeeByPhone(string phone)
+        {
+            if (_context.Employees == null)
+            {
+                return NotFound();
+            }
+            var employee = _context.Employees.FirstOrDefault(e => e.Phone.Equals(phone));
+
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            return employee;
+        }
+
+
+        // GET: api/Employee/5
+        [HttpGet("Manager/Phone/{Phone}")]
+        public async Task<ActionResult<Employee>> GetManagerByPhone(string phone)
+        {
+            if (_context.Employees == null)
+            {
+                return NotFound();
+            }
+            var employee = _context.Employees.Include(e => e.Role).FirstOrDefault(e => e.Phone.Equals(phone) && e.Role.RoleName.ToLower().Equals("manager"));
 
             if (employee == null)
             {

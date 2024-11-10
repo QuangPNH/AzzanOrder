@@ -21,6 +21,7 @@ public class OrderController : ControllerBase
     [HttpPost("create")]
     public async Task<IActionResult> CreatePaymentLink(CreatePaymentLinkRequest body)
     {
+        string ownerJson = HttpContext.Session.GetString("OwnerData");
         try
         {
             int orderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff"));

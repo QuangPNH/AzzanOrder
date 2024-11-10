@@ -22,7 +22,6 @@ namespace payos.Models
             try
             {
                 _httpContext.Request.Cookies.TryGetValue("LoginInfo", out string loginInfoJson); // Use the instance field
-                
                 var loginInfo = JsonConvert.DeserializeObject<Employee>(loginInfoJson);
                 if (loginInfo.RoleId != null)
                 {

@@ -51,6 +51,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson);
 
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+            Console.WriteLine("aaaaaaaaa a " + await authorizeLogin.CheckLogin());
             if ((await authorizeLogin.CheckLogin()).Equals("owner"))
             {
                 return RedirectToAction("Index", "Home");
@@ -76,6 +77,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     if (res.IsSuccessStatusCode)
                     {
                         string data = await res.Content.ReadAsStringAsync();
+                        Console.WriteLine("try dgee" + data);
                         emp = JsonConvert.DeserializeObject<Employee>(data);
                     }
                     else
@@ -198,8 +200,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
                     var loginInfo = JsonConvert.DeserializeObject<Employee>(loginInfoJson);
 
-
-
                     if (loginInfo.RoleId != null)
                     {
                         return RedirectToAction("List", "Employee");
@@ -262,25 +262,46 @@ namespace AzzanOrder.ManagerOwner.Controllers
             if (pack.Equals("monthly"))
             {
                 price = "30000";
+                model.owner.SubscriptionStartDate = DateTime.Now;
+                model.owner.SubscribeEndDate = DateTime.Now.AddMonths(1);
             }
             else if (pack.Equals("yearly"))
             {
                 price = "300000";
+                model.owner.SubscriptionStartDate = DateTime.Now;
+                model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
             }
             else if (pack.Equals("forever"))
             {
                 price = "3000000";
+                model.owner.SubscriptionStartDate = DateTime.Now;
+                model.owner.SubscribeEndDate = DateTime.Now.AddYears(100);
             }
 
             if (model.owner != null)
             {
-                // Prepare the query parameters with Owner details
+                var ownerJson = JsonConvert.SerializeObject(model.owner);
                 var ownerParams = new Dictionary<string, string>
-            {
-            { "Price", price }, // Adjust price based on pack
-            { "Item", "Subscribe" + char.ToUpper(pack[0]) + pack.Substring(1) + "Pack" },      // e.g., SubscribeMonthlyPack
-            { "Message", char.ToUpper(pack[0]) + pack.Substring(1) + "Pack" }
-        };
+                {
+                    { "Price", price }, // Adjust price based on pack
+                    { "Item", "Subscribe" + char.ToUpper(pack[0]) + pack.Substring(1) + "Pack" }, // e.g., SubscribeMonthlyPack
+                    { "Message", char.ToUpper(pack[0]) + pack.Substring(1) + "Pack" }
+                };
+
+                if (!string.IsNullOrEmpty(ownerJson))
+                {
+                    Response.Cookies.Append("OwnerData", ownerJson, new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Expires = DateTimeOffset.UtcNow.AddDays(1)
+                    });
+                    Console.WriteLine(" coOwnersergokeie " + HttpContext.Request.Cookies.TryGetValue("OwnerData", out var ownerData));
+                }
+                    Response.Cookies.Append("ItemType", "Subscribe" + char.ToUpper(pack[0]) + pack.Substring(1) + "Pack", new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Expires = DateTimeOffset.UtcNow.AddDays(1)
+                    });
 
                 // Construct the URL with the query parameters
                 redirectUrl += string.Join("&", ownerParams.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
@@ -311,12 +332,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             try
             {
                 var ownerJson = JsonConvert.SerializeObject(owner);
-                Console.WriteLine("meowdhd: " + ownerJson);
-                HttpContext.Response.Cookies.Append("LoginInfo", ownerJson, new CookieOptions
-                {
-                    Expires = DateTimeOffset.UtcNow.AddDays(30)
-                });
-                    return Ok();
+                return Ok();
             }
             catch
             {

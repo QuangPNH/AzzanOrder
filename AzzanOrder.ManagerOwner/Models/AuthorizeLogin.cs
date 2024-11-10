@@ -44,7 +44,7 @@ namespace AzzanOrder.ManagerOwner.Models
                     {
                         try
                         {
-                            HttpResponseMessage res = await client.GetAsync(_apiUrl + "Employee/Phone/" + emp.Phone);
+                            HttpResponseMessage res = await client.GetAsync(_apiUrl + "Employee/Manager/Phone/" + emp.Phone);
                             if (res.IsSuccessStatusCode)
                             {
                                 string data = await res.Content.ReadAsStringAsync();

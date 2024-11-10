@@ -88,37 +88,18 @@ public class CheckoutController : Controller
         [FromQuery] double? Price,
         [FromQuery] string? Message)
     {
-        // Log query parameters for debugging purposes
-        Console.WriteLine("Item: " + Item);
-        Console.WriteLine("Price: " + Price);
-        Console.WriteLine("Message: " + Message);
-        Console.WriteLine("OwnerName: " + owner.OwnerName);
-        Console.WriteLine("Gender: " + (owner.Gender.HasValue ? (owner.Gender.Value ? "Male" : "Female") : "Not Specified"));
-        Console.WriteLine("Phone: " + owner.Phone);
-        Console.WriteLine("Gmail: " + owner.Gmail);
-        Console.WriteLine("BirthDate: " + owner.BirthDate);
-        Console.WriteLine("BankId: " + owner.BankId);
-        Console.WriteLine("Image: " + owner.Image);
-        Console.WriteLine("IsDelete: " + owner.IsDelete);
-        Console.WriteLine("PAYOS_CLIENT_ID: " + owner.Bank?.PAYOS_CLIENT_ID);
-        Console.WriteLine("PAYOS_API_KEY: " + owner.Bank?.PAYOS_API_KEY);
-        Console.WriteLine("PAYOS_CHECKSUM_KEY: " + owner.Bank?.PAYOS_CHECKSUM_KEY);
-
-
-
         string ownerJson = JsonConvert.SerializeObject(owner);
         Console.WriteLine("Owner cookeie " + ownerJson);
 
-        if (!string.IsNullOrEmpty(ownerJson))
+        /*if (!string.IsNullOrEmpty(ownerJson))
         {
-            Response.Cookies.Append("OwnerData1", ownerJson, new CookieOptions
+            Response.Cookies.Append("OwnerData", ownerJson, new CookieOptions
             {
                 HttpOnly = true,
                 Expires = DateTimeOffset.UtcNow.AddDays(1)
             });
+            Console.WriteLine(" coOwnersergokeie " + HttpContext.Request.Cookies.TryGetValue("OwnerData", out var ownerData));
         }
-
-        // Initialize the _payOS instance with API keys if provided
         if (!string.IsNullOrEmpty(Item))
         {
             Response.Cookies.Append("ItemType", Item, new CookieOptions
@@ -126,7 +107,7 @@ public class CheckoutController : Controller
                 HttpOnly = true,
                 Expires = DateTimeOffset.UtcNow.AddDays(1)
             });
-        }
+        }*/
 
         try
         {
@@ -164,6 +145,52 @@ public class CheckoutController : Controller
         }
     }
 
+    [HttpGet("/success")]
+    public async Task<IActionResult> Success([FromQuery] int memberId)
+    {
+        Console.WriteLine("Success running yeh");
+        HttpContext.Request.Cookies.TryGetValue("tableqrPayOs", out string tableqr);
+        HttpContext.Request.Cookies.TryGetValue("ItemType", out string itemType);
+
+        if (itemType.Contains("Subscribe"))
+        {
+            Console.WriteLine("When succ" + HttpContext.Request.Cookies.TryGetValue("OwnerData", out string ownerJson));
+            Console.WriteLine("Tets cookie " + ownerJson);
+            Console.WriteLine("Tets cookie " + Request.Cookies["OwnerData"]);
+
+
+
+
+            Owner owner = JsonConvert.DeserializeObject<Owner>(ownerJson);
+            using (HttpClient client = new HttpClient())
+            {
+                using (HttpResponseMessage res = await client.PostAsJsonAsync("https://localhost:7183/api/Owner/Add/", owner))
+                {
+                    using (HttpContent content = res.Content)
+                    {
+                        string message = await res.Content.ReadAsStringAsync();
+                    }
+                }
+
+                using (HttpResponseMessage res = await client.PostAsJsonAsync("https://localhost:7093/OwnerRegister", owner))
+                {
+                    using (HttpContent content = res.Content)
+                    {
+                        string message = await res.Content.ReadAsStringAsync();
+                        Console.WriteLine(message);
+                    }
+                }
+            }
+
+            HttpContext.Response.Cookies.Append("LoginInfo", ownerJson, new CookieOptions
+            {
+                Expires = DateTimeOffset.UtcNow.AddDays(30)
+            });
+
+            return Redirect("https://localhost:7093/Home/Index");
+        }
+        return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=success");
+    }
 
 
 
@@ -178,48 +205,13 @@ public class CheckoutController : Controller
         {
             return Redirect("https://localhost:7093/Home/Subscribe");
         }
+
+        //return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=cancel");
         return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=success");
     }
 
 
-    [HttpGet("/success")]
-    public async Task<IActionResult> Success([FromQuery] int memberId)
-    {
-        Console.WriteLine("Success running yeh");
-        HttpContext.Request.Cookies.TryGetValue("tableqrPayOs", out string tableqr);
-        HttpContext.Request.Cookies.TryGetValue("ItemType", out string itemType);
-
-        if (itemType.Contains("Subscribe"))
-        {
-            HttpContext.Request.Cookies.TryGetValue("OwnerData1", out string ownerJson);
-            Console.WriteLine("Found cookie " + ownerJson);
-            Owner owner = JsonConvert.DeserializeObject<Owner>(ownerJson);
-            using (HttpClient client = new HttpClient())
-            {
-                using (HttpResponseMessage res = await client.PostAsJsonAsync("https://localhost:7183/api/Owner/Add/", owner))
-                {
-                    using (HttpContent content = res.Content)
-                    {
-                        string message = await res.Content.ReadAsStringAsync();
-                        Console.WriteLine(message);
-
-                    }
-                }
-
-                using (HttpResponseMessage res = await client.PostAsJsonAsync("https://localhost:7093/OwnerRegister", owner))
-                {
-                    using (HttpContent content = res.Content)
-                    {
-                        string message = await res.Content.ReadAsStringAsync();
-                        Console.WriteLine(message);
-                    }
-                }
-            }
-            return Redirect("https://localhost:7093/Home/Index");
-        }
-        return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=success");
-    }
-
+    
 
 
     //var _apiUrl = $"https://localhost:7183/api/Member/";
