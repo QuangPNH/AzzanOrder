@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AzzanOrder.ManagerOwner.Models
+namespace payos.Models
 {
     public partial class Owner
     {

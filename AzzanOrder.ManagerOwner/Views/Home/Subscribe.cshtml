@@ -71,7 +71,7 @@
                                 </div>
                             </div>
 
-                            <div class="mb-3 row">
+                            @* <div class="mb-3 row">
                                 <label class="col-form-label col-sm-2 text-sm-end">Select Bank</label>
                                 <div class="col-sm-10">
                                     <select asp-for="bankDatum.code" class="form-select">
@@ -82,26 +82,26 @@
                                         }
                                     </select>
                                 </div>
-                            </div>
+                            </div> *@
 
                             <div class="mb-3 row">
                                 <label class="col-form-label col-sm-2 text-sm-end">PayOS client ID</label>
                                 <div class="col-sm-10">
-                                    <input asp-for="owner.Gmail" class="form-control" placeholder="PAYOS_CLIENT_ID">
+                                    <input asp-for="bank.PAYOS_API_KEY" class="form-control" placeholder="PAYOS_CLIENT_ID">
                                 </div>
                             </div>
 
                             <div class="mb-3 row">
                                 <label class="col-form-label col-sm-2 text-sm-end">PayOS client ID</label>
                                 <div class="col-sm-10">
-                                    <input asp-for="owner.Gmail" class="form-control" placeholder="PAYOS_API_KEY">
+                                    <input asp-for="bank.PAYOS_CLIENT_ID" class="form-control" placeholder="PAYOS_API_KEY">
                                 </div>
                             </div>
 
                             <div class="mb-3 row">
                                 <label class="col-form-label col-sm-2 text-sm-end">PayOS checksum key</label>
                                 <div class="col-sm-10">
-                                    <input asp-for="owner.Gmail" class="form-control" placeholder="PAYOS_CHECKSUM_KEY">
+                                    <input asp-for="bank.PAYOS_CHECKSUM_KEY" class="form-control" placeholder="PAYOS_CHECKSUM_KEY">
                                 </div>
                             </div>
 

@@ -11,6 +11,11 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzzanOrder.ManagerOwner", "
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "payos-demo-dotnet-core", "payos\payos-demo-dotnet-core.csproj", "{1E80AD1B-42D8-4857-A220-36926763C729}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tuan", "Tuan", "{74B0F385-651E-4149-BC34-79F68AC7DD57}"
+	ProjectSection(SolutionItems) = preProject
+		SQL_Tuan_09-11.txt = SQL_Tuan_09-11.txt
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU

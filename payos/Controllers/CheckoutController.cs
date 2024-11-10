@@ -17,16 +17,16 @@ public class CheckoutController : Controller
 	}
 
 
-    //https://localhost:3002/?tableqr=QR_002/1&Price=1000&Item=OASItem&Message=Order
+    //https://localhost:3002/?tableqr=QR_002/1&Price=1000.00&Item=OASItem&Message=Order
     //https://localhost:3002/?Price=30000&Item=SubscribeMontlyPack&Message=MonthyPack
+    //http://localhost:3002/?Price=30000&Item=SubscribeMonthlyPack&Message=MonthlyPack&OwnerName=&OwnerEmail=
     [HttpGet("/")]
-    public async Task<IActionResult> IndexAsync([FromQuery] string tableqr, [FromQuery] string Item, [FromQuery] double Price, [FromQuery] string Message)
+    public async Task<IActionResult> IndexAsync([FromQuery] string? tableqr, [FromQuery] string? Item, [FromQuery] double? Price, [FromQuery] string? Message)
     {
         Console.WriteLine("tableqr: " + tableqr);
         Console.WriteLine("Item: " + Item);
         Console.WriteLine("Price: " + Price);
         Console.WriteLine("Message: " + Message);
-
         // Save 'tableqr' and 'Item' to cookies
         if (!string.IsNullOrEmpty(tableqr))
         {
@@ -49,10 +49,8 @@ public class CheckoutController : Controller
             int orderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff"));
             ItemData item = new ItemData(Item, 1, 1000);
             List<ItemData> items = new List<ItemData> { item };
-
             var request = _httpContextAccessor.HttpContext.Request;
             var baseUrl = $"{request.Scheme}://{request.Host}";
-
             PaymentData paymentData = new PaymentData(
                 orderCode,
                 (int)Price,
@@ -69,7 +67,8 @@ public class CheckoutController : Controller
         catch (System.Exception exception)
         {
             Console.WriteLine(exception);
-            return Redirect("/");
+            //return Redirect("/");
+            return View();
         }
     }
 

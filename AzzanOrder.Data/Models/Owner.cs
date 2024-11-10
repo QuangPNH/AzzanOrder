@@ -21,7 +21,7 @@ namespace AzzanOrder.Data.Models
         public string? Image { get; set; }
         public bool? IsDelete { get; set; }
         public DateTime SubscriptionStartDate { get; set; }
-        public DateTime SubscriptionEndDate { get; set; }
+        public DateTime SubscribeEndDate { get; set; }
 
 
         public virtual Bank? Bank { get; set; }

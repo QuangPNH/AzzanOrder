@@ -60,12 +60,10 @@ namespace AzzanOrder.Data.Models
             {
                 entity.ToTable("Bank");
 
-                entity.Property(e => e.BankBin)
-                    .HasMaxLength(50)
+                entity.Property(e => e.PAYOS_CHECKSUM_KEY)
                     .IsUnicode(false);
 
-                entity.Property(e => e.BankNumber)
-                    .HasMaxLength(50)
+                entity.Property(e => e.PAYOS_API_KEY)
                     .IsUnicode(false);
             });
 

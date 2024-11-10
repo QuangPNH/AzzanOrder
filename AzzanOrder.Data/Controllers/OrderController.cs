@@ -189,9 +189,11 @@ namespace AzzanOrder.Data.Controllers
                 var listBankData = JsonConvert.DeserializeObject<Api.Bank>(htmlData);
             }*/
 
+
+        //INSERT [dbo].[Bank] ([BankId], [BankName], [BankNumber], [BankBin]) VALUES (1, N'NH So Timo', N'9021687094268', N'963388')
         //https://www.vietqr.io/danh-sach-api/link-tao-ma-nhanh/api-tao-ma-qr/
         //https://www.vietqr.io/en/danh-sach-api/link-tao-ma-nhanh/
-        [HttpGet("QR/{price}")]
+        /*[HttpGet("QR/{price}")]
         public async Task<IActionResult> VietQR(double price, int employeeId)
         {
             var e = _context.Employees.FirstOrDefault(e => e.EmployeeId == employeeId);
@@ -221,7 +223,7 @@ namespace AzzanOrder.Data.Controllers
             var image = Base64ToImage(dataResult.data.qrDataURL.Replace("data:image/png;base64,", ""));
             base64Image = image;
             return Ok(new { base64Image });
-        }
+        }*/
 
         [HttpGet("PendingOrder")]
         public async Task<ActionResult<IEnumerable<Order>>> GetPendingOrder()

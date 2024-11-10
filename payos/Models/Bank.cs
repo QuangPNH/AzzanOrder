@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace AzzanOrder.Data.Models
+namespace payos.Models
 {
     public partial class Bank
     {

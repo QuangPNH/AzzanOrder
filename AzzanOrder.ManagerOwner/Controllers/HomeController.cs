@@ -241,10 +241,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
             }
 
             var model = new AzzanOrder.ManagerOwner.Models.Model { bankDatums = theBank.data };
-
-
-
-
             return View(model);
         }
 
@@ -252,26 +248,39 @@ namespace AzzanOrder.ManagerOwner.Controllers
         public IActionResult SubscribeAction(string pack, Model model)
         {
             // Implement necessary subscription logic here
-            // For example, process the subscription based on the pack type
+            // Example processing logic based on the pack type
+            string redirectUrl = "https://localhost:3002/?";
 
-            switch (pack)
+            Bank bank = model.bank;
+
+            if (model.owner != null)
             {
-                case "monthly":
-                    return Redirect("http://localhost:5173/?tableqr=");
-                    break;
-                case "yearly":
-                    // Handle yearly subscription
-                    break;
-                case "forever":
-                    // Handle forever subscription
-                    break;
-                default:
-                    // Handle invalid pack value if necessary
-                    break;
+            // Prepare the query parameters with Owner details
+            var ownerParams = new Dictionary<string, string>
+            {
+            { "Price", "0" }, // Adjust price based on pack
+            { "Item", "Subscribe" + char.ToUpper(pack[0]) + pack.Substring(1) + "Pack" },      // e.g., SubscribeMonthlyPack
+            { "Message", char.ToUpper(pack[0]) + pack.Substring(1) + "Pack" },
+            { "OwnerName", model.owner.OwnerName ?? string.Empty },
+            { "OwnerEmail", model.owner.Gmail ?? string.Empty },
+            { "OwnerEmail", model.owner.Gmail ?? string.Empty },
+            { "OwnerEmail", model.owner.Gmail ?? string.Empty },
+            { "OwnerEmail", model.owner.Gmail ?? string.Empty },
+            { "OwnerEmail", model.owner.Gmail ?? string.Empty },
+            };
+
+                // Construct the URL with the query parameters
+                redirectUrl += string.Join("&", ownerParams.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
             }
-            // Redirect to a confirmation page or wherever you'd like
-            return RedirectToAction("SubscriptionConfirmation");
+            else
+            {
+                // Handle case when model.Owner is null if necessary
+                return RedirectToAction("Error");  // Redirect to an error page or display a message if Owner is missing
+            }
+
+            return Redirect(redirectUrl);  // Redirect to the dynamically generated URL
         }
+
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

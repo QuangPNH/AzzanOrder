@@ -103,7 +103,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return Problem("Bank is null.");
             }
-            var b = new Bank() { BankName = bank.BankName, BankNumber = bank.BankNumber };
+            var b = new Bank() { PAYOS_CLIENT_ID = bank.PAYOS_CLIENT_ID, PAYOS_API_KEY = bank.PAYOS_API_KEY };
             _context.Banks.Add(b);
             await _context.SaveChangesAsync();
 
