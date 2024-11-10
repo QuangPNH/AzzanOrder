@@ -48,7 +48,7 @@ namespace AzzanOrder.Data.Controllers
         }
 
         [HttpGet("GetCustomerOrder/{id}")]
-        public async Task<ActionResult<IEnumerable<Order>>> GetGetCustomerOrder(int id)
+        public async Task<ActionResult<IEnumerable<Order>>> GetGetCustomerOrder(int id, int?  employeeId)
         {
             if (_context.Orders == null)
             {
@@ -56,7 +56,7 @@ namespace AzzanOrder.Data.Controllers
             }
             var orders = await _context.Orders.Include(o => o.OrderDetails)
                     .ThenInclude(od => od.MenuItem).Where(
-                x => x.MemberId == id &&
+                x => x.MemberId == id  &&
                 x.OrderDate > DateTime.Now.AddHours(-1)
                 ).ToListAsync();
 
@@ -198,7 +198,7 @@ namespace AzzanOrder.Data.Controllers
         {
             var e = _context.Employees.FirstOrDefault(e => e.EmployeeId == employeeId);
             var a = _context.Owners.Include(o => o.Bank).FirstOrDefault(o => o.OwnerId == e.OwerId);
-            
+
             var apiRequest = new Api.ApiRequest
             {
                 acqId = Convert.ToInt32(a.Bank.BankBin), //Vietcombank
@@ -269,7 +269,7 @@ namespace AzzanOrder.Data.Controllers
         {
             return (_context.Orders?.Any(e => e.OrderId == id)).GetValueOrDefault();
         }
-        
+
     }
 }
 

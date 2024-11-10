@@ -2,6 +2,25 @@ import React, { useEffect, useState } from "react";
 import { getCookie, setCookie } from '../Account/SignUpForm/Validate';
 import LogoutPage from '../Account/LogoutPage';
 import { useLocation } from "react-router-dom";
+import { table } from "framer-motion/client";
+
+async function AddPoint (memberId, amount){
+    const response = await fetch(`https://localhost:7183/api/Member/UpdatePoints/memberId/point?memberId=${memberId}&point=${amount/1000}`);
+    if (!response.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const response1 = await fetch(`https://localhost:7183/api/MemberVouchers/memberId/voucherDetailId?memberId=${memberId}&voucherDetailId=${JSON.parse(getCookie('voucher')).voucherDetailId}`);
+    if (!response1.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+    const data1 = await response1.json();
+    const response2 = await fetch(`https://localhost:7183/api/MemberVouchers/Delete/${data1.memberVoucherId}`, {
+        method : "DELETE",
+    });
+    if (!response2.ok) {
+        throw new Error(`HTTP error! status: ${response.status}`);
+    }
+};
 
 export async function postOrder(amount, isCash) {
     try {
@@ -64,21 +83,14 @@ export async function postOrder(amount, isCash) {
         }
 
         const data = await response.json();
-        // console.log("Order created successfully:", data);
+        console.log("Order created successfully:", data);
 
         if (memberIn) {
-            const a = await fetch(`https://localhost:7183/api/Members/UpdatePoints/${JSON.parse(memberIn).memberId}/${amount / 1000}`, {
-                method: "PUT",
-                headers: {
-                    "Content-Type": "application/json",
-                }
-            });
-            const b = await a.json();
-            console.log(b);
+            AddPoint(JSON.parse(memberIn).memberId, amount);
 
         }
         deleteCookie('cartData');
-        return a;
+        return data;
     } catch (error) {
         console.error("Error creating order:", error);
         throw error;
@@ -138,5 +150,6 @@ const PlaceOrderButton = ({ amount, isTake, isCash }) => {
 };
 const deleteCookie = () => {
     setCookie('cartData', '', -1); // Call setCookie with negative days to delete
+    setCookie('voucher', '', -1);
 };
 export default PlaceOrderButton;
