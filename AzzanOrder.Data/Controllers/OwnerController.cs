@@ -49,7 +49,25 @@ namespace AzzanOrder.Data.Controllers
             return owner;
         }
 
-		[HttpGet("Phone/{phone}")]
+        // GET: api/Owner/5
+        [HttpGet("Manager/{id}")]
+        public async Task<ActionResult<Owner>> GetOwnerByManagerId(int id)
+        {
+            if (_context.Owners == null)
+            {
+                return NotFound();
+            }
+            var owner = await _context.Owners.Where(o => o.IsDelete == false).Include(o => o.Bank).FirstOrDefaultAsync(o => o.OwnerId == id);
+
+            if (owner == null)
+            {
+                return NotFound();
+            }
+
+            return owner;
+        }
+
+        [HttpGet("Phone/{phone}")]
 		public async Task<ActionResult<Owner>> GetOwnerByPhone(string phone)
 		{
 			if (_context.Owners == null)

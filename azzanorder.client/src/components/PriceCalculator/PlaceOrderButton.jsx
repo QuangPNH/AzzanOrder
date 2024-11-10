@@ -106,11 +106,27 @@ const PlaceOrderButton = ({ amount, isTake, isCash }) => {
             if (isCash) {
                 await postOrder(amount, isCash);
             } else {
+
+                
+                const yeh = getCookie('tableqr') ? getCookie('tableqr').split('/')[1] : null;
+                try {
+                    const response = await fetch(`https://localhost:7183/api/Owner/Manager/${yeh}`);
+                    var owner = await response.json();
+                    console.log(owner);
+                } catch (error) {
+                    console.error('Error fetching notifications:', error);
+                }
+
+
+
                 const bank = {
-                    PAYOS_CLIENT_ID: "c3ab25b3-a36b-44bc-8a15-0a2406de4642",
-                    PAYOS_API_KEY: "5e6bd626-9e42-4e4b-8b8a-6858d1f7615a",
-                    PAYOS_CHECKSUM_KEY: "bf84f6e8550cecf8ef0cf8c0b3eca70a37dd2ceb610efb6c3cc01d25148d637b"
+                    PAYOS_CLIENT_ID: owner.bank.payoS_CLIENT_ID,
+                    PAYOS_API_KEY: owner.bank.payoS_API_KEY,
+                    PAYOS_CHECKSUM_KEY: owner.bank.payoS_CHECKSUM_KEY,
                 };
+
+                
+
                 //Set owner PayOs
                 fetch("https://localhost:3002/?tableqr=" + getCookie("tableqr") + "&Price=" + amount + "&Item=OASItem&Message=Order", {
                     method: "POST",
