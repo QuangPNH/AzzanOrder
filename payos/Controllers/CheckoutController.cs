@@ -5,6 +5,7 @@ using Net.payOS;
 using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 using payos.Models;
+using NetCoreDemo.Types;
 
 public class CheckoutController : Controller
 {
@@ -17,14 +18,12 @@ public class CheckoutController : Controller
         _httpContextAccessor = httpContextAccessor;
     }
 
-
-
     //https://localhost:3002/?tableqr=QR_002/1&Price=1000.00&Item=OASItem&Message=Order
     //https://localhost:3002/?Price=30000&Item=SubscribeMontlyPack&Message=MonthyPack
     //http://localhost:3002/?Price=30000&Item=SubscribeMonthlyPack&Message=MonthlyPack&OwnerName=&OwnerEmail=
     //Normal payment
     [HttpPost("/")]
-    public async Task<string> Index([FromBody]Bank bank, [FromQuery] string tableqr, [FromQuery] string Item, [FromQuery] double Price, [FromQuery] string Message)
+    public async Task<string> Index([FromBody] Bank bank, [FromQuery] string tableqr, [FromQuery] string Item, [FromQuery] double Price, [FromQuery] string Message)
     {
         _payOS = new PayOS(bank.PAYOS_CLIENT_ID ?? "", bank.PAYOS_API_KEY ?? "", bank.PAYOS_CHECKSUM_KEY ?? "");
         Console.WriteLine("PAYOS_CLIENT_ID: " + bank.PAYOS_CLIENT_ID);
@@ -37,7 +36,7 @@ public class CheckoutController : Controller
         Console.WriteLine("Item: " + Item);
         Console.WriteLine("Price: " + Price);
         Console.WriteLine("Message: " + Message);
-        
+
         if (!string.IsNullOrEmpty(tableqr))
         {
             Response.Cookies.Append("tableqrPayOs", tableqr, new CookieOptions
@@ -83,62 +82,43 @@ public class CheckoutController : Controller
 
     //Subscription payment
     [HttpPost("/Subscribe")]
-    public async Task<IActionResult> Subscribe(
+    public async Task<string> Subscribe(
+        [FromBody] Owner owner,
         [FromQuery] string? Item,
         [FromQuery] double? Price,
-        [FromQuery] string? Message,
-        [FromQuery] string? OwnerName,
-        [FromQuery] bool? Gender,
-        [FromQuery] string? Phone,
-        [FromQuery] string? Gmail,
-        [FromQuery] DateTime? BirthDate,
-        [FromQuery] int? BankId,
-        [FromQuery] string? Image,
-        [FromQuery] bool? IsDelete,
-        [FromQuery] string? PAYOS_CLIENT_ID,
-        [FromQuery] string? PAYOS_API_KEY,
-        [FromQuery] string? PAYOS_CHECKSUM_KEY)
+        [FromQuery] string? Message)
     {
         // Log query parameters for debugging purposes
         Console.WriteLine("Item: " + Item);
         Console.WriteLine("Price: " + Price);
         Console.WriteLine("Message: " + Message);
-        Console.WriteLine("OwnerName: " + OwnerName);
-        Console.WriteLine("Gender: " + (Gender.HasValue ? (Gender.Value ? "Male" : "Female") : "Not Specified"));
-        Console.WriteLine("Phone: " + Phone);
-        Console.WriteLine("Gmail: " + Gmail);
-        Console.WriteLine("BirthDate: " + BirthDate);
-        Console.WriteLine("BankId: " + BankId);
-        Console.WriteLine("Image: " + Image);
-        Console.WriteLine("IsDelete: " + IsDelete);
-        Console.WriteLine("PAYOS_CLIENT_ID: " + PAYOS_CLIENT_ID);
-        Console.WriteLine("PAYOS_API_KEY: " + PAYOS_API_KEY);
-        Console.WriteLine("PAYOS_CHECKSUM_KEY: " + PAYOS_CHECKSUM_KEY);
+        Console.WriteLine("OwnerName: " + owner.OwnerName);
+        Console.WriteLine("Gender: " + (owner.Gender.HasValue ? (owner.Gender.Value ? "Male" : "Female") : "Not Specified"));
+        Console.WriteLine("Phone: " + owner.Phone);
+        Console.WriteLine("Gmail: " + owner.Gmail);
+        Console.WriteLine("BirthDate: " + owner.BirthDate);
+        Console.WriteLine("BankId: " + owner.BankId);
+        Console.WriteLine("Image: " + owner.Image);
+        Console.WriteLine("IsDelete: " + owner.IsDelete);
+        Console.WriteLine("PAYOS_CLIENT_ID: " + owner.Bank?.PAYOS_CLIENT_ID);
+        Console.WriteLine("PAYOS_API_KEY: " + owner.Bank?.PAYOS_API_KEY);
+        Console.WriteLine("PAYOS_CHECKSUM_KEY: " + owner.Bank?.PAYOS_CHECKSUM_KEY);
 
 
-        Owner owner = new Owner
+
+        string ownerJson = JsonConvert.SerializeObject(owner);
+        Console.WriteLine("Owner cookeie " + ownerJson);
+
+        if (!string.IsNullOrEmpty(ownerJson))
         {
-            OwnerName = OwnerName,
-            Gender = Gender, // Assuming true = Male, false = Female
-            Phone = Phone,
-            Gmail = Gmail,
-            BirthDate = BirthDate,
-            Image = Image,
-            IsDelete = false,
-            /*SubscriptionStartDate = DateTime.UtcNow,
-            SubscribeEndDate = DateTime.UtcNow.AddMonths(1),*/
-            Bank = new Bank
+            Response.Cookies.Append("OwnerData1", ownerJson, new CookieOptions
             {
-                PAYOS_CLIENT_ID = "your-client-id",
-                PAYOS_API_KEY = "your-api-key",
-                PAYOS_CHECKSUM_KEY = "your-checksum-key"
-            }
-        };
-
+                HttpOnly = true,
+                Expires = DateTimeOffset.UtcNow.AddDays(1)
+            });
+        }
 
         // Initialize the _payOS instance with API keys if provided
-
-
         if (!string.IsNullOrEmpty(Item))
         {
             Response.Cookies.Append("ItemType", Item, new CookieOptions
@@ -167,19 +147,20 @@ public class CheckoutController : Controller
                 (int)Price.GetValueOrDefault(),
                 Message + orderCode,
                 items,
-                $"{baseUrl}/cancel",
-                $"{baseUrl}/success"
+                $"{baseUrl}/success",
+                $"{baseUrl}/cancel"
             );
 
             // Create the payment link
             CreatePaymentResult createPayment = await _payOS.createPaymentLink(paymentData);
 
-            return Redirect(createPayment.checkoutUrl);
+            //return Redirect(createPayment.checkoutUrl);
+            return createPayment.checkoutUrl;
         }
         catch (System.Exception exception)
         {
             Console.WriteLine(exception);
-            return View();
+            return exception.ToString();
         }
     }
 
@@ -189,6 +170,7 @@ public class CheckoutController : Controller
     [HttpGet("/cancel")]
     public IActionResult Cancel()
     {
+        Console.WriteLine("Cancel nah");
         HttpContext.Request.Cookies.TryGetValue("tableqrPayOs", out string tableqr);
         HttpContext.Request.Cookies.TryGetValue("ItemType", out string itemType);
 
@@ -196,8 +178,6 @@ public class CheckoutController : Controller
         {
             return Redirect("https://localhost:7093/Home/Subscribe");
         }
-
-        //return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=cancel");
         return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=success");
     }
 
@@ -205,11 +185,36 @@ public class CheckoutController : Controller
     [HttpGet("/success")]
     public async Task<IActionResult> Success([FromQuery] int memberId)
     {
+        Console.WriteLine("Success running yeh");
         HttpContext.Request.Cookies.TryGetValue("tableqrPayOs", out string tableqr);
         HttpContext.Request.Cookies.TryGetValue("ItemType", out string itemType);
 
         if (itemType.Contains("Subscribe"))
         {
+            HttpContext.Request.Cookies.TryGetValue("OwnerData1", out string ownerJson);
+            Console.WriteLine("Found cookie " + ownerJson);
+            Owner owner = JsonConvert.DeserializeObject<Owner>(ownerJson);
+            using (HttpClient client = new HttpClient())
+            {
+                using (HttpResponseMessage res = await client.PostAsJsonAsync("https://localhost:7183/api/Owner/Add/", owner))
+                {
+                    using (HttpContent content = res.Content)
+                    {
+                        string message = await res.Content.ReadAsStringAsync();
+                        Console.WriteLine(message);
+
+                    }
+                }
+
+                using (HttpResponseMessage res = await client.PostAsJsonAsync("https://localhost:7093/OwnerRegister", owner))
+                {
+                    using (HttpContent content = res.Content)
+                    {
+                        string message = await res.Content.ReadAsStringAsync();
+                        Console.WriteLine(message);
+                    }
+                }
+            }
             return Redirect("https://localhost:7093/Home/Index");
         }
         return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=success");

@@ -5,6 +5,7 @@ using Newtonsoft.Json.Linq;
 using System.Diagnostics;
 using System.Numerics;
 using System.Reflection;
+using System.Text;
 using System.Text.RegularExpressions;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
@@ -48,10 +49,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
         public async Task<IActionResult> Login()
         {
             HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson);
-            Console.WriteLine("sfdjhsbfjs " + empJson);
-            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
 
-            Console.WriteLine("ssdsdjjsc " + await authorizeLogin.CheckLogin());
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             if ((await authorizeLogin.CheckLogin()).Equals("owner"))
             {
                 return RedirectToAction("Index", "Home");
@@ -63,7 +62,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             return View();
         }
 
-
+        //Login method for both owner and manager
         [HttpPost]
         public async Task<IActionResult> LoginAction(Employee employee)
         {
@@ -139,7 +138,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     var model = new AzzanOrder.ManagerOwner.Models.Model { owner = owner, employee = emp };
 
                     var ownerJson = JsonConvert.SerializeObject(owner);
-                    HttpContext.Response.Cookies.Append("LoginInfo", ownerJson, new CookieOptions
+                    HttpContext.Response.Cookies.Append("TempLoginInfo", ownerJson, new CookieOptions
                     {
                         Expires = DateTimeOffset.UtcNow.AddDays(30)
                     });
@@ -171,7 +170,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 var model = new AzzanOrder.ManagerOwner.Models.Model { employee = emp };
 
                 var empJson = JsonConvert.SerializeObject(emp);
-                HttpContext.Response.Cookies.Append("LoginInfo", empJson, new CookieOptions
+                HttpContext.Response.Cookies.Append("TempLoginInfo", empJson, new CookieOptions
                 {
                     Expires = DateTimeOffset.UtcNow.AddDays(30)
                 });
@@ -190,8 +189,17 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 TempData.Remove("OTP");
                 try
                 {
-                    HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string loginInfoJson);
+                    HttpContext.Request.Cookies.TryGetValue("TempLoginInfo", out string loginInfoJson);
+                    HttpContext.Response.Cookies.Append("LoginInfo", loginInfoJson, new CookieOptions
+                    {
+                        Expires = DateTimeOffset.UtcNow.AddDays(30)
+                    });
+                    HttpContext.Response.Cookies.Delete("TempLoginInfo");
+
                     var loginInfo = JsonConvert.DeserializeObject<Employee>(loginInfoJson);
+
+
+
                     if (loginInfo.RoleId != null)
                     {
                         return RedirectToAction("List", "Employee");
@@ -244,42 +252,49 @@ namespace AzzanOrder.ManagerOwner.Controllers
             return View(model);
         }
 
-        [HttpPost]
-        public IActionResult SubscribeAction(string pack, Model model)
-        {
-            // Implement necessary subscription logic here
-            // Example processing logic based on the pack type
-            string redirectUrl = "https://localhost:3002/?";
 
-            Bank bank = model.bank;
+
+        [HttpPost]
+        public async Task<IActionResult> SubscribeActionAsync(string pack, Model model)
+        {
+            string redirectUrl = "https://localhost:3002/Subscribe/?";
+            string price = "0";
+            if (pack.Equals("monthly"))
+            {
+                price = "30000";
+            }
+            else if (pack.Equals("yearly"))
+            {
+                price = "300000";
+            }
+            else if (pack.Equals("forever"))
+            {
+                price = "3000000";
+            }
 
             if (model.owner != null)
             {
                 // Prepare the query parameters with Owner details
                 var ownerParams = new Dictionary<string, string>
             {
-            { "Price", "0" }, // Adjust price based on pack
+            { "Price", price }, // Adjust price based on pack
             { "Item", "Subscribe" + char.ToUpper(pack[0]) + pack.Substring(1) + "Pack" },      // e.g., SubscribeMonthlyPack
-            { "Message", char.ToUpper(pack[0]) + pack.Substring(1) + "Pack" },
-            { "OwnerName", model.owner.OwnerName ?? string.Empty },
-            { "Gender", model.owner.Gender.HasValue ? (model.owner.Gender.Value ? "Male" : "Female") : string.Empty },
-            { "Phone", model.owner.Phone ?? string.Empty },
-            { "Gmail", model.owner.Gmail ?? string.Empty },
-            { "BirthDate", model.owner.BirthDate.HasValue ? model.owner.BirthDate.Value.ToString("yyyy-MM-dd") : string.Empty },
-            { "BankId", model.owner.BankId?.ToString() ?? string.Empty },
-            { "Image", model.owner.Image ?? string.Empty },
-            { "IsDelete", model.owner.IsDelete.HasValue ? model.owner.IsDelete.Value.ToString() : string.Empty },
-            { "SubscriptionStartDate", model.owner.SubscriptionStartDate.ToString("yyyy-MM-dd") },
-            { "SubscribeEndDate", model.owner.SubscribeEndDate.ToString("yyyy-MM-dd") },
-
-            // Bank details
-            { "PAYOS_CLIENT_ID", model.owner.Bank.PAYOS_CLIENT_ID ?? string.Empty },
-            { "PAYOS_API_KEY", model.owner.Bank.PAYOS_API_KEY ?? string.Empty },
-            { "PAYOS_CHECKSUM_KEY", model.owner.Bank.PAYOS_CHECKSUM_KEY ?? string.Empty }
+            { "Message", char.ToUpper(pack[0]) + pack.Substring(1) + "Pack" }
         };
 
                 // Construct the URL with the query parameters
                 redirectUrl += string.Join("&", ownerParams.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
+                using (HttpClient client = new HttpClient())
+                {
+                    var json = JsonConvert.SerializeObject(model.owner);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    var response = await client.PostAsync(redirectUrl, content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string payURL = await response.Content.ReadAsStringAsync();
+                        return Redirect(payURL);
+                    }
+                }
             }
             else
             {
@@ -289,6 +304,27 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
             return Redirect(redirectUrl);  // Redirect to the dynamically generated URL
         }
+
+        [HttpPost]
+        public IActionResult OwnerRegister([FromBody] Owner owner)
+        {
+            try
+            {
+                var ownerJson = JsonConvert.SerializeObject(owner);
+                Console.WriteLine("meowdhd: " + ownerJson);
+                HttpContext.Response.Cookies.Append("LoginInfo", ownerJson, new CookieOptions
+                {
+                    Expires = DateTimeOffset.UtcNow.AddDays(30)
+                });
+                    return Ok();
+            }
+            catch
+            {
+
+            }
+            return Conflict();
+        }
+
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
