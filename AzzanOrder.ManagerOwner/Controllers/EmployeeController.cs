@@ -21,12 +21,12 @@ namespace AzzanOrder.ManagerOwner.Controllers
 			}
 			else if (authorizeLogin.Equals("owner expired"))
 			{
-				ViewBag.Message = "Your subscription has been expired. Please subscribe again.";
+				ViewBag.Message = "Your subscription has expired. Please subscribe again.";
 				return RedirectToAction("Login", "Home");
 			}
 			else if (authorizeLogin.Equals("manager expired"))
 			{
-				ViewBag.Message = "Your owner's subscription has been expired.";
+				ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
 				return RedirectToAction("Login", "Home");
 			}
 
@@ -127,12 +127,12 @@ namespace AzzanOrder.ManagerOwner.Controllers
 			}
 			else if (authorizeLogin.Equals("owner expired"))
 			{
-				ViewBag.Message = "Your subscription has been expired. Please subscribe again.";
+				ViewBag.Message = "Your subscription has expired. Please subscribe again.";
 				return RedirectToAction("Login", "Home");
 			}
 			else if (authorizeLogin.Equals("manager expired"))
 			{
-				ViewBag.Message = "Your owner's subscription has been expired for over a week.\nFor more instruction, please contact the owner.";
+				ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
 				return RedirectToAction("Login", "Home");
 			}
 
@@ -215,12 +215,12 @@ namespace AzzanOrder.ManagerOwner.Controllers
 			}
 			else if (authorizeLogin.Equals("owner expired"))
 			{
-				ViewBag.Message = "Your subscription has been expired. Please subscribe again.";
+				ViewBag.Message = "Your subscription has expired. Please subscribe again.";
 				return RedirectToAction("Login", "Home");
 			}
 			else if (authorizeLogin.Equals("manager expired"))
 			{
-				ViewBag.Message = "Your owner's subscription has been expired.";
+				ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
 				return RedirectToAction("Login", "Home");
 			}
 
@@ -296,12 +296,12 @@ namespace AzzanOrder.ManagerOwner.Controllers
 			}
 			else if (authorizeLogin.Equals("owner expired"))
 			{
-				ViewBag.Message = "Your subscription has been expired. Please subscribe again.";
+				ViewBag.Message = "Your subscription has expired. Please subscribe again.";
 				return RedirectToAction("Login", "Home");
 			}
 			else if (authorizeLogin.Equals("manager expired"))
 			{
-				ViewBag.Message = "Your owner's subscription has been expired.";
+				ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
 				return RedirectToAction("Login", "Home");
 			}
 			// Convert uploaded image to Base64 if there is a new image
@@ -419,12 +419,12 @@ namespace AzzanOrder.ManagerOwner.Controllers
 			}
 			else if (authorizeLogin.Equals("owner expired"))
 			{
-				ViewBag.Message = "Your subscription has been expired. Please subscribe again.";
+				ViewBag.Message = "Your subscription has expired. Please subscribe again.";
 				return RedirectToAction("Login", "Home");
 			}
 			else if (authorizeLogin.Equals("manager expired"))
 			{
-				ViewBag.Message = "Your owner's subscription has been expired.";
+				ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
 				return RedirectToAction("Login", "Home");
 			}
 			using (HttpClient client = new HttpClient())

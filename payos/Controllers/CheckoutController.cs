@@ -162,25 +162,47 @@ public class CheckoutController : Controller
 
 
             Owner owner = JsonConvert.DeserializeObject<Owner>(ownerJson);
-            using (HttpClient client = new HttpClient())
-            {
-                using (HttpResponseMessage res = await client.PostAsJsonAsync("https://localhost:7183/api/Owner/Add/", owner))
-                {
-                    using (HttpContent content = res.Content)
-                    {
-                        string message = await res.Content.ReadAsStringAsync();
-                    }
-                }
 
-                using (HttpResponseMessage res = await client.PostAsJsonAsync("https://localhost:7093/OwnerRegister", owner))
-                {
-                    using (HttpContent content = res.Content)
-                    {
-                        string message = await res.Content.ReadAsStringAsync();
-                        Console.WriteLine(message);
-                    }
-                }
-            }
+			using (HttpClient client = new HttpClient())
+			{
+				// Check if the phone number exists
+				HttpResponseMessage getResponse = await client.GetAsync($"https://localhost:7183/api/Owner/Phone/{owner.Phone}");
+				if (getResponse.IsSuccessStatusCode)
+				{
+					// Phone number exists, update subscription dates
+					var updateData = new
+					{
+						subscriptionStartDate = owner.SubscriptionStartDate,
+						subscriptionEndDate = owner.SubscribeEndDate
+					};
+					HttpResponseMessage updateResponse = await client.PatchAsync(
+						$"https://localhost:7183/api/Owner/UpdateSubscriptionDatesByPhone/{owner.Phone}",
+						JsonContent.Create(updateData)
+					);
+					if (updateResponse.IsSuccessStatusCode)
+					{
+						string updateMessage = await updateResponse.Content.ReadAsStringAsync();
+						Console.WriteLine(updateMessage);
+					}
+				}
+				else
+				{
+					// Phone number does not exist, add new owner
+					HttpResponseMessage addResponse = await client.PostAsJsonAsync("https://localhost:7183/api/Owner/Add/", owner);
+					if (addResponse.IsSuccessStatusCode)
+					{
+						string addMessage = await addResponse.Content.ReadAsStringAsync();
+						Console.WriteLine(addMessage);
+					}
+				}
+
+				HttpResponseMessage registerResponse = await client.PostAsJsonAsync("https://localhost:7093/OwnerRegister", owner);
+				if (registerResponse.IsSuccessStatusCode)
+				{
+					string registerMessage = await registerResponse.Content.ReadAsStringAsync();
+					Console.WriteLine(registerMessage);
+				}
+			}
 
             HttpContext.Response.Cookies.Append("LoginInfo", ownerJson, new CookieOptions
             {
