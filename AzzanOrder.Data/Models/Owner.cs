@@ -20,7 +20,8 @@ namespace AzzanOrder.Data.Models
         public int? BankId { get; set; }
         public string? Image { get; set; }
         public bool? IsDelete { get; set; }
-        public DateTime SubscriptionStartDate { get; set; }
+		public bool? IsFreeTrial { get; set; }
+		public DateTime SubscriptionStartDate { get; set; }
         public DateTime SubscribeEndDate { get; set; }
 
 

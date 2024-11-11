@@ -283,84 +283,206 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 
         [HttpPost]
-        public async Task<IActionResult> SubscribeActionAsync(string pack, Model model)
-        {
-            string redirectUrl = "https://localhost:3002/Subscribe/?";
-            string price = "0";
-            if (pack.Equals("monthly"))
-            {
-                price = "30000";
-                model.owner.SubscriptionStartDate = DateTime.Now;
-                model.owner.SubscribeEndDate = DateTime.Now.AddMonths(1);
-            }
-            else if (pack.Equals("yearly"))
-            {
-                price = "300000";
-                model.owner.SubscriptionStartDate = DateTime.Now;
-                model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
-            }
-            else if (pack.Equals("forever"))
-            {
-                price = "3000000";
-                model.owner.SubscriptionStartDate = DateTime.Now;
-                model.owner.SubscribeEndDate = DateTime.Now.AddYears(100);
-            }
+		public async Task<IActionResult> SubscribeActionAsync(string pack, Model model)
+		{
+			if (pack.Equals("free"))
+			{
+				return await SubscribeFreeTrialAction(model);
+			}
 
-            if (model.owner != null)
-            {
-                var ownerJson = JsonConvert.SerializeObject(model.owner);
-                var ownerParams = new Dictionary<string, string>
-                {
-                    { "Price", price }, // Adjust price based on pack
-                    { "Item", "Subscribe" + char.ToUpper(pack[0]) + pack.Substring(1) + "Pack" }, // e.g., SubscribeMonthlyPack
-                    { "Message", char.ToUpper(pack[0]) + pack.Substring(1) + "Pack" }
-                };
+			string redirectUrl = "https://localhost:3002/Subscribe/?";
+			string price = "0";
 
-                if (!string.IsNullOrEmpty(ownerJson))
-                {
-                    Response.Cookies.Append("OwnerData", ownerJson, new CookieOptions
-                    {
-                        HttpOnly = true,
-                        Expires = DateTimeOffset.UtcNow.AddDays(1)
-                    });
-                    Console.WriteLine(" coOwnersergokeie " + HttpContext.Request.Cookies.TryGetValue("OwnerData", out var ownerData));
-                }
-                    Response.Cookies.Append("ItemType", "Subscribe" + char.ToUpper(pack[0]) + pack.Substring(1) + "Pack", new CookieOptions
-                    {
-                        HttpOnly = true,
-                        Expires = DateTimeOffset.UtcNow.AddDays(1)
-                    });
+			if (pack.Equals("yearly"))
+			{
+				price = "300000";
+				model.owner.SubscriptionStartDate = DateTime.Now;
+				model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
+			}
+			else if (pack.Equals("forever"))
+			{
+				price = "3000000";
+				model.owner.SubscriptionStartDate = DateTime.Now;
+				model.owner.SubscribeEndDate = DateTime.Now.AddYears(100);
+			}
 
-                // Construct the URL with the query parameters
-                redirectUrl += string.Join("&", ownerParams.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
-                using (HttpClient client = new HttpClient())
-                {
-                    var json = JsonConvert.SerializeObject(model.owner);
-                    var content = new StringContent(json, Encoding.UTF8, "application/json");
-                    var response = await client.PostAsync(redirectUrl, content);
-                    if (response.IsSuccessStatusCode)
-                    {
-                        string payURL = await response.Content.ReadAsStringAsync();
-                        return Redirect(payURL);
-                    }
-                }
-            }
-            else
-            {
-                // Handle case when model.Owner is null if necessary
-                return RedirectToAction("Error");  // Redirect to an error page or display a message if Owner is missing
-            }
+			if (model.owner != null)
+			{
+				var ownerJson = JsonConvert.SerializeObject(model.owner);
+				var ownerParams = new Dictionary<string, string>
+				{
+					{ "Price", price },
+					{ "Item", "Subscribe" + char.ToUpper(pack[0]) + pack.Substring(1) + "Pack" },
+					{ "Message", char.ToUpper(pack[0]) + pack.Substring(1) + "Pack" }
+				};
 
-            return Redirect(redirectUrl);  // Redirect to the dynamically generated URL
-        }
+				if (!string.IsNullOrEmpty(ownerJson))
+				{
+					Response.Cookies.Append("OwnerData", ownerJson, new CookieOptions
+					{
+						HttpOnly = true,
+						Expires = DateTimeOffset.UtcNow.AddDays(1)
+					});
+				}
 
-        [HttpPost]
+				Response.Cookies.Append("ItemType", "Subscribe" + char.ToUpper(pack[0]) + pack.Substring(1) + "Pack", new CookieOptions
+				{
+					HttpOnly = true,
+					Expires = DateTimeOffset.UtcNow.AddDays(1)
+				});
+
+				redirectUrl += string.Join("&", ownerParams.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
+				using (HttpClient client = new HttpClient())
+				{
+					var json = JsonConvert.SerializeObject(model.owner);
+					var content = new StringContent(json, Encoding.UTF8, "application/json");
+					var response = await client.PostAsync(redirectUrl, content);
+					if (response.IsSuccessStatusCode)
+					{
+						string payURL = await response.Content.ReadAsStringAsync();
+						return Redirect(payURL);
+					}
+				}
+			}
+			else
+			{
+				return RedirectToAction("Error");
+			}
+
+			return Redirect(redirectUrl);
+		}
+
+
+		[HttpPost]
+		private async Task<IActionResult> SubscribeFreeTrialAction(Model model)
+		{
+			Employee emp = null;
+			Owner owner = null;
+			string otp = new Random().Next(000000, 999999).ToString();
+
+			otp = "123456"; // For testing only, remove this line in production
+
+			HttpContext.Session.SetString("OTP", otp);
+
+			/*// Send OTP via Twilio
+			var accountSid = "ACd5083d30edb839433981a766a0c2e2fd";
+			var authToken = "";
+			TwilioClient.Init(accountSid, authToken);
+			var messageOptions = new CreateMessageOptions(new PhoneNumber("+84388536414"))
+			{
+				From = new PhoneNumber("+19096555985"),
+				Body = "Your OTP is " + otp
+			};
+			MessageResource.Create(messageOptions);*/
+
+			// Redirect to the OTP input page
+		     model = new AzzanOrder.ManagerOwner.Models.Model { owner = model.owner, employee = emp };
+
+			var ownerJson = JsonConvert.SerializeObject(model.owner);
+			HttpContext.Response.Cookies.Append("TempLoginInfo", ownerJson, new CookieOptions
+			{
+				Expires = DateTimeOffset.UtcNow.AddDays(30)
+			});
+
+			return View("OTPFreeTrial", model);
+		}
+
+		[HttpPost]
+		public async Task<IActionResult> VerifyOtpFreeTrial(string otp)
+		{
+			var sessionOtp = HttpContext.Session.GetString("OTP");
+			// Check if the OTP matches
+			if (otp == sessionOtp?.ToString())
+			{
+				TempData.Remove("OTP");
+				try
+				{
+					HttpContext.Request.Cookies.TryGetValue("TempLoginInfo", out string loginInfoJson);
+					HttpContext.Response.Cookies.Append("LoginInfo", loginInfoJson, new CookieOptions
+					{
+						Expires = DateTimeOffset.UtcNow.AddDays(30)
+					});
+					HttpContext.Response.Cookies.Delete("TempLoginInfo");
+
+					var owner = JsonConvert.DeserializeObject<Owner>(loginInfoJson);
+
+					bool ownerExist = false;
+					using (HttpClient client = new HttpClient())
+					{
+						HttpResponseMessage getResponse = await client.GetAsync($"https://localhost:7183/api/Owner/Phone/{owner.Phone}");
+						if (getResponse.IsSuccessStatusCode)
+						{
+							var ownerData = await getResponse.Content.ReadAsStringAsync();
+							var existingOwner = JsonConvert.DeserializeObject<Owner>(ownerData);
+
+							if (existingOwner != null)
+							{
+								ownerExist = true;
+								if (existingOwner.IsFreeTrial == true)
+								{
+									ViewBag.Message = "Already in free trial";
+									return RedirectToAction("Subscribe", "Home");
+								}
+								else if (existingOwner.IsFreeTrial == false)
+								{
+									ViewBag.Message = "You can only subscribe to the free trial once";
+									return RedirectToAction("Subscribe", "Home");
+								}
+							}
+						}
+					}
+
+					owner.SubscriptionStartDate = DateTime.Now;
+					owner.SubscribeEndDate = DateTime.Now.AddMonths(1);
+					owner.IsFreeTrial = true;
+
+					if (ownerExist == false)
+					{
+						using (HttpClient client = new HttpClient())
+						{
+							HttpResponseMessage addResponse = await client.PostAsJsonAsync("https://localhost:7183/api/Owner/Add/", owner);
+							if (addResponse.IsSuccessStatusCode)
+							{
+								string addMessage = await addResponse.Content.ReadAsStringAsync();
+								Console.WriteLine(addMessage);
+							}
+						}
+					}
+
+					var ownerJson1 = JsonConvert.SerializeObject(owner);
+					HttpContext.Response.Cookies.Append("LoginInfo", ownerJson1, new CookieOptions
+					{
+						Expires = DateTimeOffset.UtcNow.AddYears(30)
+					});
+
+					return RedirectToAction("Index", "Home");
+				}
+				catch
+				{
+
+				}
+				return View("OTPFreeTrial");
+			}
+			else
+			{
+				var model = new AzzanOrder.ManagerOwner.Models.Model();
+				ModelState.AddModelError(string.Empty, "Invalid OTP. Please try again.");
+				return View("OTPFreeTrial", model);
+			}
+		}
+
+
+		[HttpPost]
         public IActionResult OwnerRegister([FromBody] Owner owner)
         {
             try
             {
                 var ownerJson = JsonConvert.SerializeObject(owner);
-                return Ok();
+				HttpContext.Response.Cookies.Append("LoginInfo", ownerJson, new CookieOptions
+				{
+					Expires = DateTimeOffset.UtcNow.AddYears(30)
+				});
+				return Ok();
             }
             catch
             {

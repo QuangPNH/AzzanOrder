@@ -3,15 +3,15 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace AzzanOrder.ManagerOwner.Models
 {
-    public class AuthorizeLogin
-    {
-        private readonly string _apiUrl = "https://localhost:7183/api/";
-        private readonly HttpContext _httpContext; // Add this field
+	public class AuthorizeLogin
+	{
+		private readonly string _apiUrl = "https://localhost:7183/api/";
+		private readonly HttpContext _httpContext; // Add this field
 
-        public AuthorizeLogin(HttpContext httpContext) // Modify constructor to accept HttpContext
-        {
-            _httpContext = httpContext; // Initialize the field
-        }
+		public AuthorizeLogin(HttpContext httpContext) // Modify constructor to accept HttpContext
+		{
+			_httpContext = httpContext; // Initialize the field
+		}
 
 		public async Task<string> CheckLogin()
 		{
@@ -40,6 +40,10 @@ namespace AzzanOrder.ManagerOwner.Models
 				if (isManager)
 				{
 					emp = JsonConvert.DeserializeObject<Employee>(user);
+					if (emp == null)
+					{
+						return "null";
+					}
 					using (HttpClient client = new HttpClient())
 					{
 						try
@@ -66,6 +70,10 @@ namespace AzzanOrder.ManagerOwner.Models
 				else
 				{
 					owner = JsonConvert.DeserializeObject<Owner>(user);
+					if (owner == null)
+					{
+						return "null";
+					}
 					using (HttpClient client = new HttpClient())
 					{
 						try
@@ -92,5 +100,5 @@ namespace AzzanOrder.ManagerOwner.Models
 			}
 			return "null";
 		}
-    }
+	}
 }

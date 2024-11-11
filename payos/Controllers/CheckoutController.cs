@@ -158,9 +158,6 @@ public class CheckoutController : Controller
             Console.WriteLine("Tets cookie " + ownerJson);
             Console.WriteLine("Tets cookie " + Request.Cookies["OwnerData"]);
 
-
-
-
             Owner owner = JsonConvert.DeserializeObject<Owner>(ownerJson);
 
 			using (HttpClient client = new HttpClient())

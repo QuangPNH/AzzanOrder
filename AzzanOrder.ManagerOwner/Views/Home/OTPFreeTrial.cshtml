@@ -1,7 +1,30 @@
 ﻿@model AzzanOrder.ManagerOwner.Models.Model
 
+
+
+
+
 <div class="container-fluid p-0">
 
+    <!-- Modal for OTP Entry -->
+    <div class="modal fade show" id="otpModal" tabindex="-1" aria-labelledby="otpModalLabel" aria-hidden="true" style="display: block;">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="otpModalLabel">OTP Verification</h5>
+                </div>
+                <div class="modal-body">
+                    <form asp-action="VerifyOtpFreeTrial" asp-controller="Home" method="post">
+                        <div class="mb-3">
+                            <label class="form-label">OTP</label>
+                            <input type="text" name="otp" class="form-control" placeholder="Enter OTP" required />
+                        </div>
+                        <button type="submit" class="btn btn-primary">Verify OTP</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="mb-3">
         <h1 class="h3 d-inline align-middle">ㅤ</h1>
     </div>
@@ -72,16 +95,16 @@
                             </div>
 
                             @* <div class="mb-3 row">
-                                <label class="col-form-label col-sm-2 text-sm-end">Select Bank</label>
-                                <div class="col-sm-10">
-                                    <select asp-for="bankDatum.code" class="form-select">
-                                        <option value="">-- Select a Bank --</option>
-                                        @foreach (var bank in Model.bankDatums)
-                                        {
-                                            <option value="@bank.code">@bank.shortName</option>
-                                        }
-                                    </select>
-                                </div>
+                            <label class="col-form-label col-sm-2 text-sm-end">Select Bank</label>
+                            <div class="col-sm-10">
+                            <select asp-for="bankDatum.code" class="form-select">
+                            <option value="">-- Select a Bank --</option>
+                            @foreach (var bank in Model.bankDatums)
+                            {
+                            <option value="@bank.code">@bank.shortName</option>
+                            }
+                            </select>
+                            </div>
                             </div> *@
 
                             <div class="mb-3 row">
@@ -118,11 +141,11 @@
                                                     </div>
                                                     <ul class="list-unstyled">
                                                         <li class="mb-2">
-                                                            Try our service for a month! No penny needed!
+                                                            Come and use our service!
                                                         </li>
                                                     </ul>
                                                     <div class="mt-auto">
-                                                        <button type="submit" class="btn btn-primary" name="pack" value="free">Start using now!</button>
+                                                        <button type="submit" class="btn btn-primary" name="pack" value="free">Purchase</button>
                                                     </div>
                                                 </div>
                                             </div>
@@ -171,7 +194,7 @@
                     </div>
                 </div>
             </div>
-            
+
 
             <hr />
 
@@ -224,3 +247,15 @@
         </div>
     </div>
 </div>
+
+
+
+
+
+
+<script>
+    // Auto-show the OTP modal on page load
+    document.addEventListener("DOMContentLoaded", function () {
+        new bootstrap.Modal(document.getElementById("otpModal")).show();
+    });
+</script>
