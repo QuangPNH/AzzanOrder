@@ -28,10 +28,26 @@ namespace AzzanOrder.ManagerOwner.Controllers
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
 
-            if ((await authorizeLogin.CheckLogin()).Equals("owner"))
+            var loginStatus = await authorizeLogin.CheckLogin();
+            if (loginStatus.Equals("owner"))
             {
                 return View();
             }
+			else if (loginStatus.Equals("manager"))
+			{
+				return RedirectToAction("List", "Employee");
+			}
+			else if (loginStatus.Equals("owner expired"))
+			{
+				ViewBag.Message = "Your subscription has been expired. Please subscribe again.";
+				return RedirectToAction("Login", "Home");
+			}
+			else if (loginStatus.Equals("manager expired"))
+			{
+				ViewBag.Message = "Your owner's subscription has been expired.";
+				return RedirectToAction("Login", "Home");
+			}
+			else
             {
                 return RedirectToAction("Login", "Home");
             }
@@ -52,15 +68,27 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             Console.WriteLine("aaaaaaaaa a " + await authorizeLogin.CheckLogin());
-            if ((await authorizeLogin.CheckLogin()).Equals("owner"))
+            var loginStatus = await authorizeLogin.CheckLogin();
+            if (loginStatus.Equals("owner"))
             {
                 return RedirectToAction("Index", "Home");
             }
-            else if ((await authorizeLogin.CheckLogin()).Equals("manager"))
+            else if (loginStatus.Equals("manager"))
             {
                 return RedirectToAction("List", "Employee");
             }
-            return View();
+            else if (loginStatus.Equals("owner expired"))
+            {
+                ViewBag.Message = "Your subscription has been expired. Please subscribe again.";
+                return RedirectToAction("Login", "Home");
+            }
+			else if (loginStatus.Equals("manager expired"))
+			{
+				ViewBag.Message = "Your owner's subscription has been expired.";
+				return RedirectToAction("Login", "Home");
+			}
+
+			return View();
         }
 
         //Login method for both owner and manager

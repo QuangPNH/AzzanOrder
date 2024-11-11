@@ -26,11 +26,11 @@ namespace payos.Models
         public string? WorkAddress { get; set; }
         public string? Image { get; set; }
         public int? ManagerId { get; set; }
-        public int? OwerId { get; set; }
+        public int? OwnerId { get; set; }
         public bool? IsDelete { get; set; }
 
         public virtual Employee? Manager { get; set; }
-        public virtual Owner? Ower { get; set; }
+        public virtual Owner? Owner { get; set; }
         public virtual Role? Role { get; set; }
         public virtual ICollection<Employee> InverseManager { get; set; }
         public virtual ICollection<ItemCategory> ItemCategories { get; set; }

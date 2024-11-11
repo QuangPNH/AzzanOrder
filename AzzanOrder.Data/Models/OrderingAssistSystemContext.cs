@@ -82,9 +82,9 @@ namespace AzzanOrder.Data.Models
                     .HasForeignKey(d => d.ManagerId)
                     .HasConstraintName("FK_Employee_Employee");
 
-                entity.HasOne(d => d.Ower)
+                entity.HasOne(d => d.Owner)
                     .WithMany(p => p.Employees)
-                    .HasForeignKey(d => d.OwerId)
+                    .HasForeignKey(d => d.OwnerId)
                     .HasConstraintName("FK_Employee_Owner");
 
                 entity.HasOne(d => d.Role)
