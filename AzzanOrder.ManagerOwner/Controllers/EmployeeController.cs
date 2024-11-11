@@ -132,7 +132,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 			}
 			else if (authorizeLogin.Equals("manager expired"))
 			{
-				ViewBag.Message = "Your owner's subscription has been expired.";
+				ViewBag.Message = "Your owner's subscription has been expired for over a week.\nFor more instruction, please contact the owner.";
 				return RedirectToAction("Login", "Home");
 			}
 
