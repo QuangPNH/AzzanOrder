@@ -322,6 +322,7 @@ CREATE TABLE [dbo].[Owner](
 	[IsDelete] [bit] NULL,
 	[SubscriptionStartDate] [date] NOT NULL,
 	[SubscribeEndDate] [date] NOT NULL,
+	[IsFreeTrial][bit] NULL,
  CONSTRAINT [PK_Owner] PRIMARY KEY CLUSTERED 
 (
 	[OwnerId] ASC
@@ -615,9 +616,9 @@ SET IDENTITY_INSERT [dbo].[OrderDetail] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Owner] ON 
 
-INSERT [dbo].[Owner] ([OwnerId], [OwnerName], [Gender], [Phone], [Gmail], [BirthDate], [BankId], [Image], [IsDelete], [SubscriptionStartDate], [SubscribeEndDate]) VALUES (1, N'Nguyễn Quang Minh', 1, N'0866187621', N'nguyenminh7902@gmail.com', CAST(N'2002-09-07T00:00:00.000' AS DateTime), 1, N'anh-4.png', 0, CAST(N'2002-09-07' AS Date), CAST(N'2025-11-08' AS Date))
-INSERT [dbo].[Owner] ([OwnerId], [OwnerName], [Gender], [Phone], [Gmail], [BirthDate], [BankId], [Image], [IsDelete], [SubscriptionStartDate], [SubscribeEndDate]) VALUES (4, N'Nguyễn Văn An', 1, N'0912345678', N' annv22@fe.edu.vn', CAST(N'1988-11-10T00:00:00.000' AS DateTime), 1, N'anh-5.png', 0, CAST(N'2002-09-07' AS Date), CAST(N'2025-11-08' AS Date))
-INSERT [dbo].[Owner] ([OwnerId], [OwnerName], [Gender], [Phone], [Gmail], [BirthDate], [BankId], [Image], [IsDelete], [SubscriptionStartDate], [SubscribeEndDate]) VALUES (5, N'Nguyễn Hải Dương', 1, N'0988787778', N'emailao4@gmail.com', CAST(N'1994-10-10T00:00:00.000' AS DateTime), NULL, N'anh-6', 0, CAST(N'2002-09-07' AS Date), CAST(N'2025-11-08' AS Date))
+INSERT [dbo].[Owner] ([OwnerId], [OwnerName], [Gender], [Phone], [Gmail], [BirthDate], [BankId], [Image], [IsDelete], [SubscriptionStartDate], [SubscribeEndDate], [IsFreeTrial]) VALUES (1, N'Nguyễn Quang Minh', 1, N'0866187621', N'nguyenminh7902@gmail.com', CAST(N'2002-09-07T00:00:00.000' AS DateTime), 1, N'anh-4.png', 0, CAST(N'2002-09-07' AS Date), CAST(N'2025-11-08' AS Date), 0)
+INSERT [dbo].[Owner] ([OwnerId], [OwnerName], [Gender], [Phone], [Gmail], [BirthDate], [BankId], [Image], [IsDelete], [SubscriptionStartDate], [SubscribeEndDate], [IsFreeTrial]) VALUES (4, N'Nguyễn Văn An', 1, N'0912345678', N' annv22@fe.edu.vn', CAST(N'1988-11-10T00:00:00.000' AS DateTime), 1, N'anh-5.png', 0, CAST(N'2002-09-07' AS Date), CAST(N'2025-11-08' AS Date), 0)
+INSERT [dbo].[Owner] ([OwnerId], [OwnerName], [Gender], [Phone], [Gmail], [BirthDate], [BankId], [Image], [IsDelete], [SubscriptionStartDate], [SubscribeEndDate], [IsFreeTrial]) VALUES (5, N'Nguyễn Hải Dương', 1, N'0988787778', N'emailao4@gmail.com', CAST(N'1994-10-10T00:00:00.000' AS DateTime), NULL, N'anh-6', 0, CAST(N'2002-09-07' AS Date), CAST(N'2025-11-08' AS Date), 0)
 SET IDENTITY_INSERT [dbo].[Owner] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Promotion] ON 
