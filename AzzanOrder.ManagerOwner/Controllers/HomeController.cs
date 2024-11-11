@@ -33,21 +33,19 @@ namespace AzzanOrder.ManagerOwner.Controllers
             {
                 return View();
             }
-			else if (loginStatus.Equals("manager"))
-			{
-				return RedirectToAction("List", "Employee");
-			}
-			else if (loginStatus.Equals("owner expired"))
-			{
-				ViewBag.Message = "Your subscription has been expired. Please subscribe again.";
-				return RedirectToAction("Login", "Home");
-			}
-			else if (loginStatus.Equals("manager expired"))
-			{
-				ViewBag.Message = "Your owner's subscription has been expired.";
-				return RedirectToAction("Login", "Home");
-			}
-			else
+            else if (loginStatus.Equals("manager"))
+            {
+                return RedirectToAction("List", "Employee");
+            }
+            else if (loginStatus.Equals("owner expired"))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            else if (loginStatus.Equals("manager expired"))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            else
             {
                 return RedirectToAction("Login", "Home");
             }
@@ -77,18 +75,18 @@ namespace AzzanOrder.ManagerOwner.Controllers
             {
                 return RedirectToAction("List", "Employee");
             }
-			else if (authorizeLogin.Equals("owner expired"))
-			{
-				ViewBag.Message = "Your subscription has expired. Please subscribe again.";
-				return RedirectToAction("Login", "Home");
-			}
-			else if (authorizeLogin.Equals("manager expired"))
-			{
-				ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
-				return RedirectToAction("Login", "Home");
-			}
+            else if (authorizeLogin.Equals("owner expired"))
+            {
+                TempData["Message"] = "Your subscription has expired. Please subscribe again.";
+                return RedirectToAction("Login", "Home");
+            }
+            else if (authorizeLogin.Equals("manager expired"))
+            {
+                TempData["Message"] = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
+                return RedirectToAction("Login", "Home");
+            }
 
-			return View();
+            return View();
         }
 
         //Login method for both owner and manager
@@ -384,7 +382,32 @@ namespace AzzanOrder.ManagerOwner.Controllers
 				Expires = DateTimeOffset.UtcNow.AddDays(30)
 			});
 
-			return View("OTPFreeTrial", model);
+
+            bool ownerExist = false;
+            using (HttpClient client = new HttpClient())
+            {
+                HttpResponseMessage getResponse = await client.GetAsync($"https://localhost:7183/api/Owner/Phone/{model.owner.Phone}");
+                if (getResponse.IsSuccessStatusCode)
+                {
+                    var ownerData = await getResponse.Content.ReadAsStringAsync();
+                    var existingOwner = JsonConvert.DeserializeObject<Owner>(ownerData);
+
+                    if (existingOwner != null)
+                    {
+                        if (existingOwner.IsFreeTrial == true)
+                        {
+                            TempData["Message"] = "Already in free trial";
+                            return RedirectToAction("Subscribe", "Home");
+                        }
+                        else if (existingOwner.IsFreeTrial == false)
+                        {
+                            TempData["Message"] = "You can only subscribe to the free trial once";
+                            return RedirectToAction("Subscribe", "Home");
+                        }
+                    }
+                }
+            }
+            return View("OTPFreeTrial", model);
 		}
 
 		[HttpPost]
@@ -398,11 +421,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 				try
 				{
 					HttpContext.Request.Cookies.TryGetValue("TempLoginInfo", out string loginInfoJson);
-					HttpContext.Response.Cookies.Append("LoginInfo", loginInfoJson, new CookieOptions
-					{
-						Expires = DateTimeOffset.UtcNow.AddDays(30)
-					});
-					HttpContext.Response.Cookies.Delete("TempLoginInfo");
+					
 
 					var owner = JsonConvert.DeserializeObject<Owner>(loginInfoJson);
 
@@ -414,21 +433,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
 						{
 							var ownerData = await getResponse.Content.ReadAsStringAsync();
 							var existingOwner = JsonConvert.DeserializeObject<Owner>(ownerData);
-
-							if (existingOwner != null)
-							{
-								ownerExist = true;
-								if (existingOwner.IsFreeTrial == true)
-								{
-									ViewBag.Message = "Already in free trial";
-									return RedirectToAction("Subscribe", "Home");
-								}
-								else if (existingOwner.IsFreeTrial == false)
-								{
-									ViewBag.Message = "You can only subscribe to the free trial once";
-									return RedirectToAction("Subscribe", "Home");
-								}
-							}
 						}
 					}
 
@@ -447,15 +451,20 @@ namespace AzzanOrder.ManagerOwner.Controllers
 								Console.WriteLine(addMessage);
 							}
 						}
-					}
+                    }
+                    else
+                    {
+                        TempData["Message"] = "You can only subscribe to the free trial once";
+                        return RedirectToAction("Subscribe", "Home");
+                    }
 
-					var ownerJson1 = JsonConvert.SerializeObject(owner);
-					HttpContext.Response.Cookies.Append("LoginInfo", ownerJson1, new CookieOptions
-					{
-						Expires = DateTimeOffset.UtcNow.AddYears(30)
-					});
 
-					return RedirectToAction("Index", "Home");
+                    HttpContext.Response.Cookies.Append("LoginInfo", loginInfoJson, new CookieOptions
+                    {
+                        Expires = DateTimeOffset.UtcNow.AddDays(30)
+                    });
+                    HttpContext.Response.Cookies.Delete("TempLoginInfo");
+                    return RedirectToAction("Index", "Home");
 				}
 				catch
 				{
