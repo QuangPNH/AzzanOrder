@@ -8,7 +8,7 @@ import { getCookie } from './Account/SignUpForm/Validate';
 
 const OrderTrackScreen = () => {
     const [orders, setOrders] = useState([]);
-    // const [customerOrder, setCustomerOrder] = useState(null);
+    const [customerOrder, setCustomerOrder] = useState([]);
 
     useEffect(() => {
         const tableqr = getCookie("tableqr");
@@ -17,7 +17,7 @@ const OrderTrackScreen = () => {
             fetchOrders(qr, id);
         }
         if (getCookie("memberInfo")) {
-            // fetchCustomerOrder(JSON.parse(getCookie("memberInfo")).memberId);
+             fetchCustomerOrder(JSON.parse(getCookie("memberInfo")).memberId);
         }
     }, []);
 
@@ -33,18 +33,17 @@ const OrderTrackScreen = () => {
         }
     };
 
-    // const fetchCustomerOrder = async (customerId) => {
-    //     try {
-    //         const response = await fetch(`https://localhost:7183/api/Order/GetCustomerOrder/${customerId}`);
-    //         if (response.ok) {
-    //             const data = await response.json();
-    //             setCustomerOrder(true);
-    //             setCustomerOrder(data);
-    //         }
-    //     } catch (error) {
-    //         console.error('Error fetching customer order:', error);
-    //     }
-    // };
+     const fetchCustomerOrder = async (customerId) => {
+         try {
+             const response = await fetch(`https://localhost:7183/api/Order/GetCustomerOrder/${customerId}`);
+             if (response.ok) {
+                 const data = await response.json();
+                 setCustomerOrder(data);
+             }
+         } catch (error) {
+             console.error('Error fetching customer order:', error);
+         }
+     };
 
     const mapStatus = (status) => {
         if (status === null) return 1;
@@ -52,9 +51,7 @@ const OrderTrackScreen = () => {
         if (status === true) return 3;
     };
 
-    const allOrdersCompleted = orders && orders.length > 0 && orders.every(order =>
-        order.orderDetails.every(orderDetail => orderDetail.status == true)
-    );
+    const allOrdersCompleted = orders && orders.length > 0 && orders.every(order => order.status === true);
 
     const updateMemberPoints = async (memberId) => {
         if(memberId != ''){
@@ -92,9 +89,7 @@ const OrderTrackScreen = () => {
                     <div style={{ marginTop: '20px', maxHeight: '400px', overflowY: 'auto' }}>
                         {orders.map((order, orderIndex) => (
                             <React.Fragment key={order.orderId}>
-                                {getCookie('memberInfo') && order.memberId == JSON.parse(getCookie("memberInfo")).memberId ? <h3>Your Order {orderIndex +1}</h3> : <h3>Order {orderIndex +1}</h3>
-                                }
-                                {getCookie('guest') ?  <h3>Your Order {orderIndex +1}</h3> : <h3>Order {orderIndex +1}</h3>}
+                                <h3>Order {orderIndex +1}</h3>
                                 {order.orderDetails.map((orderDetail, detailIndex) => (
                                     <React.Fragment key={orderDetail.orderDetailId}>
                                         <OrderItem
@@ -109,20 +104,27 @@ const OrderTrackScreen = () => {
                                 {orderIndex < orders.length - 1 && <div className="order-item-spacing" />}
                             </React.Fragment>
                         ))}
-                        {/* {customerOrder && (
+                         {customerOrder && (
                             <div style={{ marginTop: '20px' }}>
-                                <h2>Customer Order</h2>
-                                {customerOrder.map((orderDetail) => (
-                                    <OrderItem
-                                        key={orderDetail.orderDetails.orderDetailId}
-                                        imageSrc={orderDetail.orderDetails.menuItem?.image || 'default-image-url'}
-                                        title={orderDetail.orderDetails.menuItem?.itemName || 'Unknown Item'}
-                                        details={[orderDetail.orderDetails.description || 'No details']}
-                                        status={mapStatus(orderDetail.orderDetails.status)}
-                                    />
-                                ))}
+                                    <h2>Customer Order</h2>
+                                    {customerOrder.map((order, orderIndex) => (
+                                        <React.Fragment key={order.orderId}>
+                                            {order.orderDetails.map((orderDetail, detailIndex) => (
+                                                <React.Fragment key={orderDetail.orderDetailId}>
+                                                    <OrderItem
+                                                        imageSrc={orderDetail.menuItem?.image || 'default-image-url'}
+                                                        title={orderDetail.menuItem?.itemName || 'Unknown Item'}
+                                                        details={[orderDetail.description || 'No details']}
+                                                        status={mapStatus(orderDetail.status)}
+                                                    />
+                                                    {detailIndex < order.orderDetails.length - 1 && <div className="order-item-spacing" />}
+                                                </React.Fragment>
+                                            ))}
+                                            {orderIndex < orders.length - 1 && <div className="order-item-spacing" />}
+                                        </React.Fragment>
+                                    ))}
                             </div>
-                        )} */}
+                        )} 
                     </div>
                 )}
                 <div style={{ display: 'flex', flexDirection: 'column' }}>

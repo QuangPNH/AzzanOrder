@@ -182,49 +182,6 @@ namespace AzzanOrder.Data.Controllers
             return Ok();
         }
 
-        //Code để list các banks
-        /*using (System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient())
-            {
-                var htmlData = await httpClient.GetStringAsync("https://api.vietqr.io/v2/banks");
-                var listBankData = JsonConvert.DeserializeObject<Api.Bank>(htmlData);
-            }*/
-
-
-        //INSERT [dbo].[Bank] ([BankId], [BankName], [BankNumber], [BankBin]) VALUES (1, N'NH So Timo', N'9021687094268', N'963388')
-        //https://www.vietqr.io/danh-sach-api/link-tao-ma-nhanh/api-tao-ma-qr/
-        //https://www.vietqr.io/en/danh-sach-api/link-tao-ma-nhanh/
-        /*[HttpGet("QR/{price}")]
-        public async Task<IActionResult> VietQR(double price, int employeeId)
-        {
-            var e = _context.Employees.FirstOrDefault(e => e.EmployeeId == employeeId);
-            var a = _context.Owners.Include(o => o.Bank).FirstOrDefault(o => o.OwnerId == e.OwerId);
-
-            var apiRequest = new Api.ApiRequest
-            {
-                acqId = Convert.ToInt32(a.Bank.BankBin), //Vietcombank
-                accountNo = Convert.ToInt64(a.Bank.BankNumber), //stk
-                accountName = a.OwnerName, //ten tai khoan
-                amount = price, //price
-                format = "text",
-                template = "compact2"
-            };
-            var jsonRequest = JsonConvert.SerializeObject(apiRequest);
-            // use restsharp for request api.
-            var restClient = new RestClient("https://api.vietqr.io/v2/generate");
-            var request = new RestRequest
-            {
-                Method = RestSharp.Method.Post
-            };
-            request.AddHeader("Accept", "application/json");
-            request.AddParameter("application/json", jsonRequest, ParameterType.RequestBody);
-            var response = await restClient.ExecuteAsync(request);
-            var content = response.Content;
-            var dataResult = JsonConvert.DeserializeObject<Api.ApiResponse>(content);
-            var image = Base64ToImage(dataResult.data.qrDataURL.Replace("data:image/png;base64,", ""));
-            base64Image = image;
-            return Ok(new { base64Image });
-        }*/
-
         [HttpGet("PendingOrder")]
         public async Task<ActionResult<IEnumerable<Order>>> GetPendingOrder()
         {

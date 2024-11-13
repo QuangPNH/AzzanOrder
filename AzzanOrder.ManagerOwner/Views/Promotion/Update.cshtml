@@ -1,40 +1,56 @@
-﻿<div class="col-12">
+﻿@model AzzanOrder.ManagerOwner.Models.Promotion
+
+<div class="col-12">
     <div class="card">
         <div class="card-header">
             <h5 class="card-title">Update Promotion</h5>
         </div>
         <div class="card-body">
-            <form action="@Url.Action("ListRunning", "Promotion")" method="post">
-                <div class="mb-3 row">
-                    <label class="col-form-label col-sm-2 text-sm-end">Promotion ID</label>
-                    <div class="col-sm-10">
-                        <input type="ID" class="form-control" placeholder="ID" disabled>
-                    </div>
-                </div>
+            <form asp-action="Update" method="post" enctype="multipart/form-data">
+                <input type="hidden" asp-for="PromotionId" />
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Title</label>
                     <div class="col-sm-10">
-                        <input type="Title" class="form-control" placeholder="Title">
+                        <input type="text" class="form-control" asp-for="Title" placeholder="Title">
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Destination</label>
+                    <div class="col-sm-10">
+                        <input type="text" class="form-control" name="Destination" value="@ViewBag.Destination" placeholder="Destination" readonly>
                     </div>
                 </div>
 
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Description</label>
                     <div class="col-sm-10">
-                        <textarea class="form-control" placeholder="Description" rows="3"></textarea>
+                        @if (ViewBag.Destination == "color")
+                        {
+                            <input type="color" class="form-control" asp-for="Description" placeholder="Description">
+                        }
+                        else
+                        {
+                            <textarea class="form-control" asp-for="Description" placeholder="Description" rows="3"></textarea>
+                        }
                     </div>
                 </div>
 
-
-
-                <div class="mb-3 row">
-                    <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Image</label>
-                    <div class="col-sm-10">
-                        <input type="file">
-                        <small class="form-check-label text-muted">Only png and jpg allowed.</small>
-
+                @if (ViewBag.Destination != "color")
+                {
+                    <div class="mb-3 row">
+                        <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Image</label>
+                        <div class="col-sm-10">
+                            @if (!string.IsNullOrEmpty(Model.Image))
+                            {
+                                <img id="currentImage" src="@Model.Image" alt="Promotion Image" class="img-fluid mb-3" style="width: 300px;" />
+                            }
+                            <img id="newImage" src="#" alt="New Image" class="img-fluid mb-3" style="display:none; width: 300px;" />
+                            <input type="file" asp-for="Image" accept="image/*" onchange="previewImage(event)">
+                            <small class="form-check-label text-muted">Only png and jpg allowed.</small>
+                        </div>
                     </div>
-                </div>
+                }
 
                 <div class="mb-3 row">
                     <div class="col-sm-10 ms-sm-auto">
@@ -45,3 +61,21 @@
         </div>
     </div>
 </div>
+
+@section Scripts {
+    <script>
+        function previewImage(event) {
+            var reader = new FileReader();
+            reader.onload = function () {
+                var output = document.getElementById('newImage');
+                output.src = reader.result;
+                output.style.display = 'block';
+                var currentImage = document.getElementById('currentImage');
+                if (currentImage) {
+                    currentImage.style.display = 'none';
+                }
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+}

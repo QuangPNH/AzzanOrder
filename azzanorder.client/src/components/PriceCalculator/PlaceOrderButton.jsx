@@ -3,7 +3,7 @@ import { getCookie, setCookie } from '../Account/SignUpForm/Validate';
 import LogoutPage from '../Account/LogoutPage';
 import { useLocation } from "react-router-dom";
 import { table } from "framer-motion/client";
-import { v4 as uuidv4 } from 'uuid';
+/*import { v4 as uuidv4 } from 'uuid';*/
 
 async function AddPoint(memberId, amount) {
     const response = await fetch(`https://localhost:7183/api/Member/UpdatePoints/memberId/point?memberId=${memberId}&point=${amount / 1000}`);
@@ -66,14 +66,14 @@ export async function postOrder(amount, isCash) {
             order.MemberId = JSON.parse(memberIn).memberId;
             
         }
-        if(getCookie('guest')){
-            order.MemberId = getCookie('guest');
-        }
+        //if(getCookie('guest')){
+        //    order.MemberId = getCookie('guest');
+        //}
 
-        if(!getCookie('guest')){
-            setCookie('guest', uuidv4(), 100);
-            order.MemberId = getCookie('guest');
-        }
+        //if(!getCookie('guest')){
+        //    setCookie('guest', uuidv4(), 100);
+        //    order.MemberId = getCookie('guest');
+        //}
 
         if (isCash) {
             order.tax = 1;
