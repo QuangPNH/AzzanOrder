@@ -3,9 +3,10 @@ import { getCookie, setCookie } from '../Account/SignUpForm/Validate';
 import LogoutPage from '../Account/LogoutPage';
 import { useLocation } from "react-router-dom";
 import { table } from "framer-motion/client";
+import { v4 as uuidv4 } from 'uuid';
 
-async function AddPoint (memberId, amount){
-    const response = await fetch(`https://localhost:7183/api/Member/UpdatePoints/memberId/point?memberId=${memberId}&point=${amount/1000}`);
+async function AddPoint(memberId, amount) {
+    const response = await fetch(`https://localhost:7183/api/Member/UpdatePoints/memberId/point?memberId=${memberId}&point=${amount / 1000}`);
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
@@ -15,7 +16,7 @@ async function AddPoint (memberId, amount){
     }
     const data1 = await response1.json();
     const response2 = await fetch(`https://localhost:7183/api/MemberVouchers/Delete/${data1.memberVoucherId}`, {
-        method : "DELETE",
+        method: "DELETE",
     });
     if (!response2.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
@@ -28,7 +29,6 @@ export async function postOrder(amount, isCash) {
         if (!cartDataString) {
             throw new Error("No item in cart");
         }
-
         const memberIn = getCookie('memberInfo');
         const cartData = JSON.parse(cartDataString);
         const orderDetails = cartData.map(item => {
@@ -64,12 +64,20 @@ export async function postOrder(amount, isCash) {
         };
         if (memberIn) {
             order.MemberId = JSON.parse(memberIn).memberId;
+            
+        }
+        if(getCookie('guest')){
+            order.MemberId = getCookie('guest');
+        }
+
+        if(!getCookie('guest')){
+            setCookie('guest', uuidv4(), 100);
+            order.MemberId = getCookie('guest');
         }
 
         if (isCash) {
             order.tax = 1;
         }
-
         const response = await fetch("https://localhost:7183/api/Order", {
             method: "POST",
             headers: {
@@ -100,19 +108,18 @@ export async function postOrder(amount, isCash) {
 const PlaceOrderButton = ({ amount, isTake, isCash }) => {
     const [qrDataURL, setQRDataURL] = useState(null);
     const [error, setError] = useState(null);
-
+    
     const handlePlaceOrder = async () => {
         try {
             if (isCash) {
                 await postOrder(amount, isCash);
             } else {
 
-                
+                const cartDataString = getCookie("cartData");
                 const yeh = getCookie('tableqr') ? getCookie('tableqr').split('/')[1] : null;
                 try {
                     const response = await fetch(`https://localhost:7183/api/Owner/Manager/${yeh}`);
                     var owner = await response.json();
-                    console.log(owner);
                 } catch (error) {
                     console.error('Error fetching notifications:', error);
                 }
@@ -124,21 +131,18 @@ const PlaceOrderButton = ({ amount, isTake, isCash }) => {
                     PAYOS_API_KEY: owner.bank.payoS_API_KEY,
                     PAYOS_CHECKSUM_KEY: owner.bank.payoS_CHECKSUM_KEY,
                 };
-
-                
-
                 //Set owner PayOs
-                fetch("https://localhost:3002/?tableqr=" + getCookie("tableqr") + "&Price=" + amount + "&Item=OASItem&Message=Order", {
+                fetch("https://localhost:3002/?tableqr=" + getCookie("tableqr") + "&Price=" + amount + "&Item=" + cartDataString + "&Message=Order", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
                     },
                     body: JSON.stringify(bank)
                 }).then(response => response.text()) // Expect a text response (the URL as a string)
-                .then(url => {
-                    // Redirect to the URL returned by the server
-                    window.location.href = url;
-                });
+                    .then(url => {
+                        // Redirect to the URL returned by the server
+                        window.location.href = url;
+                    });
             }
         } catch (error) {
             setError(error.message);

@@ -79,7 +79,7 @@ const Cart = () => {
     const [discountPrice, setDiscountPrice] = useState(0);
     const [headerText, setHeaderText] = useState(false);
     const id = getCookie("tableqr");
-
+    const member = getCookie('memberInfo');
     useEffect(() => {
         const fetchTotal = async () => {
             const { total, totalDiscount } = await calculateTotal();
@@ -124,7 +124,9 @@ const Cart = () => {
                     <p>Your cart is empty.</p>
                 )}
             </div>
+            {member && 
             <VoucherCart onSelectVoucher={handleSelectVoucher} />
+            }
             <div>
                 <PriceCalculator totalPrice={totalPrice} discountPrice={discountPrice} onTakeOutChange={handleTakeOutChange} />
             </div>

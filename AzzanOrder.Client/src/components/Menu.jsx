@@ -4,10 +4,13 @@ import Header from '../components/Header/Header';
 import ShowMoreLink from './ShowMoreLink/ShowMoreLink';
 import ProductCard from './ProductCard/ProductCard';
 import Dropdown from './Dropdown/Dropdown';
+import { getCookie } from './Account/SignUpForm/Validate';
 
 const fetchCategoriesAndProducts = async (setCategories, setProducts) => {
     try {
-        const response = await fetch('https://localhost:7183/api/ItemCategory');
+        const id = getCookie("tableqr") ? getCookie("tableqr").split('/')[1] : null;
+        const url = id ? `https://localhost:7183/api/ItemCategory?id=${id}` : 'https://localhost:7183/api/ItemCategory';
+        const response = await fetch(url);
         const categories = await response.json();
 
         const initialProducts = categories.reduce((acc, category) => {
