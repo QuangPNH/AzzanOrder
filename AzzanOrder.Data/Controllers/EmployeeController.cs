@@ -50,14 +50,14 @@ namespace AzzanOrder.Data.Controllers
         }
 
         // GET: api/Employee/5
-        [HttpGet("Employee/Phone/{Phone}")]
+        [HttpGet("Phone/{phone}")]
         public async Task<ActionResult<Employee>> GetEmployeeByPhone(string phone)
         {
             if (_context.Employees == null)
             {
                 return NotFound();
             }
-            var employee = _context.Employees.FirstOrDefault(e => e.Phone.Equals(phone));
+            var employee = _context.Employees.Include(e => e.Role).FirstOrDefault(e => e.Phone.Equals(phone));
 
             if (employee == null)
             {
@@ -69,7 +69,26 @@ namespace AzzanOrder.Data.Controllers
 
 
         // GET: api/Employee/5
-        [HttpGet("Manager/Phone/{Phone}")]
+        [HttpGet("Staff/Phone/{phone}")]
+        public async Task<ActionResult<Employee>> GetStaffByPhone(string phone)
+        {
+            if (_context.Employees == null)
+            {
+                return NotFound();
+            }
+            var employee = _context.Employees.Include(e => e.Role).Where(e => e.Role.RoleName.ToLower().Equals("staff") || e.Role.RoleName.ToLower().Equals("bartender")).FirstOrDefault(e => e.Phone.Equals(phone));
+            Console.WriteLine("djhfjshd "+phone);
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            return employee;
+        }
+
+
+        // GET: api/Employee/5
+        [HttpGet("Manager/Phone/{phone}")]
         public async Task<ActionResult<Employee>> GetManagerByPhone(string phone)
         {
             if (_context.Employees == null)
