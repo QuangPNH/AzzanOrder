@@ -33,10 +33,6 @@ public class CheckoutController : Controller
             return "Payment credentials not set.";
         }
 
-
-
-
-
         if (!string.IsNullOrEmpty(tableqr))
         {
             Response.Cookies.Append("tableqrPayOs", tableqr, new CookieOptions
