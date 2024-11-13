@@ -13,93 +13,122 @@ const ItemInCart = ({ id, name, options, price, quantity, onQuantityChange }) =>
     const [currentQuantity, setCurrentQuantity] = useState(quantity);
     const isFirstRender = useRef(true);
 
-    useEffect(() => {
-        if (isFirstRender.current) {
-            isFirstRender.current = false;
-            return;
-        }
-        // Update the quantity and options in the cookie
-        const cartData = JSON.parse(getCookie("cartData"));
-        const updatedCartData = cartData.map((item) => {
-            if (item.id === id && JSON.stringify(item.options) === JSON.stringify(options)) {
-                return {
-                    ...item,
-                    quantity: currentQuantity,
-                    options: {
-                        ...item.options,
-                        selectedSugar,
-                        selectedIce,
-                        selectedToppings
-                    }
-                };
+        useEffect(() => {
+            if (isFirstRender.current) {
+                isFirstRender.current = false;
+                return;
             }
-            return item;
-        });
-        setCookie("cartData", JSON.stringify(updatedCartData), 0.02);
-        onQuantityChange(updatedCartData);
-    }, [currentQuantity, selectedSugar, selectedIce, selectedToppings, id]);
 
-    const handleQuantityChange = (newQuantity) => {
-        setCurrentQuantity(newQuantity);
-    };
+            const updateCartData = async () => {
+                const cartData = JSON.parse(getCookie("cartData"));
+                const voucher = JSON.parse(getCookie('voucher'));
 
-    const handleDelete = () => {
-        const cartData = JSON.parse(getCookie("cartData"));
-        const updatedCartData = cartData.filter((item) => item.id !== id);
-        setCookie("cartData", JSON.stringify(updatedCartData), 0.02);
-        onQuantityChange(updatedCartData);
-    };
+                const updatedCartData = await Promise.all(cartData.map(async (item) => {
+                    let discountAmount = 0; // Mặc định giảm giá là 0
 
-    const calculateTotalPrice = () => {
-        const toppingsPrice = selectedToppings.reduce((total, topping) => total + topping.price, 0);
-        return (price + toppingsPrice) * currentQuantity;
-    };
+                    if (item.id === id && JSON.stringify(item.options) === JSON.stringify(options)) {
+                        // Kiểm tra nếu món ăn hợp lệ với voucher
+                        const data = await checkLegal(item, id, voucher);
 
-    return (
-        <section className="item-in-cart">
-            <article className="cart-item">
-                <div className="cart-item-content">
-                    <div className="item-header">
-                        <img
-                            src="https://cdn.builder.io/api/v1/image/assets/TEMP/febac510c6d584a90466fa7c52c5724906fbbf8624bfa03ec21ea8114b229195?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8"
-                            alt=""
-                            className="item-icon"
-                        />
-                        <h3 className="item-name">{name}</h3>
-                        <img
-                            src="https://cdn.builder.io/api/v1/image/assets/TEMP/fbbe8e49109e7ba499ad0129a45932bcb03213d85b1c078668fd9d88bca09d81?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8"
-                            alt="Delete item"
-                            className="delete-icon"
-                            onClick={handleDelete}
+                        // Nếu `data` trả về hợp lệ (ví dụ, `data` không rỗng hoặc có các thuộc tính cần thiết)
+                        if (data && Object.keys(data).length !== 0) {
+                            discountAmount = (item.price * (voucher.discount / 100)) * currentQuantity;
+                        }
+
+                        return {
+                            ...item,
+                            quantity: currentQuantity,
+                            options: {
+                                ...item.options,
+                                selectedSugar,
+                                selectedIce,
+                                selectedToppings
+                            },
+                            discount: discountAmount
+                        };
+                    }
+                    return item;
+                }));
+
+                setCookie("cartData", JSON.stringify(updatedCartData), 0.02);
+                onQuantityChange(updatedCartData);
+            };
+
+            updateCartData();
+        }, [currentQuantity, selectedSugar, selectedIce, selectedToppings, id]);
+
+
+        const handleQuantityChange = (newQuantity) => {
+            setCurrentQuantity(newQuantity);
+        };
+
+        const checkLegal = async (item, id, voucher) => {
+            try {
+                const response = await fetch(`https://localhost:7183/api/Vouchers/voucherDetailId/menuItemId?voucherDetailid=${voucher.voucherDetailId}&menuItemId=${item.id}&employeeId=${id}`);
+                const data = await response.json();
+                return data;
+            } catch (error) {
+                console.error('Error fetching notifications:', error);
+            }
+        };
+
+        const handleDelete = () => {
+            const cartData = JSON.parse(getCookie("cartData"));
+            const updatedCartData = cartData.filter((item) => item.id !== id);
+            setCookie("cartData", JSON.stringify(updatedCartData), 0.02);
+            onQuantityChange(updatedCartData);
+        };
+
+        const calculateTotalPrice = () => {
+            const toppingsPrice = selectedToppings.reduce((total, topping) => total + topping.price, 0);
+            return (price + toppingsPrice) * currentQuantity;
+        };
+
+        return (
+            <section className="item-in-cart">
+                <article className="cart-item">
+                    <div className="cart-item-content">
+                        <div className="item-header">
+                            <img
+                                src="https://cdn.builder.io/api/v1/image/assets/TEMP/febac510c6d584a90466fa7c52c5724906fbbf8624bfa03ec21ea8114b229195?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8"
+                                alt=""
+                                className="item-icon"
+                            />
+                            <h3 className="item-name">{name}</h3>
+                            <img
+                                src="https://cdn.builder.io/api/v1/image/assets/TEMP/fbbe8e49109e7ba499ad0129a45932bcb03213d85b1c078668fd9d88bca09d81?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8"
+                                alt="Delete item"
+                                className="delete-icon"
+                                onClick={handleDelete}
+                            />
+                        </div>
+                        <div className="item-details">
+                            {options && (
+                                <>
+                                    <div className="item-option compact">
+                                        <CustomItem title="Lượng đường:" compact />
+                                        <AmountBar selectedValue={selectedSugar} onStepClick={setSelectedSugar} compact />
+                                    </div>
+                                    <div className="item-option compact">
+                                        <CustomItem title="Lượng đá:" compact />
+                                        <AmountBar selectedValue={selectedIce} onStepClick={setSelectedIce} compact />
+                                    </div>
+                                    <div className="item-option compact">
+                                        <CustomItem title="Toppings:" compact />
+                                        <p>+{selectedToppings.map(topping => `${topping.name}`).join(', ')}</p>
+                                    </div>
+                                </>
+                            )}
+                        </div>
+                    </div>
+                    <div className="cart-item-footer">
+                        <p className="item-price">{calculateTotalPrice()}đ</p>
+                        <QuantityControl
+                            quantity={currentQuantity}
+                            onQuantityChange={handleQuantityChange}
                         />
                     </div>
-                    <div className="item-details">
-                        {options && (
-                            <>
-                                <div className="item-option compact">
-                                    <CustomItem title="Lượng đường:" compact />
-                                    <AmountBar selectedValue={selectedSugar} onStepClick={setSelectedSugar} compact />
-                                </div>
-                                <div className="item-option compact">
-                                    <CustomItem title="Lượng đá:" compact />
-                                    <AmountBar selectedValue={selectedIce} onStepClick={setSelectedIce} compact />
-                                </div>
-                                <div className="item-option compact">
-                                    <CustomItem title="Toppings:" compact />
-                                    <p>+{selectedToppings.map(topping => `${topping.name}`).join(', ')}</p>
-                                </div>
-                            </>
-                        )}
-                    </div>
-                </div>
-                <div className="cart-item-footer">
-                    <p className="item-price">{calculateTotalPrice()}đ</p>
-                    <QuantityControl
-                        quantity={currentQuantity}
-                        onQuantityChange={handleQuantityChange}
-                    />
-                </div>
-                <style jsx>{`
+                    <style jsx>{`
                     .cart-item {
                         display: flex;
                         width: 100%;
@@ -174,10 +203,10 @@ const ItemInCart = ({ id, name, options, price, quantity, onQuantityChange }) =>
                         flex-direction: column;
                     }
                 `}</style>
-            </article>
-            <MenuSeparator />
-        </section>
-    );
-};
+                </article>
+                <MenuSeparator />
+            </section>
+        );
+    };
 
-export default ItemInCart;
+    export default ItemInCart;

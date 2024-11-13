@@ -60,11 +60,15 @@ namespace AzzanOrder.Data.Models
             {
                 entity.ToTable("Bank");
 
-                entity.Property(e => e.PAYOS_CHECKSUM_KEY)
-                    .IsUnicode(false);
-
                 entity.Property(e => e.PAYOS_API_KEY)
-                    .IsUnicode(false);
+                    .IsUnicode(false)
+                    .HasColumnName("PAYOS_API_KEY");
+
+                entity.Property(e => e.PAYOS_CHECKSUM_KEY)
+                    .IsUnicode(false)
+                    .HasColumnName("PAYOS_CHECKSUM_KEY");
+
+                entity.Property(e => e.PAYOS_CLIENT_ID).HasColumnName("PAYOS_CLIENT_ID");
             });
 
             modelBuilder.Entity<Employee>(entity =>
@@ -235,6 +239,10 @@ namespace AzzanOrder.Data.Models
                 entity.Property(e => e.Phone)
                     .HasMaxLength(10)
                     .IsUnicode(false);
+
+                entity.Property(e => e.SubscribeEndDate).HasColumnType("date");
+
+                entity.Property(e => e.SubscriptionStartDate).HasColumnType("date");
 
                 entity.HasOne(d => d.Bank)
                     .WithMany(p => p.Owners)

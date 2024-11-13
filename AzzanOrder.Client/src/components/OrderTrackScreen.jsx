@@ -57,16 +57,20 @@ const OrderTrackScreen = () => {
     );
 
     const updateMemberPoints = async (memberId) => {
-        try {
-            await fetch(`https://localhost:7183/api/Member/UpdatePoints/memberId/point?memberId=${memberId}&point=25`);
-        } catch (error) {
-            console.error('Error updating member points:', error);
+        if(memberId != ''){
+            try {
+
+                await fetch(`https://localhost:7183/api/Member/UpdatePoints/memberId/point?memberId=${memberId}&point=25`);
+            } catch (error) {
+                console.error('Error updating member points:', error);
+            }
+            window.location.href = '/';
         }
         window.location.href = '/';
     };
 
     const handleButtonClick = () => {
-        if (orders.length > 0 && orders[0].orderDetails.status === true) {
+        if (allOrdersCompleted) {
             updateMemberPoints(orders[0].memberId);
         }
     };
@@ -88,7 +92,9 @@ const OrderTrackScreen = () => {
                     <div style={{ marginTop: '20px', maxHeight: '400px', overflowY: 'auto' }}>
                         {orders.map((order, orderIndex) => (
                             <React.Fragment key={order.orderId}>
-                                {order.memberId == JSON.parse(getCookie("memberInfo")).memberId ? <h3>Your Order {orderIndex +1}</h3> : <h3>Order {orderIndex +1}</h3> }
+                                {getCookie('memberInfo') && order.memberId == JSON.parse(getCookie("memberInfo")).memberId ? <h3>Your Order {orderIndex +1}</h3> : <h3>Order {orderIndex +1}</h3>
+                                }
+                                {getCookie('guest') ?  <h3>Your Order {orderIndex +1}</h3> : <h3>Order {orderIndex +1}</h3>}
                                 {order.orderDetails.map((orderDetail, detailIndex) => (
                                     <React.Fragment key={orderDetail.orderDetailId}>
                                         <OrderItem

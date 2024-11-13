@@ -1,10 +1,11 @@
 ﻿import React, { useState } from 'react';
 import Button from "./Button";
-
+import { setCookie } from './Validate';
 function YNWidget({ title, onClose, func }) {
 
     const handleSubmit = async () => {
         try {
+            setCookie('voucher', '' , -1);
             onClose();
             if (func) {
                 await func();

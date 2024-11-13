@@ -10,7 +10,7 @@ import ShowMoreLink from './ShowMoreLink/ShowMoreLink';
 import ProductCard from './ProductCard/ProductCard';
 import { getCookie, setCookie } from './Account/SignUpForm/Validate';
 
-const ItemDetail = ({ closeModal, imageSrc, key, title, price, cate, desc, id }) => {
+const ItemDetail = ({ closeModal, imageSrc, key, title, price, discount , cate, desc, id }) => {
     const [products, setProducts] = useState([]);
     const [toppings, setToppings] = useState([]);
     const [selectedSugar, setSelectedSugar] = useState('50');
@@ -85,7 +85,8 @@ const ItemDetail = ({ closeModal, imageSrc, key, title, price, cate, desc, id })
                 name: title,
                 options: formattedOptions,
                 price: price,
-                quantity: currentQuantity
+                quantity: currentQuantity,
+               
             };
             parsedData.push(newItem);
         }

@@ -1,4 +1,4 @@
-namespace NetCoreDemo.Controllers;
+﻿namespace NetCoreDemo.Controllers;
 using Microsoft.AspNetCore.Mvc;
 using Net.payOS.Types;
 using Net.payOS;
@@ -6,6 +6,7 @@ using Microsoft.EntityFrameworkCore.Metadata.Internal;
 using Newtonsoft.Json;
 using payos.Models;
 using NetCoreDemo.Types;
+using System.Text.Json;
 
 public class CheckoutController : Controller
 {
@@ -32,10 +33,9 @@ public class CheckoutController : Controller
             return "Payment credentials not set.";
         }
 
-        Console.WriteLine("tableqr: " + tableqr);
-        Console.WriteLine("Item: " + Item);
-        Console.WriteLine("Price: " + Price);
-        Console.WriteLine("Message: " + Message);
+
+
+
 
         if (!string.IsNullOrEmpty(tableqr))
         {
@@ -49,8 +49,14 @@ public class CheckoutController : Controller
         try
         {
             int orderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff"));
-            ItemData item = new ItemData(Item, 1, 1000);
-            List<ItemData> items = new List<ItemData> { item };
+            List<ItemData> items = new List<ItemData>();
+            int total = 0;
+            var a = System.Text.Json.JsonSerializer.Deserialize<List<Item>>(Item);
+            foreach (var i in a)
+            {
+                items.Add(new ItemData(i.name, i.quantity, (i.price - i.discount) * i.quantity));
+                total += i.price * i.quantity;
+            }
 
             var request = _httpContextAccessor.HttpContext.Request;
             var baseUrl = $"{request.Scheme}://{request.Host}";
@@ -115,8 +121,13 @@ public class CheckoutController : Controller
             int orderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff"));
 
             // Create the item list with the provided item data
-            ItemData item = new ItemData(Item, 1, 1000);
-            List<ItemData> items = new List<ItemData> { item };
+            List<ItemData> items = new List<ItemData>();
+            var a = System.Text.Json.JsonSerializer.Deserialize<List<Item>>(Item);
+            foreach (var i in a)
+            {
+                items.Add(new ItemData(i.name, i.quantity, (i.price - i.discount)*i.quantity));
+            }
+
 
             // Get the base URL of the current request
             var request = _httpContextAccessor.HttpContext.Request;
@@ -125,7 +136,7 @@ public class CheckoutController : Controller
             // Set up the payment data, including the additional owner information in the message if needed
             PaymentData paymentData = new PaymentData(
                 orderCode,
-                (int)Price.GetValueOrDefault(),
+                (int)Price,
                 Message + orderCode,
                 items,
                 $"{baseUrl}/success",
@@ -160,46 +171,46 @@ public class CheckoutController : Controller
 
             Owner owner = JsonConvert.DeserializeObject<Owner>(ownerJson);
 
-			using (HttpClient client = new HttpClient())
-			{
-				// Check if the phone number exists
-				HttpResponseMessage getResponse = await client.GetAsync($"https://localhost:7183/api/Owner/Phone/{owner.Phone}");
-				if (getResponse.IsSuccessStatusCode)
-				{
-					// Phone number exists, update subscription dates
-					var updateData = new
-					{
-						subscriptionStartDate = owner.SubscriptionStartDate,
-						subscriptionEndDate = owner.SubscribeEndDate
-					};
-					HttpResponseMessage updateResponse = await client.PatchAsync(
-						$"https://localhost:7183/api/Owner/UpdateSubscriptionDatesByPhone/{owner.Phone}",
-						JsonContent.Create(updateData)
-					);
-					if (updateResponse.IsSuccessStatusCode)
-					{
-						string updateMessage = await updateResponse.Content.ReadAsStringAsync();
-						Console.WriteLine(updateMessage);
-					}
-				}
-				else
-				{
-					// Phone number does not exist, add new owner
-					HttpResponseMessage addResponse = await client.PostAsJsonAsync("https://localhost:7183/api/Owner/Add/", owner);
-					if (addResponse.IsSuccessStatusCode)
-					{
-						string addMessage = await addResponse.Content.ReadAsStringAsync();
-						Console.WriteLine(addMessage);
-					}
-				}
+            using (HttpClient client = new HttpClient())
+            {
+                // Check if the phone number exists
+                HttpResponseMessage getResponse = await client.GetAsync($"https://localhost:7183/api/Owner/Phone/{owner.Phone}");
+                if (getResponse.IsSuccessStatusCode)
+                {
+                    // Phone number exists, update subscription dates
+                    var updateData = new
+                    {
+                        subscriptionStartDate = owner.SubscriptionStartDate,
+                        subscriptionEndDate = owner.SubscribeEndDate
+                    };
+                    HttpResponseMessage updateResponse = await client.PatchAsync(
+                        $"https://localhost:7183/api/Owner/UpdateSubscriptionDatesByPhone/{owner.Phone}",
+                        JsonContent.Create(updateData)
+                    );
+                    if (updateResponse.IsSuccessStatusCode)
+                    {
+                        string updateMessage = await updateResponse.Content.ReadAsStringAsync();
+                        Console.WriteLine(updateMessage);
+                    }
+                }
+                else
+                {
+                    // Phone number does not exist, add new owner
+                    HttpResponseMessage addResponse = await client.PostAsJsonAsync("https://localhost:7183/api/Owner/Add/", owner);
+                    if (addResponse.IsSuccessStatusCode)
+                    {
+                        string addMessage = await addResponse.Content.ReadAsStringAsync();
+                        Console.WriteLine(addMessage);
+                    }
+                }
 
-				HttpResponseMessage registerResponse = await client.PostAsJsonAsync("https://localhost:7093/OwnerRegister", owner);
-				if (registerResponse.IsSuccessStatusCode)
-				{
-					string registerMessage = await registerResponse.Content.ReadAsStringAsync();
-					Console.WriteLine(registerMessage);
-				}
-			}
+                HttpResponseMessage registerResponse = await client.PostAsJsonAsync("https://localhost:7093/OwnerRegister", owner);
+                if (registerResponse.IsSuccessStatusCode)
+                {
+                    string registerMessage = await registerResponse.Content.ReadAsStringAsync();
+                    Console.WriteLine(registerMessage);
+                }
+            }
 
             HttpContext.Response.Cookies.Append("LoginInfo", ownerJson, new CookieOptions
             {
@@ -218,19 +229,21 @@ public class CheckoutController : Controller
     {
         Console.WriteLine("Cancel nah");
         HttpContext.Request.Cookies.TryGetValue("tableqrPayOs", out string tableqr);
-        HttpContext.Request.Cookies.TryGetValue("ItemType", out string itemType);
+        //HttpContext.Request.Cookies.TryGetValue("ItemType", out string itemType);
 
-        if (itemType.Contains("Subscribe"))
-        {
-            return Redirect("https://localhost:7093/Home/Subscribe");
-        }
+        //if (itemType.Contains("Subscribe"))
+        //{
+        //    return Redirect("https://localhost:7093/Home/Subscribe");
+        //}
 
         //return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=cancel");
         return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=success");
     }
 
 
-    
+
+
+
 
 
     //var _apiUrl = $"https://localhost:7183/api/Member/";
