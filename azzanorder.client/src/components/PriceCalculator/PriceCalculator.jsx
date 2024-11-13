@@ -29,7 +29,7 @@ const PriceCalculator = ({ discountPrice, totalPrice, onTakeOutChange }) => {
                 <div className="price-list">
                     
                     <PriceItem label="Total:" value={`${trueTotalPrice - discountPrice} đ`} isTotal={true} />
-                    <PriceItem label="Discount:" value={`${discountPrice} đ`} isTotal={true} />
+                    {getCookie("memberInfo") ? <PriceItem label="Discount:" value={`${discountPrice} đ`} isTotal={true} /> : <></>}     
                     <PriceItem label="Final:" value={`${trueTotalPrice} đ`} isTotal={true} />
                     <ItemCheck label="Take Out" value={isTake} onChange={handleTakeOutChange} />
                     <ItemCheck label="Pay in cash" value={isCash} onChange={setIsCash} />
