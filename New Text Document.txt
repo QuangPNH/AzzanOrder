@@ -1,0 +1,72 @@
+{System.Net.WebException: unexpected end of stream on com.android.okhttp.Address@3f8e8ca4
+ ---> Java.IO.IOException: unexpected end of stream on com.android.okhttp.Address@3f8e8ca4
+ ---> Java.IO.EOFException: \n not found: size=0 content=...
+
+  --- End of managed Java.IO.EOFException stack trace ---
+java.io.EOFException: \n not found: size=0 content=...
+	at com.android.okhttp.okio.RealBufferedSource.readUtf8LineStrict(RealBufferedSource.java:202)
+	at com.android.okhttp.internal.http.Http1xStream.readResponse(Http1xStream.java:188)
+	at com.android.okhttp.internal.http.Http1xStream.readResponseHeaders(Http1xStream.java:129)
+	at com.android.okhttp.internal.http.HttpEngine.readNetworkResponse(HttpEngine.java:750)
+	at com.android.okhttp.internal.http.HttpEngine.readResponse(HttpEngine.java:622)
+	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.execute(HttpURLConnectionImpl.java:475)
+	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponse(HttpURLConnectionImpl.java:411)
+	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponseCode(HttpURLConnectionImpl.java:542)
+
+  --- End of managed Java.IO.EOFException stack trace ---
+java.io.EOFException: \n not found: size=0 content=...
+	at com.android.okhttp.okio.RealBufferedSource.readUtf8LineStrict(RealBufferedSource.java:202)
+	at com.android.okhttp.internal.http.Http1xStream.readResponse(Http1xStream.java:188)
+	at com.android.okhttp.internal.http.Http1xStream.readResponseHeaders(Http1xStream.java:129)
+	at com.android.okhttp.internal.http.HttpEngine.readNetworkResponse(HttpEngine.java:750)
+	at com.android.okhttp.internal.http.HttpEngine.readResponse(HttpEngine.java:622)
+	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.execute(HttpURLConnectionImpl.java:475)
+	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponse(HttpURLConnectionImpl.java:411)
+	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponseCode(HttpURLConnectionImpl.java:542)
+
+   --- End of inner exception stack trace ---
+   at Java.Interop.JniEnvironment.InstanceMethods.CallIntMethod(JniObjectReference instance, JniMethodInfo method, JniArgumentValue* args) in /Users/runner/work/1/s/xamarin-android/external/Java.Interop/src/Java.Interop/obj/Release/net7.0/JniEnvironment.g.cs:line 20203
+   at Java.Interop.JniPeerMembers.JniInstanceMethods.InvokeVirtualInt32Method(String encodedMember, IJavaPeerable self, JniArgumentValue* parameters) in /Users/runner/work/1/s/xamarin-android/external/Java.Interop/src/Java.Interop/Java.Interop/JniPeerMembers.JniInstanceMethods_Invoke.cs:line 511
+   at Java.Net.HttpURLConnection.get_ResponseCode() in /Users/runner/work/1/s/xamarin-android/src/Mono.Android/obj/Release/net8.0/android-34/mcw/Java.Net.HttpURLConnection.cs:line 521
+   at Xamarin.Android.Net.AndroidMessageHandler.<>c__DisplayClass140_0.<DoProcessRequest>b__2() in /Users/runner/work/1/s/xamarin-android/src/Mono.Android/Xamarin.Android.Net/AndroidMessageHandler.cs:line 650
+   at System.Threading.Tasks.Task`1[[System.Net.HttpStatusCode, System.Net.Primitives, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a]].InnerInvoke()
+   at System.Threading.Tasks.Task.<>c.<.cctor>b__281_0(Object obj)
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+--- End of stack trace from previous location ---
+   at System.Threading.ExecutionContext.RunFromThreadPoolDispatchLoop(Thread threadPoolThread, ExecutionContext executionContext, ContextCallback callback, Object state)
+   at System.Threading.Tasks.Task.ExecuteWithThreadLocal(Task& currentTaskSlot, Thread threadPoolThread)
+--- End of stack trace from previous location ---
+   at Xamarin.Android.Net.AndroidMessageHandler.DoProcessRequest(HttpRequestMessage request, URL javaUrl, HttpURLConnection httpConnection, CancellationToken cancellationToken, RequestRedirectionState redirectState) in /Users/runner/work/1/s/xamarin-android/src/Mono.Android/Xamarin.Android.Net/AndroidMessageHandler.cs:line 650
+   at Xamarin.Android.Net.AndroidMessageHandler.DoSendAsync(HttpRequestMessage request, CancellationToken cancellationToken) in /Users/runner/work/1/s/xamarin-android/src/Mono.Android/Xamarin.Android.Net/AndroidMessageHandler.cs:line 482
+  --- End of managed Java.IO.IOException stack trace ---
+java.io.IOException: unexpected end of stream on com.android.okhttp.Address@3f8e8ca4
+	at com.android.okhttp.internal.http.Http1xStream.readResponse(Http1xStream.java:203)
+	at com.android.okhttp.internal.http.Http1xStream.readResponseHeaders(Http1xStream.java:129)
+	at com.android.okhttp.internal.http.HttpEngine.readNetworkResponse(HttpEngine.java:750)
+	at com.android.okhttp.internal.http.HttpEngine.readResponse(HttpEngine.java:622)
+	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.execute(HttpURLConnectionImpl.java:475)
+	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponse(HttpURLConnectionImpl.java:411)
+	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponseCode(HttpURLConnectionImpl.java:542)
+Caused by: java.io.EOFException: \n not found: size=0 content=...
+	at com.android.okhttp.okio.RealBufferedSource.readUtf8LineStrict(RealBufferedSource.java:202)
+	at com.android.okhttp.internal.http.Http1xStream.readResponse(Http1xStream.java:188)
+	... 6 more
+
+  --- End of managed Java.IO.IOException stack trace ---
+java.io.IOException: unexpected end of stream on com.android.okhttp.Address@3f8e8ca4
+	at com.android.okhttp.internal.http.Http1xStream.readResponse(Http1xStream.java:203)
+	at com.android.okhttp.internal.http.Http1xStream.readResponseHeaders(Http1xStream.java:129)
+	at com.android.okhttp.internal.http.HttpEngine.readNetworkResponse(HttpEngine.java:750)
+	at com.android.okhttp.internal.http.HttpEngine.readResponse(HttpEngine.java:622)
+	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.execute(HttpURLConnectionImpl.java:475)
+	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponse(HttpURLConnectionImpl.java:411)
+	at com.android.okhttp.internal.huc.HttpURLConnectionImpl.getResponseCode(HttpURLConnectionImpl.java:542)
+Caused by: java.io.EOFException: \n not found: size=0 content=...
+	at com.android.okhttp.okio.RealBufferedSource.readUtf8LineStrict(RealBufferedSource.java:202)
+	at com.android.okhttp.internal.http.Http1xStream.readResponse(Http1xStream.java:188)
+	... 6 more
+
+   --- End of inner exception stack trace ---
+   at Xamarin.Android.Net.AndroidMessageHandler.DoSendAsync(HttpRequestMessage request, CancellationToken cancellationToken) in /Users/runner/work/1/s/xamarin-android/src/Mono.Android/Xamarin.Android.Net/AndroidMessageHandler.cs:line 497
+   at System.Net.Http.HttpClient.<SendAsync>g__Core|83_0(HttpRequestMessage request, HttpCompletionOption completionOption, CancellationTokenSource cts, Boolean disposeCts, CancellationTokenSource pendingRequestsCts, CancellationToken originalCancellationToken)
+   at OrderingAssistSystem_StaffApp.MainPage.OnSendOtpClicked(Object sender, EventArgs e) in E:\FPT\SEP409_G14\Project\Yeee\Maui\OrderingAssistSystem_StaffApp\MainPage.xaml.cs:line 60}

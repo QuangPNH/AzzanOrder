@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect } from 'react';
+﻿import React, { useState, useEffect, useRef } from 'react';
 import { useLocation } from "react-router-dom";
 import { postOrder } from './PriceCalculator/PlaceOrderButton'
 import { calculateTotal } from './Cart'
@@ -21,6 +21,8 @@ const Homepage = () => {
     const id = new URLSearchParams(search).get("tableqr");
     const status = new URLSearchParams(search).get("status");
 
+    const hasProcessedOrder = useRef(false);
+
     useEffect(() => {
         const memberInfo = getCookie('memberInfo');
         const memberId = memberInfo ? JSON.parse(memberInfo).memberId : null;
@@ -37,15 +39,19 @@ const Homepage = () => {
                 await fetchOrderExits(id.split('/')[0], id.split('/')[1]);
             }
         };
-        if (status == "success") {
+
+        if (status === "success" && !hasProcessedOrder.current) {
+            hasProcessedOrder.current = true;
             const processOrder = async () => {
                 const { total, totalDiscount } = await calculateTotal();
                 await postOrder(total);
-            }
+            };
             processOrder();
         }
+
         fetchData();
-    }, [id, status]);
+    }, [status]);
+
     useEffect(() => {
         if ('serviceWorker' in navigator) {
             console.log('Service worker supported');
@@ -80,9 +86,6 @@ const Homepage = () => {
     window.addEventListener('load', () => {
         console.log('Window loaded');
     });
-    useEffect(() => {
-
-    }, [status]);
 
     const fetchMenuItems = async (manaId) => {
         try {
@@ -125,7 +128,7 @@ const Homepage = () => {
                 <ShowMoreLink title="LIMITED COMBO" />
                 <Frame />
                 <div>
-                    {showRecentlyOrdered && (
+                    {showRecentlyOrdered && recentMenuItems && Array.isArray(recentMenuItems) && (
                         <div>
                             <ShowMoreLink title="RECENTLY ORDERED" />
                             <div className='product-grid'>

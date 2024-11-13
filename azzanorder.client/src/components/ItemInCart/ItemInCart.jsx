@@ -20,17 +20,25 @@ const ItemInCart = ({ id, name, options, price, quantity, onQuantityChange }) =>
             }
 
             const updateCartData = async () => {
-                const cartData = JSON.parse(getCookie("cartData"));
-                const voucher = JSON.parse(getCookie('voucher'));
+                let cartData = [];
+                let voucher = null;
+
+                if (getCookie("cartData")) {
+                    cartData = JSON.parse(getCookie("cartData"));
+                }
+
+                if (getCookie("voucher")) {
+                    voucher = JSON.parse(getCookie('voucher'));
+                }
 
                 const updatedCartData = await Promise.all(cartData.map(async (item) => {
-                    let discountAmount = 0; // Mặc định giảm giá là 0
+                    let discountAmount = 0; // Default discount is 0
 
                     if (item.id === id && JSON.stringify(item.options) === JSON.stringify(options)) {
-                        // Kiểm tra nếu món ăn hợp lệ với voucher
+                        // Check if the item is valid with the voucher
                         const data = await checkLegal(item, id, voucher);
 
-                        // Nếu `data` trả về hợp lệ (ví dụ, `data` không rỗng hoặc có các thuộc tính cần thiết)
+                        // If `data` is valid (e.g., `data` is not empty or has necessary properties)
                         if (data && Object.keys(data).length !== 0) {
                             discountAmount = (item.price * (voucher.discount / 100)) * currentQuantity;
                         }
@@ -54,8 +62,8 @@ const ItemInCart = ({ id, name, options, price, quantity, onQuantityChange }) =>
                 onQuantityChange(updatedCartData);
             };
 
-            updateCartData();
-        }, [currentQuantity, selectedSugar, selectedIce, selectedToppings, id]);
+                updateCartData();
+            }, [currentQuantity, selectedSugar, selectedIce, selectedToppings, id]);
 
 
         const handleQuantityChange = (newQuantity) => {

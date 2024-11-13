@@ -55,11 +55,6 @@ namespace AzzanOrder.Data.Controllers
         [HttpPut("Update")]
         public async Task<IActionResult> PutPromotion(Promotion promotion)
         {
-            if (PromotionExists(promotion.PromotionId))
-            {
-                return BadRequest();
-            }
-
             _context.Entry(promotion).State = EntityState.Modified;
 
             try

@@ -1,5 +1,6 @@
 ﻿using AzzanOrder.ManagerOwner.Models; // Update this line
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Dynamic;
 using System.Reflection;
@@ -8,111 +9,47 @@ namespace AzzanOrder.ManagerOwner.Controllers
 {
     public class PromotionController : Controller
     {
-        public async Task<IActionResult> ListRunning()
+        private string urlPromotion = "https://localhost:7183/api/Promotions/GetByDescription/";
+
+        [HttpGet("ListAll")]
+        public async Task<IActionResult> ListAll(int manaId = 1)
         {
             dynamic promotions = new ExpandoObject();
             promotions.Logo = new Promotion();
-            promotions.BackgroundColor = "";
+            promotions.BackgroundColor = new Promotion();
             promotions.Carousel = new List<Promotion>();
             promotions.Banner = new List<Promotion>();
+            promotions.Hotline = new Promotion();
+            promotions.Mail = new Promotion();
+            promotions.Contact = new Promotion();
+
+            var endpoints = new Dictionary<string, Action<string>>
+            {
+                { $"logo?manaId={manaId}", response => promotions.Logo = JsonConvert.DeserializeObject<Promotion>(response) },
+                { $"color?manaId={manaId}", response => promotions.BackgroundColor = JsonConvert.DeserializeObject<Promotion>(response) },
+                { $"carousel?manaId={manaId}", response => promotions.Carousel = JsonConvert.DeserializeObject<List<Promotion>>(response) },
+                { $"banner?manaId={manaId}", response => promotions.Banner = JsonConvert.DeserializeObject<List<Promotion>>(response) },
+                { $"hotline?manaId={manaId}", response => promotions.Hotline = JsonConvert.DeserializeObject < Promotion >(response) },
+                { $"mail?manaId={manaId}", response => promotions.Mail = JsonConvert.DeserializeObject < Promotion >(response) },
+                { $"contact?manaId={manaId}", response => promotions.Contact = JsonConvert.DeserializeObject<Promotion>(response) }
+            };
 
             using (var httpClient = new HttpClient())
             {
-                try
+                foreach (var endpoint in endpoints)
                 {
-                    var logoResponse = await httpClient.GetStringAsync("https://localhost:7183/api/Promotions/GetByDescription/logo");
-                    promotions.Logo = JsonConvert.DeserializeObject<Promotion>(logoResponse);
-                }
-                catch (Exception ex)
-                {
-                    // Log the exception if necessary
-                }
-
-                try
-                {
-                    var backgroundColorResponse = await httpClient.GetStringAsync("https://localhost:7183/api/Promotions/GetByDescription/color");
-                    var data = JsonConvert.DeserializeObject<Promotion>(backgroundColorResponse);
-                    promotions.BackgroundColor = data.Description.Split('/')[1];
-                }
-                catch (Exception ex)
-                {
-                    // Log the exception if necessary
-                }
-
-                try
-                {
-                    var carouselResponse = await httpClient.GetStringAsync("https://localhost:7183/api/Promotions/GetByDescription/carousel");
-                    promotions.Carousel = JsonConvert.DeserializeObject<List<Promotion>>(carouselResponse);
-                }
-                catch (Exception ex)
-                {
-                    // Log the exception if necessary
-                }
-
-                try
-                {
-                    var bannerResponse = await httpClient.GetStringAsync("https://localhost:7183/api/Promotions/GetByDescription/banner");
-                    promotions.Banner = JsonConvert.DeserializeObject<List<Promotion>>(bannerResponse);
-                }
-                catch (Exception ex)
-                {
-                    // Log the exception if necessary
+                    try
+                    {
+                        var response = await httpClient.GetStringAsync(urlPromotion + endpoint.Key);
+                        endpoint.Value(response);
+                    }
+                    catch (Exception ex)
+                    {
+                        // Log the exception if necessary
+                    }
                 }
             }
-            return View(promotions);
-        }
 
-        public async Task<IActionResult> ListAll()
-        {
-            dynamic promotions = new ExpandoObject();
-            promotions.Logo = new Promotion();
-            promotions.BackgroundColor = "";
-            promotions.Carousel = new List<Promotion>();
-            promotions.Banner = new List<Promotion>();
-
-            using (var httpClient = new HttpClient())
-            {
-                try
-                {
-                    var logoResponse = await httpClient.GetStringAsync("https://localhost:7183/api/Promotions/GetByDescription/logo");
-                    promotions.Logo = JsonConvert.DeserializeObject<Promotion>(logoResponse);
-                }
-                catch (Exception ex)
-                {
-                    // Log the exception if necessary
-                }
-
-                try
-                {
-                    var backgroundColorResponse = await httpClient.GetStringAsync("https://localhost:7183/api/Promotions/GetByDescription/color");
-                    var data = JsonConvert.DeserializeObject<Promotion>(backgroundColorResponse);
-                    promotions.BackgroundColor = data.Description.Split('/')[1];
-                }
-                catch (Exception ex)
-                {
-                    // Log the exception if necessary
-                }
-
-                try
-                {
-                    var carouselResponse = await httpClient.GetStringAsync("https://localhost:7183/api/Promotions/GetByDescription/carousel");
-                    promotions.Carousel = JsonConvert.DeserializeObject<List<Promotion>>(carouselResponse);
-                }
-                catch (Exception ex)
-                {
-                    // Log the exception if necessary
-                }
-
-                try
-                {
-                    var bannerResponse = await httpClient.GetStringAsync("https://localhost:7183/api/Promotions/GetByDescription/banner");
-                    promotions.Banner = JsonConvert.DeserializeObject<List<Promotion>>(bannerResponse);
-                }
-                catch (Exception ex)
-                {
-                    // Log the exception if necessary
-                }
-            }
             return View(promotions);
         }
 
@@ -134,24 +71,88 @@ namespace AzzanOrder.ManagerOwner.Controllers
             // If model validation fails, redisplay the form with validation messages
             return View();
         }
-
-        public IActionResult Update()
+        [HttpGet]
+        public async Task<IActionResult> Update(int id, string destination)
         {
-            return View();
+            Promotion table = new Promotion();
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    HttpResponseMessage response = await client.GetAsync("https://localhost:7183/api/Promotions/" + id);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string data = await response.Content.ReadAsStringAsync();
+                        table = JsonConvert.DeserializeObject<Promotion>(data);
+
+                        if (table != null && !string.IsNullOrEmpty(table.Description))
+                        {
+                            var parts = table.Description.Split('/');
+                            ViewBag.Destination = parts[0].IsNullOrEmpty() ? destination : parts[0];
+                            table.Description = parts[1] ?? string.Empty;
+                        }
+                    }
+                    else
+                    {
+                        ViewBag.Destination = destination;
+                        ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                    }
+                }
+                catch (HttpRequestException)
+                {
+                    ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
+                }
+            }
+            return View(table);
         }
 
         // POST: Employee/Update
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult UpdatePost()
+        public async Task<IActionResult> Update(Promotion promotion, IFormFile? Image)
         {
             if (ModelState.IsValid)
             {
-                return RedirectToAction("ListRunning");
-            }
+                if (Image != null && Image.Length > 0)
+                {
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await Image.CopyToAsync(memoryStream);
+                        var fileBytes = memoryStream.ToArray();
+                        promotion.Image = "data:image/png;base64," + Convert.ToBase64String(fileBytes);
+                    }
+                }
 
-            // If model validation fails, redisplay the form with validation messages
-            return View();
+                // Combine Destination and Description
+                var destination = Request.Form["Destination"];
+                promotion.Description = $"{destination}/{promotion.Description}";
+
+                using (HttpClient client = new HttpClient())
+                {
+                    var json = JsonConvert.SerializeObject(promotion);
+                    var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+                    HttpResponseMessage response;
+                    if (promotion.PromotionId == 0)
+                    {
+                        response = await client.PostAsync("https://localhost:7183/api/Promotions/Add", content);
+                    }
+                    else
+                    {
+                        response = await client.PutAsync("https://localhost:7183/api/Promotions/Update", content);
+                    }
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return RedirectToAction("ListAll");
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                    }
+                }
+            }
+            return View(promotion);
         }
 
         [HttpPost]

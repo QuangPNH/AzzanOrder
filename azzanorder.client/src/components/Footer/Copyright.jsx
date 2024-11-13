@@ -6,7 +6,7 @@ import React from "react";
 const Copyright = () => {
   return (
     <div className="copyright">
-      Bản quyền © 2016 Công ty cổ phần Azzan.
+      Copyrighted © 2024 Assits Ordering System.
       <style jsx>{`
         .copyright {
           background-color: #553434;

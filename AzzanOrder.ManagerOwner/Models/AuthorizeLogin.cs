@@ -15,25 +15,25 @@ namespace AzzanOrder.ManagerOwner.Models
 
 		public async Task<string> CheckLogin()
 		{
-			Employee emp = new Employee();
-			Owner owner = new Owner();
-			bool isManager = false;
+			//Employee emp = new Employee();
+			//Owner owner = new Owner();
+			//bool isManager = false;
 
-			try
-			{
-				_httpContext.Request.Cookies.TryGetValue("LoginInfo", out string loginInfoJson); // Use the instance field
+			//try
+			//{
+			//	_httpContext.Request.Cookies.TryGetValue("LoginInfo", out string loginInfoJson); // Use the instance field
 
-				var loginInfo = JsonConvert.DeserializeObject<Employee>(loginInfoJson);
-				if (loginInfo.RoleId != null)
-				{
-					isManager = true;
-				}
-				else
-				{
-					isManager = false;
-				}
-			}
-			catch { }
+			//	var loginInfo = JsonConvert.DeserializeObject<Employee>(loginInfoJson);
+			//	if (loginInfo.RoleId != null)
+			//	{
+			//		isManager = true;
+			//	}
+			//	else
+			//	{
+			//		isManager = false;
+			//	}
+			//}
+			//catch { }
 
 			if (_httpContext.Request.Cookies.TryGetValue("LoginInfo", out string user)) // Use the instance field
 			{
@@ -62,7 +62,7 @@ namespace AzzanOrder.ManagerOwner.Models
 									return "manager expired";
 								}
 							}
-							else { }
+							else { return "null"; }
 						}
 						catch (HttpRequestException e) { }
 					}
@@ -92,7 +92,7 @@ namespace AzzanOrder.ManagerOwner.Models
 									return "owner";
 								}
 							}
-							else { }
+							else { return "null"; }
 						}
 						catch (HttpRequestException e) { }
 					}

@@ -4,215 +4,251 @@
 @{
     var logo = Model.Logo;
 
-    var backgroundColor = Model.BackgroundColor;
+    var backgroundColor = !string.IsNullOrEmpty(Model.BackgroundColor.Description) ? Model.BackgroundColor.Description.Split('/')[1] : "#f6b5b5";
 
     var carousel = Model.Carousel;
 
     var banner = Model.Banner;
 
+    var hotLine = !string.IsNullOrEmpty(Model.Hotline.Description) ? Model.Hotline.Description.Split('/')[1] : "123-456-7890";
+
+    var mail = !string.IsNullOrEmpty(Model.Mail.Description) ? Model.Mail.Description.Split('/')[1] : "example@mail.com";
+
+    var contact = !string.IsNullOrEmpty(Model.Contact.Description) ? Model.Contact.Description.Split('/')[1] : "Lorem ipsum dolor sit amet, consectetur adipiscing elit.";
+
     var placeholderImage = "https://s6.imgcdn.dev/gl4Iv.png";
 }
-<div>
+<div style="margin-bottom: 10px">
     <a href="@Url.Action("Add", "Promotion")" class="btn btn-primary">Add New Promotion</a>
 </div>
-<header class="header">
-    <div>
-        <img src="@(string.IsNullOrEmpty(logo.Image) ? placeholderImage : logo.Image)" class="logo">
-        <a href="@Url.Action("Update", "Promotion",new { id = logo.PromotionId })" class="align-middle me-2">
-            <i data-feather="edit"></i>
-        </a>
-    </div>
-    <nav class="navigation">
-        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/aae56868fdcb862e605ea9a58584175c78f8bec2f1376557a9d660d8863bf323?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="Navigation item 1" class="nav-item" loading="lazy">
-        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/189297da07ec9868357cb4291401ef50667416493bf889bffb02c9cca138ebca?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="Navigation item 2" class="nav-item nav-item-last" loading="lazy">
-    </nav>
-</header>
-<div class="page-container">
-    <nav class="redirect-bar-header">
-        <div class="redirect-bar-navigation">
-            <div class="nav-item2">
-                <div class="icon-wrapper">
-                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/4248bf27bbf27f1c483ff23778eaba7c542de4e8e12b9707e9f5dfec6988ba65?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" alt="Menu icon" class="icon">
-                </div>
-                <span class="label">Menu</span>
+<div style="width: 420px; position: relative">
+    <div style="height: 600px; overflow-y: scroll; width:fit-content ">
+        <header class="header" style="background-color: @backgroundColor">
+            <div>
+                <img src="@(string.IsNullOrEmpty(logo.Image) ? placeholderImage : logo.Image)" class="logo">
+                <a href="@Url.Action("Update", "Promotion", new { id = logo.PromotionId, destination = "logo" })" class="align-middle me-2">
+                    <i data-feather="edit"></i>
+                </a>
             </div>
-            <div class="nav-item2">
-                <div class="icon-wrapper">
-                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/7a853134f70b6e70ec8c0b2dd80275ee6662820bbc34ce628dce07c644383e1b?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" alt="About Us icon" class="icon">
+            <a href="@Url.Action("Update", "Promotion", new { id = Model.BackgroundColor.PromotionId, destination = "color" })" class="align-middle me-2">
+                <i data-feather="edit"></i>
+            </a>
+            <nav class="navigation">
+                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/aae56868fdcb862e605ea9a58584175c78f8bec2f1376557a9d660d8863bf323?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="Navigation item 1" class="nav-item" loading="lazy">
+                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/189297da07ec9868357cb4291401ef50667416493bf889bffb02c9cca138ebca?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="Navigation item 2" class="nav-item nav-item-last" loading="lazy">
+            </nav>
+        </header>
+        <div class="page-container">
+            <nav class="redirect-bar-header">
+                <div class="redirect-bar-navigation">
+                    <div class="nav-item2">
+                        <div class="icon-wrapper">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/4248bf27bbf27f1c483ff23778eaba7c542de4e8e12b9707e9f5dfec6988ba65?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" alt="Menu icon" class="icon">
+                        </div>
+                        <span class="label">Menu</span>
+                    </div>
+                    <div class="nav-item2">
+                        <div class="icon-wrapper">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/7a853134f70b6e70ec8c0b2dd80275ee6662820bbc34ce628dce07c644383e1b?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" alt="About Us icon" class="icon">
+                        </div>
+                        <span class="label">About Us</span>
+                    </div>
+                    <div class="nav-item2">
+                        <div class="icon-wrapper">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/77b7958b81123b01b3263f4d163a20b07db78de7b2898a7f38789ad7f4172289?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" alt="Order icon" class="icon">
+                        </div>
+                        <span class="label">Order</span>
+                    </div>
+                    <div class="nav-item2">
+                        <div class="icon-wrapper">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/d896ad111b7b0d08a8da0eef1536518980ea24bf8935c612f44c1ad667772f3c?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" alt="Voucher icon" class="icon">
+                        </div>
+                        <span class="label">Voucher</span>
+                    </div>
                 </div>
-                <span class="label">About Us</span>
-            </div>
-            <div class="nav-item2">
-                <div class="icon-wrapper">
-                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/77b7958b81123b01b3263f4d163a20b07db78de7b2898a7f38789ad7f4172289?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" alt="Order icon" class="icon">
+            </nav>
+            <section class="recently-ordered-section">
+                <h2 class="section-title">LIMITED COMBO</h2>
+            </section>
+            <div class="card-body">
+                <div class="carousel-container">
+                    <div class="small-image-container left">
+                        <img class="small-image"
+                             alt="@carousel[0]?.Title"
+                             src="@(string.IsNullOrEmpty(carousel[0]?.Image) ? placeholderImage : carousel[0]?.Image)"
+                             onclick="handlePrev()" />
+                    </div>
+                    <div class="big-image-container">
+                        <img class="big-image" alt="@carousel[1]?.Title" src="@(string.IsNullOrEmpty(carousel[1]?.Image) ? placeholderImage : carousel[1]?.Image)" />
+                        <div class="promotion-details">
+                            <h2>@carousel[1]?.Title</h2>
+                            <a href="@Url.Action("Update", "Promotion", new { id = carousel[1]?.PromotionId, destination = "carousel" })" class="align-middle me-2">
+                                <i data-feather="edit"></i>
+                            </a>
+                        </div>
+                    </div>
+                    <div class="small-image-container right">
+                        <img class="small-image"
+                             alt="@carousel[2]?.Title"
+                             src="@(string.IsNullOrEmpty(carousel[2]?.Image) ? placeholderImage : carousel[2]?.Image)"
+                             onclick="handleNext()" />
+                    </div>
                 </div>
-                <span class="label">Order</span>
             </div>
-            <div class="nav-item2">
-                <div class="icon-wrapper">
-                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/d896ad111b7b0d08a8da0eef1536518980ea24bf8935c612f44c1ad667772f3c?placeholderIfAbsent=true&apiKey=a971ff9380c749fd99c76f2c51698533" alt="Voucher icon" class="icon">
+            <section class="recently-ordered-section">
+                <h2 class="section-title">RECENTLY ORDERED</h2>
+            </section>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="@placeholderImage" class="product-image">
+                    <h2 class="product-title">Café Ðen/ Café Nâu</h2>
+                    <div class="price-tag">
+                        <span class="price">10000đ</span>
+                        <button class="add-to-cart" aria-label="Add to cart">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
+                        </button>
+                    </div>
                 </div>
-                <span class="label">Voucher</span>
+                <div class="product-card">
+                    <img src="@placeholderImage" class="product-image">
+                    <h2 class="product-title">Café Ðen/ Café Nâu</h2>
+                    <div class="price-tag">
+                        <span class="price">10000đ</span>
+                        <button class="add-to-cart" aria-label="Add to cart">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
+                        </button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="@placeholderImage" class="product-image">
+                    <h2 class="product-title">Café Ðen/ Café Nâu</h2>
+                    <div class="price-tag">
+                        <span class="price">10000đ</span>
+                        <button class="add-to-cart" aria-label="Add to cart">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
+                        </button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="@placeholderImage" class="product-image">
+                    <h2 class="product-title">Café Ðen/ Café Nâu</h2>
+                    <div class="price-tag">
+                        <span class="price">10000đ</span>
+                        <button class="add-to-cart" aria-label="Add to cart">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
+                        </button>
+                    </div>
+                </div>
             </div>
+            <section class="recently-ordered-section">
+                <h2 class="section-title">HOT ITEMS</h2>
+            </section>
+            <div class="product-grid">
+                <div class="product-card">
+                    <img src="@placeholderImage" class="product-image">
+                    <h2 class="product-title">Café Ðen/ Café Nâu</h2>
+                    <div class="price-tag">
+                        <span class="price">10000đ</span>
+                        <button class="add-to-cart" aria-label="Add to cart">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
+                        </button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="@placeholderImage" class="product-image">
+                    <h2 class="product-title">Café Ðen/ Café Nâu</h2>
+                    <div class="price-tag">
+                        <span class="price">10000đ</span>
+                        <button class="add-to-cart" aria-label="Add to cart">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
+                        </button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="@placeholderImage" class="product-image">
+                    <h2 class="product-title">Café Ðen/ Café Nâu</h2>
+                    <div class="price-tag">
+                        <span class="price">10000đ</span>
+                        <button class="add-to-cart" aria-label="Add to cart">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
+                        </button>
+                    </div>
+                </div>
+                <div class="product-card">
+                    <img src="@placeholderImage" class="product-image">
+                    <h2 class="product-title">Café Ðen/ Café Nâu</h2>
+                    <div class="price-tag">
+                        <span class="price">10000đ</span>
+                        <button class="add-to-cart" aria-label="Add to cart">
+                            <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
+                        </button>
+                    </div>
+                </div>
+            </div>
+            <section class="banner">
+                <div class="image-gallery">
+                    @foreach (var promotion in banner)
+                    {
+                        <div class="image-wrapper">
+                            <a style="z-index: 1; position:absolute" href="@Url.Action("Update", "Promotion", new { id = promotion.PromotionId, destination = "banner" })" class="align-middle me-2">
+                                <i data-feather="edit"></i>
+                            </a>
+                            <img src="@(string.IsNullOrEmpty(promotion.Image) ? placeholderImage : promotion.Image)" alt="@promotion.Title" />
+                        </div>
+                    }
+                </div>
+
+                <nav class="banner-navigation">
+                    @for (int i = 0; i < banner.Count; i++)
+                    {
+                        <div class="dot-indicator @(i == 0 ? "active" : "")"></div>
+                    }
+                </nav>
+            </section>
         </div>
-    </nav>
-    <section class="recently-ordered-section">
-        <h2 class="section-title">LIMITED COMBO</h2>
-    </section>
-    <div class="card-body">
-        <div class="carousel-container">
-            <div class="small-image-container left">
-                <img class="small-image"
-                     alt="@carousel[0]?.Title"
-                     src="@(string.IsNullOrEmpty(carousel[0]?.Image) ? placeholderImage : carousel[0]?.Image)"
-                     onclick="handlePrev()" />
-            </div>
-            <div class="big-image-container">
-                <img class="big-image" alt="@carousel[1]?.Title" src="@(string.IsNullOrEmpty(carousel[1]?.Image) ? placeholderImage : carousel[1]?.Image)" />
-                <div class="promotion-details">
-                    <h2>@carousel[1]?.Title</h2>
-                    <a id="edit-link" href="@Url.Action("Update", "Promotion",new { id = carousel[1].PromotionId })" class="align-middle me-2">
+        <footer class="footer1" style="background-color: @backgroundColor">
+            <div class="footer-content">
+                <div class="contact-info">
+                    <div class="contact-item">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/c3aac47b727a6612500a96595a3b4d9dea0e4aefb355edcbc066da9019801d47?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="contact-icon">
+                        <span class="contact-text">
+                            Hotline: @hotLine
+                            <a href="@Url.Action("Update", "Promotion", new { id = Model.Hotline.PromotionId, destination = "hotline" })" class="align-middle me-2">
+                                <i data-feather="edit"></i>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="contact-item">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/958d2628ee54563e2bd440632e1f0ac71b655aba4be5db360de18f694a6593ec?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="contact-icon">
+                        <span class="contact-text">
+                            Mail: @mail
+                            <a href="@Url.Action("Update", "Promotion", new { id = Model.Mail.PromotionId, destination = "mail" })" class="align-middle me-2">
+                                <i data-feather="edit"></i>
+                            </a>
+                        </span>
+                    </div>
+                    <div class="contact-item">
+                        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/259d79add37fc95f3d1523bdcd472dc9158a67373e6e6ef3b90165fe08b90b77?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="contact-icon">
+                        <span class="contact-text">Contact</span>
+                    </div>
+                </div>
+                <address class="address">
+                    @contact <a href="@Url.Action("Update", "Promotion", new { id = Model.Contact.PromotionId, destination = "contact" })" class="align-middle me-2">
                         <i data-feather="edit"></i>
                     </a>
-                </div>
+                </address>
+                <img src="@(string.IsNullOrEmpty(logo.Image) ? placeholderImage : logo.Image)" alt="Company logo" class="company-logo">
             </div>
-            <div class="small-image-container right">
-                <img class="small-image"
-                     alt="@carousel[2]?.Title"
-                     src="@(string.IsNullOrEmpty(carousel[2]?.Image) ? placeholderImage : carousel[2]?.Image)"
-                     onclick="handleNext()" />
-            </div>
-        </div>
+        </footer>
     </div>
-    <section class="recently-ordered-section">
-        <h2 class="section-title">RECENTLY ORDERED</h2>
-    </section>
-    <div class="product-grid">
-        <div class="product-card">
-            <img src="@placeholderImage" class="product-image">
-            <h2 class="product-title">Café Ðen/ Café Nâu</h2>
-            <div class="price-tag">
-                <span class="price">10000đ</span>
-                <button class="add-to-cart" aria-label="Add to cart">
-                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
-                </button>
-            </div>
-        </div>
-        <div class="product-card">
-            <img src="@placeholderImage" class="product-image">
-            <h2 class="product-title">Café Ðen/ Café Nâu</h2>
-            <div class="price-tag">
-                <span class="price">10000đ</span>
-                <button class="add-to-cart" aria-label="Add to cart">
-                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
-                </button>
-            </div>
-        </div>
-        <div class="product-card">
-            <img src="@placeholderImage" class="product-image">
-            <h2 class="product-title">Café Ðen/ Café Nâu</h2>
-            <div class="price-tag">
-                <span class="price">10000đ</span>
-                <button class="add-to-cart" aria-label="Add to cart">
-                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
-                </button>
-            </div>
-        </div>
-        <div class="product-card">
-            <img src="@placeholderImage" class="product-image">
-            <h2 class="product-title">Café Ðen/ Café Nâu</h2>
-            <div class="price-tag">
-                <span class="price">10000đ</span>
-                <button class="add-to-cart" aria-label="Add to cart">
-                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
-                </button>
-            </div>
-        </div>
+    <div style="position: absolute; bottom: 50px; right: 26px; z-index: 9999;">
+        <button style="border-radius: 100%; padding: 12px; background-color: rgb(189, 51, 38); cursor: pointer;">
+            <img src="~/img/icons/shoppingCart.svg" style="width: 20px; height: 20px;">
+        </button>
     </div>
-    <section class="recently-ordered-section">
-        <h2 class="section-title">HOT ITEMS</h2>
-    </section>
-    <div class="product-grid">
-        <div class="product-card">
-            <img src="@placeholderImage" class="product-image">
-            <h2 class="product-title">Café Ðen/ Café Nâu</h2>
-            <div class="price-tag">
-                <span class="price">10000đ</span>
-                <button class="add-to-cart" aria-label="Add to cart">
-                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
-                </button>
-            </div>
-        </div>
-        <div class="product-card">
-            <img src="@placeholderImage" class="product-image">
-            <h2 class="product-title">Café Ðen/ Café Nâu</h2>
-            <div class="price-tag">
-                <span class="price">10000đ</span>
-                <button class="add-to-cart" aria-label="Add to cart">
-                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
-                </button>
-            </div>
-        </div>
-        <div class="product-card">
-            <img src="@placeholderImage" class="product-image">
-            <h2 class="product-title">Café Ðen/ Café Nâu</h2>
-            <div class="price-tag">
-                <span class="price">10000đ</span>
-                <button class="add-to-cart" aria-label="Add to cart">
-                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
-                </button>
-            </div>
-        </div>
-        <div class="product-card">
-            <img src="@placeholderImage" class="product-image">
-            <h2 class="product-title">Café Ðen/ Café Nâu</h2>
-            <div class="price-tag">
-                <span class="price">10000đ</span>
-                <button class="add-to-cart" aria-label="Add to cart">
-                    <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/2058a1d549e641fdf84125eca4b1b3f07bb5710599dffea18b6cc6ee0301ecfb?placeholderIfAbsent=true&amp;apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="cart-icon">
-                </button>
-            </div>
-        </div>
-    </div>
-    <section class="banner">
-        <div class="image-gallery">
-            @foreach (var promotion in banner)
-            {
-                <i class="align-middle me-2" data-feather="edit"></i>
-                <div class="image-wrapper">
-                    <img src="@(string.IsNullOrEmpty(promotion.Image) ? placeholderImage : promotion.Image)" alt="@promotion.Title" />
-                </div>
-            }
-        </div>
-
-        <nav class="banner-navigation">
-            @for (int i = 0; i < banner.Count; i++)
-            {
-                <div class="dot-indicator @(i == 0 ? "active" : "")"></div>
-            }
-        </nav>
-    </section>
 </div>
-<footer class="footer1">
-    <div class="footer-content">
-        <div class="contact-info">
-            <div class="contact-item">
-                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/c3aac47b727a6612500a96595a3b4d9dea0e4aefb355edcbc066da9019801d47?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="contact-icon">
-                <span class="contact-text">Hotline: 0967375045</span>
-            </div>
-            <div class="contact-item">
-                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/958d2628ee54563e2bd440632e1f0ac71b655aba4be5db360de18f694a6593ec?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="contact-icon">
-                <span class="contact-text">Mail: dungthhe170357@fpt.edu.vn</span>
-            </div>
-            <div class="contact-item">
-                <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/259d79add37fc95f3d1523bdcd472dc9158a67373e6e6ef3b90165fe08b90b77?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="" class="contact-icon">
-                <span class="contact-text">Contact</span>
-            </div>
-        </div>
-        <address class="address">2G7G+8F3, Thạch Hoà, Thạch Thất, Hà Nội, Vietnam</address>
-        <img src="https://cdn.builder.io/api/v1/image/assets/TEMP/01b1ac975c883874a9251382d0fac643e51155a65744cab318a1afa1ef964ae8?placeholderIfAbsent=true&apiKey=c0efc441fe73418b8b7246db17f848b8" alt="Company logo" class="company-logo">
-    </div>
-</footer>
+
+
 @section Scripts {
     <script>
         let currentIndex = 1;
@@ -263,7 +299,7 @@
         }
 
         function initializeBanner() {
-            const images = document.querySelectorAll('.image-wrapper img');
+            const images = document.querySelectorAll('.image-wrapper');
             const dots = document.querySelectorAll('.dot-indicator');
             let activeIndex = 0;
 
@@ -391,8 +427,8 @@
             background-color: #4c5a61; /* Darker color for active dot */
             width: 19px; /* Larger size for active dot */
         }
+
     .header {
-        background-color: #f6b5b5;
         width: 400px;
         height: 64px;
         display: flex;
@@ -488,7 +524,6 @@
     }
     .footer1 {
         padding-top: 22px;
-        background-color: #f6b5b5;
         width: 400px;
     }
 
