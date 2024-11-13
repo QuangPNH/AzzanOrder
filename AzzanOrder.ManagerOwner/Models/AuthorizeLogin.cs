@@ -62,7 +62,7 @@ namespace AzzanOrder.ManagerOwner.Models
 									return "manager expired";
 								}
 							}
-							else { }
+							else { return "null"; }
 						}
 						catch (HttpRequestException e) { }
 					}
@@ -92,7 +92,7 @@ namespace AzzanOrder.ManagerOwner.Models
 									return "owner";
 								}
 							}
-							else { }
+							else { return "null"; }
 						}
 						catch (HttpRequestException e) { }
 					}
