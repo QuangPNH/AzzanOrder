@@ -1,25 +1,31 @@
-﻿<div class="col-12">
+﻿@model AzzanOrder.ManagerOwner.Models.Model
+<div class="col-12">
     <div class="card">
         <div class="card-header">
             <h5 class="card-title">Add Voucher</h5>
         </div>
         <div class="card-body">
-            <form action="@Url.Action("List", "Voucher")" method="post">
+            <form asp-action="AddPost" asp-controller="Voucher" method="post">
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Title</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" placeholder="Title">
+                        <input asp-for="voucherDetail.Title" class="form-control" placeholder="Title">
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Item Category</label>
                     <div class="col-sm-10">
-                        <select class="form-select">
-                            <option selected>Select Item Category</option>
-                            <option value="1">Coffee</option>
-                            <option value="2">Tea</option>
-                            <option value="3">Juice</option>
-                        </select>
+                        <ul>
+                            @{
+                                foreach (var i in Model.itemCategories)
+                                {
+                                    <li>
+                                        <input type="checkbox" name="SelectedCategories" value="@i.ItemCategoryId" />
+                                        <label>@i.ItemCategoryName</label>
+                                    </li>
+                                }
+                            }
+                        </ul>
                     </div>
                 </div>
                 <div class="mb-3 row">

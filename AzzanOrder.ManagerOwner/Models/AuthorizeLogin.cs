@@ -15,9 +15,9 @@ namespace AzzanOrder.ManagerOwner.Models
 
 		public async Task<string> CheckLogin()
 		{
-			//Employee emp = new Employee();
-			//Owner owner = new Owner();
-			//bool isManager = false;
+			Employee emp = new Employee();
+			Owner owner = new Owner();
+			bool isManager = false;
 
 			//try
 			//{

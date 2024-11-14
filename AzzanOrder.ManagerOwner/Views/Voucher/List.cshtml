@@ -1,5 +1,5 @@
-﻿@model IEnumerable<AzzanOrder.ManagerOwner.Models.VoucherDetail>
-
+﻿@* @model IEnumerable<AzzanOrder.ManagerOwner.Models.VoucherDetail> *@
+    @model AzzanOrder.ManagerOwner.Models.Model 
 <h1 class="h3 mb-3">Voucher Management</h1>
 
 <div class="col-12">
@@ -23,7 +23,7 @@
                 </tr>
             </thead>
             <tbody>
-                @for (int i = 0; i < Model.Count(); i++)
+               @*  @for (int i = 0; i < Model.Count(); i++)
                 {
                     var voucherDetail = Model.ElementAt(i);
                     var vouchers = voucherDetail.Vouchers;
@@ -31,7 +31,7 @@
                         <td>@(i + 1)</td>
                         <td>@voucherDetail.Title</td>
                         <td>
-                            @foreach (var voucher in vouchers)
+                            @foreach (var voucher in Model.Inc)
                             {
                                 <div>
                                     @voucher.ItemCategory?.ItemCategoryName
@@ -48,6 +48,33 @@
                             <a href="@Url.Action("Delete", "Voucher", new { id = voucherDetail.VoucherDetailId })"><i class="align-middle" data-feather="trash"></i></a>
                         </td>
                     </tr>
+                } *@
+
+                @{
+                    foreach (var i in Model.voucherDetails.Where(v => v.Vouchers.Any(v => v.IsActive == true)))
+                    {
+                        <tr>
+                            <td>@i.VoucherDetailId</td>
+                            <td>@i.Title</td>
+                            <td>
+                                @foreach (var voucher in Model.vouchers.Where(v => v.VoucherDetailId == i.VoucherDetailId))
+                                {
+                                    <div>
+                                        @voucher.ItemCategory.ItemCategoryName
+                                        <span class="@(voucher.IsActive == true ? "text-success ms-2" : "text-danger ms-2")">
+                                            @(voucher.IsActive == true ? "Active" : "Not Active")
+                                        </span>
+                                    </div>
+                                }
+                            </td>
+                            <td>@i.Discount%</td>
+                            <td class="d-none d-md-table-cell">@i.Price</td>
+                            <td class="table-action">
+                                <a href="@Url.Action("Update", "Voucher", new { id = i.VoucherDetailId })"><i class="align-middle" data-feather="edit-2"></i></a>
+                                <a href="@Url.Action("Delete", "Voucher", new { id = i.VoucherDetailId })"><i class="align-middle" data-feather="trash"></i></a>
+                            </td>
+                        </tr>
+                    }
                 }
             </tbody>
         </table>

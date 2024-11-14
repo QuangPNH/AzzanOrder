@@ -42,7 +42,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 try
                 {
                     HttpResponseMessage res = await client.GetAsync(_apiUrl + "Employee");
-                        string data = await res.Content.ReadAsStringAsync();
+                            string data = await res.Content.ReadAsStringAsync();
                     employees = JsonConvert.DeserializeObject<List<Employee>>(data);
                         totalEmployees = employees.Count(e => e.IsDelete == false);
                 }
@@ -76,8 +76,21 @@ namespace AzzanOrder.ManagerOwner.Controllers
         public async Task<IActionResult> Add()
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
-            if (!(await authorizeLogin.CheckLogin()).Equals("manager"))
+            if (authorizeLogin.Equals("owner"))
             {
+                return RedirectToAction("Index", "Home");
+            }
+            else if (authorizeLogin.Equals("manager"))
+            {
+            }
+            else if (authorizeLogin.Equals("owner expired"))
+            {
+                ViewBag.Message = "Your subscription has expired. Please subscribe again.";
+                return RedirectToAction("Login", "Home");
+            }
+            else if (authorizeLogin.Equals("manager expired"))
+            {
+                ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
                 return RedirectToAction("Login", "Home");
             }
             List<Role> roles = new List<Role>();

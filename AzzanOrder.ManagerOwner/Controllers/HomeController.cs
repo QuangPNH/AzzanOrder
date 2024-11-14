@@ -65,7 +65,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson);
 
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
-            Console.WriteLine("aaaaaaaaa a " + await authorizeLogin.CheckLogin());
+            //Console.WriteLine("aaaaaaaaa a " + await authorizeLogin.CheckLogin());
             var loginStatus = await authorizeLogin.CheckLogin();
             if (loginStatus.Equals("owner"))
             {
