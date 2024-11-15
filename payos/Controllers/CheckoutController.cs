@@ -42,6 +42,15 @@ public class CheckoutController : Controller
             });
         }
 
+        if (!string.IsNullOrEmpty(Item))
+        {
+            Response.Cookies.Append("ItemType", Item, new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTimeOffset.UtcNow.AddDays(1)
+            });
+        }
+
         try
         {
             int orderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff"));
@@ -192,7 +201,7 @@ public class CheckoutController : Controller
                 else
                 {
                     // Phone number does not exist, add new owner
-                    HttpResponseMessage addResponse = await client.PostAsJsonAsync("https://localhost:7183/api/Owner/Add/", owner);
+                    HttpResponseMessage addResponse = await client.PostAsJsonAsync("https://localhost:7093/api/Owner/Add/", owner);
                     if (addResponse.IsSuccessStatusCode)
                     {
                         string addMessage = await addResponse.Content.ReadAsStringAsync();
@@ -200,7 +209,7 @@ public class CheckoutController : Controller
                     }
                 }
 
-                HttpResponseMessage registerResponse = await client.PostAsJsonAsync("https://localhost:7093/OwnerRegister", owner);
+                HttpResponseMessage registerResponse = await client.PostAsJsonAsync("https://localhost:7183/Home/OwnerRegister", owner);
                 if (registerResponse.IsSuccessStatusCode)
                 {
                     string registerMessage = await registerResponse.Content.ReadAsStringAsync();
@@ -213,7 +222,7 @@ public class CheckoutController : Controller
                 Expires = DateTimeOffset.UtcNow.AddDays(30)
             });
 
-            return Redirect("https://localhost:7093/Home/Index");
+            return Redirect("https://localhost:7183/Home/Index");
         }
         return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=success");
     }
@@ -225,12 +234,12 @@ public class CheckoutController : Controller
     {
         Console.WriteLine("Cancel nah");
         HttpContext.Request.Cookies.TryGetValue("tableqrPayOs", out string tableqr);
-        //HttpContext.Request.Cookies.TryGetValue("ItemType", out string itemType);
+        HttpContext.Request.Cookies.TryGetValue("ItemType", out string itemType);
 
-        //if (itemType.Contains("Subscribe"))
-        //{
-        //    return Redirect("https://localhost:7093/Home/Subscribe");
-        //}
+        if (itemType.Contains("Subscribe"))
+        {
+            return Redirect("https://localhost:7183/Home/Subscribe");
+        }
 
         //return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=cancel");
         return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=success");
