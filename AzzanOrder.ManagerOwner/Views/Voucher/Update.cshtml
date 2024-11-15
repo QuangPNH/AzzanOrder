@@ -1,25 +1,41 @@
-﻿<div class="col-12">
+﻿@model AzzanOrder.ManagerOwner.Models.Model
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<div class="col-12">
     <div class="card">
         <div class="card-header">
             <h5 class="card-title">Update Voucher</h5>
         </div>
         <div class="card-body">
-            <form action="@Url.Action("List", "Voucher")" method="post">
+            <form asp-action="UpdatePost" asp-controller="Voucher" method="post">
+                <div class="mb-3 row" hidden>
+                    <label class="col-form-label col-sm-2 text-sm-end">VoucherDetailId</label>
+                    <div class="col-sm-10">
+                        <input asp-for="voucherDetail.VoucherDetailId" class="form-control" />
+                        <span asp-validation-for="voucherDetail.VoucherDetailId" class="text-danger"></span>
+                    </div>
+                </div>
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Title</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" placeholder="Title">
+                        <input asp-for="voucherDetail.Title" class="form-control" />
+                        <span asp-validation-for="voucherDetail.Title" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Item Category</label>
                     <div class="col-sm-10">
-                        <select class="form-select">
-                            <option selected>Select Item Category</option>
-                            <option value="1">Coffee</option>
-                            <option value="2">Tea</option>
-                            <option value="3">Juice</option>
-                        </select>
+                        <ul>
+                            @{
+                                foreach (var i in Model.itemCategories)
+                                {
+                                    <li>
+                                        <input type="checkbox" name="SelectedCategories" value="@i.ItemCategoryId" 
+                                        @Model.voucherDetail.Vouchers.FirstOrDefault(v => v.ItemCategoryId == i.ItemCategoryId) != null ? checked : />
+                                        <label>@i.ItemCategoryName</label>
+                                    </li>
+                                }
+                            }
+                        </ul>
                     </div>
                 </div>
                 <div class="mb-3 row">
@@ -34,28 +50,36 @@
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Start Date</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="startDate" data-inputmask-alias="datetime"
+                        <input asp-for="voucherDetail.StartDate" id="startDate" class="form-control" data-inputmask-alias="datetime"
                                data-inputmask-inputformat="dd/mm/yyyy" disabled />
+                        <span asp-validation-for="voucherDetail.StartDate" class="text-danger"></span>
+                        @*  <input type="text" class="form-control" id="startDate" data-inputmask-alias="datetime"
+                        data-inputmask-inputformat="dd/mm/yyyy" disabled /> *@
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">End Date</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="endDate" data-inputmask-alias="datetime"
+                        <input asp-for="voucherDetail.EndDate" id="endDate" class="form-control" data-inputmask-alias="datetime"
                                data-inputmask-inputformat="dd/mm/yyyy" disabled />
+                        <span asp-validation-for="voucherDetail.EndDate" class="text-danger"></span>
+                        @* <input type="text" class="form-control" id="endDate" data-inputmask-alias="datetime"
+                        data-inputmask-inputformat="dd/mm/yyyy" disabled /> *@
                         <span class="text-muted">DD/MM/YYYY format. Can be used for limited voucher only.</span>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Discount</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" placeholder="Discount">
+                        <input asp-for="voucherDetail.Discount" class="form-control" />
+                        <span asp-validation-for="voucherDetail.Discount" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Price</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" placeholder="Price">
+                        <input asp-for="voucherDetail.Price" class="form-control" />
+                        <span asp-validation-for="voucherDetail.Price" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="mb-3 row">
@@ -80,7 +104,9 @@
                 const isChecked = limitedCheckbox.checked;
                 startDate.disabled = !isChecked;
                 endDate.disabled = !isChecked;
+                startDate.value = "";
+                endDate.value = "";
             });
-        }
-    });
+            }
+        });
 </script>

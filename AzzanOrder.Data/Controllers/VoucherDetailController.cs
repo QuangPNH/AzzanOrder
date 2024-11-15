@@ -30,9 +30,23 @@ namespace AzzanOrder.Data.Controllers
                 return NotFound();
             }
             //var a = await _context.VoucherDetails.Include(vd => vd.Vouchers.Where(v=>v.IsActive == true)).ToListAsync();
-            var b = employeeId.HasValue 
-                ? await _context.MemberVouchers.Where(mv => mv.VoucherDetail.EmployeeId == employeeId).Include(vd => vd.VoucherDetail).ThenInclude(vd => vd.Vouchers.Where(v => v.IsActive == true)).Select(mv => mv.VoucherDetail).ToListAsync() 
+            var b = employeeId.HasValue
+                ? await _context.MemberVouchers.Where(mv => mv.VoucherDetail.EmployeeId == employeeId).Include(vd => vd.VoucherDetail).ThenInclude(vd => vd.Vouchers.Where(v => v.IsActive == true)).Select(mv => mv.VoucherDetail).ToListAsync()
                 : await _context.MemberVouchers.Include(vd => vd.VoucherDetail).ThenInclude(vd => vd.Vouchers.Where(v => v.IsActive == true)).Select(mv => mv.VoucherDetail).ToListAsync();
+            return Ok(b);
+        }
+
+        [HttpGet("ListVoucherDetail")]
+        public async Task<ActionResult<IEnumerable<VoucherDetail>>> GetListVoucherDetails(int? employeeId)
+        {
+            if (_context.VoucherDetails == null)
+            {
+                return NotFound();
+            }
+            //var a = await _context.VoucherDetails.Include(vd => vd.Vouchers.Where(v=>v.IsActive == true)).ToListAsync();
+            var b = employeeId.HasValue
+                ? await _context.VoucherDetails.Where(mv => mv.EmployeeId == employeeId).Include(vd => vd.Vouchers.Where(v => v.IsActive == true)).ToListAsync()
+                : await _context.VoucherDetails.Include(vd => vd.Vouchers.Where(v => v.IsActive == true)).ToListAsync();
             return Ok(b);
         }
 
@@ -40,8 +54,8 @@ namespace AzzanOrder.Data.Controllers
         public async Task<ActionResult> GetVoucherDetailByCategory(int categoryId, int? employeeId)
         {
             if (_context.VoucherDetails == null)
-            { 
-                return NotFound(); 
+            {
+                return NotFound();
             }
             var voucherDetails = employeeId.HasValue ? _context.Vouchers
     .Where(v => v.ItemCategoryId == categoryId && v.IsActive == true && v.VoucherDetail.EmployeeId == employeeId)  // L?c theo categoryId và IsActive
@@ -56,7 +70,7 @@ namespace AzzanOrder.Data.Controllers
         }
 
 
-        
+
         // GET: api/VoucherDetail/5
         [HttpGet("{id}")]
         public async Task<ActionResult<VoucherDetail>> GetVoucherDetail(int id)
@@ -113,7 +127,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return Problem("List voucher are null.");
             }
-            if(voucherDetail.Price == null)
+            if (voucherDetail.Price == null)
             {
                 voucherDetail.Price = 0;
             }
