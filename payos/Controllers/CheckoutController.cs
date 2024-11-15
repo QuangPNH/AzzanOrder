@@ -42,6 +42,15 @@ public class CheckoutController : Controller
             });
         }
 
+        if (!string.IsNullOrEmpty(Item))
+        {
+            Response.Cookies.Append("ItemType", Item, new CookieOptions
+            {
+                HttpOnly = true,
+                Expires = DateTimeOffset.UtcNow.AddDays(1)
+            });
+        }
+
         try
         {
             int orderCode = int.Parse(DateTimeOffset.Now.ToString("ffffff"));
