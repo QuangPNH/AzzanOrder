@@ -201,7 +201,7 @@ public class CheckoutController : Controller
                 else
                 {
                     // Phone number does not exist, add new owner
-                    HttpResponseMessage addResponse = await client.PostAsJsonAsync("https://localhost:7093/api/Owner/Add/", owner);
+                    HttpResponseMessage addResponse = await client.PostAsJsonAsync("https://localhost:7183/api/Owner/Add/", owner);
                     if (addResponse.IsSuccessStatusCode)
                     {
                         string addMessage = await addResponse.Content.ReadAsStringAsync();
@@ -209,7 +209,7 @@ public class CheckoutController : Controller
                     }
                 }
 
-                HttpResponseMessage registerResponse = await client.PostAsJsonAsync("https://localhost:7183/Home/OwnerRegister", owner);
+                HttpResponseMessage registerResponse = await client.PostAsJsonAsync("https://localhost:7093/Home/OwnerRegister", owner);
                 if (registerResponse.IsSuccessStatusCode)
                 {
                     string registerMessage = await registerResponse.Content.ReadAsStringAsync();
@@ -222,7 +222,7 @@ public class CheckoutController : Controller
                 Expires = DateTimeOffset.UtcNow.AddDays(30)
             });
 
-            return Redirect("https://localhost:7183/Home/Index");
+            return Redirect("https://localhost:7093/Home/Index");
         }
         return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=success");
     }
@@ -238,7 +238,7 @@ public class CheckoutController : Controller
 
         if (itemType.Contains("Subscribe"))
         {
-            return Redirect("https://localhost:7183/Home/Subscribe");
+            return Redirect("https://localhost:7093/Home/Subscribe");
         }
 
         //return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=cancel");
