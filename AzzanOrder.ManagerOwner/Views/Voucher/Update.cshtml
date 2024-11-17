@@ -28,9 +28,13 @@
                             @{
                                 foreach (var i in Model.itemCategories)
                                 {
+                                    var isChecked = Model.voucherDetail.Vouchers.Any(v =>
+                                    v.ItemCategoryId == i.ItemCategoryId &&
+                                    v.IsActive == true &&
+                                    v.VoucherDetailId == Model.voucherDetail.VoucherDetailId);
                                     <li>
-                                        <input type="checkbox" name="SelectedCategories" value="@i.ItemCategoryId" 
-                                        @Model.voucherDetail.Vouchers.FirstOrDefault(v => v.ItemCategoryId == i.ItemCategoryId) != null ? checked : />
+                                        <input type="checkbox" name="SelectedCategories" value="@i.ItemCategoryId"                                             
+                                        @(isChecked ? "checked" : "") />
                                         <label>@i.ItemCategoryName</label>
                                     </li>
                                 }

@@ -164,6 +164,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             }
             voucherDetail.EmployeeId = emp.EmployeeId;
             //List<Voucher> voucherlist = new List<Voucher>();
+            var itemCategories = new List<ItemCategory>();
             var selectedCategories = Request.Form["SelectedCategories"].Select(int.Parse).ToList();
             using (HttpClient client = new HttpClient())
             {
@@ -176,9 +177,32 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
                     }
                 }
-                foreach (var categoryId in selectedCategories)
+
+                try
                 {
-                    using (HttpResponseMessage res = await client.PostAsJsonAsync(_apiUrl + "Vouchers/Add/", new Voucher() { ItemCategoryId = categoryId, VoucherDetailId = voucherDetail.VoucherDetailId, IsActive = true }))
+                    var url = emp != null ? _apiUrl + $"ItemCategory?id={emp.EmployeeId}" : _apiUrl + "ItemCategory";
+                    HttpResponseMessage itemCats = await client.GetAsync(url);
+                    if (itemCats.IsSuccessStatusCode)
+                    {
+                        string itemCategoryList = await itemCats.Content.ReadAsStringAsync();
+                        itemCategories = JsonConvert.DeserializeObject<List<ItemCategory>>(itemCategoryList);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                    }
+
+                }
+                catch (HttpRequestException)
+                {
+                    ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
+                }
+
+
+                foreach (var itemCategory in itemCategories)
+                {
+                    bool isActive = selectedCategories.Contains(itemCategory.ItemCategoryId);
+                    using (HttpResponseMessage res = await client.PostAsJsonAsync(_apiUrl + "Vouchers/Add/", new Voucher() { ItemCategoryId = itemCategory.ItemCategoryId, VoucherDetailId = voucherDetail.VoucherDetailId, IsActive = isActive }))
                     {
                         using (HttpContent content = res.Content)
                         {
@@ -186,6 +210,9 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         }
                     }
                 }
+
+
+
             }
             // If model validation fails, redisplay the form with validation messages
             return RedirectToAction("List", "Voucher");
@@ -215,7 +242,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             VoucherDetail vd = new VoucherDetail();
             Employee emp = new Employee();
             List<ItemCategory> itemCategories = new List<ItemCategory>();
-            
+
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
             {
                 emp = JsonConvert.DeserializeObject<Employee>(empJson);
@@ -262,32 +289,129 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 }
 
             }
+
+
             Model model = new Model
             {
                 itemCategories = itemCategories,
                 voucherDetail = vd
-                
+
                 //,
                 //vouchers = vouchers
             };
+            foreach (var i in itemCategories)
+            {
+                var a = vd.Vouchers.Any(v => v.ItemCategoryId == i.ItemCategoryId && v.IsActive == true && v.VoucherDetailId == vd.VoucherDetailId);
+            }
             return View(model);
         }
 
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdatePost()
+        public async Task<IActionResult> UpdatePost(VoucherDetail voucherDetail)
         {
-            if (ModelState.IsValid)
-            {
-                return RedirectToAction("List");
-            }
 
+            Employee emp = new Employee();
+            if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
+            {
+                emp = JsonConvert.DeserializeObject<Employee>(empJson);
+            }
+            voucherDetail.EmployeeId = emp.EmployeeId;
+            //List<Voucher> voucherlist = new List<Voucher>();
+            var itemCategories = new List<ItemCategory>();
+            var selectedCategories = Request.Form["SelectedCategories"].Select(int.Parse).ToList();
+            using (HttpClient client = new HttpClient())
+            {
+                using (HttpResponseMessage res = await client.PutAsJsonAsync(_apiUrl + "VoucherDetail/Update/", voucherDetail))
+                {
+                    using (HttpContent content = res.Content)
+                    {
+                        string message = await res.Content.ReadAsStringAsync();
+                        voucherDetail = JsonConvert.DeserializeObject<VoucherDetail>(message);
+
+                    }
+                }
+
+                try
+                {
+                    var url = emp != null ? _apiUrl + $"ItemCategory?id={emp.EmployeeId}" : _apiUrl + "ItemCategory";
+                    HttpResponseMessage itemCats = await client.GetAsync(url);
+                    if (itemCats.IsSuccessStatusCode)
+                    {
+                        string itemCategoryList = await itemCats.Content.ReadAsStringAsync();
+                        itemCategories = JsonConvert.DeserializeObject<List<ItemCategory>>(itemCategoryList);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                    }
+
+                }
+                catch (HttpRequestException)
+                {
+                    ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
+                }
+
+
+                foreach (var itemCategory in itemCategories)
+                {
+                    bool isActive = selectedCategories.Contains(itemCategory.ItemCategoryId);
+                    using (HttpResponseMessage res = await client.PutAsJsonAsync(_apiUrl + "Vouchers/Update/", new Voucher() { ItemCategoryId = itemCategory.ItemCategoryId, VoucherDetailId = voucherDetail.VoucherDetailId, IsActive = isActive }))
+                    {
+                        using (HttpContent content = res.Content)
+                        {
+                            string message = await res.Content.ReadAsStringAsync();
+                        }
+                    }
+                }
+
+
+
+            }
             // If model validation fails, redisplay the form with validation messages
-            return View();
+            return RedirectToAction("List", "Voucher");
         }
-        public IActionResult Delete()
+        public async Task<IActionResult> DeleteAsync(int id)
         {
+            var itemCategories = new List<ItemCategory>();
+
+            Employee emp = new Employee();
+            if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
+            {
+                emp = JsonConvert.DeserializeObject<Employee>(empJson);
+            }
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    var url = emp != null ? _apiUrl + $"ItemCategory?id={emp.EmployeeId}" : _apiUrl + "ItemCategory";
+                    HttpResponseMessage itemCats = await client.GetAsync(url);
+                    if (itemCats.IsSuccessStatusCode)
+                    {
+                        string itemCategoryList = await itemCats.Content.ReadAsStringAsync();
+                        itemCategories = JsonConvert.DeserializeObject<List<ItemCategory>>(itemCategoryList);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                    }
+
+                }
+                catch (HttpRequestException)
+                {
+                    ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
+                }
+
+                using (HttpResponseMessage res = await client.DeleteAsync(_apiUrl + "Vouchers/Delete/" + id))
+                {
+                    using (HttpContent content = res.Content)
+                    {
+                        string message = await res.Content.ReadAsStringAsync();
+                    }
+                }
+
+            }
             return RedirectToAction("List", "Voucher");
         }
     }

@@ -38,8 +38,8 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound("List voucher is empty");
             }
-      
-            var vouchers = employeeId.HasValue 
+
+            var vouchers = employeeId.HasValue
                 ? await _context.Vouchers.Where(v => v.VoucherDetailId == voucherDetailid && v.VoucherDetail.EmployeeId == employeeId).Include(v => v.ItemCategory).ThenInclude(v => v.MenuCategories).ToListAsync()
                 : await _context.Vouchers.Where(v => v.VoucherDetailId == voucherDetailid).Include(v => v.ItemCategory).ThenInclude(v => v.MenuCategories).ToListAsync();
             var check = vouchers.Any(v => v.ItemCategory.MenuCategories.Any(m => m.MenuItemId == menuItemId));
@@ -103,7 +103,7 @@ namespace AzzanOrder.Data.Controllers
                 return Problem("This voucher not exist.");
             }
             var count = _context.Vouchers.Count();
-            Voucher v = new Voucher() { ItemCategoryId = voucher.ItemCategoryId, VoucherDetailId = voucher.VoucherDetailId, IsActive = true };
+            Voucher v = new Voucher() { ItemCategoryId = voucher.ItemCategoryId, VoucherDetailId = voucher.VoucherDetailId, IsActive = voucher.IsActive };
             _context.Vouchers.Add(v);
             await _context.SaveChangesAsync();
             if (!(_context.Vouchers.Count() > count))
@@ -114,21 +114,24 @@ namespace AzzanOrder.Data.Controllers
         }
 
         // DELETE: api/Vouchers/5
-        [HttpDelete("Delete/Voucher")]
-        public async Task<IActionResult> DeleteVoucher([Bind("VoucherDetailId", "ItemCategoryId")] VoucherDTO voucher)
+        [HttpDelete("Delete/{VoucherDetailId}")]
+        public async Task<IActionResult> DeleteVoucher(int voucherDetailId)
         {
             if (_context.Vouchers == null)
             {
                 return NotFound();
             }
-            if (!VoucherExists(voucher))
+            if (_context.Vouchers.Where(v => v.VoucherDetailId == voucherDetailId).Count() < 0)
             {
                 return NotFound();
             }
-            var v = _context.Vouchers.FirstOrDefault(v => v.VoucherDetailId == voucher.VoucherDetailId && v.ItemCategoryId == voucher.ItemCategoryId);
-            _context.Vouchers.Remove(v);
-            await _context.SaveChangesAsync();
-
+            foreach (var i in await _context.ItemCategories.ToListAsync())
+            {
+                var v = _context.Vouchers.FirstOrDefault(v => v.VoucherDetailId == voucherDetailId && v.ItemCategoryId == i.ItemCategoryId);
+                v.IsActive = false;
+                _context.Vouchers.Update(v);
+                await _context.SaveChangesAsync();
+            }
             return Ok("Delete success");
         }
 
