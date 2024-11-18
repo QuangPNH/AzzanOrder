@@ -22,7 +22,7 @@ const Header = () => {
                 try {
                     const url = manaId ? `https://localhost:7183/api/Promotions/GetByDescription/color?manaId=${manaId}` : `https://localhost:7183/api/Promotions/GetByDescription/color`;
                     const response = await fetch(url);
-                    if (!response.ok) {
+                    if (response.ok) {
                         const data = await response.json();
                         setBackgroundColor(data.description.split('/')[1]);
                     }

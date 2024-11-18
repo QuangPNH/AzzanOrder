@@ -7,8 +7,9 @@
     var backgroundColor = !string.IsNullOrEmpty(Model.BackgroundColor.Description) ? Model.BackgroundColor.Description.Split('/')[1] : "#f6b5b5";
 
     var carousel = Model.Carousel;
-
-    var banner = Model.Banner;
+    var promotions = Model.Promotions;
+    var banner = Model.Banner as List<Promotion>;
+    var cart = !string.IsNullOrEmpty(Model.Cart.Description) ? Model.Cart.Description.Split('/')[1] : "#BD3326";
 
     var hotLine = !string.IsNullOrEmpty(Model.Hotline.Description) ? Model.Hotline.Description.Split('/')[1] : "123-456-7890";
 
@@ -20,8 +21,30 @@
 }
 <div style="margin-bottom: 10px">
     <a href="@Url.Action("Add", "Promotion")" class="btn btn-primary">Add New Promotion</a>
+    <a id="toggleButton" class="btn btn-primary" onclick="toggleEditForm()">Edit Running Promotion</a>
+    <a id="toggleButton1" class="btn btn-primary" onclick="toggleDeleteForm()">Delete Promotion</a>
 </div>
-<div style="width: 420px; position: relative">
+<div id="deleteform" style="width: 420px; position: relative; display: none">
+    <div style="height: 600px; overflow-y: scroll; width:fit-content ">
+        @foreach (var promotion in promotions)
+        {
+            <div class="promotion-item" style="margin-bottom: 20px;">
+                <h3>
+                    @promotion.Title
+                    <a href="@Url.Action("Delete", "Promotion", new { id = logo.PromotionId })" class="align-middle me-2">
+                        <i data-feather="delete"></i>
+                    </a>
+                </h3>
+                <p>@promotion.Description</p>
+                @if (!string.IsNullOrEmpty(promotion.Image))
+                {
+                    <img src="@promotion.Image" alt="@promotion.Title" style="max-width: 100%; height: auto;" />
+                }
+            </div>
+        }
+    </div>
+</div>
+<div id="editform" style="width: 420px; position: relative; display: none">
     <div style="height: 600px; overflow-y: scroll; width:fit-content ">
         <header class="header" style="background-color: @backgroundColor">
             <div>
@@ -82,7 +105,7 @@
                         <img class="big-image" alt="@carousel[1]?.Title" src="@(string.IsNullOrEmpty(carousel[1]?.Image) ? placeholderImage : carousel[1]?.Image)" />
                         <div class="promotion-details">
                             <h2>@carousel[1]?.Title</h2>
-                            <a href="@Url.Action("Update", "Promotion", new { id = carousel[1]?.PromotionId, destination = "carousel" })" class="align-middle me-2">
+                            <a id="edit-link" href="@Url.Action("Update", "Promotion", new { id = carousel[1]?.PromotionId, destination = "carousel" })" class="align-middle me-2">
                                 <i data-feather="edit"></i>
                             </a>
                         </div>
@@ -185,6 +208,12 @@
                     </div>
                 </div>
             </div>
+            @if (banner == null || !banner.Any())
+            {
+                <a style="z-index: 1; position:relative" href="@Url.Action("Update", "Promotion", new { id = 0, destination = "banner" })" class="align-middle me-2">
+                    <i data-feather="edit"></i>
+                </a>
+            }
             <section class="banner">
                 <div class="image-gallery">
                     @foreach (var promotion in banner)
@@ -242,8 +271,10 @@
         </footer>
     </div>
     <div style="position: absolute; bottom: 50px; right: 26px; z-index: 9999;">
-        <button style="border-radius: 100%; padding: 12px; background-color: rgb(189, 51, 38); cursor: pointer;">
-            <img src="~/img/icons/shoppingCart.svg" style="width: 20px; height: 20px;">
+        <button style="border-radius: 100%; padding: 12px; background-color: @cart; cursor: pointer;">
+            <a href="@Url.Action("Update", "Promotion", new { id = Model.Cart.PromotionId, destination = "cart" })" class="align-middle">
+                <i data-feather="edit"></i>
+            </a>
         </button>
     </div>
 </div>
@@ -252,7 +283,7 @@
 @section Scripts {
     <script>
         let currentIndex = 1;
-        const promotions = @Html.Raw(JsonConvert.SerializeObject(Model.Carousel));
+        const promotions = @Html.Raw(JsonConvert.SerializeObject(Model.Carousel))
 
         function handleNext() {
             currentIndex = (currentIndex + 1) % promotions.length;
@@ -317,6 +348,29 @@
             });
         }
         document.addEventListener('DOMContentLoaded', initializeBanner);
+
+        function toggleEditForm() {
+            var editForm = document.getElementById('editform');
+            var toggleButton = document.getElementById('toggleButton');
+            if (editForm.style.display === 'block') {
+                editForm.style.display = 'none';
+                toggleButton.classList.remove('active');
+            } else {
+                editForm.style.display = 'block';
+                toggleButton.classList.add('active');
+            }
+        }
+        function toggleDeleteForm() {
+            var editForm = document.getElementById('deleteform');
+            var toggleButton = document.getElementById('toggleButton1');
+            if (editForm.style.display === 'block') {
+                editForm.style.display = 'none';
+                toggleButton.classList.remove('active');
+            } else {
+                editForm.style.display = 'block';
+                toggleButton.classList.add('active');
+            }
+        }
     </script>
 }
 <style>

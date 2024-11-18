@@ -31,7 +31,7 @@ export async function postOrder(amount, isCash) {
         const memberIn = getCookie('memberInfo');
         const cartData = JSON.parse(cartDataString);
         const orderDetails = cartData.map(item => {
-            const { selectedIce, selectedSugar, toppings } = item.options || {};
+            const { selectedIce, selectedSugar, selectedToppings = [] } = item.options || {};
             const descriptionParts = [];
 
             if (selectedIce) {
@@ -40,8 +40,10 @@ export async function postOrder(amount, isCash) {
             if (selectedSugar) {
                 descriptionParts.push(`${selectedSugar} Sugar`);
             }
-            if (toppings && toppings.length > 0) {
-                descriptionParts.push(...toppings);
+            if (selectedToppings && selectedToppings.length > 0) {
+                selectedToppings.forEach(topping => {
+                    descriptionParts.push(topping.name);
+                });
             }
 
             return {

@@ -22,14 +22,19 @@ namespace AzzanOrder.Data.Controllers
         }
 
         // GET: api/Promotions
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<Promotion>>> GetPromotions()
+        [HttpGet("GetPromotionsByEmpId/{id}")]
+        public async Task<ActionResult<IEnumerable<Promotion>>> GetPromotionsByEmpId(int id)
         {
           if (_context.Promotions == null)
           {
               return NotFound();
           }
-            return await _context.Promotions.ToListAsync();
+          var promotions = await _context.Promotions.Where(p => p.EmployeeId == id && p.IsActive != false).ToListAsync();
+            if (promotions == null)
+            {
+                return NotFound();
+            }
+            return promotions;
         }
 
         // GET: api/Promotions/5
@@ -105,7 +110,7 @@ namespace AzzanOrder.Data.Controllers
                 return NotFound();
             }
 
-            _context.Promotions.Remove(promotion);
+            promotion.IsActive = false;
             await _context.SaveChangesAsync();
 
             return NoContent();
@@ -132,7 +137,7 @@ namespace AzzanOrder.Data.Controllers
             }
 
             var promotions = await query
-                .Where(p => p.Description.Contains(description))
+                .Where(p => p.Description.Contains(description) && p.IsActive != false)
                 .Select(m => new PromotionDTO
                 {
                     PromotionId = m.PromotionId,

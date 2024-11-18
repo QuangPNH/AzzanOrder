@@ -14,6 +14,29 @@ namespace AzzanOrder.ManagerOwner.Controllers
         [HttpGet("ListAll")]
         public async Task<IActionResult> ListAll(int manaId = 1)
         {
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+            if (authorizeLogin.Equals("owner"))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if (authorizeLogin.Equals("manager"))
+            {
+            }
+            else if (authorizeLogin.Equals("owner expired"))
+            {
+                ViewBag.Message = "Your subscription has expired. Please subscribe again.";
+                return RedirectToAction("Login", "Home");
+            }
+            else if (authorizeLogin.Equals("manager expired"))
+            {
+                ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
+                return RedirectToAction("Login", "Home");
+            }
+            Employee emp = new Employee();
+            if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
+            {
+                emp = JsonConvert.DeserializeObject<Employee>(empJson);
+            }
             dynamic promotions = new ExpandoObject();
             promotions.Logo = new Promotion();
             promotions.BackgroundColor = new Promotion();
@@ -22,7 +45,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
             promotions.Hotline = new Promotion();
             promotions.Mail = new Promotion();
             promotions.Contact = new Promotion();
+            promotions.Cart = new Promotion();
+            promotions.Promotions = new List<Promotion>();
 
+            manaId = emp.EmployeeId;
             var endpoints = new Dictionary<string, Action<string>>
             {
                 { $"logo?manaId={manaId}", response => promotions.Logo = JsonConvert.DeserializeObject<Promotion>(response) },
@@ -31,7 +57,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 { $"banner?manaId={manaId}", response => promotions.Banner = JsonConvert.DeserializeObject<List<Promotion>>(response) },
                 { $"hotline?manaId={manaId}", response => promotions.Hotline = JsonConvert.DeserializeObject < Promotion >(response) },
                 { $"mail?manaId={manaId}", response => promotions.Mail = JsonConvert.DeserializeObject < Promotion >(response) },
-                { $"contact?manaId={manaId}", response => promotions.Contact = JsonConvert.DeserializeObject<Promotion>(response) }
+                { $"contact?manaId={manaId}", response => promotions.Contact = JsonConvert.DeserializeObject<Promotion>(response) },
+                { $"cart?manaId={manaId}", response => promotions.Cart = JsonConvert.DeserializeObject<Promotion>(response) }
             };
 
             using (var httpClient = new HttpClient())
@@ -48,6 +75,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         // Log the exception if necessary
                     }
                 }
+                var response1 = await httpClient.GetStringAsync("https://localhost:7183/api/Promotions/GetPromotionsByEmpId/" + emp.EmployeeId);
+                promotions.Promotions = JsonConvert.DeserializeObject<List<Promotion>>(response1);
             }
 
             return View(promotions);
@@ -55,25 +84,91 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
         public IActionResult Add()
         {
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+            if (authorizeLogin.Equals("owner"))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if (authorizeLogin.Equals("manager"))
+            {
+            }
+            else if (authorizeLogin.Equals("owner expired"))
+            {
+                ViewBag.Message = "Your subscription has expired. Please subscribe again.";
+                return RedirectToAction("Login", "Home");
+            }
+            else if (authorizeLogin.Equals("manager expired"))
+            {
+                ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
+                return RedirectToAction("Login", "Home");
+            }
             return View();
         }
 
         // POST: Employee/Add
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public IActionResult AddPost()
+        public async Task<IActionResult> Add(Promotion promotion, IFormFile? Image)
         {
-            if (ModelState.IsValid)
+            Employee emp = new Employee();
+            if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
             {
-                return RedirectToAction("Running");
+                emp = JsonConvert.DeserializeObject<Employee>(empJson);
+            }
+            if (Image != null && Image.Length > 0)
+            {
+                using (var memoryStream = new MemoryStream())
+                {
+                    await Image.CopyToAsync(memoryStream);
+                    var fileBytes = memoryStream.ToArray();
+                    promotion.Image = "data:image/png;base64," + Convert.ToBase64String(fileBytes);
+                }
             }
 
-            // If model validation fails, redisplay the form with validation messages
-            return View();
+            // Combine Destination and Description
+            var destination = Request.Form["Destination"];
+            promotion.Description = $"{destination}/{promotion.Description}";
+            promotion.EmployeeId = emp.EmployeeId;
+
+            using (HttpClient client = new HttpClient())
+            {
+                var json = JsonConvert.SerializeObject(promotion);
+                var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
+
+                HttpResponseMessage response = await client.PostAsync("https://localhost:7183/api/Promotions/Add", content);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("ListAll");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                }
+            }
+            return View(promotion);
         }
         [HttpGet]
         public async Task<IActionResult> Update(int id, string destination)
         {
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+            if (authorizeLogin.Equals("owner"))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if (authorizeLogin.Equals("manager"))
+            {
+            }
+            else if (authorizeLogin.Equals("owner expired"))
+            {
+                ViewBag.Message = "Your subscription has expired. Please subscribe again.";
+                return RedirectToAction("Login", "Home");
+            }
+            else if (authorizeLogin.Equals("manager expired"))
+            {
+                ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
+                return RedirectToAction("Login", "Home");
+            }
             Promotion table = new Promotion();
             using (HttpClient client = new HttpClient())
             {
@@ -111,6 +206,11 @@ namespace AzzanOrder.ManagerOwner.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(Promotion promotion, IFormFile? Image)
         {
+            Employee emp = new Employee();
+            if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
+            {
+                emp = JsonConvert.DeserializeObject<Employee>(empJson);
+            }
             if (ModelState.IsValid)
             {
                 if (Image != null && Image.Length > 0)
@@ -126,6 +226,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 // Combine Destination and Description
                 var destination = Request.Form["Destination"];
                 promotion.Description = $"{destination}/{promotion.Description}";
+                promotion.EmployeeId = emp.EmployeeId;
 
                 using (HttpClient client = new HttpClient())
                 {
@@ -153,6 +254,25 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 }
             }
             return View(promotion);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                HttpResponseMessage response = await client.DeleteAsync($"https://localhost:7183/api/Promotions/Delete/{id}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    return RedirectToAction("ListAll");
+                }
+                else
+                {
+                    ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                    return RedirectToAction("ListAll");
+                }
+            }
         }
 
         [HttpPost]

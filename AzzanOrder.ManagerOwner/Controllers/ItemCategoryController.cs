@@ -16,13 +16,36 @@ namespace AzzanOrder.ManagerOwner.Controllers
         private readonly string _apiUrl = "https://localhost:7183/api/";
         public async Task<IActionResult> ListAsync(int? page)
 		{
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+            if (authorizeLogin.Equals("owner"))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if (authorizeLogin.Equals("manager"))
+            {
+            }
+            else if (authorizeLogin.Equals("owner expired"))
+            {
+                ViewBag.Message = "Your subscription has expired. Please subscribe again.";
+                return RedirectToAction("Login", "Home");
+            }
+            else if (authorizeLogin.Equals("manager expired"))
+            {
+                ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
+                return RedirectToAction("Login", "Home");
+            }
+            Employee emp = new Employee();
+            if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
+            {
+                emp = JsonConvert.DeserializeObject<Employee>(empJson);
+            }
             List<ItemCategory> tables = new List<ItemCategory>();
 
             using (HttpClient client = new HttpClient())
             {
                 try
                 {
-                    HttpResponseMessage tableRes = await client.GetAsync(_apiUrl + "ItemCategory/GetByManagerId/1");
+                    HttpResponseMessage tableRes = await client.GetAsync(_apiUrl + "ItemCategory/GetByManagerId/" + emp.EmployeeId);
                     if (tableRes.IsSuccessStatusCode)
                     {
                         string tableData = await tableRes.Content.ReadAsStringAsync();
@@ -58,7 +81,25 @@ namespace AzzanOrder.ManagerOwner.Controllers
         [HttpGet]
         public IActionResult Add()
 		{
-			return View();
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+            if (authorizeLogin.Equals("owner"))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if (authorizeLogin.Equals("manager"))
+            {
+            }
+            else if (authorizeLogin.Equals("owner expired"))
+            {
+                ViewBag.Message = "Your subscription has expired. Please subscribe again.";
+                return RedirectToAction("Login", "Home");
+            }
+            else if (authorizeLogin.Equals("manager expired"))
+            {
+                ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
+                return RedirectToAction("Login", "Home");
+            }
+            return View();
 		}
 
 		// POST: Employee/Add
@@ -66,13 +107,18 @@ namespace AzzanOrder.ManagerOwner.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Add(ItemCategory itemCategory)
 		{
+            Employee emp = new Employee();
+            if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
+            {
+                emp = JsonConvert.DeserializeObject<Employee>(empJson);
+            }
             if (ModelState.IsValid)
 			{
                 using (HttpClient client = new HttpClient())
                 {
                     try
                     {
-                        itemCategory.EmployeeId = 1;
+                        itemCategory.EmployeeId = emp.EmployeeId;
                         itemCategory.IsDelete = false;
                         itemCategory.Employee = new Employee { };
                         string json = JsonConvert.SerializeObject(itemCategory);
@@ -100,6 +146,24 @@ namespace AzzanOrder.ManagerOwner.Controllers
         [HttpGet]
         public async Task<IActionResult> Update(int id)
         {
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+            if (authorizeLogin.Equals("owner"))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if (authorizeLogin.Equals("manager"))
+            {
+            }
+            else if (authorizeLogin.Equals("owner expired"))
+            {
+                ViewBag.Message = "Your subscription has expired. Please subscribe again.";
+                return RedirectToAction("Login", "Home");
+            }
+            else if (authorizeLogin.Equals("manager expired"))
+            {
+                ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
+                return RedirectToAction("Login", "Home");
+            }
             ItemCategory table = null;
             using (HttpClient client = new HttpClient())
             {
@@ -129,13 +193,18 @@ namespace AzzanOrder.ManagerOwner.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Update(ItemCategory itemCategory)
         {
+            Employee emp = new Employee();
+            if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
+            {
+                emp = JsonConvert.DeserializeObject<Employee>(empJson);
+            }
             if (ModelState.IsValid)
             {
                 using (HttpClient client = new HttpClient())
                 {
                     try
                     {
-                        itemCategory.EmployeeId = 1;
+                        itemCategory.EmployeeId = emp.EmployeeId;
                         itemCategory.IsDelete = false;
                         itemCategory.Employee = new Employee { };
                         string json = JsonConvert.SerializeObject(itemCategory);
