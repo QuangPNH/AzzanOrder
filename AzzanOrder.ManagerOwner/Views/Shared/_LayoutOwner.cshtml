@@ -254,7 +254,9 @@
 						</li>
 
 						<li class="nav-item">
-							<a class="nav-link" href="#">Log out</a>
+							<form id="logout-form" action="@Url.Action("LogoutAction", "Home")" method="post" style="display: none;">
+								@Html.AntiForgeryToken()
+							</form>
 						</li>
 					</ul>
 				</div>
