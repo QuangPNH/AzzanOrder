@@ -262,7 +262,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
         public async Task<IActionResult> Subscribe()
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
-            if ((await authorizeLogin.CheckLogin()).Equals("owner"))
+            if (!(await authorizeLogin.CheckLogin()).Equals("owner"))
             {
                 return RedirectToAction("Index", "Home");
             }
