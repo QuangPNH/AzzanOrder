@@ -10,7 +10,7 @@ namespace AzzanOrder.Data.Models
         public string? Description { get; set; }
         public string? Image { get; set; }
         public int? EmployeeId { get; set; }
-
+        public bool? IsActive { get; set; }
         public virtual Employee? Employee { get; set; }
     }
 }

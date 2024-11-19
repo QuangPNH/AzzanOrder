@@ -25,7 +25,7 @@
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Description</label>
                     <div class="col-sm-10">
-                        @if (ViewBag.Destination == "color")
+                        @if (ViewBag.Destination == "color" || ViewBag.Destination == "cart")
                         {
                             <input type="color" class="form-control" asp-for="Description" placeholder="Description">
                         }
@@ -36,7 +36,7 @@
                     </div>
                 </div>
 
-                @if (ViewBag.Destination != "color")
+                @if (ViewBag.Destination != "color" && ViewBag.Destination != "cart")
                 {
                     <div class="mb-3 row">
                         <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Image</label>
