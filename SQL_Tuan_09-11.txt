@@ -259,6 +259,7 @@ CREATE TABLE [dbo].[Notification](
 	[NotificationId] [int] IDENTITY(1,1) NOT NULL,
 	[Title] [nvarchar](max) NULL,
 	[Content] [nvarchar](max) NULL,
+	[IsRead] bit NULL,
 	[MemberId] [int] NULL,
 	[EmployeeId] [int] NULL,
  CONSTRAINT [PK_Notification] PRIMARY KEY CLUSTERED 
@@ -275,7 +276,6 @@ GO
 CREATE TABLE [dbo].[Order](
 	[OrderId] [int] IDENTITY(1,1) NOT NULL,
 	[OrderDate] [datetime] NULL,
-	[OrderDetailId] [int] NULL,
 	[TableId] [int] NULL,
 	[Cost] [float] NULL,
 	[Tax] [float] NULL,
@@ -591,17 +591,17 @@ SET IDENTITY_INSERT [dbo].[MenuItem] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Notification] ON 
 
-INSERT [dbo].[Notification] ([NotificationId], [Title], [Content], [MemberId], [EmployeeId]) VALUES (1, N'Discount offer', N'Get 10% off on all coffee orders', 1, 2)
-INSERT [dbo].[Notification] ([NotificationId], [Title], [Content], [MemberId], [EmployeeId]) VALUES (2, N'Happy Hour', N'50% off on all drinks from 3-5 PM', 2, 2)
+INSERT [dbo].[Notification] ([NotificationId], [Title], [Content], [IsRead], [MemberId], [EmployeeId]) VALUES (1, N'Discount offer', N'Get 10% off on all coffee orders',false, 1, 2)
+INSERT [dbo].[Notification] ([NotificationId], [Title], [Content], [IsRead], [MemberId], [EmployeeId]) VALUES (2, N'Happy Hour', N'50% off on all drinks from 3-5 PM',false, 2, 2)
 SET IDENTITY_INSERT [dbo].[Notification] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Order] ON 
 
-INSERT [dbo].[Order] ([OrderId], [OrderDate], [OrderDetailId], [TableId], [Cost], [Tax], [MemberId], [Status]) VALUES (1, CAST(N'2024-09-20T00:00:00.000' AS DateTime), 1, 1, 10.5, 1.05, 1, 1)
-INSERT [dbo].[Order] ([OrderId], [OrderDate], [OrderDetailId], [TableId], [Cost], [Tax], [MemberId], [Status]) VALUES (2, CAST(N'2024-09-21T00:00:00.000' AS DateTime), 2, 2, 8, 0.8, 2, 0)
-INSERT [dbo].[Order] ([OrderId], [OrderDate], [OrderDetailId], [TableId], [Cost], [Tax], [MemberId], [Status]) VALUES (3, CAST(N'2024-11-04T22:11:17.720' AS DateTime), NULL, 2, 45.6, NULL, 1, NULL)
-INSERT [dbo].[Order] ([OrderId], [OrderDate], [OrderDetailId], [TableId], [Cost], [Tax], [MemberId], [Status]) VALUES (4, CAST(N'2024-11-04T23:16:13.707' AS DateTime), NULL, 3, 20, NULL, 1, NULL)
-INSERT [dbo].[Order] ([OrderId], [OrderDate], [OrderDetailId], [TableId], [Cost], [Tax], [MemberId], [Status]) VALUES (5, CAST(N'2024-11-06T11:57:05.763' AS DateTime), NULL, 2, 112.5, NULL, 1, NULL)
+INSERT [dbo].[Order] ([OrderId], [OrderDate], [TableId], [Cost], [Tax], [MemberId], [Status]) VALUES (1, CAST(N'2024-09-20T00:00:00.000' AS DateTime), 1, 10.5, 1.05, 1, 1)
+INSERT [dbo].[Order] ([OrderId], [OrderDate], [TableId], [Cost], [Tax], [MemberId], [Status]) VALUES (2, CAST(N'2024-09-21T00:00:00.000' AS DateTime), 2, 8, 0.8, 2, 0)
+INSERT [dbo].[Order] ([OrderId], [OrderDate], [TableId], [Cost], [Tax], [MemberId], [Status]) VALUES (3, CAST(N'2024-11-04T22:11:17.720' AS DateTime), 2, 45.6, NULL, 1, NULL)
+INSERT [dbo].[Order] ([OrderId], [OrderDate], [TableId], [Cost], [Tax], [MemberId], [Status]) VALUES (4, CAST(N'2024-11-04T23:16:13.707' AS DateTime), 3, 20, NULL, 1, NULL)
+INSERT [dbo].[Order] ([OrderId], [OrderDate], [TableId], [Cost], [Tax], [MemberId], [Status]) VALUES (5, CAST(N'2024-11-06T11:57:05.763' AS DateTime), 2, 112.5, NULL, 1, NULL)
 SET IDENTITY_INSERT [dbo].[Order] OFF
 GO
 SET IDENTITY_INSERT [dbo].[OrderDetail] ON 
