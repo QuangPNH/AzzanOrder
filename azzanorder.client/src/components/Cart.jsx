@@ -73,7 +73,10 @@ const checkLegal = async (item, id, voucher) => {
 };
 
 const Cart = () => {
-    const [cartData, setCartData] = useState(getCartData());
+    const [cartData, setCartData] = useState(() => {
+        const initialCartData = getCartData();
+        return initialCartData;
+    });
     const [voucher, setVoucher] = useState(getVoucher());
     const [totalPrice, setTotalPrice] = useState(0);
     const [discountPrice, setDiscountPrice] = useState(0);
