@@ -249,15 +249,12 @@ namespace AzzanOrder.ManagerOwner.Controllers
             }
         }
 
-
         [HttpPost]
         public async Task<IActionResult> LogoutAction()
         {
             HttpContext.Response.Cookies.Delete("LoginInfo");
             return RedirectToAction("Login", "Home");
         }
-
-
 
         public async Task<IActionResult> Subscribe()
         {

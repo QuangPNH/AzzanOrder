@@ -1,5 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import BuyVoucher from './BuyVoucher';
+
 const SaleContent = ({ saleAmount, price, infiniteUses, useCount, bought, voucherDetailId }) => {
     const [vouchers, setVouchers] = useState([]);
     const [showLogout, setLogout] = useState(false);
