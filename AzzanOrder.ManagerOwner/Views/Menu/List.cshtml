@@ -4,43 +4,93 @@
 
 @model AzzanOrder.ManagerOwner.Models.Model
 
-<h1 class="h3 mb-3">Employee Management</h1>
+<h1 class="h3 mb-3">Menu Item Management</h1>
 
 <div class="col-12">
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">ListEmployee</h5>
+            <h5 class="card-title">ListMenuItem</h5>
         </div>
         <div>
-            <a href="@Url.Action("Add", "Menu")" class="btn btn-primary">Add New Employee</a>
+            <a href="@Url.Action("AddItem", "Menu")" class="btn btn-primary">Add New Voucher</a>
         </div>
-
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
                     <th style="width:5%">No.</th>
-                    <th style="width:20%">Menu List Name</th>
-                    <th style="width:20%">Duration</th>
+                    <th style="width:20%">Name</th>
+                    <th class="d-none d-md-table-cell" style="width:10%">Description</th>
+                    <th class="d-none d-md-table-cell" style="width:5%">Discount</th>
+                    <th style="width:10%">Is Available</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Coffee</td>
-                    <td>Infinite</td> 
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>New Year</td>
-                    <td>December 12 - January 6</td>
-                </tr>
+                @{
+                    foreach (var i in Model.itemCategories)
+                    {
+                        <tr>
+                            <td>@i.ItemCategoryId</td>
+                            <td>@i.ItemCategoryName</td>
+                            <td class="d-none d-md-table-cell">@i.Description</td>
+                            <td class="d-none d-md-table-cell">@i.Discount</td>
+                            <td>@(i.IsDelete != true ? "Yes" : "No")</td>
+                            <td class="table-action">
+                                <a href="@Url.Action("UpdateItem", "Menu")"><i class="align-middle" data-feather="edit-2"></i></a>
+                            </td>
+                        </tr>
+                    }
+                }
+
             </tbody>
         </table>
+        
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th style="width:5%">No.</th>
+                    <th style="width:20%">Name</th>
+                    <th style="width:20%">Menu</th>
+                    <th style="width:5%">Price</th>
+                    <th class="d-none d-md-table-cell" style="width:10%">Description</th>
+                    <th class="d-none d-md-table-cell" style="width:5%">Discount</th>
+                    <th style="width:10%">Is Available</th>
+                    <th>Actions</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    foreach (var i in Model.menuItems)
+                    {
+                        <tr>
+                            <td>@i.MenuItemId</td>
+                            <td>@i.ItemName</td>
+                            <td>
+                            <ul>
+                                    @{
+                                        foreach (var j in @i.MenuCategories.Where(mc => mc.MenuItemId == i.MenuItemId))
+                                        {
+                                            <li>@j.ItemCategory.ItemCategoryName</li>
+                                        }
+                                    }
+                            </ul>
+                               
 
+                            </td>
+                            <td>@i.Price</td>
+                            <td class="d-none d-md-table-cell">@i.Description</td>
+                            <td class="d-none d-md-table-cell">@i.Discount</td>
+                            <td>@(i.IsAvailable == true ? "Yes" : "No")</td>
+                            <td class="table-action">
+                                <a href="@Url.Action("UpdateItem", "Menu")"><i class="align-middle" data-feather="edit-2"></i></a>
+                            </td>
+                        </tr>
+                    }
+                }
+
+            </tbody>
+        </table>
         <div class="row mt-3">
-            <div class="col d-flex align-items-center">
-                <span id="response-info">Showing 0-0 out of 0 responses</span>
-            </div>
             <div class="col d-flex justify-content-end">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination pagination-md mb-0">
@@ -72,5 +122,7 @@
                 </nav>
             </div>
         </div>
+
     </div>
 </div>
+

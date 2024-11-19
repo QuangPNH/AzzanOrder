@@ -22,6 +22,7 @@ namespace AzzanOrder.ManagerOwner.Models
         public IEnumerable<Member> members { get; set; }
         public IEnumerable<MemberVoucher> memberVouchers { get; set; }
         public IEnumerable<Notification> notifications { get; set; }
+        public IEnumerable<MenuItem> menuItems { get; set; }
         public IEnumerable<Order> orders { get; set; }
         public IEnumerable<Owner> owners { get; set; }
         public IEnumerable<Promotion> promotions { get; set; }

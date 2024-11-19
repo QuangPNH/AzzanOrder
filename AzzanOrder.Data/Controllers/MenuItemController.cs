@@ -22,14 +22,15 @@ namespace AzzanOrder.Data.Controllers
         }
 
         // GET: api/MenuItem
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<MenuItem>>> GetMenuItems()
+        [HttpGet("GetAllMenuItem")]
+        public async Task<ActionResult<IEnumerable<MenuItem>>> GetMenuItems(int? employeeId)
         {
             if (_context.MenuItems == null)
             {
                 return NotFound();
             }
-            return await _context.MenuItems.ToListAsync();
+            var a = employeeId.HasValue ? await _context.MenuItems.Include(mi => mi.MenuCategories).ThenInclude(mi=>mi.ItemCategory).Where(mi => mi.EmployeeId == employeeId).ToListAsync() : await _context.MenuItems.Include(mi => mi.MenuCategories).ThenInclude(mi => mi.ItemCategory).ToListAsync();
+            return a;
         }
 
         // GET: api/MenuItem/5
@@ -55,7 +56,7 @@ namespace AzzanOrder.Data.Controllers
         [HttpPut("{id}")]
         public async Task<IActionResult> PutMenuItem(int id, MenuItemAddDTO menuItem)
         {
-            
+
             try
             {
                 var menuItemToUpdate = await _context.MenuItems.FindAsync(id);
@@ -72,7 +73,7 @@ namespace AzzanOrder.Data.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                
+
             }
 
             return Ok(menuItem);

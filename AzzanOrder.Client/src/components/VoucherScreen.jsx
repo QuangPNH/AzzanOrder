@@ -5,7 +5,8 @@ import Dropdown from './Dropdown/Dropdown';
 import ProductSale from './Voucher/VoucherDetail/ProductSale';
 import PointsDisplay from './Voucher/PointDisplay';
 import VoucherList from './Voucher/VoucherList';
-import { useLocation } from "react-router-dom";
+import { getCookie } from './Account/SignUpForm/Validate';
+
 const VoucherScreen = () => {
     const [vouchers, setVouchers] = useState([]);
     const [allVouchers, setAllVouchers] = useState(false);
@@ -183,14 +184,5 @@ const VoucherScreen = () => {
         </>
     );
 };
-function setCookie(name, value, days) {
-    const expires = new Date(Date.now() + days * 864e5).toUTCString(); // Calculate expiration date
-    document.cookie = `${name}=${encodeURIComponent(value)}; expires=${expires}; path=/`; // Set cookie
-}
 
-function getCookie(name) {
-    const value = `; ${document.cookie}`; // Add a leading semicolon for easier parsing
-    const parts = value.split(`; ${name}=`); // Split the cookie string to find the desired cookie
-    if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift()); // Return the cookie value
-}
 export default VoucherScreen;
