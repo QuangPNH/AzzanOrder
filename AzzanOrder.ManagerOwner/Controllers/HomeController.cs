@@ -249,7 +249,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
             }
         }
 
-
         [HttpPost]
         public async Task<IActionResult> LogoutAction()
         {
@@ -257,12 +256,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
             return RedirectToAction("Login", "Home");
         }
 
-
-
         public async Task<IActionResult> Subscribe()
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
-            if ((await authorizeLogin.CheckLogin()).Equals("owner"))
+            if (!(await authorizeLogin.CheckLogin()).Equals("owner"))
             {
                 return RedirectToAction("Index", "Home");
             }
