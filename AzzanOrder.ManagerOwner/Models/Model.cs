@@ -43,6 +43,7 @@ namespace AzzanOrder.ManagerOwner.Models
         public Notification notification { get; set; }
         public Order order { get; set; }
         public Owner owner { get; set; }
+        public MenuItem menuItem { get; set; }
         public Promotion promotion { get; set; }
         public Role role { get; set; }
         public Table table { get; set; }

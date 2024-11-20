@@ -1,0 +1,97 @@
+﻿@model AzzanOrder.ManagerOwner.Models.Model
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<div class="col-12">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">Update Menu Item</h5>
+        </div>
+        <div class="card-body">
+            <form asp-action="UpdatePost" asp-controller="Menu" method="post">
+                
+
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Name</label>
+                    <div class="col-sm-10">
+                        <input asp-for="menuItem.ItemName" class="form-control" />
+                        <span asp-validation-for="menuItem.ItemName" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Item Category</label>
+                    <div class="col-sm-10">
+                        <ul>
+                            @{
+                                foreach (var i in Model.itemCategories)
+                                {
+                                    var isChecked = Model.menuItem.MenuCategories.Any(v =>
+                                    v.ItemCategoryId == i.ItemCategoryId &&
+                                   
+                                    v.MenuItemId == Model.menuItem.MenuItemId);
+                                    <li>
+                                        <input type="checkbox" name="SelectedCategories" value="@i.ItemCategoryId"
+                                        @(isChecked ? "checked" : "") />
+                                        <label>@i.ItemCategoryName</label>
+                                    </li>
+                                }
+                            }
+                        </ul>
+                    </div>
+                </div>
+
+
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Price</label>
+                    <div class="col-sm-10">
+                        <input asp-for="menuItem.Price" class="form-control" />
+                        <span asp-validation-for="menuItem.Price" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Description</label>
+                    <div class="col-sm-10">
+          
+      
+                        <textarea asp-for="menuItem.Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="menuItem.Description" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Discount</label>
+                    <div class="col-sm-10">
+                        <input asp-for="menuItem.Discount" class="form-control" />
+                        <span asp-validation-for="menuItem.Discount" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Image</label>
+                    <div class="col-sm-10">
+                        <input asp-for="menuItem.Image" name="menuItemImage" type="file" accept=".png, .jpg">
+                        <small class="form-check-label text-muted">Only png and jpg allowed.</small>
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Checkbox</label>
+                    <div class="col-sm-10">
+                        <label class="form-check m-0">
+                            <input type="checkbox" name="IsAvailable"
+                            @(Model.menuItem.IsAvailable == true ? "checked" : "") />
+                            <span class="form-check-label">Is Available?</span>
+                        </label>
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <div class="col-sm-10 ms-sm-auto">
+                        <button type="submit" class="btn btn-primary">Submit</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
