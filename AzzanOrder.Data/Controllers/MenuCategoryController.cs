@@ -23,30 +23,31 @@ namespace AzzanOrder.Data.Controllers
 
         // GET: api/MenuCategory
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MenuCategory>>> GetMenuCategories()
+        public async Task<ActionResult<IEnumerable<MenuCategory>>> GetMenuCategories(int ?employeeId)
         {
           if (_context.MenuCategories == null)
           {
               return NotFound();
           }
-            return await _context.MenuCategories.ToListAsync();
+            var a = employeeId.HasValue ?  await _context.MenuCategories.Include(mc=>mc.ItemCategory).Where(mc => mc.MenuItem.EmployeeId == employeeId).ToListAsync() : await _context.MenuCategories.Include(mc => mc.ItemCategory).ToListAsync();
+            return a ;
         }
 
         // GET: api/MenuCategory/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<MenuCategory>> GetMenuCategory(int id)
-        {
-          if (_context.MenuCategories == null)
-          {
-              return NotFound();
-          }
-            var menuCategory = await _context.MenuCategories.FindAsync(id);
-            if (menuCategory == null)
-            {
-                return NotFound();
-            }
-            return menuCategory;
-        }
+        //[HttpGet("MenuItemId")]
+        //public async Task<ActionResult<MenuCategory>> GetMenuCategory(int MenuItemId)
+        //{
+        //    if (_context.MenuCategories == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    var menuCategory = await _context.MenuCategories.FindAsync(id);
+        //    if (menuCategory == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return menuCategory;
+        //}
 
         // PUT: api/MenuCategory/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
