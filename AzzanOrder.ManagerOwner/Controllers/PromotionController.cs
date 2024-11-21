@@ -15,19 +15,20 @@ namespace AzzanOrder.ManagerOwner.Controllers
         public async Task<IActionResult> ListAll(int manaId = 1)
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
-            if (authorizeLogin.Equals("owner"))
+            var loginStatus = await authorizeLogin.CheckLogin();
+            if (loginStatus.Equals("owner"))
             {
                 return RedirectToAction("Index", "Home");
             }
-            else if (authorizeLogin.Equals("manager"))
+            else if (loginStatus.Equals("manager"))
             {
             }
-            else if (authorizeLogin.Equals("owner expired"))
+            else if (loginStatus.Equals("owner expired"))
             {
                 ViewBag.Message = "Your subscription has expired. Please subscribe again.";
                 return RedirectToAction("Login", "Home");
             }
-            else if (authorizeLogin.Equals("manager expired"))
+            else if (loginStatus.Equals("manager expired"))
             {
                 ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
                 return RedirectToAction("Login", "Home");
@@ -82,22 +83,23 @@ namespace AzzanOrder.ManagerOwner.Controllers
             return View(promotions);
         }
 
-        public IActionResult Add()
+        public async Task<IActionResult> AddAsync()
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
-            if (authorizeLogin.Equals("owner"))
+            var loginStatus = await authorizeLogin.CheckLogin();
+            if (loginStatus.Equals("owner"))
             {
                 return RedirectToAction("Index", "Home");
             }
-            else if (authorizeLogin.Equals("manager"))
+            else if (loginStatus.Equals("manager"))
             {
             }
-            else if (authorizeLogin.Equals("owner expired"))
+            else if (loginStatus.Equals("owner expired"))
             {
                 ViewBag.Message = "Your subscription has expired. Please subscribe again.";
                 return RedirectToAction("Login", "Home");
             }
-            else if (authorizeLogin.Equals("manager expired"))
+            else if (loginStatus.Equals("manager expired"))
             {
                 ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
                 return RedirectToAction("Login", "Home");
@@ -152,19 +154,20 @@ namespace AzzanOrder.ManagerOwner.Controllers
         public async Task<IActionResult> Update(int id, string destination)
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
-            if (authorizeLogin.Equals("owner"))
+            var loginStatus = await authorizeLogin.CheckLogin();
+            if (loginStatus.Equals("owner"))
             {
                 return RedirectToAction("Index", "Home");
             }
-            else if (authorizeLogin.Equals("manager"))
+            else if (loginStatus.Equals("manager"))
             {
             }
-            else if (authorizeLogin.Equals("owner expired"))
+            else if (loginStatus.Equals("owner expired"))
             {
                 ViewBag.Message = "Your subscription has expired. Please subscribe again.";
                 return RedirectToAction("Login", "Home");
             }
-            else if (authorizeLogin.Equals("manager expired"))
+            else if (loginStatus.Equals("manager expired"))
             {
                 ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
                 return RedirectToAction("Login", "Home");

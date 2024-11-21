@@ -75,12 +75,12 @@ namespace AzzanOrder.ManagerOwner.Controllers
             {
                 return RedirectToAction("List", "Employee");
             }
-            else if (authorizeLogin.Equals("owner expired"))
+            else if (loginStatus.Equals("owner expired"))
             {
                 TempData["Message"] = "Your subscription has expired. Please subscribe again.";
                 return RedirectToAction("Login", "Home");
             }
-            else if (authorizeLogin.Equals("manager expired"))
+            else if (loginStatus.Equals("manager expired"))
             {
                 TempData["Message"] = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
                 return RedirectToAction("Login", "Home");
@@ -259,7 +259,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
         public async Task<IActionResult> Subscribe()
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
-            if (!(await authorizeLogin.CheckLogin()).Equals("owner"))
+            var loginStatus = await authorizeLogin.CheckLogin();
+            if (!loginStatus.Equals("owner"))
             {
                 return RedirectToAction("Index", "Home");
             }

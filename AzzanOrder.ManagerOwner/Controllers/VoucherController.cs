@@ -18,19 +18,20 @@ namespace AzzanOrder.ManagerOwner.Controllers
         public async Task<IActionResult> ListAsync(int? page)
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
-            if (authorizeLogin.Equals("owner"))
+            var loginStatus = await authorizeLogin.CheckLogin();
+            if (loginStatus.Equals("owner"))
             {
                 return RedirectToAction("Index", "Home");
             }
-            else if (authorizeLogin.Equals("manager"))
+            else if (loginStatus.Equals("manager"))
             {
             }
-            else if (authorizeLogin.Equals("owner expired"))
+            else if (loginStatus.Equals("owner expired"))
             {
                 ViewBag.Message = "Your subscription has expired. Please subscribe again.";
                 return RedirectToAction("Login", "Home");
             }
-            else if (authorizeLogin.Equals("manager expired"))
+            else if (loginStatus.Equals("manager expired"))
             {
                 ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
                 return RedirectToAction("Login", "Home");
@@ -90,19 +91,20 @@ namespace AzzanOrder.ManagerOwner.Controllers
         public async Task<IActionResult> AddAsync()
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
-            if (authorizeLogin.Equals("owner"))
+            var loginStatus = await authorizeLogin.CheckLogin();
+            if (loginStatus.Equals("owner"))
             {
                 return RedirectToAction("Index", "Home");
             }
-            else if (authorizeLogin.Equals("manager"))
+            else if (loginStatus.Equals("manager"))
             {
             }
-            else if (authorizeLogin.Equals("owner expired"))
+            else if (loginStatus.Equals("owner expired"))
             {
                 ViewBag.Message = "Your subscription has expired. Please subscribe again.";
                 return RedirectToAction("Login", "Home");
             }
-            else if (authorizeLogin.Equals("manager expired"))
+            else if (loginStatus.Equals("manager expired"))
             {
                 ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
                 return RedirectToAction("Login", "Home");
@@ -222,19 +224,20 @@ namespace AzzanOrder.ManagerOwner.Controllers
         public async Task<IActionResult> UpdateAsync(int id)
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
-            if (authorizeLogin.Equals("owner"))
+            var loginStatus = await authorizeLogin.CheckLogin();
+            if (loginStatus.Equals("owner"))
             {
                 return RedirectToAction("Index", "Home");
             }
-            else if (authorizeLogin.Equals("manager"))
+            else if (loginStatus.Equals("manager"))
             {
             }
-            else if (authorizeLogin.Equals("owner expired"))
+            else if (loginStatus.Equals("owner expired"))
             {
                 ViewBag.Message = "Your subscription has expired. Please subscribe again.";
                 return RedirectToAction("Login", "Home");
             }
-            else if (authorizeLogin.Equals("manager expired"))
+            else if (loginStatus.Equals("manager expired"))
             {
                 ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
                 return RedirectToAction("Login", "Home");
@@ -290,7 +293,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
             }
 
-
             Model model = new Model
             {
                 itemCategories = itemCategories,
@@ -311,7 +313,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> UpdatePost(VoucherDetail voucherDetail)
         {
-
             Employee emp = new Employee();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
             {
