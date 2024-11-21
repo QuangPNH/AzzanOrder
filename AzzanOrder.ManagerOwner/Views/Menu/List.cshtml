@@ -12,7 +12,7 @@
             <h5 class="card-title">ListMenuItem</h5>
         </div>
         <div>
-            <a href="@Url.Action("AddItem", "Menu")" class="btn btn-primary">Add New Voucher</a>
+            <a href="@Url.Action("Add", "Menu")" class="btn btn-primary">Add New MenuItem</a>
         </div>
         <table class="table table-striped table-hover">
             <thead>
@@ -45,58 +45,6 @@
         </table>
         <hr />
         <div id="menuItemsContainer" ></div>
-     
-
-        @{
-            //      <table class="table table-striped table-hover">
-            //          <thead>
-            //              <tr>
-            //                  <th style="width:5%">No.</th>
-            //                  <th style="width:20%">Name</th>
-            //                  <th style="width:20%">Menu</th>
-            //                  <th style="width:5%">Price</th>
-            //                  <th class="d-none d-md-table-cell" style="width:10%">Description</th>
-            //                  <th class="d-none d-md-table-cell" style="width:5%">Discount</th>
-            //                  <th style="width:10%">Is Available</th>
-            //                  <th>Actions</th>
-            //              </tr>
-            //          </thead>
-            //          <tbody>
-            //              @{
-            //                  foreach (var i in Model.menuItems)
-            //                  {
-            //                      <tr>
-            //                          <td>@i.MenuItemId</td>
-            //                          <td>@i.ItemName</td>
-            //                          <td>
-            //                              <ul>
-            //                                  @{
-            //                                      foreach (var j in @i.MenuCategories.Where(mc => mc.MenuItemId == i.MenuItemId))
-            //                                      {
-            //                                          <li>@j.ItemCategory.ItemCategoryName</li>
-            //                                      }
-            //                                  }
-            //                              </ul>
-
-
-            //                          </td>
-            //                          <td>@i.Price</td>
-            //                          <td class="d-none d-md-table-cell">@i.Description</td>
-            //                          <td class="d-none d-md-table-cell">@i.Discount</td>
-            //                          <td>@(i.IsAvailable == true ? "Yes" : "No")</td>
-            //                          <td class="table-action">
-            //                              <a href="@Url.Action("UpdateItem", "Menu")"><i class="align-middle" data-feather="edit-2"></i></a>
-            //                          </td>
-            //                      </tr>
-            //                  }
-            //              }
-
-            //          </tbody>
-            //      </table>
-        }
-
-       
-
     </div>
 </div>
 @section Scripts {
@@ -114,11 +62,12 @@
                     success: function (data) {
                         // Hiển thị danh sách món ăn tại đây
                         var menuItemsHtml = `<h3 class="card-title">Menu Items of ${categoryName}</h3><table class="table table-striped">`;
-                        menuItemsHtml += '<thead><tr><th>Name</th><th>Image</th><th>Price</th><th>Description</th><th>Actions</th></tr></thead><tbody>';
+                        menuItemsHtml += '<thead><tr><th>No</th><th>Name</th><th>Image</th><th>Price</th><th>Description</th><th>Actions</th></tr></thead><tbody>';
                         $.each(data, function (index, item) {
                             menuItemsHtml += `
                                  
                             <tr>
+                                    <td>${item.menuItem.menuItemId}</td>
                                                 <td>${item.menuItem.itemName}</td>
                                                 <td>${item.menuItem.image}</td>
                                                 <td>${item.menuItem.price}</td>
@@ -145,7 +94,7 @@
         function deleteItem(menuItemId) {
             if (confirm("Are you sure you want to delete this item?")) {
                 $.ajax({
-                    url: '/api/MenuItem/Delete/' + menuItemId, // Đường dẫn API xóa
+                    url: 'https://localhost:7183/api/MenuItem/Delete/' + menuItemId, // Đường dẫn API xóa
                     type: 'DELETE',
                     success: function (response) {
                         alert('Item deleted successfully!');

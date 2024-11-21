@@ -341,7 +341,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     {
                         string message = await res.Content.ReadAsStringAsync();
                         voucherDetail = JsonConvert.DeserializeObject<VoucherDetail>(message);
-
                     }
                 }
 

@@ -39,7 +39,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            var b = await _context.MenuCategories.Include(mi => mi.MenuItem).Where(mi => mi.ItemCategoryId == itemCategoryId).ToListAsync();
+            var b = await _context.MenuCategories.Include(mi => mi.MenuItem).Where(mi => mi.ItemCategoryId == itemCategoryId && mi.MenuItem.IsAvailable == true).ToListAsync();
 
             //var a = employeeId.HasValue ? await _context.MenuItems.Include(mi => mi.MenuCategories).ThenInclude(mi => mi.ItemCategory).Where(mi => mi.EmployeeId == employeeId).ToListAsync() : await _context.MenuItems.Include(mi => mi.MenuCategories).ThenInclude(mi => mi.ItemCategory).ToListAsync();
             return Ok(b);

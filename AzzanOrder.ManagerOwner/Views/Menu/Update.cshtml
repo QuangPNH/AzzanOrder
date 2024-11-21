@@ -8,7 +8,13 @@
         <div class="card-body">
             <form asp-action="UpdatePost" asp-controller="Menu" method="post">
                 
-
+                <div class="mb-3 row" hidden>
+                    <label class="col-form-label col-sm-2 text-sm-end">MenuItemId</label>
+                    <div class="col-sm-10">
+                        <input asp-for="menuItem.MenuItemId" class="form-control" />
+                        <span asp-validation-for="menuItem.MenuItemId" class="text-danger"></span>
+                    </div>
+                </div>
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Name</label>
                     <div class="col-sm-10">
@@ -73,16 +79,7 @@
                     </div>
                 </div>
 
-                <div class="mb-3 row">
-                    <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Checkbox</label>
-                    <div class="col-sm-10">
-                        <label class="form-check m-0">
-                            <input type="checkbox" name="IsAvailable"
-                            @(Model.menuItem.IsAvailable == true ? "checked" : "") />
-                            <span class="form-check-label">Is Available?</span>
-                        </label>
-                    </div>
-                </div>
+               
 
                 <div class="mb-3 row">
                     <div class="col-sm-10 ms-sm-auto">

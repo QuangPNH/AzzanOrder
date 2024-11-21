@@ -1,40 +1,73 @@
-﻿<div class="col-12">
+﻿@model AzzanOrder.ManagerOwner.Models.Model
+@addTagHelper *, Microsoft.AspNetCore.Mvc.TagHelpers
+<div class="col-12">
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">Add Voucher</h5>
+            <h5 class="card-title">Add Menu Item</h5>
         </div>
         <div class="card-body">
-            <form action="@Url.Action("List", "Menu")" method="post">
+            <form asp-action="AddPost" asp-controller="Menu" method="post">
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Name</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" placeholder="Name">
+                        <input asp-for="menuItem.ItemName" class="form-control" />
+                        <span asp-validation-for="menuItem.ItemName" class="text-danger"></span>
                     </div>
                 </div>
                 <div class="mb-3 row">
-                    <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Checkbox</label>
+                    <label class="col-form-label col-sm-2 text-sm-end">Item Category</label>
                     <div class="col-sm-10">
-                        <label class="form-check m-0">
-                            <input type="checkbox" class="form-check-input" id="limitedCheckbox">
-                            <span class="form-check-label">Limited</span>
-                        </label>
+                        <ul>
+                            @{
+                                foreach (var i in Model.itemCategories)
+                                {
+                                    <li>
+                                        <input type="checkbox" name="SelectedCategories" value="@i.ItemCategoryId" />
+                                        <label>@i.ItemCategoryName</label>
+                                    </li>
+                                }
+                            }
+                        </ul>
                     </div>
                 </div>
+
+
                 <div class="mb-3 row">
-                    <label class="col-form-label col-sm-2 text-sm-end">Start Date</label>
+                    <label class="col-form-label col-sm-2 text-sm-end">Price</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="startDate" data-inputmask-alias="datetime"
-                               data-inputmask-inputformat="dd/mm/yyyy" disabled />
+                        <input asp-for="menuItem.Price" class="form-control" />
+                        <span asp-validation-for="menuItem.Price" class="text-danger"></span>
                     </div>
                 </div>
+
                 <div class="mb-3 row">
-                    <label class="col-form-label col-sm-2 text-sm-end">End Date</label>
+                    <label class="col-form-label col-sm-2 text-sm-end">Description</label>
                     <div class="col-sm-10">
-                        <input type="text" class="form-control" id="endDate" data-inputmask-alias="datetime"
-                               data-inputmask-inputformat="dd/mm/yyyy" disabled />
-                        <span class="text-muted">DD/MM/YYYY format. Can be used for limited voucher only.</span>
+
+
+                        <textarea asp-for="menuItem.Description" class="form-control" rows="3"></textarea>
+                        <span asp-validation-for="menuItem.Description" class="text-danger"></span>
                     </div>
                 </div>
+
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Discount</label>
+                    <div class="col-sm-10">
+                        <input asp-for="menuItem.Discount" class="form-control" />
+                        <span asp-validation-for="menuItem.Discount" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Image</label>
+                    <div class="col-sm-10">
+                        <input asp-for="menuItem.Image" name="menuItemImage" type="file" accept=".png, .jpg">
+                        <small class="form-check-label text-muted">Only png and jpg allowed.</small>
+                    </div>
+                </div>
+
+
+
                 <div class="mb-3 row">
                     <div class="col-sm-10 ms-sm-auto">
                         <button type="submit" class="btn btn-primary">Submit</button>
@@ -44,6 +77,9 @@
         </div>
     </div>
 </div>
+
+
+
 
 <script>
     document.addEventListener("DOMContentLoaded", function () {
