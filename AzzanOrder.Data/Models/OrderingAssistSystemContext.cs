@@ -154,10 +154,6 @@ namespace AzzanOrder.Data.Models
 
                 entity.ToTable("MenuCategory");
 
-                entity.Property(e => e.EndDate).HasColumnType("datetime");
-
-                entity.Property(e => e.StartDate).HasColumnType("datetime");
-
                 entity.HasOne(d => d.ItemCategory)
                     .WithMany(p => p.MenuCategories)
                     .HasForeignKey(d => d.ItemCategoryId)

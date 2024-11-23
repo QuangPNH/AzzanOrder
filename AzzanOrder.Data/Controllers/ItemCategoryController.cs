@@ -168,7 +168,10 @@ namespace AzzanOrder.Data.Controllers
               Discount = itemCategory.Discount, 
               Image = itemCategory.Image,
               EmployeeId = itemCategory.EmployeeId,
-              IsDelete = itemCategory.IsDelete
+              IsDelete = false,
+              StartDate = itemCategory.StartDate,
+              EndDate = itemCategory.EndDate,
+              IsCombo = itemCategory.IsCombo
           };
             _context.ItemCategories.Add(ic);
             await _context.SaveChangesAsync();

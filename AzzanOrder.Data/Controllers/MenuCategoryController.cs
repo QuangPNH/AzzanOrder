@@ -90,7 +90,7 @@ namespace AzzanOrder.Data.Controllers
           {
               return Problem("Category is null.");
           }
-          var menuC = new MenuCategory() { MenuItemId = menuCategory.MenuItemId, ItemCategoryId = menuCategory.ItemCategoryId, StartDate = menuCategory.StartDate, EndDate = menuCategory.EndDate, IsForCombo = menuCategory.IsForCombo };
+          var menuC = new MenuCategory() { MenuItemId = menuCategory.MenuItemId, ItemCategoryId = menuCategory.ItemCategoryId};
             _context.MenuCategories.Add(menuC);
             try
             {

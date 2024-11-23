@@ -3,17 +3,10 @@
 <div class="col-12">
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">Update Abouts</h5>
+            <h5 class="card-title">Add Abouts</h5>
         </div>
         <div class="card-body">
-            <form asp-action="UpdatePost" asp-controller="AboutUs" method="post">
-                <div class="mb-3 row" hidden>
-                    <label class="col-form-label col-sm-2 text-sm-end">AboutId</label>
-                    <div class="col-sm-10">
-                        <input asp-for="about.AboutId" class="form-control" />
-                        <span asp-validation-for="about.AboutId" class="text-danger"></span>
-                    </div>
-                </div>
+            <form asp-action="AddPost" asp-controller="AboutUs" method="post">
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Title</label>
                     <div class="col-sm-10">
@@ -38,5 +31,4 @@
             </form>
         </div>
     </div>
-</div>
 </div>

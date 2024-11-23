@@ -1,5 +1,6 @@
 ﻿using AzzanOrder.ManagerOwner.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Text;
 
@@ -79,7 +80,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             return View(viewModel);
         }
         [HttpGet]
-        public IActionResult Add()
+        public IActionResult AddAsync()
 		{
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             if (authorizeLogin.Equals("owner"))
@@ -105,19 +106,21 @@ namespace AzzanOrder.ManagerOwner.Controllers
 		// POST: Employee/Add
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Add(ItemCategory itemCategory)
+		public async Task<IActionResult> AddPost(ItemCategory itemCategory)
 		{
             Employee emp = new Employee();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
             {
                 emp = JsonConvert.DeserializeObject<Employee>(empJson);
             }
+            var isCombo = !Request.Form["IsCombo"].IsNullOrEmpty();
             if (ModelState.IsValid)
 			{
                 using (HttpClient client = new HttpClient())
                 {
                     try
                     {
+                        itemCategory.IsCombo = isCombo;
                         itemCategory.EmployeeId = emp.EmployeeId;
                         itemCategory.IsDelete = false;
                         itemCategory.Employee = new Employee { };
@@ -144,7 +147,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 		}
 
         [HttpGet]
-        public async Task<IActionResult> Update(int id)
+        public async Task<IActionResult> UpdateAsync(int id)
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             if (authorizeLogin.Equals("owner"))
@@ -191,7 +194,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> Update(ItemCategory itemCategory)
+		public async Task<IActionResult> UpdatePost(ItemCategory itemCategory)
         {
             Employee emp = new Employee();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
@@ -202,12 +205,14 @@ namespace AzzanOrder.ManagerOwner.Controllers
             {
                 return RedirectToAction("List");
             }
+            var isCombo = !Request.Form["IsCombo"].IsNullOrEmpty();
             if (ModelState.IsValid)
             {
                 using (HttpClient client = new HttpClient())
                 {
                     try
                     {
+                        itemCategory.IsCombo = isCombo;
                         itemCategory.EmployeeId = emp.EmployeeId;
                         itemCategory.IsDelete = false;
                         itemCategory.Employee = new Employee { };

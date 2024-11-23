@@ -149,8 +149,8 @@ namespace AzzanOrder.Data.Controllers
 
             var top4MenuItems = await query
                 .Where(m => m.MenuCategories.Any(mc =>
-                    (mc.EndDate == null && mc.StartDate == null) ||
-                    (mc.EndDate > DateTime.Now && mc.StartDate < DateTime.Now && mc.IsForCombo == false)))
+                    (mc.ItemCategory.EndDate == null && mc.ItemCategory.StartDate == null) ||
+                    (mc.ItemCategory.EndDate > DateTime.Now && mc.ItemCategory.StartDate < DateTime.Now && mc.ItemCategory.IsCombo == false)))
                 .OrderByDescending(m => m.OrderDetails.Count)
                 .Take(4)
                 .Select(m => new MenuItemDTO
@@ -179,8 +179,8 @@ namespace AzzanOrder.Data.Controllers
         {
             var query = _context.MenuItems.Where(m => m.MenuCategories.Any(mc =>
                 mc.ItemCategory.Description.ToLower().Contains(categoryname.ToLower()) &&
-                (mc.EndDate == null && mc.StartDate == null ||
-                mc.EndDate > DateTime.Now && mc.StartDate < DateTime.Now && mc.IsForCombo == false)) &&
+                (mc.ItemCategory.EndDate == null && mc.ItemCategory.StartDate == null ||
+                mc.ItemCategory.EndDate > DateTime.Now && mc.ItemCategory.StartDate < DateTime.Now && mc.ItemCategory.IsCombo == false)) &&
                 m.IsAvailable == true);
 
             if (id.HasValue)
@@ -221,8 +221,8 @@ namespace AzzanOrder.Data.Controllers
                 .Distinct()
                 .Take(4)
                 .Where(m => m.MenuCategories.Any(mc =>
-                    (mc.EndDate == null && mc.StartDate == null ||
-                    mc.EndDate > DateTime.Now && mc.StartDate < DateTime.Now && mc.IsForCombo == false)) &&
+                    (mc.ItemCategory.EndDate == null && mc.ItemCategory.StartDate == null ||
+                    mc.ItemCategory.EndDate > DateTime.Now && mc.ItemCategory.StartDate < DateTime.Now && mc.ItemCategory.IsCombo == false)) &&
                     m.IsAvailable == true);
 
             if (id.HasValue)
