@@ -1,4 +1,6 @@
-﻿<!DOCTYPE html>
+﻿@using AzzanOrder.ManagerOwner.Services
+@inject EmployeeService EmployeeService
+<!DOCTYPE html>
 <html lang="en">
 
 <head>
@@ -62,8 +64,11 @@
 				<div class="sidebar-user">
 					<div class="d-flex justify-content-center">
 						<div class="flex-grow-1 ps-2">
-							<div class="sidebar-user-title">Charles Hall</div>
-							<div class="sidebar-user-subtitle">Manager</div>
+							@if (EmployeeService.CurrentEmployee != null)
+							{
+								<div class="sidebar-user-title">@EmployeeService.CurrentEmployee.EmployeeName</div>
+								<div class="sidebar-user-subtitle">Manager</div>
+							}
 						</div>
 					</div>
 				</div>
@@ -111,7 +116,7 @@
 				
 				</ul>
 
-				<div class="sidebar-cta">
+				@* <div class="sidebar-cta">
 					<div class="sidebar-cta-content">
 						<strong class="d-inline-block mb-2">Weekly Sales Report</strong>
 						<div class="mb-3 text-sm">
@@ -122,7 +127,7 @@
 							<a href="https://adminkit.io/" class="btn btn-outline-primary" target="_blank">Download</a>
 						</div>
 					</div>
-				</div>
+				</div> *@
 			</div>
 		</nav>
 
@@ -133,7 +138,7 @@
 					<i class="hamburger align-self-center"></i>
 				</a>
 
-				<form class="d-none d-sm-inline-block">
+				@* <form class="d-none d-sm-inline-block">
 					<div class="input-group input-group-navbar">
 						<input type="text" class="form-control" placeholder="Search…" aria-label="Search">
 						<button class="btn" type="button">
@@ -199,11 +204,11 @@
 									data-feather="edit"></i> Changelog</a>
 						</div>
 					</li>
-				</ul>
+				</ul> *@
 
 				<div class="navbar-collapse collapse">
 					<ul class="navbar-nav navbar-align">
-						<li class="nav-item dropdown">
+						@* <li class="nav-item dropdown">
 							<a class="nav-icon dropdown-toggle" href="#" id="alertsDropdown" data-bs-toggle="dropdown">
 								<div class="position-relative">
 									<i class="align-middle" data-feather="bell"></i>
@@ -267,7 +272,7 @@
 									<a href="#" class="text-muted">Show all notifications</a>
 								</div>
 							</div>
-						</li>
+						</li> *@
 
 						<li class="nav-item">
 							<a class="nav-icon js-fullscreen d-none d-lg-block" href="#">
@@ -293,7 +298,7 @@
 			</main>
 
 			@* Footer *@
-			<footer class="footer">
+			@* <footer class="footer">
 				<div class="container-fluid">
 					<div class="row text-muted">
 						<div class="col-6 text-start">
@@ -319,7 +324,7 @@
 						</div>
 					</div>
 				</div>
-			</footer>
+			</footer> *@
 		</div>
 	</div>
 

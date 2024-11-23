@@ -1,6 +1,8 @@
-﻿@{
+﻿@using AzzanOrder.ManagerOwner.Services
+@inject EmployeeService EmployeeService
+@{
     var path = Context.Request.Path.ToString().ToLower();
-    if (path.Contains("/aboutus") || path.Contains("/manager"))
+    if (EmployeeService.CurrentOwner != null)
     {
         Layout = "_LayoutOwner";
     }

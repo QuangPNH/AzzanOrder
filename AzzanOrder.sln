@@ -16,6 +16,8 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tuan", "Tuan", "{74B0F385-6
 		SQL_Tuan_09-11.txt = SQL_Tuan_09-11.txt
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzzanOrder.Data.Test", "AzzanOrder.Data.Test\AzzanOrder.Data.Test.csproj", "{BB6E715C-FB09-44ED-8A95-B931B1AD7FF8}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -40,6 +42,10 @@ Global
 		{1E80AD1B-42D8-4857-A220-36926763C729}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1E80AD1B-42D8-4857-A220-36926763C729}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1E80AD1B-42D8-4857-A220-36926763C729}.Release|Any CPU.Build.0 = Release|Any CPU
+		{BB6E715C-FB09-44ED-8A95-B931B1AD7FF8}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{BB6E715C-FB09-44ED-8A95-B931B1AD7FF8}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{BB6E715C-FB09-44ED-8A95-B931B1AD7FF8}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{BB6E715C-FB09-44ED-8A95-B931B1AD7FF8}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

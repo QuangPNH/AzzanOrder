@@ -64,16 +64,25 @@ namespace AzzanOrder.Data.Controllers
             return Ok(itemCategories);
         }
 
-        [HttpGet("GetByManagerId/{id}")]
-        public async Task<ActionResult<IEnumerable<ItemCategory>>> GetByManagerId(int? id)
+        //[HttpGet("GetByManagerId/{id}")]
+        //public async Task<ActionResult<IEnumerable<ItemCategory>>> GetByManagerId(int? id)
+        //{
+        //    if (_context.ItemCategories == null)
+        //    {
+        //        return NotFound();
+        //    }
+        //    return await _context.ItemCategories.Where(x => x.EmployeeId == 1).ToListAsync();
+        //}
+        [HttpGet("GetByMenuItemId")]
+        public async Task<ActionResult<IEnumerable<ItemCategory>>> GetByMenuItemId(int? id)
         {
             if (_context.ItemCategories == null)
             {
                 return NotFound();
             }
-            return await _context.ItemCategories.Where(x => x.EmployeeId == 1).ToListAsync();
+            var a = id.HasValue ? await _context.MenuCategories.Where(x => x.MenuItemId == id).Select(mc => mc.ItemCategory).ToListAsync() : await _context.MenuCategories.Select(mc => mc.ItemCategory).ToListAsync();
+            return a;
         }
-
         // GET: api/ItemCategory/5
         [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable>> GetItemCategory(int id)

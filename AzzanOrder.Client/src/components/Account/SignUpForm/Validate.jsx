@@ -14,3 +14,6 @@ export function setCookie(name, value, days) {
     }
     document.cookie = name + "=" + (value || "") + expires + "; path=/; SameSite=None; Secure";
 }
+export function deleteCookie(name) {
+    setCookie(name, '', -1);
+}

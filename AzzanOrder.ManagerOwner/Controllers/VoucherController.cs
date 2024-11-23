@@ -38,6 +38,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             }
             Employee emp = new Employee();
             List<VoucherDetail> voucherDetails = new List<VoucherDetail>();
+            var totalVoucherDetails = 0;
             List<Voucher> vouchers = new List<Voucher>();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
             {
@@ -80,8 +81,19 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 }
 
             }
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
+            int maxPageNav = 10;
+            totalVoucherDetails = voucherDetails.Count();
+            int totalPages = (int)Math.Ceiling((double)totalVoucherDetails / pageSize);
+
+            // Paginate the employees
+            voucherDetails = voucherDetails.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             Model model = new Model
             {
+                anIntegerUsedForCountingNumberOfPageQueuedForTheList = totalPages,
+                anIntegerUsedForKnowingWhatTheCurrentPageOfTheList = pageNumber,
+                thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed = maxPageNav,
                 voucherDetails = voucherDetails,
                 vouchers = vouchers
             };
@@ -330,7 +342,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     {
                         string message = await res.Content.ReadAsStringAsync();
                         voucherDetail = JsonConvert.DeserializeObject<VoucherDetail>(message);
-
                     }
                 }
 

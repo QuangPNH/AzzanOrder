@@ -22,16 +22,28 @@ namespace AzzanOrder.Data.Controllers
         }
 
         // GET: api/MenuItem
-        [HttpGet]
-        public async Task<ActionResult<IEnumerable<MenuItem>>> GetMenuItems()
+        [HttpGet("GetAllMenuItem")]
+        public async Task<ActionResult<IEnumerable<MenuItem>>> GetMenuItems(int? employeeId)
         {
             if (_context.MenuItems == null)
             {
                 return NotFound();
             }
-            return await _context.MenuItems.ToListAsync();
+            var a = employeeId.HasValue ? await _context.MenuItems.Include(mi => mi.MenuCategories).ThenInclude(mi=>mi.ItemCategory).Where(mi => mi.EmployeeId == employeeId).ToListAsync() : await _context.MenuItems.Include(mi => mi.MenuCategories).ThenInclude(mi => mi.ItemCategory).ToListAsync();
+            return a;
         }
+        [HttpGet("ItemCategoryId/{itemCategoryId}")]
+        public async Task<ActionResult> GetMenuItemByTtemCategory(int itemCategoryId)
+        {
+            if (_context.MenuItems == null)
+            {
+                return NotFound();
+            }
+            var b = await _context.MenuCategories.Include(mi => mi.MenuItem).Where(mi => mi.ItemCategoryId == itemCategoryId && mi.MenuItem.IsAvailable == true).ToListAsync();
 
+            //var a = employeeId.HasValue ? await _context.MenuItems.Include(mi => mi.MenuCategories).ThenInclude(mi => mi.ItemCategory).Where(mi => mi.EmployeeId == employeeId).ToListAsync() : await _context.MenuItems.Include(mi => mi.MenuCategories).ThenInclude(mi => mi.ItemCategory).ToListAsync();
+            return Ok(b);
+        }
         // GET: api/MenuItem/5
         [HttpGet("{id}")]
         public async Task<ActionResult<MenuItem>> GetMenuItem(int id)
@@ -40,7 +52,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            var menuItem = await _context.MenuItems.FindAsync(id);
+            var menuItem = await _context.MenuItems.Include(mi => mi.MenuCategories).ThenInclude(mi => mi.ItemCategory).FirstOrDefaultAsync(mi => mi.MenuItemId == id);
 
             if (menuItem == null)
             {
@@ -52,31 +64,32 @@ namespace AzzanOrder.Data.Controllers
 
         // PUT: api/MenuItem/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("{id}")]
-        public async Task<IActionResult> PutMenuItem(int id, MenuItemAddDTO menuItem)
+        [HttpPut("Update")]
+        public async Task<IActionResult> PutMenuItem(MenuItem menuItem)
         {
-            
-            try
-            {
-                var menuItemToUpdate = await _context.MenuItems.FindAsync(id);
-                if (!MenuItemExists(id))
-                {
+
+           
+                if (!MenuItemExists(menuItem.MenuItemId)){
                     return NotFound();
                 }
-                menuItemToUpdate.ItemName = menuItem.ItemName;
-                menuItemToUpdate.Price = menuItem.Price;
-                menuItemToUpdate.Description = menuItem.Description;
-                menuItemToUpdate.Discount = menuItem.Discount;
-                menuItemToUpdate.Image = menuItem.ImageBase64;
-                await _context.SaveChangesAsync();
+                _context.Entry(menuItem).State = EntityState.Modified;
+                try
+                {
+                    await _context.SaveChangesAsync();
+                }
+                catch (DbUpdateConcurrencyException)
+                {
+                    if (!MenuItemExists(menuItem.MenuItemId))
+                    {
+                        return NotFound();
+                    }
+                    else
+                    {
+                        throw;
+                    }
+                }
+                return Ok(_context.MenuItems.FirstOrDefault(vd => vd.MenuItemId == menuItem.MenuItemId));
             }
-            catch (DbUpdateConcurrencyException)
-            {
-                
-            }
-
-            return Ok(menuItem);
-        }
 
         // POST: api/MenuItem
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

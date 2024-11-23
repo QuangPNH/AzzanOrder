@@ -23,31 +23,34 @@ namespace AzzanOrder.Data.Controllers
 
         // GET: api/MenuCategory
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<MenuCategory>>> GetMenuCategories()
+        public async Task<ActionResult<IEnumerable<MenuCategory>>> GetMenuCategories(int ?employeeId)
         {
           if (_context.MenuCategories == null)
           {
               return NotFound();
           }
-            return await _context.MenuCategories.ToListAsync();
+            var a = employeeId.HasValue ?  await _context.MenuCategories.Include(mc=>mc.ItemCategory).Where(mc => mc.MenuItem.EmployeeId == employeeId).ToListAsync() : await _context.MenuCategories.Include(mc => mc.ItemCategory).ToListAsync();
+            return a ;
         }
 
-        // GET: api/MenuCategory/5
-        [HttpGet("{id}")]
-        public async Task<ActionResult<MenuCategory>> GetMenuCategory(int id)
+        //GET: api/MenuCategory/5
+      
+        [HttpGet("itemCategoryId/menuItemId")]
+        public async Task<ActionResult> CheckVoucher(int itemCategoryId, int menuItemId)
         {
-          if (_context.MenuCategories == null)
-          {
-              return NotFound();
-          }
-            var menuCategory = await _context.MenuCategories.FindAsync(id);
-            if (menuCategory == null)
+            if (_context.MenuCategories == null)
             {
-                return NotFound();
+                return NotFound("List voucher is empty");
             }
-            return menuCategory;
-        }
 
+            var mC = await _context.MenuCategories.FirstOrDefaultAsync(mc => mc.MenuItemId == menuItemId && mc.ItemCategoryId == itemCategoryId);
+            if(mC == null)
+            {
+                return NotFound() ;
+            }
+            //var vouchers = await _context.VoucherDetails.Include(v => v.Vouchers).ThenInclude(ic => ic.ItemCategory).ToListAsync();
+            return Ok(mC);
+        }
         // PUT: api/MenuCategory/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("Update")]

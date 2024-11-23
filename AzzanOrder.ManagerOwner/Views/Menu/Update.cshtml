@@ -3,10 +3,18 @@
 <div class="col-12">
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">Add Menu Item</h5>
+            <h5 class="card-title">Update Menu Item</h5>
         </div>
         <div class="card-body">
-            <form asp-action="AddPost" asp-controller="Menu" method="post">
+            <form asp-action="UpdatePost" asp-controller="Menu" method="post">
+                
+                <div class="mb-3 row" hidden>
+                    <label class="col-form-label col-sm-2 text-sm-end">MenuItemId</label>
+                    <div class="col-sm-10">
+                        <input asp-for="menuItem.MenuItemId" class="form-control" />
+                        <span asp-validation-for="menuItem.MenuItemId" class="text-danger"></span>
+                    </div>
+                </div>
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Name</label>
                     <div class="col-sm-10">
@@ -21,8 +29,13 @@
                             @{
                                 foreach (var i in Model.itemCategories)
                                 {
+                                    var isChecked = Model.menuItem.MenuCategories.Any(v =>
+                                    v.ItemCategoryId == i.ItemCategoryId &&
+                                   
+                                    v.MenuItemId == Model.menuItem.MenuItemId);
                                     <li>
-                                        <input type="checkbox" name="SelectedCategories" value="@i.ItemCategoryId" />
+                                        <input type="checkbox" name="SelectedCategories" value="@i.ItemCategoryId"
+                                        @(isChecked ? "checked" : "") />
                                         <label>@i.ItemCategoryName</label>
                                     </li>
                                 }
@@ -43,8 +56,8 @@
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Description</label>
                     <div class="col-sm-10">
-
-
+          
+      
                         <textarea asp-for="menuItem.Description" class="form-control" rows="3"></textarea>
                         <span asp-validation-for="menuItem.Description" class="text-danger"></span>
                     </div>
@@ -66,7 +79,7 @@
                     </div>
                 </div>
 
-
+               
 
                 <div class="mb-3 row">
                     <div class="col-sm-10 ms-sm-auto">
@@ -79,21 +92,3 @@
 </div>
 
 
-
-
-<script>
-    document.addEventListener("DOMContentLoaded", function () {
-        // Enable/disable datetime fields based on checkbox state
-        const limitedCheckbox = document.getElementById('limitedCheckbox');
-        const startDate = document.getElementById('startDate');
-        const endDate = document.getElementById('endDate');
-
-        if (limitedCheckbox) {
-            limitedCheckbox.addEventListener('change', function () {
-                const isChecked = limitedCheckbox.checked;
-                startDate.disabled = !isChecked;
-                endDate.disabled = !isChecked;
-            });
-        }
-    });
-</script>

@@ -66,7 +66,7 @@ const router = createBrowserRouter([
 // Wrap your app with the Router component and PopupProvider
 const rootElement = document.getElementById('root');
 ReactDOM.createRoot(rootElement).render(
-    <React.StrictMode>
+   /* <React.StrictMode>*/
         <RouterProvider router={router} />
-    </React.StrictMode>
+    /*</React.StrictMode>*/
 );

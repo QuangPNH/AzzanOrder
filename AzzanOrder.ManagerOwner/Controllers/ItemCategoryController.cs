@@ -46,7 +46,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             {
                 try
                 {
-                    HttpResponseMessage tableRes = await client.GetAsync(_apiUrl + "ItemCategory/GetByManagerId/" + emp.EmployeeId);
+                    HttpResponseMessage tableRes = await client.GetAsync(_apiUrl + "ItemCategory?id=" + emp.EmployeeId);
                     if (tableRes.IsSuccessStatusCode)
                     {
                         string tableData = await tableRes.Content.ReadAsStringAsync();
@@ -200,6 +200,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
             {
                 emp = JsonConvert.DeserializeObject<Employee>(empJson);
+            }
+            if (itemCategory.Description.Contains("TOPPING"))
+            {
+                return RedirectToAction("List");
             }
             if (ModelState.IsValid)
             {

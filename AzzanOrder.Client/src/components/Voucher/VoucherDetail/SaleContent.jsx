@@ -1,6 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import BuyVoucher from './BuyVoucher';
-
+import { getCookie, setCookie } from "../../Account/SignUpForm/Validate";
 const SaleContent = ({ saleAmount, price, infiniteUses, useCount, bought, voucherDetailId }) => {
     const [vouchers, setVouchers] = useState([]);
     const [showLogout, setLogout] = useState(false);
@@ -203,9 +203,5 @@ const SaleContent = ({ saleAmount, price, infiniteUses, useCount, bought, vouche
 
     );
 };
-function getCookie(name) {
-    const value = `; ${document.cookie}`; // Add a leading semicolon for easier parsing
-    const parts = value.split(`; ${name}=`); // Split the cookie string to find the desired cookie
-    if (parts.length === 2) return decodeURIComponent(parts.pop().split(';').shift()); // Return the cookie value
-}
+
 export default SaleContent;

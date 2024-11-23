@@ -4,73 +4,107 @@
 
 @model AzzanOrder.ManagerOwner.Models.Model
 
-<h1 class="h3 mb-3">Employee Management</h1>
+<h1 class="h3 mb-3">Menu Item Management</h1>
 
 <div class="col-12">
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">ListEmployee</h5>
+            <h5 class="card-title">ListMenuItem</h5>
         </div>
         <div>
-            <a href="@Url.Action("Add", "Menu")" class="btn btn-primary">Add New Employee</a>
+            <a href="@Url.Action("Add", "Menu")" class="btn btn-primary">Add New MenuItem</a>
         </div>
-
         <table class="table table-striped table-hover">
             <thead>
                 <tr>
                     <th style="width:5%">No.</th>
-                    <th style="width:20%">Menu List Name</th>
-                    <th style="width:20%">Duration</th>
+                    <th style="width:20%">Name</th>
+                    <th class="d-none d-md-table-cell" style="width:10%">Description</th>
+                    <th class="d-none d-md-table-cell" style="width:5%">Discount</th>
+                    <th style="width:10%">Is Available</th>
+                    <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
-                <tr>
-                    <td>1</td>
-                    <td>Coffee</td>
-                    <td>Infinite</td> 
-                </tr>
-                <tr>
-                    <td>2</td>
-                    <td>New Year</td>
-                    <td>December 12 - January 6</td>
-                </tr>
+                @{
+                    foreach (var i in Model.itemCategories)
+                    {
+                        <tr>
+                            <td>@i.ItemCategoryId</td>
+                            <td>@i.ItemCategoryName</td>
+                            <td class="d-none d-md-table-cell">@i.Description</td>
+                            <td class="d-none d-md-table-cell">@i.Discount</td>
+                            <td>@(i.IsDelete != true ? "Yes" : "No")</td>
+                            <td class="table-action" data-category-id="@i.ItemCategoryId" data-category-name="@i.ItemCategoryName" style="cursor:pointer">
+                                <button class="btn btn-info btn-sm">View Items</button>
+                            </td>
+                        </tr>
+                    }
+                }
             </tbody>
         </table>
-
-        <div class="row mt-3">
-            <div class="col d-flex align-items-center">
-                <span id="response-info">Showing 0-0 out of 0 responses</span>
-            </div>
-            <div class="col d-flex justify-content-end">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination pagination-md mb-0">
-                        <li class="page-item @(Model.anIntegerUsedForKnowingWhatTheCurrentPageOfTheList == 1 ? "disabled" : "")">
-                            <a class="page-link" href="@Url.Action("List", new { page = Model.anIntegerUsedForKnowingWhatTheCurrentPageOfTheList - 1 })">
-                                <i class="fas fa-angle-left"></i>
-                            </a>
-                        </li>
-                        @{
-                            int startPage = Math.Max(1, Model.anIntegerUsedForKnowingWhatTheCurrentPageOfTheList - Model.thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed / 2);
-                            int endPage = Math.Min(Model.anIntegerUsedForCountingNumberOfPageQueuedForTheList, startPage + Model.thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed - 1);
-                            if (endPage - startPage < Model.thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed)
-                            {
-                                startPage = Math.Max(1, endPage - Model.thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed + 1);
-                            }
-                        }
-                        @for (int i = startPage; i <= endPage; i++)
-                        {
-                            <li class="page-item @(Model.anIntegerUsedForKnowingWhatTheCurrentPageOfTheList == i ? "active" : "")">
-                                <a class="page-link" href="@Url.Action("List", new { page = i })">@i</a>
-                            </li>
-                        }
-                        <li class="page-item @(Model.anIntegerUsedForKnowingWhatTheCurrentPageOfTheList == Model.anIntegerUsedForCountingNumberOfPageQueuedForTheList ? "disabled" : "")">
-                            <a class="page-link" href="@Url.Action("List", new { page = Model.anIntegerUsedForKnowingWhatTheCurrentPageOfTheList + 1 })">
-                                <i class="fas fa-angle-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
-            </div>
-        </div>
+        <hr />
+        <div id="menuItemsContainer" ></div>
     </div>
 </div>
+@section Scripts {
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <script>
+        // Hàm xử lý click vào category để load danh sách món
+        $(document).ready(function () {
+            $('.table-action').on('click', function () {
+                var categoryId = $(this).data('category-id');
+                var categoryName = $(this).data('category-name');
+
+                $.ajax({
+                    url: 'https://localhost:7183/api/MenuItem/ItemCategoryId/' + categoryId, // Đường dẫn API
+                    type: 'GET',
+                    success: function (data) {
+                        // Hiển thị danh sách món ăn tại đây
+                        var menuItemsHtml = `<h3 class="card-title">Menu Items of ${categoryName}</h3><table class="table table-striped">`;
+                        menuItemsHtml += '<thead><tr><th>No</th><th>Name</th><th>Image</th><th>Price</th><th>Description</th><th>Actions</th></tr></thead><tbody>';
+                        $.each(data, function (index, item) {
+                            menuItemsHtml += `
+                                 
+                            <tr>
+                                    <td>${item.menuItem.menuItemId}</td>
+                                                <td>${item.menuItem.itemName}</td>
+                                                <td>${item.menuItem.image}</td>
+                                                <td>${item.menuItem.price}</td>
+                                                <td>${item.menuItem.description}</td>
+                                        <td>
+                           
+                                                            <a href="/Menu/Update/${item.menuItem.menuItemId}" class="btn btn-warning btn-sm">Edit</a>
+                                                    <button class="btn btn-danger btn-sm" onclick="deleteItem(${item.menuItem.menuItemId})">Delete</button>
+                                        </td>
+                                    </tr>`;
+                        });
+                        menuItemsHtml += '</tbody></table>';
+
+                        $('#menuItemsContainer').html(menuItemsHtml);
+                    },
+                    error: function (err) {
+                        alert('Error fetching data');
+                    }
+                });
+            });
+        });
+
+        // Hàm xóa món ăn
+        function deleteItem(menuItemId) {
+            if (confirm("Are you sure you want to delete this item?")) {
+                $.ajax({
+                    url: 'https://localhost:7183/api/MenuItem/Delete/' + menuItemId, // Đường dẫn API xóa
+                    type: 'DELETE',
+                    success: function (response) {
+                        alert('Item deleted successfully!');
+                        location.reload(); // Reload lại trang để cập nhật danh sách món ăn
+                    },
+                    error: function (err) {
+                        alert('Error deleting item');
+                    }
+                });
+            }
+        }
+    </script>
+}
