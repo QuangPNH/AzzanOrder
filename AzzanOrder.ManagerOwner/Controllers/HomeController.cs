@@ -276,10 +276,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
             {
                 return RedirectToAction("Login", "Home");
             }
-            else
-            {
-                return RedirectToAction("Login", "Home");
-            }
 
             Api.Bank theBank = new Api.Bank();
             using (System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient())
@@ -287,7 +283,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 var htmlData = await httpClient.GetStringAsync("https://api.vietqr.io/v2/banks");
                 theBank = JsonConvert.DeserializeObject<Api.Bank>(htmlData);
             }
-
             var model = new AzzanOrder.ManagerOwner.Models.Model { bankDatums = theBank.data };
             return View(model);
         }

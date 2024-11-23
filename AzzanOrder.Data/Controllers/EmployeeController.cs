@@ -101,9 +101,24 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-
             return employee;
         }
+
+        [HttpGet("FirstEmployee/{id}")]
+        public async Task<ActionResult<Employee>> GetFirstEmployeeOfOwner(int id)
+        {
+            if (_context.Employees == null)
+            {
+                return NotFound();
+            }
+            var employee = _context.Employees.Include(e => e.Role).Include(e => e.Owner).Where( e => e.OwnerId == id).FirstOrDefault();
+            if (employee == null)
+            {
+                return NotFound();
+            }
+            return employee;
+        }
+
 
         // PUT: api/Employee/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754

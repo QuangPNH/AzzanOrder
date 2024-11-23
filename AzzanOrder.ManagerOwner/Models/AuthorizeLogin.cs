@@ -48,7 +48,21 @@ namespace AzzanOrder.ManagerOwner.Models
 					{
 						try
 						{
-							HttpResponseMessage res = await client.GetAsync(_apiUrl + "Employee/Manager/Phone/" + emp.Phone);
+                            HttpResponseMessage res = await client.GetAsync(_apiUrl + "/Employee/FirstEmployee/" + emp.OwnerId);
+                            if (res.IsSuccessStatusCode)
+                            {
+                                string data = await res.Content.ReadAsStringAsync();
+                                Employee emp1 = JsonConvert.DeserializeObject<Employee>(data);
+                                if (emp.Owner.SubscribeEndDate < DateTime.Now.AddDays(7))
+                                {
+                                    return "first manager";
+                                }
+
+
+                            }
+
+
+                            res = await client.GetAsync(_apiUrl + "Employee/Manager/Phone/" + emp.Phone);
 							if (res.IsSuccessStatusCode)
 							{
 								string data = await res.Content.ReadAsStringAsync();
@@ -83,6 +97,7 @@ namespace AzzanOrder.ManagerOwner.Models
 							{
 								string data = await res.Content.ReadAsStringAsync();
 								owner = JsonConvert.DeserializeObject<Owner>(data);
+
 								if (owner.SubscribeEndDate < DateTime.Now.AddDays(7))
 								{
 									return "owner expired";
