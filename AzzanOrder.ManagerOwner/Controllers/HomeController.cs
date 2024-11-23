@@ -260,9 +260,25 @@ namespace AzzanOrder.ManagerOwner.Controllers
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             var loginStatus = await authorizeLogin.CheckLogin();
-            if (!loginStatus.Equals("owner"))
+            if (loginStatus.Equals("owner"))
             {
                 return RedirectToAction("Index", "Home");
+            }
+            else if (loginStatus.Equals("manager"))
+            {
+                return RedirectToAction("List", "Employee");
+            }
+            else if (loginStatus.Equals("owner expired"))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            else if (loginStatus.Equals("manager expired"))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            else
+            {
+                return RedirectToAction("Login", "Home");
             }
 
             Api.Bank theBank = new Api.Bank();

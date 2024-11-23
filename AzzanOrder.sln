@@ -13,10 +13,10 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "payos-demo-dotnet-core", "p
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tuan", "Tuan", "{74B0F385-651E-4149-BC34-79F68AC7DD57}"
 	ProjectSection(SolutionItems) = preProject
-		SQL_Tuan_09-11.txt = SQL_Tuan_09-11.txt
+		SQL_Tuan_23-11.txt = SQL_Tuan_23-11.txt
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "AzzanOrder.Data.Test", "AzzanOrder.Data.Test\AzzanOrder.Data.Test.csproj", "{BB6E715C-FB09-44ED-8A95-B931B1AD7FF8}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "AzzanOrder.Data.Test", "AzzanOrder.Data.Test\AzzanOrder.Data.Test.csproj", "{BB6E715C-FB09-44ED-8A95-B931B1AD7FF8}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
