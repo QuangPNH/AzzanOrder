@@ -53,12 +53,10 @@ namespace AzzanOrder.ManagerOwner.Models
                             {
                                 string data = await res.Content.ReadAsStringAsync();
                                 Employee emp1 = JsonConvert.DeserializeObject<Employee>(data);
-                                if (emp.Owner.SubscribeEndDate < DateTime.Now.AddDays(7))
+                                if (emp1.Phone != null)
                                 {
                                     return "first manager";
                                 }
-
-
                             }
 
 
