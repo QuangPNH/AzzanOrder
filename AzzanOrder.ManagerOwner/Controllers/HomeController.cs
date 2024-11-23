@@ -461,7 +461,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 								Console.WriteLine(addMessage);
 							}
 						}
-                        var emp = new Employee() { EmployeeName = owner.OwnerName, Phone = owner.Phone, Gmail = owner.Gmail, BirthDate = owner.BirthDate, RoleId = 1, Image = owner.Image};
+                        var emp = new Employee() { EmployeeName = owner.OwnerName, Phone = owner.Phone, Gender = owner.Gender,  Gmail = owner.Gmail, BirthDate = owner.BirthDate, RoleId = 1, Image = owner.Image, IsDelete = false, OwnerId = owner.OwnerId};
                         using (HttpClient client = new HttpClient())
                         {
                             HttpResponseMessage addResponse = await client.PostAsJsonAsync(_apiUrl + "Employee/Add", emp);
