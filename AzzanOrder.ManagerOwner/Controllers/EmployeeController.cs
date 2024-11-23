@@ -1,8 +1,6 @@
 ﻿using AzzanOrder.ManagerOwner.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using System.Reflection;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace AzzanOrder.ManagerOwner.Controllers
 {

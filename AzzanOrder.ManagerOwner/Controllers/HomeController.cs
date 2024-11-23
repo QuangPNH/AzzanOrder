@@ -478,11 +478,11 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         return RedirectToAction("Subscribe", "Home");
                     }
 
-
                     HttpContext.Response.Cookies.Append("LoginInfo", loginInfoJson, new CookieOptions
                     {
                         Expires = DateTimeOffset.UtcNow.AddDays(30)
                     });
+
                     HttpContext.Response.Cookies.Delete("TempLoginInfo");
                     return RedirectToAction("Index", "Home");
 				}
