@@ -1,20 +1,17 @@
-USE [master]
+﻿USE [master]
 GO
-/****** Object:  Database [OrderingAssistSystem]    Script Date: 23/11/2024 6:14:10 CH ******/
+DECLARE @kill varchar(8000) = '';  
+SELECT @kill = @kill + 'kill ' + CONVERT(varchar(5), session_id) + ';' 
+FROM sys.dm_exec_sessions 
+WHERE database_id = db_id('OrderingAssistSystem');
+EXEC(@kill);
+IF DB_ID('OrderingAssistSystem') IS NOT NULL
+BEGIN
+    ALTER DATABASE [OrderingAssistSystem] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
+    DROP DATABASE [OrderingAssistSystem];
+END
+GO
 CREATE DATABASE [OrderingAssistSystem]
- CONTAINMENT = NONE
- ON  PRIMARY 
-( NAME = N'OrderingAssistSystem', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\OrderingAssistSystem.mdf' , SIZE = 73728KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
- LOG ON 
-( NAME = N'OrderingAssistSystem_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\OrderingAssistSystem_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
- WITH CATALOG_COLLATION = DATABASE_DEFAULT, LEDGER = OFF
-GO
-ALTER DATABASE [OrderingAssistSystem] SET COMPATIBILITY_LEVEL = 160
-GO
-IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
-begin
-EXEC [OrderingAssistSystem].[dbo].[sp_fulltext_database] @action = 'enable'
-end
 GO
 ALTER DATABASE [OrderingAssistSystem] SET ANSI_NULL_DEFAULT OFF 
 GO
@@ -262,6 +259,7 @@ CREATE TABLE [dbo].[Notification](
 	[NotificationId] [int] IDENTITY(1,1) NOT NULL,
 	[Title] [nvarchar](max) NULL,
 	[Content] [nvarchar](max) NULL,
+	[IsRead] bit NULL,
 	[MemberId] [int] NULL,
 	[EmployeeId] [int] NULL,
  CONSTRAINT [PK_Notification] PRIMARY KEY CLUSTERED 
@@ -602,8 +600,8 @@ SET IDENTITY_INSERT [dbo].[MenuItem] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Notification] ON 
 
-INSERT [dbo].[Notification] ([NotificationId], [Title], [Content], [MemberId], [EmployeeId]) VALUES (1, N'Discount offer', N'Get 10% off on all coffee orders', 1, 2)
-INSERT [dbo].[Notification] ([NotificationId], [Title], [Content], [MemberId], [EmployeeId]) VALUES (2, N'Happy Hour', N'50% off on all drinks from 3-5 PM', 2, 2)
+INSERT [dbo].[Notification] ([NotificationId], [Title], [Content], [IsRead], [MemberId], [EmployeeId]) VALUES (1, N'Discount offer', N'Get 10% off on all coffee orders',false, 1, 2)
+INSERT [dbo].[Notification] ([NotificationId], [Title], [Content], [IsRead], [MemberId], [EmployeeId]) VALUES (2, N'Happy Hour', N'50% off on all drinks from 3-5 PM',false, 2, 2)
 SET IDENTITY_INSERT [dbo].[Notification] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Order] ON 

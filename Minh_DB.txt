@@ -1,17 +1,20 @@
-﻿USE [master]
+USE [master]
 GO
-DECLARE @kill varchar(8000) = '';  
-SELECT @kill = @kill + 'kill ' + CONVERT(varchar(5), session_id) + ';' 
-FROM sys.dm_exec_sessions 
-WHERE database_id = db_id('OrderingAssistSystem');
-EXEC(@kill);
-IF DB_ID('OrderingAssistSystem') IS NOT NULL
-BEGIN
-    ALTER DATABASE [OrderingAssistSystem] SET SINGLE_USER WITH ROLLBACK IMMEDIATE;
-    DROP DATABASE [OrderingAssistSystem];
-END
-GO
+/****** Object:  Database [OrderingAssistSystem]    Script Date: 23/11/2024 6:14:10 CH ******/
 CREATE DATABASE [OrderingAssistSystem]
+ CONTAINMENT = NONE
+ ON  PRIMARY 
+( NAME = N'OrderingAssistSystem', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\OrderingAssistSystem.mdf' , SIZE = 73728KB , MAXSIZE = UNLIMITED, FILEGROWTH = 65536KB )
+ LOG ON 
+( NAME = N'OrderingAssistSystem_log', FILENAME = N'C:\Program Files\Microsoft SQL Server\MSSQL16.MSSQLSERVER\MSSQL\DATA\OrderingAssistSystem_log.ldf' , SIZE = 8192KB , MAXSIZE = 2048GB , FILEGROWTH = 65536KB )
+ WITH CATALOG_COLLATION = DATABASE_DEFAULT, LEDGER = OFF
+GO
+ALTER DATABASE [OrderingAssistSystem] SET COMPATIBILITY_LEVEL = 160
+GO
+IF (1 = FULLTEXTSERVICEPROPERTY('IsFullTextInstalled'))
+begin
+EXEC [OrderingAssistSystem].[dbo].[sp_fulltext_database] @action = 'enable'
+end
 GO
 ALTER DATABASE [OrderingAssistSystem] SET ANSI_NULL_DEFAULT OFF 
 GO
@@ -81,7 +84,7 @@ ALTER DATABASE [OrderingAssistSystem] SET QUERY_STORE (OPERATION_MODE = READ_WRI
 GO
 USE [OrderingAssistSystem]
 GO
-/****** Object:  Table [dbo].[About]    Script Date: 08/11/2024 2:07:00 CH ******/
+/****** Object:  Table [dbo].[About]    Script Date: 23/11/2024 6:14:10 CH ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -97,7 +100,7 @@ CREATE TABLE [dbo].[About](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Bank]    Script Date: 08/11/2024 2:07:00 CH ******/
+/****** Object:  Table [dbo].[Bank]    Script Date: 23/11/2024 6:14:10 CH ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -113,7 +116,7 @@ CREATE TABLE [dbo].[Bank](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Employee]    Script Date: 08/11/2024 2:07:00 CH ******/
+/****** Object:  Table [dbo].[Employee]    Script Date: 23/11/2024 6:14:10 CH ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -138,7 +141,7 @@ CREATE TABLE [dbo].[Employee](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Feedback]    Script Date: 08/11/2024 2:07:00 CH ******/
+/****** Object:  Table [dbo].[Feedback]    Script Date: 23/11/2024 6:14:10 CH ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -153,7 +156,7 @@ CREATE TABLE [dbo].[Feedback](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[ItemCategory]    Script Date: 08/11/2024 2:07:00 CH ******/
+/****** Object:  Table [dbo].[ItemCategory]    Script Date: 23/11/2024 6:14:10 CH ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -166,13 +169,16 @@ CREATE TABLE [dbo].[ItemCategory](
 	[Image] [nvarchar](max) NULL,
 	[EmployeeId] [int] NULL,
 	[IsDelete] [bit] NULL,
+	[StartDate] [date] NULL,
+	[EndDate] [date] NULL,
+	[IsCombo] [bit] NULL,
  CONSTRAINT [PK_ItemCategory] PRIMARY KEY CLUSTERED 
 (
 	[ItemCategoryId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Member]    Script Date: 08/11/2024 2:07:00 CH ******/
+/****** Object:  Table [dbo].[Member]    Script Date: 23/11/2024 6:14:10 CH ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -194,7 +200,7 @@ CREATE TABLE [dbo].[Member](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[MemberVoucher]    Script Date: 08/11/2024 2:07:00 CH ******/
+/****** Object:  Table [dbo].[MemberVoucher]    Script Date: 23/11/2024 6:14:10 CH ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -212,7 +218,7 @@ CREATE TABLE [dbo].[MemberVoucher](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[MenuCategory]    Script Date: 08/11/2024 2:07:00 CH ******/
+/****** Object:  Table [dbo].[MenuCategory]    Script Date: 23/11/2024 6:14:10 CH ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -220,9 +226,6 @@ GO
 CREATE TABLE [dbo].[MenuCategory](
 	[MenuItemId] [int] NOT NULL,
 	[ItemCategoryId] [int] NOT NULL,
-	[StartDate] [datetime] NULL,
-	[EndDate] [datetime] NULL,
-	[IsForCombo] [bit] NULL,
  CONSTRAINT [PK_MenuCategory] PRIMARY KEY CLUSTERED 
 (
 	[MenuItemId] ASC,
@@ -230,7 +233,7 @@ CREATE TABLE [dbo].[MenuCategory](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[MenuItem]    Script Date: 08/11/2024 2:07:00 CH ******/
+/****** Object:  Table [dbo].[MenuItem]    Script Date: 23/11/2024 6:14:10 CH ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -250,7 +253,7 @@ CREATE TABLE [dbo].[MenuItem](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Notification]    Script Date: 08/11/2024 2:07:00 CH ******/
+/****** Object:  Table [dbo].[Notification]    Script Date: 23/11/2024 6:14:10 CH ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -268,7 +271,7 @@ CREATE TABLE [dbo].[Notification](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Order]    Script Date: 08/11/2024 2:07:00 CH ******/
+/****** Object:  Table [dbo].[Order]    Script Date: 23/11/2024 6:14:10 CH ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -287,7 +290,7 @@ CREATE TABLE [dbo].[Order](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[OrderDetail]    Script Date: 08/11/2024 2:07:00 CH ******/
+/****** Object:  Table [dbo].[OrderDetail]    Script Date: 23/11/2024 6:14:10 CH ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -305,7 +308,7 @@ CREATE TABLE [dbo].[OrderDetail](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Owner]    Script Date: 08/11/2024 2:07:00 CH ******/
+/****** Object:  Table [dbo].[Owner]    Script Date: 23/11/2024 6:14:10 CH ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -322,14 +325,14 @@ CREATE TABLE [dbo].[Owner](
 	[IsDelete] [bit] NULL,
 	[SubscriptionStartDate] [date] NOT NULL,
 	[SubscribeEndDate] [date] NOT NULL,
-	[IsFreeTrial][bit] NULL,
+	[IsFreeTrial] [bit] NULL,
  CONSTRAINT [PK_Owner] PRIMARY KEY CLUSTERED 
 (
 	[OwnerId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Promotion]    Script Date: 08/11/2024 2:07:00 CH ******/
+/****** Object:  Table [dbo].[Promotion]    Script Date: 23/11/2024 6:14:10 CH ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -346,7 +349,7 @@ CREATE TABLE [dbo].[Promotion](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Role]    Script Date: 08/11/2024 2:07:00 CH ******/
+/****** Object:  Table [dbo].[Role]    Script Date: 23/11/2024 6:14:10 CH ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -360,7 +363,7 @@ CREATE TABLE [dbo].[Role](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Table]    Script Date: 08/11/2024 2:07:00 CH ******/
+/****** Object:  Table [dbo].[Table]    Script Date: 23/11/2024 6:14:10 CH ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -376,7 +379,7 @@ CREATE TABLE [dbo].[Table](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[Voucher]    Script Date: 08/11/2024 2:07:00 CH ******/
+/****** Object:  Table [dbo].[Voucher]    Script Date: 23/11/2024 6:14:10 CH ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -392,7 +395,7 @@ CREATE TABLE [dbo].[Voucher](
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY]
 GO
-/****** Object:  Table [dbo].[VoucherDetail]    Script Date: 08/11/2024 2:07:00 CH ******/
+/****** Object:  Table [dbo].[VoucherDetail]    Script Date: 23/11/2024 6:14:10 CH ******/
 SET ANSI_NULLS ON
 GO
 SET QUOTED_IDENTIFIER ON
@@ -413,7 +416,7 @@ CREATE TABLE [dbo].[VoucherDetail](
 GO
 SET IDENTITY_INSERT [dbo].[About] ON 
 
-INSERT [dbo].[About] ([AboutId], [Title], [Content], [OwnerId]) VALUES (1, N'About Us', N'AZZAN was born to fulfill the mission of restoring the original coffee culture that has been forgotten and realizing the dream of Vietnamese Chocolate.
+INSERT [dbo].[About] ([AboutId], [Title], [Content], [OwnerId]) VALUES (1, N'About Us 2', N'AZZAN was born to fulfill the mission of restoring the original coffee culture that has been forgotten and realizing the dream of Vietnamese Chocolate.
 
 We are doing the opposite of what is happening with Cacao and coffee in Vietnam. From choosing seedlings to taking care of the trees, harvesting, processing raw materials, roasting and packaging finished products.
 
@@ -453,13 +456,15 @@ SET IDENTITY_INSERT [dbo].[Feedback] OFF
 GO
 SET IDENTITY_INSERT [dbo].[ItemCategory] ON 
 
-INSERT [dbo].[ItemCategory] ([ItemCategoryId], [ItemCategoryName], [Description], [Discount], [Image], [EmployeeId], [IsDelete]) VALUES (1, N'CAFÉ', N'COFFEE', 0, N'https://www.flaticon.com/free-icon/coffee-cup_8230211', 1, NULL)
-INSERT [dbo].[ItemCategory] ([ItemCategoryId], [ItemCategoryName], [Description], [Discount], [Image], [EmployeeId], [IsDelete]) VALUES (2, N'TRÀ', N'TEA', 0, N'https://www.freepik.com/icon/hot-tea_4300605', 1, NULL)
-INSERT [dbo].[ItemCategory] ([ItemCategoryId], [ItemCategoryName], [Description], [Discount], [Image], [EmployeeId], [IsDelete]) VALUES (3, N'Sữa CHUA', N'YOGURT', 0, N'https://www.google.com/imgres?q=s%E1%BB%AFa%20chua%20yogurt%20icon&imgurl=https%3A%2F%2Fpng.pngtree.com%2Fpng-clipart%2F20210312%2Fourmid%2Fpngtree-yogurt-clip-art-plain-yogurt-png-image_3033785.jpg&imgrefurl=https%3A%2F%2Fvi.pngtree.com%2Ffree-png-vectors%2Fyogurt&docid=Ap701QDLEZfmFM&tbnid=cPdzadW5b2u4TM&vet=12ahUKEwjb_rbak9uIAxVnqFYBHR3-E24QM3oECDcQAA..i&w=360&h=360&hcb=2&ved=2ahUKEwjb_rbak9uIAxVnqFYBHR3-E24QM3oECDcQAA', 1, NULL)
-INSERT [dbo].[ItemCategory] ([ItemCategoryId], [ItemCategoryName], [Description], [Discount], [Image], [EmployeeId], [IsDelete]) VALUES (4, N'SINH Tố & Nước ÉP', N'SMOOTHIE&FRUIT JUICE', 0, N'https://www.pngegg.com/vi/png-bydmc', 1, NULL)
-INSERT [dbo].[ItemCategory] ([ItemCategoryId], [ItemCategoryName], [Description], [Discount], [Image], [EmployeeId], [IsDelete]) VALUES (5, N'ÐÁ XAY', N'ICE BLENDED', 0, N'https://vi.pngtree.com/free-png-vectors/%C4%91%C3%A1-xay', 1, NULL)
-INSERT [dbo].[ItemCategory] ([ItemCategoryId], [ItemCategoryName], [Description], [Discount], [Image], [EmployeeId], [IsDelete]) VALUES (6, N'L?P PH?', N'TOPPING', 0, N'https://www.flaticon.com/free-icon/topping_3157439', 1, NULL)
-INSERT [dbo].[ItemCategory] ([ItemCategoryId], [ItemCategoryName], [Description], [Discount], [Image], [EmployeeId], [IsDelete]) VALUES (7, N'TRANG PHỤC', N'CLOTHES', 0, N'CLOTHES.IMG', 5, NULL)
+INSERT [dbo].[ItemCategory] ([ItemCategoryId], [ItemCategoryName], [Description], [Discount], [Image], [EmployeeId], [IsDelete], [StartDate], [EndDate], [IsCombo]) VALUES (1, N'CAFÉ', N'COFFEE', 0, N'https://www.flaticon.com/free-icon/coffee-cup_8230211', 1, 0, NULL, NULL, 0)
+INSERT [dbo].[ItemCategory] ([ItemCategoryId], [ItemCategoryName], [Description], [Discount], [Image], [EmployeeId], [IsDelete], [StartDate], [EndDate], [IsCombo]) VALUES (2, N'TRÀ', N'TEA', 0, N'https://www.freepik.com/icon/hot-tea_4300605', 1, 0, NULL, NULL, 0)
+INSERT [dbo].[ItemCategory] ([ItemCategoryId], [ItemCategoryName], [Description], [Discount], [Image], [EmployeeId], [IsDelete], [StartDate], [EndDate], [IsCombo]) VALUES (3, N'Sữa CHUA', N'YOGURT', 0, N'https://www.google.com/imgres?q=s%E1%BB%AFa%20chua%20yogurt%20icon&imgurl=https%3A%2F%2Fpng.pngtree.com%2Fpng-clipart%2F20210312%2Fourmid%2Fpngtree-yogurt-clip-art-plain-yogurt-png-image_3033785.jpg&imgrefurl=https%3A%2F%2Fvi.pngtree.com%2Ffree-png-vectors%2Fyogurt&docid=Ap701QDLEZfmFM&tbnid=cPdzadW5b2u4TM&vet=12ahUKEwjb_rbak9uIAxVnqFYBHR3-E24QM3oECDcQAA..i&w=360&h=360&hcb=2&ved=2ahUKEwjb_rbak9uIAxVnqFYBHR3-E24QM3oECDcQAA', 1, 0, NULL, NULL, 0)
+INSERT [dbo].[ItemCategory] ([ItemCategoryId], [ItemCategoryName], [Description], [Discount], [Image], [EmployeeId], [IsDelete], [StartDate], [EndDate], [IsCombo]) VALUES (4, N'SINH Tố & Nước ÉP', N'SMOOTHIE&FRUIT JUICE', 0, N'https://www.pngegg.com/vi/png-bydmc', 1, 0, NULL, NULL, 0)
+INSERT [dbo].[ItemCategory] ([ItemCategoryId], [ItemCategoryName], [Description], [Discount], [Image], [EmployeeId], [IsDelete], [StartDate], [EndDate], [IsCombo]) VALUES (5, N'ÐÁ XAY', N'ICE BLENDED', 0, N'https://vi.pngtree.com/free-png-vectors/%C4%91%C3%A1-xay', 1, 0, NULL, NULL, 0)
+INSERT [dbo].[ItemCategory] ([ItemCategoryId], [ItemCategoryName], [Description], [Discount], [Image], [EmployeeId], [IsDelete], [StartDate], [EndDate], [IsCombo]) VALUES (6, N'L?P PH?', N'TOPPING', 0, N'https://www.flaticon.com/free-icon/topping_3157439', 1, 0, NULL, NULL, 0)
+INSERT [dbo].[ItemCategory] ([ItemCategoryId], [ItemCategoryName], [Description], [Discount], [Image], [EmployeeId], [IsDelete], [StartDate], [EndDate], [IsCombo]) VALUES (7, N'TRANG PHỤC', N'CLOTHES', 0, N'CLOTHES.IMG', 5, 0, NULL, NULL, 0)
+INSERT [dbo].[ItemCategory] ([ItemCategoryId], [ItemCategoryName], [Description], [Discount], [Image], [EmployeeId], [IsDelete], [StartDate], [EndDate], [IsCombo]) VALUES (8, N'COMBO1', N'COMBO1', 0, N'COMBO1', 1, 0, NULL, NULL, 1)
+INSERT [dbo].[ItemCategory] ([ItemCategoryId], [ItemCategoryName], [Description], [Discount], [Image], [EmployeeId], [IsDelete], [StartDate], [EndDate], [IsCombo]) VALUES (14, NULL, NULL, NULL, NULL, 1, 0, NULL, NULL, 0)
 SET IDENTITY_INSERT [dbo].[ItemCategory] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Member] ON 
@@ -480,58 +485,63 @@ INSERT [dbo].[MemberVoucher] ([MemberVoucherId], [MemberId], [VoucherDetailId], 
 INSERT [dbo].[MemberVoucher] ([MemberVoucherId], [MemberId], [VoucherDetailId], [OrderId], [IsActive], [Quantity]) VALUES (18, 1, 7, NULL, 1, 1)
 SET IDENTITY_INSERT [dbo].[MemberVoucher] OFF
 GO
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (1, 1, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (2, 1, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (3, 1, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (4, 1, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (5, 1, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (6, 1, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (7, 1, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (8, 1, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (9, 1, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (10, 1, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (11, 1, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (12, 2, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (13, 2, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (14, 2, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (15, 2, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (16, 2, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (17, 2, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (18, 2, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (19, 2, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (20, 2, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (21, 2, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (22, 2, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (23, 2, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (24, 3, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (25, 3, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (26, 3, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (27, 3, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (28, 3, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (29, 3, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (30, 3, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (31, 4, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (32, 4, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (33, 4, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (34, 4, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (35, 4, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (36, 4, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (37, 4, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (38, 4, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (39, 4, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (40, 5, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (41, 5, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (42, 5, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (43, 5, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (44, 5, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (45, 5, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (46, 6, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (47, 6, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (48, 6, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (49, 6, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (50, 6, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (51, 6, NULL, NULL, 0)
-INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId], [StartDate], [EndDate], [IsForCombo]) VALUES (52, 6, NULL, NULL, 0)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (1, 1)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (1, 4)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (1, 5)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (1, 8)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (2, 1)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (3, 1)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (4, 1)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (5, 1)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (6, 1)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (7, 1)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (8, 1)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (9, 1)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (10, 1)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (11, 1)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (12, 2)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (13, 2)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (14, 2)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (15, 2)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (16, 2)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (17, 2)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (18, 2)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (19, 2)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (20, 2)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (21, 2)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (22, 2)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (23, 2)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (24, 3)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (25, 3)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (26, 3)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (27, 3)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (28, 3)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (29, 3)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (30, 3)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (31, 4)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (32, 4)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (33, 4)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (34, 4)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (35, 4)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (36, 4)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (37, 4)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (38, 4)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (39, 4)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (40, 5)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (41, 5)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (42, 5)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (43, 5)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (44, 5)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (45, 5)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (46, 6)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (47, 6)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (48, 6)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (49, 6)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (50, 6)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (51, 6)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (52, 6)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (53, 7)
+INSERT [dbo].[MenuCategory] ([MenuItemId], [ItemCategoryId]) VALUES (54, 1)
 GO
 SET IDENTITY_INSERT [dbo].[MenuItem] ON 
 
@@ -579,7 +589,7 @@ INSERT [dbo].[MenuItem] ([MenuItemId], [ItemName], [Price], [Description], [Disc
 INSERT [dbo].[MenuItem] ([MenuItemId], [ItemName], [Price], [Description], [Discount], [Image], [IsAvailable], [EmployeeId]) VALUES (42, N'Chocolate Bạc Hà', 35000, N'Mint Chocolate', 0, NULL, 1, 1)
 INSERT [dbo].[MenuItem] ([MenuItemId], [ItemName], [Price], [Description], [Discount], [Image], [IsAvailable], [EmployeeId]) VALUES (43, N'Chanh Tuyết', 30000, N'Snow Lemon', 0, NULL, 1, 1)
 INSERT [dbo].[MenuItem] ([MenuItemId], [ItemName], [Price], [Description], [Discount], [Image], [IsAvailable], [EmployeeId]) VALUES (44, N'Chanh Leo Tuyết', 35000, N'Snow Passion Fruit', 0, NULL, 1, 1)
-INSERT [dbo].[MenuItem] ([MenuItemId], [ItemName], [Price], [Description], [Discount], [Image], [IsAvailable], [EmployeeId]) VALUES (45, N'Đậu Xanh Cốt Dừa', 35000, N'Coconut Green Beans', 0, NULL, 1, 1)
+INSERT [dbo].[MenuItem] ([MenuItemId], [ItemName], [Price], [Description], [Discount], [Image], [IsAvailable], [EmployeeId]) VALUES (45, N'Đậu Xanh Cốt Dừa', 35000, N'Coconut Green Beans', 0, NULL, 0, 1)
 INSERT [dbo].[MenuItem] ([MenuItemId], [ItemName], [Price], [Description], [Discount], [Image], [IsAvailable], [EmployeeId]) VALUES (46, N'Thạch Dừa', 5000, N'Coconut Jelly', 0, NULL, 1, 1)
 INSERT [dbo].[MenuItem] ([MenuItemId], [ItemName], [Price], [Description], [Discount], [Image], [IsAvailable], [EmployeeId]) VALUES (47, N'Thạch Ðào', 5000, N'Peach Jelly', 0, NULL, 1, 1)
 INSERT [dbo].[MenuItem] ([MenuItemId], [ItemName], [Price], [Description], [Discount], [Image], [IsAvailable], [EmployeeId]) VALUES (48, N'Trân Châu', 7000, N'Bubble', 0, NULL, 1, 1)
@@ -587,6 +597,8 @@ INSERT [dbo].[MenuItem] ([MenuItemId], [ItemName], [Price], [Description], [Disc
 INSERT [dbo].[MenuItem] ([MenuItemId], [ItemName], [Price], [Description], [Discount], [Image], [IsAvailable], [EmployeeId]) VALUES (50, N'Đậu Ðỏ', 10000, N'Red Bean', 0, NULL, 1, 1)
 INSERT [dbo].[MenuItem] ([MenuItemId], [ItemName], [Price], [Description], [Discount], [Image], [IsAvailable], [EmployeeId]) VALUES (51, N'Hướng Duong', 20000, N'SunflOwner Seeds', 0, NULL, 1, 1)
 INSERT [dbo].[MenuItem] ([MenuItemId], [ItemName], [Price], [Description], [Discount], [Image], [IsAvailable], [EmployeeId]) VALUES (52, N'Hạt Bí', 20000, N'Pumpkin Seeds', 0, NULL, 1, 1)
+INSERT [dbo].[MenuItem] ([MenuItemId], [ItemName], [Price], [Description], [Discount], [Image], [IsAvailable], [EmployeeId]) VALUES (53, N'Sản phẩm thử nghiệm', 30000, N'Test product', 0, N'string', 1, 5)
+INSERT [dbo].[MenuItem] ([MenuItemId], [ItemName], [Price], [Description], [Discount], [Image], [IsAvailable], [EmployeeId]) VALUES (54, N'Tuan', 12345, N'NGU', 0, NULL, 1, 1)
 SET IDENTITY_INSERT [dbo].[MenuItem] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Notification] ON 
@@ -602,6 +614,8 @@ INSERT [dbo].[Order] ([OrderId], [OrderDate], [TableId], [Cost], [Tax], [MemberI
 INSERT [dbo].[Order] ([OrderId], [OrderDate], [TableId], [Cost], [Tax], [MemberId], [Status]) VALUES (3, CAST(N'2024-11-04T22:11:17.720' AS DateTime), 2, 45.6, NULL, 1, NULL)
 INSERT [dbo].[Order] ([OrderId], [OrderDate], [TableId], [Cost], [Tax], [MemberId], [Status]) VALUES (4, CAST(N'2024-11-04T23:16:13.707' AS DateTime), 3, 20, NULL, 1, NULL)
 INSERT [dbo].[Order] ([OrderId], [OrderDate], [TableId], [Cost], [Tax], [MemberId], [Status]) VALUES (5, CAST(N'2024-11-06T11:57:05.763' AS DateTime), 2, 112.5, NULL, 1, NULL)
+INSERT [dbo].[Order] ([OrderId], [OrderDate], [TableId], [Cost], [Tax], [MemberId], [Status]) VALUES (6, CAST(N'2024-11-13T16:34:45.743' AS DateTime), 2, 30000, NULL, NULL, NULL)
+INSERT [dbo].[Order] ([OrderId], [OrderDate], [TableId], [Cost], [Tax], [MemberId], [Status]) VALUES (7, CAST(N'2024-11-13T16:34:45.743' AS DateTime), 2, 30000, NULL, NULL, NULL)
 SET IDENTITY_INSERT [dbo].[Order] OFF
 GO
 SET IDENTITY_INSERT [dbo].[OrderDetail] ON 
@@ -612,6 +626,8 @@ INSERT [dbo].[OrderDetail] ([OrderDetailId], [Quantity], [MenuItemId], [OrderId]
 INSERT [dbo].[OrderDetail] ([OrderDetailId], [Quantity], [MenuItemId], [OrderId], [Status], [Description]) VALUES (4, 1, 45, 3, NULL, NULL)
 INSERT [dbo].[OrderDetail] ([OrderDetailId], [Quantity], [MenuItemId], [OrderId], [Status], [Description]) VALUES (5, 1, 2, 4, NULL, NULL)
 INSERT [dbo].[OrderDetail] ([OrderDetailId], [Quantity], [MenuItemId], [OrderId], [Status], [Description]) VALUES (6, 5, 29, 5, NULL, NULL)
+INSERT [dbo].[OrderDetail] ([OrderDetailId], [Quantity], [MenuItemId], [OrderId], [Status], [Description]) VALUES (7, 1, 29, 6, NULL, N'normal Ice, normal Sugar')
+INSERT [dbo].[OrderDetail] ([OrderDetailId], [Quantity], [MenuItemId], [OrderId], [Status], [Description]) VALUES (8, 1, 29, 7, NULL, N'normal Ice, normal Sugar')
 SET IDENTITY_INSERT [dbo].[OrderDetail] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Owner] ON 
@@ -673,7 +689,29 @@ INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES 
 INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (4, 2, 1)
 INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (4, 3, 1)
 INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (4, 4, 0)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (4, 5, 1)
 INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (7, 7, 1)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (10, 1, 1)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (10, 2, 1)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (10, 3, 1)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (11, 1, 1)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (11, 2, 1)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (12, 1, 0)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (12, 2, 0)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (12, 3, 0)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (12, 4, 0)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (12, 5, 0)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (13, 1, 1)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (13, 2, 0)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (13, 3, 1)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (13, 4, 1)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (13, 5, 0)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (14, 1, 1)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (14, 2, 0)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (14, 3, 0)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (14, 4, 0)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (14, 5, 0)
+INSERT [dbo].[Voucher] ([VoucherDetailId], [ItemCategoryId], [IsActive]) VALUES (14, 8, 0)
 GO
 SET IDENTITY_INSERT [dbo].[VoucherDetail] ON 
 
@@ -683,6 +721,13 @@ INSERT [dbo].[VoucherDetail] ([VoucherDetailId], [Title], [StartDate], [EndDate]
 INSERT [dbo].[VoucherDetail] ([VoucherDetailId], [Title], [StartDate], [EndDate], [Discount], [Price], [EmployeeId]) VALUES (4, N'New Year Discount', CAST(N'2024-01-01T00:00:00.000' AS DateTime), CAST(N'2024-01-10T00:00:00.000' AS DateTime), 10, 1000, 1)
 INSERT [dbo].[VoucherDetail] ([VoucherDetailId], [Title], [StartDate], [EndDate], [Discount], [Price], [EmployeeId]) VALUES (5, N'Giảm Giá Hỏi Chấm ', CAST(N'2024-10-31T07:27:11.887' AS DateTime), CAST(N'2024-10-31T07:27:11.887' AS DateTime), 15, 0, 1)
 INSERT [dbo].[VoucherDetail] ([VoucherDetailId], [Title], [StartDate], [EndDate], [Discount], [Price], [EmployeeId]) VALUES (7, N'Halloween', CAST(N'2024-11-01T00:00:00.000' AS DateTime), CAST(N'2024-11-06T00:00:00.000' AS DateTime), 15, 0, 5)
+INSERT [dbo].[VoucherDetail] ([VoucherDetailId], [Title], [StartDate], [EndDate], [Discount], [Price], [EmployeeId]) VALUES (8, N'Giảm Giá Thử Nghiệm', CAST(N'2024-11-15T03:34:14.853' AS DateTime), CAST(N'2024-11-20T03:34:14.853' AS DateTime), 10, 100, 1)
+INSERT [dbo].[VoucherDetail] ([VoucherDetailId], [Title], [StartDate], [EndDate], [Discount], [Price], [EmployeeId]) VALUES (9, N'1', CAST(N'2024-11-15T10:41:00.000' AS DateTime), CAST(N'2024-11-15T10:41:00.000' AS DateTime), 2, 3, 1)
+INSERT [dbo].[VoucherDetail] ([VoucherDetailId], [Title], [StartDate], [EndDate], [Discount], [Price], [EmployeeId]) VALUES (10, N'1', CAST(N'2024-11-15T10:51:00.000' AS DateTime), CAST(N'2024-11-15T10:51:00.000' AS DateTime), 2, 3, 1)
+INSERT [dbo].[VoucherDetail] ([VoucherDetailId], [Title], [StartDate], [EndDate], [Discount], [Price], [EmployeeId]) VALUES (11, N'Giảm giá bất ngờ', NULL, NULL, 10, 100, 1)
+INSERT [dbo].[VoucherDetail] ([VoucherDetailId], [Title], [StartDate], [EndDate], [Discount], [Price], [EmployeeId]) VALUES (12, N'Hello', CAST(N'2024-11-18T00:29:00.000' AS DateTime), CAST(N'2024-11-30T00:29:00.000' AS DateTime), 2, 100, 1)
+INSERT [dbo].[VoucherDetail] ([VoucherDetailId], [Title], [StartDate], [EndDate], [Discount], [Price], [EmployeeId]) VALUES (13, N'1234', NULL, NULL, 2, 100, 1)
+INSERT [dbo].[VoucherDetail] ([VoucherDetailId], [Title], [StartDate], [EndDate], [Discount], [Price], [EmployeeId]) VALUES (14, N'Hello', NULL, NULL, 21, 100, 1)
 SET IDENTITY_INSERT [dbo].[VoucherDetail] OFF
 GO
 ALTER TABLE [dbo].[About]  WITH CHECK ADD  CONSTRAINT [FK_About_Owner] FOREIGN KEY([OwnerId])
