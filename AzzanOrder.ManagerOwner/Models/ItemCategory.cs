@@ -15,6 +15,9 @@
         public string? Image { get; set; }
         public int? EmployeeId { get; set; }
         public bool? IsDelete { get; set; }
+        public DateTime? StartDate { get; set; }
+        public DateTime? EndDate { get; set; }
+        public bool? IsCombo { get; set; }
 
         public virtual Employee? Employee { get; set; }
         public virtual ICollection<MenuCategory> MenuCategories { get; set; }

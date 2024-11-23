@@ -22,13 +22,14 @@ namespace AzzanOrder.Data.Controllers
 
         // GET: api/Abouts
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<About>>> GetAbouts()
+        public async Task<ActionResult<IEnumerable<About>>> GetAbouts(int ?ownerId)
         {
           if (_context.Abouts == null)
           {
               return NotFound();
           }
-            return await _context.Abouts.ToListAsync();
+            var a = ownerId.HasValue ? await _context.Abouts.Where(a => a.OwnerId == ownerId).ToListAsync() : await _context.Abouts.ToListAsync();
+            return a;
         }
 
         // GET: api/Abouts/5

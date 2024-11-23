@@ -5,7 +5,7 @@
             <h5 class="card-title">Update Item Category</h5>
         </div>
         <div class="card-body">
-            <form asp-action="Update" method="post">
+            <form asp-action="UpdatePost"asp-controller="ItemCategory" method="post">
                 <input type="hidden" asp-for="ItemCategoryId" />
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Name</label>
@@ -23,6 +23,29 @@
                     </div>
                 </div>
 
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Start Date</label>
+                    <div class="col-sm-10">
+                        <input asp-for="StartDate" class="form-control" data-inputmask-alias="datetime"
+                               data-inputmask-inputformat="dd/mm/yyyy" />
+                        <span asp-validation-for="StartDate" class="text-danger"></span>
+                    </div>
+                </div>
+
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">End Date</label>
+                    <div class="col-sm-10">
+                        <input asp-for="EndDate" class="form-control" data-inputmask-alias="datetime"
+                               data-inputmask-inputformat="dd/mm/yyyy" />
+                        <span asp-validation-for="EndDate" class="text-danger"></span>
+                    </div>
+                </div>
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">IsCombo</label>
+                    <label class="col-sm-10">
+                        <input type="checkbox" class="form-check-input" name="IsCombo" value="true" @(Model.IsCombo == true ? "checked": "")>
+                    </label>
+                </div>
                 <div class="mb-3 row">
                     <div class="col-sm-10 ms-sm-auto">
                         <button type="submit" class="btn btn-primary">Submit</button>
