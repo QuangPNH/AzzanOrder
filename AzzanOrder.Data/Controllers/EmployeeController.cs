@@ -77,7 +77,6 @@ namespace AzzanOrder.Data.Controllers
                 return NotFound();
             }
             var employee = _context.Employees.Include(e => e.Role).Where(e => e.Role.RoleName.ToLower().Equals("staff") || e.Role.RoleName.ToLower().Equals("bartender")).FirstOrDefault(e => e.Phone.Equals(phone));
-            Console.WriteLine("djhfjshd "+phone);
             if (employee == null)
             {
                 return NotFound();

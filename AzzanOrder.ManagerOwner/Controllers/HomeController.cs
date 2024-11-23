@@ -400,7 +400,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             bool ownerExist = false;
             using (HttpClient client = new HttpClient())
             {
-                HttpResponseMessage getResponse = await client.GetAsync($"https://localhost:7183/api/Owner/Phone/{model.owner.Phone}");
+                HttpResponseMessage getResponse = await client.GetAsync(_apiUrl + $"Owner/Phone/{model.owner.Phone}");
                 if (getResponse.IsSuccessStatusCode)
                 {
                     var ownerData = await getResponse.Content.ReadAsStringAsync();
@@ -428,6 +428,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 		public async Task<IActionResult> VerifyOtpFreeTrial(string otp)
 		{
 			var sessionOtp = HttpContext.Session.GetString("OTP");
+            
 			// Check if the OTP matches
 			if (otp == sessionOtp?.ToString())
 			{
@@ -442,7 +443,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 					bool ownerExist = false;
 					using (HttpClient client = new HttpClient())
 					{
-						HttpResponseMessage getResponse = await client.GetAsync($"https://localhost:7183/api/Owner/Phone/{owner.Phone}");
+						HttpResponseMessage getResponse = await client.GetAsync(_apiUrl + $"Owner/Phone/{owner.Phone}");
 						if (getResponse.IsSuccessStatusCode)
 						{
 							var ownerData = await getResponse.Content.ReadAsStringAsync();
@@ -458,13 +459,23 @@ namespace AzzanOrder.ManagerOwner.Controllers
 					{
 						using (HttpClient client = new HttpClient())
 						{
-							HttpResponseMessage addResponse = await client.PostAsJsonAsync("https://localhost:7183/api/Owner/Add/", owner);
+							HttpResponseMessage addResponse = await client.PostAsJsonAsync(_apiUrl + "Owner/Add/", owner);
 							if (addResponse.IsSuccessStatusCode)
 							{
 								string addMessage = await addResponse.Content.ReadAsStringAsync();
 								Console.WriteLine(addMessage);
 							}
 						}
+                        var emp = new Employee() { EmployeeName = owner.OwnerName, Phone = owner.Phone, Gmail = owner.Gmail, BirthDate = owner.BirthDate, RoleId = 1, Image = owner.Image};
+                        using (HttpClient client = new HttpClient())
+                        {
+                            HttpResponseMessage addResponse = await client.PostAsJsonAsync(_apiUrl + "Employee/Add", emp);
+                            if (addResponse.IsSuccessStatusCode)
+                            {
+                                string addMessage = await addResponse.Content.ReadAsStringAsync();
+                                Console.WriteLine(addMessage);
+                            }
+                        }
                     }
                     else
                     {
