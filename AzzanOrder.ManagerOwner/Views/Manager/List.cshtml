@@ -18,22 +18,32 @@
                     <th style="width:20%">Phone Number</th>
                     <th class="d-none d-md-table-cell" style="width:20%">Email</th>
                     <th class="d-none d-md-table-cell" style="width:20%">Date of Birth</th>
+                    <th>Menu</th>
                     <th>Actions</th>
                 </tr>
             </thead>
             <tbody>
+                @{
+                    int position = 1;
+                }
+                @foreach (var emp in Model.employees)
+                {
                     <tr>
-                    <td style="widtd:5%">No.</td>
-                    <td style="widtd:20%">Employee Name</td>
-                    <td style="widtd:20%">Phone Number</td>
-                    <td class="d-none d-md-table-cell" style="width:20%">Email</td>
-                    <td class="d-none d-md-table-cell" style="width:20%">Date of Birtd</td>
-                    <td>Actions</td>
+                        <td>@position</td>
+                        <td>@emp.EmployeeName</td>
+                        <td>@emp.Phone</td>
+                        <td>@emp.Gmail</td>
+                        <td>@emp.BirthDate</td>
                         <td class="table-action">
-                            <a href="@Url.Action("Update", "Manager")"><i class="align-middle" data-feather="edit-2"></i></a>
-                            <a href="@Url.Action("Delete", "Manager")"><i class="align-middle" data-feather="trash"></i></a>
+                            <a href="@Url.Action("MenuList", "Manager", new { id = emp.EmployeeId})">Link</a>
+                        </td>
+                        <td class="table-action">
+                            <a href="@Url.Action("Update", "Manager", new { id = emp.EmployeeId})"><i class="align-middle" data-feather="edit-2"></i></a>
+                            <a href="@Url.Action("Delete", "Manager", new { id = emp.EmployeeId})"><i class="align-middle" data-feather="trash"></i></a>
                         </td>
                     </tr>
+                    position++;
+                }
             </tbody>
         </table>
 

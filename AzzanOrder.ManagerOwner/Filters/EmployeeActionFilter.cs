@@ -19,10 +19,12 @@
             {
                 var emp = JsonConvert.DeserializeObject<Employee>(empJson);
                 _employeeService.CurrentEmployee = emp;
-                if(emp.EmployeeId == 0)
+                _employeeService.CurrentOwner = null;
+                if (emp.EmployeeId == 0)
                 {
                     var owner = JsonConvert.DeserializeObject<Owner>(empJson);
                     _employeeService.CurrentOwner = owner;
+                    _employeeService.CurrentEmployee = null;
                 }
             }
         }

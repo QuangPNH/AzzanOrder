@@ -29,11 +29,14 @@
                 </tr>
             </thead>
             <tbody>
+                @{
+                    int position = 1;
+                }
                 @foreach (var item in Model.employees)
                 {
                     <tr>
                         <td>
-                            @Html.DisplayFor(modelItem => item.EmployeeId)
+                            @position
                         </td>
                         <td>
                             @Html.DisplayFor(modelItem => item.EmployeeName)
@@ -59,6 +62,7 @@
                             @* <a href="@Url.Action("Delete", "Employee")"><i class="align-middle" data-feather="trash"></i></a> *@
                         </td>
                     </tr>
+                    position++;
                 }
             </tbody>
         </table>

@@ -7,94 +7,94 @@ namespace AzzanOrder.ManagerOwner.Controllers
 {
     public class ManagerController : Controller
     {
-		private readonly string _apiUrl = "https://localhost:7183/api/";
-		public async Task<IActionResult> List(int? page)
+        private readonly string _apiUrl = "https://localhost:7183/api/";
+        public async Task<IActionResult> List(int? page)
         {
-			AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
-			if (authorizeLogin.Equals("owner"))
-			{
-				
-			}
-			else if (authorizeLogin.Equals("manager"))
-			{
-				return RedirectToAction("List", "Employee");
-			}
-			else if (authorizeLogin.Equals("owner expired"))
-			{
-				ViewBag.Message = "Your subscription has expired. Please subscribe again.";
-				return RedirectToAction("Login", "Home");
-			}
-			else if (authorizeLogin.Equals("manager expired"))
-			{
-				ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
-				return RedirectToAction("Login", "Home");
-			}
-			Owner emp = new Owner();
-			if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
-			{
-				emp = JsonConvert.DeserializeObject<Owner>(empJson);
-			}
-			List<Employee> employees = new List<Employee>();
-			int totalEmployees = 0;
-			using (HttpClient client = new HttpClient())
-			{
-				try
-				{
-					HttpResponseMessage res = await client.GetAsync(_apiUrl + "Employee");
-					string data = await res.Content.ReadAsStringAsync();
-					employees = JsonConvert.DeserializeObject<List<Employee>>(data);
-					totalEmployees = employees.Count(e => e.IsDelete == false);
-				}
-				catch (HttpRequestException e)
-				{
-					// Handle the exception here
-					ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
-				}
-			}
-			employees = employees.Where(e => e.ManagerId == emp.OwnerId && e.IsDelete == false && (e.Role.RoleName.ToLower() == "Magager".ToLower() || e.Role.RoleName.ToLower() == "Manager".ToLower())).ToList();
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+            if (authorizeLogin.Equals("owner"))
+            {
 
-			int pageSize = 10;
-			int pageNumber = page ?? 1;
-			int maxPageNav = 10;
-			totalEmployees = employees.Count();
-			int totalPages = (int)Math.Ceiling((double)totalEmployees / pageSize);
+            }
+            else if (authorizeLogin.Equals("manager"))
+            {
+                return RedirectToAction("List", "Employee");
+            }
+            else if (authorizeLogin.Equals("owner expired"))
+            {
+                ViewBag.Message = "Your subscription has expired. Please subscribe again.";
+                return RedirectToAction("Login", "Home");
+            }
+            else if (authorizeLogin.Equals("manager expired"))
+            {
+                ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
+                return RedirectToAction("Login", "Home");
+            }
+            Owner emp = new Owner();
+            if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
+            {
+                emp = JsonConvert.DeserializeObject<Owner>(empJson);
+            }
+            List<Employee> employees = new List<Employee>();
+            int totalEmployees = 0;
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    HttpResponseMessage res = await client.GetAsync(_apiUrl + "Employee");
+                    string data = await res.Content.ReadAsStringAsync();
+                    employees = JsonConvert.DeserializeObject<List<Employee>>(data);
+                    totalEmployees = employees.Count(e => e.IsDelete == false);
+                }
+                catch (HttpRequestException e)
+                {
+                    // Handle the exception here
+                    ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
+                }
+            }
+            employees = employees.Where(e => e.RoleId == 1).ToList();
 
-			// Paginate the employees
-			employees = employees.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
+            int maxPageNav = 10;
+            totalEmployees = employees.Count();
+            int totalPages = (int)Math.Ceiling((double)totalEmployees / pageSize);
 
-			var viewModel = new Model
-			{
-				anIntegerUsedForCountingNumberOfPageQueuedForTheList = totalPages,
-				anIntegerUsedForKnowingWhatTheCurrentPageOfTheList = pageNumber,
-				thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed = maxPageNav,
-				employees = employees,
-			};
-			return View(viewModel);
+            // Paginate the employees
+            employees = employees.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
+
+            var viewModel = new Model
+            {
+                anIntegerUsedForCountingNumberOfPageQueuedForTheList = totalPages,
+                anIntegerUsedForKnowingWhatTheCurrentPageOfTheList = pageNumber,
+                thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed = maxPageNav,
+                employees = employees,
+            };
+            return View(viewModel);
         }
 
         public IActionResult Add()
         {
-			AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
-			if (authorizeLogin.Equals("owner"))
-			{
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+            if (authorizeLogin.Equals("owner"))
+            {
 
-			}
-			else if (authorizeLogin.Equals("manager"))
-			{
-				return RedirectToAction("List", "Employee");
-			}
-			else if (authorizeLogin.Equals("owner expired"))
-			{
-				ViewBag.Message = "Your subscription has expired. Please subscribe again.";
-				return RedirectToAction("Login", "Home");
-			}
-			else if (authorizeLogin.Equals("manager expired"))
-			{
-				ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
-				return RedirectToAction("Login", "Home");
-			}
-			return View();
-		}
+            }
+            else if (authorizeLogin.Equals("manager"))
+            {
+                return RedirectToAction("List", "Employee");
+            }
+            else if (authorizeLogin.Equals("owner expired"))
+            {
+                ViewBag.Message = "Your subscription has expired. Please subscribe again.";
+                return RedirectToAction("Login", "Home");
+            }
+            else if (authorizeLogin.Equals("manager expired"))
+            {
+                ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
+                return RedirectToAction("Login", "Home");
+            }
+            return View();
+        }
 
         // POST: Employee/Add
         [HttpPost]
@@ -115,8 +115,9 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     employee.Image = "data:image/png;base64," + Convert.ToBase64String(fileBytes);
                 }
             }
-			employee.OwnerId = emp.OwnerId;
-			employee.IsDelete = false;
+            employee.RoleId = 1;
+            employee.OwnerId = emp.OwnerId;
+            employee.IsDelete = false;
             using (HttpClient client = new HttpClient())
             {
                 var json = JsonConvert.SerializeObject(employee);
@@ -171,7 +172,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     }
                     else
                     {
-                        if(employee.RoleId != 1)
+                        if (employee.RoleId != 1)
                         {
                             return RedirectToAction("List");
                         }
@@ -207,6 +208,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     employee.Image = "data:image/png;base64," + Convert.ToBase64String(fileBytes);
                 }
             }
+            employee.RoleId = 1;
             employee.OwnerId = emp.OwnerId;
             employee.IsDelete = false;
             using (HttpClient client = new HttpClient())
@@ -228,21 +230,77 @@ namespace AzzanOrder.ManagerOwner.Controllers
             return View(employee);
         }
 
-        public IActionResult MenuList()
+        public async Task<IActionResult> MenuList(int id, int? page)
         {
-            return View();
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+            if (authorizeLogin.Equals("owner"))
+            {
+
+            }
+            else if (authorizeLogin.Equals("manager"))
+            {
+                return RedirectToAction("List", "Employee");
+            }
+            else if (authorizeLogin.Equals("owner expired"))
+            {
+                ViewBag.Message = "Your subscription has expired. Please subscribe again.";
+                return RedirectToAction("Login", "Home");
+            }
+            else if (authorizeLogin.Equals("manager expired"))
+            {
+                ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
+                return RedirectToAction("Login", "Home");
+            }
+            List<ItemCategory> itemCategories = new List<ItemCategory>();
+            var menuItemCounts = 0;
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    var url1 = "https://localhost:7183/api/" + $"ItemCategory?id={id}";
+                    HttpResponseMessage itemCategoryRes = await client.GetAsync(url1);
+                    if (itemCategoryRes.IsSuccessStatusCode)
+                    {
+                        string itemCategoryData = await itemCategoryRes.Content.ReadAsStringAsync();
+                        itemCategories = JsonConvert.DeserializeObject<List<ItemCategory>>(itemCategoryData);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                    }
+
+
+                }
+                catch (HttpRequestException)
+                {
+                    ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
+                }
+
+            }
+            int pageSize = 10;
+            int pageNumber = page ?? 1;
+            int maxPageNav = 10;
+            int totalTables = itemCategories.SelectMany(x => x.MenuCategories).Count();
+            int totalPages = (int)Math.Ceiling((double)totalTables / pageSize);
+
+            var paginatedMenuCategories = itemCategories
+                .SelectMany(x => x.MenuCategories)
+                .Skip((pageNumber - 1) * pageSize)
+                .Take(pageSize)
+                .ToList();
+            var viewModel = new Model
+            {
+                anIntegerUsedForCountingNumberOfPageQueuedForTheList = totalPages,
+                anIntegerUsedForKnowingWhatTheCurrentPageOfTheList = pageNumber,
+                thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed = maxPageNav,
+                itemCategories = itemCategories,
+                menuCategories = paginatedMenuCategories,
+                employee = new Employee
+                {
+                    EmployeeId = id
+                }
+            };
+            return View(viewModel);
         }
-
-        public IActionResult MenuItemList()
-        {
-            return View();
-        }
-
-        public IActionResult MenuItemDetail()
-        {
-            return View();
-        }
-
-
     }
 }
