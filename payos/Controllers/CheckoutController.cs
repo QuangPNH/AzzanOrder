@@ -12,6 +12,8 @@ public class CheckoutController : Controller
 {
     private PayOS _payOS;
     private readonly IHttpContextAccessor _httpContextAccessor;
+    private readonly AzzanOrder.ManagerOwner.Models.Config _config = new AzzanOrder.ManagerOwner.Models.Config();
+
 
     public CheckoutController(PayOS payOS, IHttpContextAccessor httpContextAccessor)
     {
@@ -87,10 +89,6 @@ public class CheckoutController : Controller
         }
     }
 
-
-
-
-
     //Subscription payment
     [HttpPost("/Subscribe")]
     public async Task<string> Subscribe(
@@ -130,9 +128,8 @@ public class CheckoutController : Controller
             var a = System.Text.Json.JsonSerializer.Deserialize<List<Item>>(Item);
             foreach (var i in a)
             {
-                items.Add(new ItemData(i.name, i.quantity, (i.price - i.discount)*i.quantity));
+                items.Add(new ItemData(i.name, i.quantity, (i.price - i.discount) * i.quantity));
             }
-
 
             // Get the base URL of the current request
             var request = _httpContextAccessor.HttpContext.Request;
@@ -179,7 +176,7 @@ public class CheckoutController : Controller
             using (HttpClient client = new HttpClient())
             {
                 // Check if the phone number exists
-                HttpResponseMessage getResponse = await client.GetAsync($"https://localhost:7183/api/Owner/Phone/{owner.Phone}");
+                HttpResponseMessage getResponse = await client.GetAsync($"{_config._apiUrl}Owner/Phone/{owner.Phone}");
                 if (getResponse.IsSuccessStatusCode)
                 {
                     // Phone number exists, update subscription dates
@@ -189,7 +186,7 @@ public class CheckoutController : Controller
                         subscriptionEndDate = owner.SubscribeEndDate
                     };
                     HttpResponseMessage updateResponse = await client.PatchAsync(
-                        $"https://localhost:7183/api/Owner/UpdateSubscriptionDatesByPhone/{owner.Phone}",
+                        $"{_config._apiUrl}Owner/UpdateSubscriptionDatesByPhone/{owner.Phone}",
                         JsonContent.Create(updateData)
                     );
                     if (updateResponse.IsSuccessStatusCode)
@@ -201,7 +198,7 @@ public class CheckoutController : Controller
                 else
                 {
                     // Phone number does not exist, add new owner
-                    HttpResponseMessage addResponse = await client.PostAsJsonAsync("https://localhost:7183/api/Owner/Add/", owner);
+                    HttpResponseMessage addResponse = await client.PostAsJsonAsync($"{_config._apiUrl}Owner/Add/", owner);
                     if (addResponse.IsSuccessStatusCode)
                     {
                         string addMessage = await addResponse.Content.ReadAsStringAsync();
@@ -209,7 +206,7 @@ public class CheckoutController : Controller
                     }
                 }
 
-                HttpResponseMessage registerResponse = await client.PostAsJsonAsync("https://localhost:7093/Home/OwnerRegister", owner);
+                HttpResponseMessage registerResponse = await client.PostAsJsonAsync($"{_config._manager}Home/OwnerRegister", owner);
                 if (registerResponse.IsSuccessStatusCode)
                 {
                     string registerMessage = await registerResponse.Content.ReadAsStringAsync();
@@ -222,12 +219,10 @@ public class CheckoutController : Controller
                 Expires = DateTimeOffset.UtcNow.AddDays(30)
             });
 
-            return Redirect("https://localhost:7093/Home/Index");
+            return Redirect($"{_config._manager}Home/Index");
         }
-        return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=success");
+        return Redirect($"{_config._client}?tableqr=" + tableqr + "&status=success");
     }
-
-
 
     [HttpGet("/cancel")]
     public IActionResult Cancel()
@@ -238,40 +233,10 @@ public class CheckoutController : Controller
 
         if (itemType.Contains("Subscribe"))
         {
-            return Redirect("https://localhost:7093/Home/Subscribe");
+            return Redirect($"{_config._manager}Home/Subscribe");
         }
 
         //return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=cancel");
-        return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=success");
+        return Redirect($"{_config._client}?tableqr=" + tableqr + "&status=success");
     }
-
-
-
-
-
-
-
-    //var _apiUrl = $"https://localhost:7183/api/Member/";
-    //      using (HttpClient client = new HttpClient())
-    //      {
-    //          try
-    //          {
-    //              HttpResponseMessage res = await client.GetAsync(_apiUrl + memberId);
-    //              if (res.IsSuccessStatusCode)
-    //              {
-    //                  string data = await res.Content.ReadAsStringAsync();
-    //                  roles = JsonConvert.DeserializeObject<List<Role>>(data);
-    //              }
-    //              else
-    //              {
-    //                  // Handle the error response here
-    //                  ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
-    //              }
-    //          }
-    //          catch (HttpRequestException e)	
-    //          {
-    //              // Handle the exception here
-    //              ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
-    //          }
-    //      }
 }
