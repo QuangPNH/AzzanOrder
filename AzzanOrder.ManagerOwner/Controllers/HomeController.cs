@@ -16,7 +16,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
     public class HomeController : Controller
     {
         private readonly ILogger<HomeController> _logger;
-        private readonly string _apiUrl = "https://localhost:7183/api/";
+        private readonly string _apiUrl = new Config()._apiUrl;
 
         public HomeController(ILogger<HomeController> logger)
         {
@@ -297,7 +297,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 				return await SubscribeFreeTrialAction(model);
 			}
 
-			string redirectUrl = "https://localhost:3002/Subscribe/?";
+			string redirectUrl = new Config()._payOS + "Subscribe/?";
 			string price = "0";
 
 			if (pack.Equals("yearly"))

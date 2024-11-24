@@ -58,7 +58,6 @@ namespace AzzanOrder.Tests
             IsDelete = false
         }
     }.AsQueryable();
-
             // Step 2: Mock the DbSet<Employee>
             _mockSet = new Mock<DbSet<Employee>>();
             _mockSet.As<IQueryable<Employee>>().Setup(m => m.Provider).Returns(employees.Provider);

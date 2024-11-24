@@ -6,7 +6,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 {
     public class EmployeeController : Controller
     {
-        private readonly string _apiUrl = "https://localhost:7183/api/";
+        private readonly string _apiUrl = new Config()._apiUrl;
         public async Task<IActionResult> List(int? page)
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);

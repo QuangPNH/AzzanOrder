@@ -14,7 +14,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             _httpClient = httpClient;
         }
 
-        private readonly string _apiUrl = "https://localhost:7183/api/";
+        private readonly string _apiUrl = new Config()._apiUrl;
         public async Task<IActionResult> ListAsync(int? page)
         {
             List<Table> tables = new List<Table>();

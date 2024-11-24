@@ -5,7 +5,7 @@ namespace AzzanOrder.ManagerOwner.Models
 {
 	public class AuthorizeLogin
 	{
-		private readonly string _apiUrl = "https://localhost:7183/api/";
+		private readonly string _apiUrl = new Config()._apiUrl;
 		private readonly HttpContext _httpContext; // Add this field
 
 		public AuthorizeLogin(HttpContext httpContext) // Modify constructor to accept HttpContext

@@ -7,7 +7,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 {
     public class ManagerController : Controller
     {
-        private readonly string _apiUrl = "https://localhost:7183/api/";
+        private readonly string _apiUrl = new Config()._apiUrl;
         public async Task<IActionResult> List(int? page)
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
@@ -257,7 +257,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             {
                 try
                 {
-                    var url1 = "https://localhost:7183/api/" + $"ItemCategory?id={id}";
+                    var url1 = _apiUrl + $"ItemCategory?id={id}";
                     HttpResponseMessage itemCategoryRes = await client.GetAsync(url1);
                     if (itemCategoryRes.IsSuccessStatusCode)
                     {

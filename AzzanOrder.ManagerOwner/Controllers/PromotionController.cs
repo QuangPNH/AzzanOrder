@@ -9,7 +9,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
 {
     public class PromotionController : Controller
     {
-        private string urlPromotion = "https://localhost:7183/api/Promotions/GetByDescription/";
+        private readonly string _apiUrl = new Config()._apiUrl;
+        private string urlPromotion = new Config()._apiUrl + "Promotions/GetByDescription/";
 
         [HttpGet("ListAll")]
         public async Task<IActionResult> ListAll(int manaId = 1)
@@ -76,7 +77,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         // Log the exception if necessary
                     }
                 }
-                var response1 = await httpClient.GetStringAsync("https://localhost:7183/api/Promotions/GetPromotionsByEmpId/" + emp.EmployeeId);
+                var response1 = await httpClient.GetStringAsync(_apiUrl + "Promotions/GetPromotionsByEmpId/" + emp.EmployeeId);
                 promotions.Promotions = JsonConvert.DeserializeObject<List<Promotion>>(response1);
             }
 
@@ -137,7 +138,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 var json = JsonConvert.SerializeObject(promotion);
                 var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await client.PostAsync("https://localhost:7183/api/Promotions/Add", content);
+                HttpResponseMessage response = await client.PostAsync(_apiUrl + "Promotions/Add", content);
 
                 if (response.IsSuccessStatusCode)
                 {
@@ -177,7 +178,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             {
                 try
                 {
-                    HttpResponseMessage response = await client.GetAsync("https://localhost:7183/api/Promotions/" + id);
+                    HttpResponseMessage response = await client.GetAsync(_apiUrl + "Promotions/" + id);
                     if (response.IsSuccessStatusCode)
                     {
                         string data = await response.Content.ReadAsStringAsync();
@@ -239,11 +240,11 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     HttpResponseMessage response;
                     if (promotion.PromotionId == 0)
                     {
-                        response = await client.PostAsync("https://localhost:7183/api/Promotions/Add", content);
+                        response = await client.PostAsync(_apiUrl + "Promotions/Add", content);
                     }
                     else
                     {
-                        response = await client.PutAsync("https://localhost:7183/api/Promotions/Update", content);
+                        response = await client.PutAsync(_apiUrl + "Promotions/Update", content);
                     }
 
                     if (response.IsSuccessStatusCode)
@@ -264,7 +265,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
         {
             using (HttpClient client = new HttpClient())
             {
-                HttpResponseMessage response = await client.DeleteAsync($"https://localhost:7183/api/Promotions/Delete/{id}");
+                HttpResponseMessage response = await client.DeleteAsync(_apiUrl + "Promotions/Delete/" + id);
 
                 if (response.IsSuccessStatusCode)
                 {

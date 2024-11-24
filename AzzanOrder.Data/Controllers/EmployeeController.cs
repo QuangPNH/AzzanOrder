@@ -94,6 +94,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
+
             var employee = _context.Employees.Include(e => e.Role).Include(e => e.Owner).FirstOrDefault(e => e.Phone.Equals(phone) && e.Role.RoleName.ToLower().Equals("manager"));
 
             if (employee == null)
