@@ -1,5 +1,6 @@
 ﻿import React, { useState, useEffect } from 'react';
 import { getCookie } from '../Account/SignUpForm/Validate';
+import API_URLS from '../../config/apiUrls';
 
 const Frame = () => {
     const [promotions, setPromotions] = useState([]);
@@ -8,7 +9,7 @@ const Frame = () => {
     useEffect(() => {
         const fetchPromotions = async (manaId) => {
             try {
-                const url = manaId ? `https://localhost:7183/api/Promotions/GetByDescription/carousel?manaId=${manaId}` : 'https://localhost:7183/api/Promotions/GetByDescription/carousel';
+                const url = manaId ? API_URLS.API + `Promotions/GetByDescription/carousel?manaId=${manaId}` : API_URLS.API + 'Promotions/GetByDescription/carousel';
                 const response = await fetch(url);
                 const data = await response.json();
                 setPromotions(data);

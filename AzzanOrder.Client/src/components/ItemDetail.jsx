@@ -9,6 +9,7 @@ import CustomItem from './MenuDetail/CustomItem';
 import ShowMoreLink from './ShowMoreLink/ShowMoreLink';
 import ProductCard from './ProductCard/ProductCard';
 import { getCookie, setCookie } from './Account/SignUpForm/Validate';
+import API_URLS from '../config/apiUrls';
 
 const ItemDetail = ({ closeModal, imageSrc, key, title, price, discount , cate, desc, id }) => {
     const [products, setProducts] = useState([]);
@@ -25,7 +26,7 @@ const ItemDetail = ({ closeModal, imageSrc, key, title, price, discount , cate, 
 
     const fetchProducts = async (category) => {
         try {
-            const response = await fetch(`https://localhost:7183/api/MenuItem/Category/${category.cate}`);
+            const response = await fetch(API_URLS.API + `MenuItem/Category/${category.cate}`);
             const data = await response.json();
             const limitedData = data.slice(0, 4); // Get only the first 4 items from the data array
             setProducts(limitedData);
@@ -36,7 +37,7 @@ const ItemDetail = ({ closeModal, imageSrc, key, title, price, discount , cate, 
 
     const fetchToppings = async () => {
         try {
-            const response = await fetch(`https://localhost:7183/api/MenuItem/Category/TOPPING`);
+            const response = await fetch(API_URLS.API + `MenuItem/Category/TOPPING`);
             const data = await response.json();
             setToppings(data);
         } catch (error) {

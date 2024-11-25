@@ -12,6 +12,7 @@ import { getCookie, setCookie } from './Account/SignUpForm/Validate';
 import Cart from './Cart';
 import { del } from 'framer-motion/client';
 import Banner from './HomeItem/Banner';
+import API_URLS from '../config/apiUrls';
 
 const Homepage = () => {
     const [menuItems, setMenuItems] = useState([]);
@@ -89,7 +90,7 @@ const Homepage = () => {
 
     const fetchMenuItems = async (manaId) => {
         try {
-            const url = manaId ? `https://localhost:7183/api/MenuItem/top4?manaId=${manaId}` : 'https://localhost:7183/api/MenuItem/top4';
+            const url = manaId ? API_URLS.API + `MenuItem/top4?manaId=${manaId}` : API_URLS.API + 'MenuItem/top4';
             const response = await fetch(url);
             const data = await response.json();
             setMenuItems(data);
@@ -100,7 +101,7 @@ const Homepage = () => {
 
     const fetchOrderExits = async (tableQr, manaId) => {
         try {
-            const response = await fetch(`https://localhost:7183/api/Order/GetOrderByTableQr/${tableQr}/${manaId}`);
+            const response = await fetch(API_URLS.API + `Order/GetOrderByTableQr/${tableQr}/${manaId}`);
             if (response.ok) {
                 window.location.href = '/order';
             }
@@ -111,7 +112,7 @@ const Homepage = () => {
 
     const fetchRecentMenuItems = async (customerId, manaId) => {
         try {
-            const url = manaId ? `https://localhost:7183/api/MenuItem/RecentMenuItems/${customerId}?manaId=${manaId}` : `https://localhost:7183/api/MenuItem/RecentMenuItems/${customerId}`;
+            const url = manaId ? API_URLS.API + `MenuItem/RecentMenuItems/${customerId}?manaId=${manaId}` : API_URLS.API + `MenuItem/RecentMenuItems/${customerId}`;
             const response = await fetch(url);
             const data = await response.json();
             setRecentMenuItems(data);

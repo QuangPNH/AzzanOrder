@@ -5,6 +5,7 @@ import OrderItem from './TrackingOrder/OrderItem';
 import OrderSummary from './TrackingOrder/OrderSummary';
 import Button from "./Account/SignUpForm/Button";
 import { getCookie } from './Account/SignUpForm/Validate';
+import API_URLS from '../config/apiUrls';
 
 const OrderTrackScreen = () => {
     const [orders, setOrders] = useState([]);
@@ -23,7 +24,7 @@ const OrderTrackScreen = () => {
 
     const fetchOrders = async (tableQr, id) => {
         try {
-            const response = await fetch(`https://localhost:7183/api/Order/GetOrderByTableQr/${tableQr}/${id}`);
+            const response = await fetch(API_URLS.API + `Order/GetOrderByTableQr/${tableQr}/${id}`);
             if (response.ok) {
                 const data = await response.json();
                 setOrders(data);
@@ -35,7 +36,7 @@ const OrderTrackScreen = () => {
 
      const fetchCustomerOrder = async (customerId) => {
          try {
-             const response = await fetch(`https://localhost:7183/api/Order/GetCustomerOrder/${customerId}`);
+             const response = await fetch(API_URLS.API + `Order/GetCustomerOrder/${customerId}`);
              if (response.ok) {
                  const data = await response.json();
                  setCustomerOrder(data);
@@ -57,7 +58,7 @@ const OrderTrackScreen = () => {
         if(memberId != ''){
             try {
 
-                await fetch(`https://localhost:7183/api/Member/UpdatePoints/memberId/point?memberId=${memberId}&point=25`);
+                await fetch(API_URLS.API + `Member/UpdatePoints/memberId/point?memberId=${memberId}&point=25`);
             } catch (error) {
                 console.error('Error updating member points:', error);
             }

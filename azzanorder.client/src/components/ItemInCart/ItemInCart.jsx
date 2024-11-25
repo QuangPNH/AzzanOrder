@@ -3,6 +3,7 @@ import MenuSeparator from "./MenuSeparator";
 import QuantityControl from "./QuantityControl";
 import AmountBar from '../MenuDetail/AmountBar';
 import CustomItem from '../MenuDetail/CustomItem';
+import API_URLS from "../../config/apiUrls";
 
 import { getCookie, setCookie } from '../Account/SignUpForm/Validate';
 
@@ -77,7 +78,7 @@ const ItemInCart = ({ id, name, options, price, quantity, onQuantityChange }) =>
 
     const checkLegal = async (item, id, voucher) => {
         try {
-            const response = await fetch(`https://localhost:7183/api/Vouchers/voucherDetailId/menuItemId?voucherDetailid=${voucher.voucherDetailId}&menuItemId=${item.id}&employeeId=${id}`);
+            const response = await fetch(API_URLS.API + `Vouchers/voucherDetailId/menuItemId?voucherDetailid=${voucher.voucherDetailId}&menuItemId=${item.id}&employeeId=${id}`);
             const data = await response.json();
             return data;
         } catch (error) {

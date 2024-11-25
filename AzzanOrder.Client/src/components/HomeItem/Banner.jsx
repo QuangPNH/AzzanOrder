@@ -2,6 +2,7 @@
 import DotIndicator from './DotIndicator';
 import ImageWrapper from './ImageWrapper';
 import { getCookie } from '../Account/SignUpForm/Validate';
+import API_URLS from '../../config/apiUrls';
 
 const Banner = () => {
     const [promotions, setPromotions] = useState([]);
@@ -13,7 +14,7 @@ const Banner = () => {
 
     const fetchImages = async (manaId) => {
         try {
-            const url = manaId ? `https://localhost:7183/api/Promotions/GetByDescription/banner?manaId=${manaId}` : 'https://localhost:7183/api/Promotions/GetByDescription/banner';
+            const url = manaId ? API_URLS.API + `Promotions/GetByDescription/banner?manaId=${manaId}` : API_URLS.API + 'Promotions/GetByDescription/banner';
             const response = await fetch(url);
             const data = await response.json();
             setPromotions(Array.isArray(data) ? data : []);

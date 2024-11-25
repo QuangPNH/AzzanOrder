@@ -2,6 +2,7 @@
 import InputField from "./InputField";
 import Button from "./Button";
 import LoginPage from '../LoginPage';
+import API_URLS from '../../../config/apiUrls';
 
 function SignUpWidget({ title, icon, placeholder, buttonText, onCheck }) {
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -21,7 +22,7 @@ function SignUpWidget({ title, icon, placeholder, buttonText, onCheck }) {
     const handleSubmitPhoneNumber = async (event) => {
         event.preventDefault();
         try {
-            let response = await fetch(`https://localhost:7183/api/Member/Register/${phoneNumber}`);
+            let response = await fetch(API_URLS.API + `Member/Register/${phoneNumber}`);
             if (response.ok) {
                 memberInfo = await response.json();
                 sessionStorage.setItem('memberInfo', JSON.stringify(memberInfo));
@@ -41,7 +42,7 @@ function SignUpWidget({ title, icon, placeholder, buttonText, onCheck }) {
         const receivedOTP = sessionStorage.getItem('savedOTP');
         if (enterOTP === receivedOTP) {
             setCookie('memberInfo', JSON.stringify(sessionStorage.getItem('memberInfo')), 100);
-            let response = await fetch(`https://localhost:7183/api/Member/`, {
+            let response = await fetch(API_URLS.API + `Member/`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',

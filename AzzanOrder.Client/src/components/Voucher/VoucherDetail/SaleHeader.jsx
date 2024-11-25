@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect, useRef } from 'react';
+import API_URLS from '../../../config/apiUrls';
 
 const SaleHeader = ({voucherDetailId, endDate }) => {
     const [categoriesByVd, setCategoriesByVd] = useState([]);
@@ -13,7 +14,7 @@ const SaleHeader = ({voucherDetailId, endDate }) => {
 
     const fetchVoucherBy = async (voucherDetailId) => {
         try {
-            const response = await fetch(`https://localhost:7183/api/ItemCategory/VoucherDetailId?VoucherDetailId=${voucherDetailId}`);
+            const response = await fetch(API_URLS.API + `ItemCategory/VoucherDetailId?VoucherDetailId=${voucherDetailId}`);
             const data = await response.json();
             setCategoriesByVd(data);
         } catch (error) {

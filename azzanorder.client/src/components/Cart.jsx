@@ -4,6 +4,7 @@ import CartHeader from './ItemInCart/CartHeader';
 import PriceCalculator from './PriceCalculator/PriceCalculator';
 import { getCookie, setCookie } from './Account/SignUpForm/Validate';
 import VoucherCart from './VoucherCart';
+import API_URLS from '../config/apiUrls';
 
 function getCartData() {
     const cartDataString = getCookie("cartData");
@@ -64,7 +65,7 @@ export const calculateTotal = async () => {
 
 const checkLegal = async (item, id, voucher) => {
     try {
-        const response = await fetch(`https://localhost:7183/api/Vouchers/voucherDetailId/menuItemId?voucherDetailid=${voucher.voucherDetailId}&menuItemId=${item.id}&employeeId=${id}`);
+        const response = await fetch(API_URLS.API + `Vouchers/voucherDetailId/menuItemId?voucherDetailid=${voucher.voucherDetailId}&menuItemId=${item.id}&employeeId=${id}`);
         const data = await response.json();
         return data;
     } catch (error) {

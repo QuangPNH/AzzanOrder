@@ -1,6 +1,7 @@
 ﻿import React, { useState, useEffect } from 'react';
 import BuyVoucher from './BuyVoucher';
 import { getCookie, setCookie } from "../../Account/SignUpForm/Validate";
+import API_URLS from '../../../config/apiUrls';
 const SaleContent = ({ saleAmount, price, infiniteUses, useCount, bought, voucherDetailId }) => {
     const [vouchers, setVouchers] = useState([]);
     const [showLogout, setLogout] = useState(false);
@@ -13,7 +14,7 @@ const SaleContent = ({ saleAmount, price, infiniteUses, useCount, bought, vouche
     // const voucherDetails = async (voucherDetailId) => {
     //     try {
     //         if (voucherDetailId != '') {
-    //             const response = await fetch(`https://localhost:7183/api/VoucherDetail/${voucherDetailId}`);
+    //             const response = await fetch(API_URLS.API + `VoucherDetail/${voucherDetailId}`);
     //             const data = await response.json();
     //             setVouchers(data);
     //         }
@@ -25,7 +26,7 @@ const SaleContent = ({ saleAmount, price, infiniteUses, useCount, bought, vouche
 
     const quantity = async () => {
         try {
-            const response = await fetch(`https://localhost:7183/api/MemberVouchers/memberId/voucherDetailId?memberId=${JSON.parse(getCookie('memberInfo')).memberId}&voucherDetailId=${voucherDetailId}`)
+            const response = await fetch(API_URLS.API + `MemberVouchers/memberId/voucherDetailId?memberId=${JSON.parse(getCookie('memberInfo')).memberId}&voucherDetailId=${voucherDetailId}`)
             const data = await response.json();
             setQuantityV(data);
             // console.log(data, 'quantity');

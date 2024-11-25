@@ -1,10 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import { getCookie } from '../Account/SignUpForm/Validate';
 import LoginPage from '../Account/LoginPage';
+import API_URLS from '../../config/apiUrls';
 
 const fetchData = async (phoneNumber, setImage, setNavItems, navItems) => {
     try {
-        const response = await fetch(`https://localhost:7183/api/Member/Phone/${phoneNumber}`);
+        const response = await fetch(API_URLS.API + `Member/Phone/${phoneNumber}`);
         const data = await response.json();
         setImage(data.image);
         const updatedNavItems = [...navItems];

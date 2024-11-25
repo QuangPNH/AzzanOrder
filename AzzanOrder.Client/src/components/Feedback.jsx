@@ -7,6 +7,7 @@ import FeedbackForm from './Feedback/FeedbackForm';
 import FeedbackNotice from './Feedback/FeedbackNotice';
 import FeedbackButton from './Feedback/FeedbackButton';
 import { getCookie } from './Account/SignUpForm/Validate';
+import API_URLS from '../config/apiUrls';
 
 const FeedbackScreen = () => {
     const [feedback, setContent] = useState(null);
@@ -22,7 +23,7 @@ const FeedbackScreen = () => {
 
     const fetchContentFromAPI = async (id) => {
         try {
-            const response = await fetch(`https://localhost:7183/api/Feedback/ByMemberId/${id}`);
+            const response = await fetch(API_URLS.API + `Feedback/ByMemberId/${id}`);
             if (response.ok) {
                 const data = await response.json();
                 setContent(data);
@@ -36,8 +37,8 @@ const FeedbackScreen = () => {
         try {
             const method = feedback?.memberId ? 'PUT' : 'POST';
             const url = feedback?.memberId
-                ? 'https://localhost:7183/api/Feedback/Update'
-                : 'https://localhost:7183/api/Feedback/Add';
+                ? API_URLS.API + 'Feedback/Update'
+                : API_URLS.API + 'Feedback/Add';
 
             const feedbackData = {
                 ...feedback,

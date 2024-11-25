@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getCookie } from '../Account/SignUpForm/Validate';
+import API_URLS from '../../config/apiUrls';
 
 const Logo = () => {
     const [logoSrc, setLogoSrc] = useState('');
@@ -10,7 +11,7 @@ const Logo = () => {
             // Fetch the logo URL based on the tableqr value
             const fetchLogoSrc = async (manaId) => {
                 try {
-                    const url = manaId ? `https://localhost:7183/api/Promotions/GetByDescription/logo?manaId=${manaId}` : 'https://localhost:7183/api/Promotions/GetByDescription/logo';
+                    const url = manaId ? API_URLS.API + `Promotions/GetByDescription/logo?manaId=${manaId}` : API_URLS.API + 'Promotions/GetByDescription/logo';
                     const response = await fetch(url);
                     if (!response.ok) {
                         throw new Error("Network response was not ok");

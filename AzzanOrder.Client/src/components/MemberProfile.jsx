@@ -8,6 +8,7 @@ import NameLabel from '../components/Profile/NameLabel';
 import ProfilePicture from '../components/Profile/ProfilePicture';
 import ProfileButton from './Profile/ProfileButton';
 import { getCookie } from './Account/SignUpForm/Validate';
+import API_URLS from '../config/apiUrls';
 
 const MemberProfile = () => {
     const [memberInfo, setMemberInfo] = useState({
@@ -33,7 +34,7 @@ const MemberProfile = () => {
 
     const setFormattedMemberInfo = async (phone) => {
         try {
-            const response = await fetch(`https://localhost:7183/api/Member/Phone/${phone}`);
+            const response = await fetch(API_URLS.API + `Member/Phone/${phone}`);
             if (response.ok) {
                 const data = await response.json();
                 const formattedMemberInfo = {
@@ -60,7 +61,7 @@ const MemberProfile = () => {
 
     const handleSave = async () => {
         try {
-            const response = await fetch('https://localhost:7183/api/Member/Update', {
+            const response = await fetch(API_URLS.API + 'Member/Update', {
                 method: 'PUT',
                 headers: {
                     'Content-Type': 'application/json'

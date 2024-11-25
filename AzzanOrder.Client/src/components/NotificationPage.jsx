@@ -4,6 +4,7 @@ import Header from '../components/Header/Header';
 import NotificationCard from './Notification/NotificationCard';
 import NotificationPageTitle from './Notification/NotificationPageTitle';
 import { getCookie } from './Account/SignUpForm/Validate';
+import API_URLS from '../config/apiUrls';
 
 const NotificationPage = () => {
     const [notifications, setNotifications] = useState([]);
@@ -20,7 +21,7 @@ const NotificationPage = () => {
 
     const fetchNotifications = async (memberInfo) => {
         try {
-            const response = await fetch(`https://localhost:7183/api/Notification/Member/${memberInfo.memberId}`);
+            const response = await fetch(API_URLS.API + `Notification/Member/${memberInfo.memberId}`);
             const data = await response.json();
             setNotifications(data);
         } catch (error) {

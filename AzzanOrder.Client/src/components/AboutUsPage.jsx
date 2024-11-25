@@ -3,6 +3,7 @@ import Footer from '../components/Footer/Footer';
 import Header from '../components/Header/Header';
 import Banner from '../components/HomeItem/Banner';
 import AboutUs from './AboutUsComponent/AboutUs';
+import API_URLS from '../config/apiUrls';
 
 
 
@@ -13,7 +14,7 @@ const Homepage = () => {
     }, []);
     const fetchAbout = async () => {
         try {
-            const response = await fetch(`https://localhost:7183/api/Abouts`);
+            const response = await fetch(API_URLS.API + `Abouts`);
             const data = await response.json();
             setAbout(data);
         } catch (error) {

@@ -3,6 +3,7 @@ import Logo from "./Logo";
 import Navigation from "./Navigation";
 import Navbar from "./Navbar"; // Assuming you have a Navbar component
 import { getCookie } from '../Account/SignUpForm/Validate';
+import API_URLS from "../../config/apiUrls";
 
 const Header = () => {
     const [showNavbar, setShowNavbar] = useState(false);
@@ -20,7 +21,7 @@ const Header = () => {
             // Fetch the background color based on the tableqr value
             const fetchBackgroundColor = async (manaId) => {
                 try {
-                    const url = manaId ? `https://localhost:7183/api/Promotions/GetByDescription/color?manaId=${manaId}` : `https://localhost:7183/api/Promotions/GetByDescription/color`;
+                    const url = manaId ? API_URLS.API + `Promotions/GetByDescription/color?manaId=${manaId}` : API_URLS.API + `Promotions/GetByDescription/color`;
                     const response = await fetch(url);
                     if (response.ok) {
                         const data = await response.json();

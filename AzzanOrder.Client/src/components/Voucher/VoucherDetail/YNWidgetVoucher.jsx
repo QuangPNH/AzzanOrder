@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { getCookie, setCookie } from '../../Account/SignUpForm/Validate';
+import API_URLS from '../../../config/apiUrls';
 
 function YNWidgetVoucher({ title, errorTitle, onClose, voucherDetailId }) {
 
@@ -12,7 +13,7 @@ function YNWidgetVoucher({ title, errorTitle, onClose, voucherDetailId }) {
 
   const fetchMember = async () => {
     try {
-      const response = await fetch(`https://localhost:7183/api/Member/${JSON.parse(getCookie('memberInfo')).memberId}`);
+      const response = await fetch(API_URLS.API + `Member/${JSON.parse(getCookie('memberInfo')).memberId}`);
       const data = await response.json();
       setMember(data);
     } catch (error) {
@@ -21,7 +22,7 @@ function YNWidgetVoucher({ title, errorTitle, onClose, voucherDetailId }) {
   };
   const fetchVoucherDetail = async (voucherDetailId) => {
     try {
-      const response = await fetch(`https://localhost:7183/api/VoucherDetail/${voucherDetailId}`);
+      const response = await fetch(API_URLS.API + `VoucherDetail/${voucherDetailId}`);
       const data = await response.json();
       setVoucherDetail(data);
     } catch (error) {
@@ -40,7 +41,7 @@ function YNWidgetVoucher({ title, errorTitle, onClose, voucherDetailId }) {
 
   // const fetchMemberVoucher = async (memberVoucher) => {
   //   try {
-  //       const response = await fetch('https://localhost:7183/api/MemberVouchers/Add', {
+  //       const response = await fetch(API_URLS.API + 'MemberVouchers/Add', {
   //           method: 'POST', // Sử dụng phương thức POST để thêm dữ liệu
   //           headers: {
   //               'Content-Type': 'application/json', // Đặt Content-Type là JSON
@@ -58,7 +59,7 @@ function YNWidgetVoucher({ title, errorTitle, onClose, voucherDetailId }) {
   //       console.error('Error adding member voucher:', error);
   //   }
   // };
-  const apiUrl = 'https://localhost:7183/api/MemberVouchers/Add';
+  const apiUrl = API_URLS.API + 'MemberVouchers/Add';
   const handleSubmit = async () => {
     console.log(member.memberId);
     fetch(apiUrl, {

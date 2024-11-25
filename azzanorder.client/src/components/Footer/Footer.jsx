@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import ContactInfo from "./ContactInfo";
 import Copyright from "./Copyright";
 import { getCookie } from '../Account/SignUpForm/Validate';
+import API_URLS from "../../config/apiUrls";
 
 const Footer = () => {
     const [backgroundColor, setBackgroundColor] = useState('#f6b5b5'); // Default background color
@@ -13,7 +14,7 @@ const Footer = () => {
     const tableqr = getCookie("tableqr");
     const fetchData = async (endpoint, manaId, setData) => {
         try {
-            const url = manaId ? `https://localhost:7183/api/Promotions/GetByDescription/${endpoint}?manaId=${manaId}` : `https://localhost:7183/api/Promotions/GetByDescription/${endpoint}`;
+            const url = manaId ? API_URLS.API + `Promotions/GetByDescription/${endpoint}?manaId=${manaId}` : API_URLS.API + `Promotions/GetByDescription/${endpoint}`;
             const response = await fetch(url);
             if (response.ok) {
                 const data = await response.json();

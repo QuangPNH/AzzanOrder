@@ -1,6 +1,7 @@
 ﻿import { useState, useEffect } from 'react';
 import DropdownItem from './DropdownItem';
 import { getCookie } from '../Account/SignUpForm/Validate';
+import API_URLS from '../../config/apiUrls';
 
 const Dropdown = ({ options, onChange, onClick}) => {
     const [items, setItems] = useState([]);
@@ -20,7 +21,7 @@ const Dropdown = ({ options, onChange, onClick}) => {
 
     const fetchLabels = async (id) => {
         try {
-            const url = id ? `https://localhost:7183/api/ItemCategory?id=${id}` : 'https://localhost:7183/api/ItemCategory';
+            const url = id ? API_URLS.API + `ItemCategory?id=${id}` : API_URLS.API + 'ItemCategory';
             const response = await fetch(url);
             const data = await response.json();
             return data;

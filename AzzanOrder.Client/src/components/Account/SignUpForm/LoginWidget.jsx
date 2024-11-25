@@ -2,6 +2,7 @@
 import InputField from "./InputField";
 import Button from "./Button";
 import SignUpPage from "../SignUpPage";
+import API_URLS from '../../../config/apiUrls';
 
 function LoginWidget({ title, icon, placeholder, buttonText, onCheck }) {
     const [phoneNumber, setPhoneNumber] = useState('');
@@ -14,7 +15,7 @@ function LoginWidget({ title, icon, placeholder, buttonText, onCheck }) {
     const handleSubmit = async (event) => {
         event.preventDefault();
         try {
-            let response = await fetch(`https://localhost:7183/api/Member/Phone/${phoneNumber}`);
+            let response = await fetch(API_URLS.API + `Member/Phone/${phoneNumber}`);
             if (response.ok) {
                 const memberInfo = await response.json();
                 memberInfo.image = "null";

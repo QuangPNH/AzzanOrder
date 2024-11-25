@@ -6,6 +6,7 @@ import ProductSale from './Voucher/VoucherDetail/ProductSale';
 import PointsDisplay from './Voucher/PointDisplay';
 import VoucherList from './Voucher/VoucherList';
 import { getCookie } from './Account/SignUpForm/Validate';
+import API_URLS from '../config/apiUrls';
 
 const VoucherScreen = () => {
     const [vouchers, setVouchers] = useState([]);
@@ -35,7 +36,7 @@ const VoucherScreen = () => {
     const fetchMemberVouchers = async (memberId, manaId) => {
         try {
         
-            const response = await fetch(`https://localhost:7183/api/MemberVouchers/memberId?memberId=${memberId}&employeeId=${manaId}`);
+            const response = await fetch(API_URLS.API + `MemberVouchers/memberId?memberId=${memberId}&employeeId=${manaId}`);
             //dang sửa API cho phần này về việc voucher và một số thành phần cần có sự quản lý của từng employeeId
             const data = await response.json();
             setMemberVouchers([true]);
@@ -48,7 +49,7 @@ const VoucherScreen = () => {
     const fetchVouchers = async (category, manaId) => {
         try {
             
-            const response = category == '' ? await fetch(`https://localhost:7183/api/VoucherDetail/?employeeId=${manaId}`) : await fetch(`https://localhost:7183/api/VoucherDetail/categoryId?categoryId=${category}&employeeId=${manaId}`);
+            const response = category == '' ? await fetch(API_URLS.API + `VoucherDetail/?employeeId=${manaId}`) : await fetch(API_URLS.API + `VoucherDetail/categoryId?categoryId=${category}&employeeId=${manaId}`);
             const data = await response.json();
             if (category == '') {
                 setAllVouchers(data);
@@ -64,7 +65,7 @@ const VoucherScreen = () => {
 
     const fetchMembers = async (customerId) => {
         try {
-            const response = await fetch(`https://localhost:7183/api/Member/${customerId}`);
+            const response = await fetch(API_URLS.API + `Member/${customerId}`);
             const data = await response.json();
             setPoint(true);
             setPoint(data);
@@ -76,7 +77,7 @@ const VoucherScreen = () => {
 
     const fetchCategories = async (manaId) => {
         try {
-            const response = await fetch(`https://localhost:7183/api/ItemCategory?id=${manaId}`);
+            const response = await fetch(API_URLS.API + `ItemCategory?id=${manaId}`);
             const data = await response.json();
             setCategories(data);
         } catch (error) {

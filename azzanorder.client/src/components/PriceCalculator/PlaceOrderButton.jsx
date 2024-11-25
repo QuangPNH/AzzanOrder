@@ -3,18 +3,19 @@ import { getCookie, setCookie } from '../Account/SignUpForm/Validate';
 import LogoutPage from '../Account/LogoutPage';
 import { useLocation } from "react-router-dom";
 import { table } from "framer-motion/client";
+import API_URLS from "../../config/apiUrls";
 
 async function AddPoint(memberId, amount) {
-    const response = await fetch(`https://localhost:7183/api/Member/UpdatePoints/memberId/point?memberId=${memberId}&point=${amount / 1000}`);
+    const response = await fetch(API_URLS.API + `Member/UpdatePoints/memberId/point?memberId=${memberId}&point=${amount / 1000}`);
     if (!response.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
-    const response1 = await fetch(`https://localhost:7183/api/MemberVouchers/memberId/voucherDetailId?memberId=${memberId}&voucherDetailId=${JSON.parse(getCookie('voucher')).voucherDetailId}`);
+    const response1 = await fetch(API_URLS.API + `MemberVouchers/memberId/voucherDetailId?memberId=${memberId}&voucherDetailId=${JSON.parse(getCookie('voucher')).voucherDetailId}`);
     if (!response1.ok) {
         throw new Error(`HTTP error! status: ${response.status}`);
     }
     const data1 = await response1.json();
-    const response2 = await fetch(`https://localhost:7183/api/MemberVouchers/Delete/${data1.memberVoucherId}`, {
+    const response2 = await fetch(API_URLS.API + `MemberVouchers/Delete/${data1.memberVoucherId}`, {
         method: "DELETE",
     });
     if (!response2.ok) {
@@ -110,7 +111,7 @@ const PlaceOrderButton = ({ amount, isTake, isCash }) => {
                 const cartDataString = getCookie("cartData");
                 const yeh = getCookie('tableqr') ? getCookie('tableqr').split('/')[1] : null;
                 try {
-                    const response = await fetch(`https://localhost:7183/api/Owner/Manager/${yeh}`);
+                    const response = await fetch(API_URLS.API + `Owner/Manager/${yeh}`);
                     var owner = await response.json();
                 } catch (error) {
                     console.error('Error fetching notifications:', error);

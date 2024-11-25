@@ -1,4 +1,5 @@
 import { useState, useEffect } from 'react';
+import API_URLS from '../../config/apiUrls';
 
 // Utility functions to get and set cookies
 const getCookie = (name) => {
@@ -15,7 +16,7 @@ const setCookie = (name, value, days) => {
 const fetchDropdownOptions = async (id) => {
     if (id) {
         try {
-            const response = await fetch(`https://localhost:7183/api/Table/GetTablesByManagerId/${id}`);
+            const response = await fetch(API_URLS.API + `Table/GetTablesByManagerId/${id}`);
             if (!response.ok) {
                 throw new Error("Network response was not ok");
             }

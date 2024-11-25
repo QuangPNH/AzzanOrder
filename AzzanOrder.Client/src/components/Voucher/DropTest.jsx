@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import DropdownItem from '../Dropdown/DropdownItem';
 import { getCookie, setCookie, deleteCookie } from '../Account/SignUpForm/Validate';
+import API_URLS from '../../config/apiUrls';
+
 function getVoucher() {
     const v = getCookie("voucher");
     if (!v) {
@@ -43,7 +45,7 @@ const DropTest = ({ options, onChange }) => {
 
     const fetchMemberVouchers = async (memberId, categoryId, id) => {
         try {
-            const response = categoryId != '' ? await fetch(`https://localhost:7183/api/MemberVouchers/memberId/itemCategoryId?memberId=${memberId}&categoryId=${categoryId}&employeeId=${id}`) : await fetch(`https://localhost:7183/api/MemberVouchers/memberId?memberId=${memberId}&employeeId=${id}`);
+            const response = categoryId != '' ? await fetch(API_URLS.API + `MemberVouchers/memberId/itemCategoryId?memberId=${memberId}&categoryId=${categoryId}&employeeId=${id}`) : await fetch(API_URLS.API + `MemberVouchers/memberId?memberId=${memberId}&employeeId=${id}`);
             const data = await response.json();
             return data;
 
@@ -64,7 +66,7 @@ const DropTest = ({ options, onChange }) => {
 
     // const fetchLabels = async () => {
     //     try {
-    //         const response = await fetch('https://localhost:7183/api/ItemCategory');
+    //         const response = await fetch(API_URLS.API + 'ItemCategory');
     //         const data = await response.json();
     //         return data;
     //     } catch (error) {

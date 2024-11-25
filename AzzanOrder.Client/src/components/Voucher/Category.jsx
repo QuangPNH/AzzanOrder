@@ -1,4 +1,5 @@
 ﻿import React, { useState, useEffect } from 'react';
+import API_URLS from '../../config/apiUrls';
 
 const Category = () => {
     // const [category, setCategorys] = useState([]);
@@ -7,7 +8,7 @@ const Category = () => {
     // });
     // const fetchCategorys = async () => {
     //     try {
-    //         const response = await fetch(`https://localhost:7183/api/Category/${CategoryId}`);
+    //         const response = await fetch(API_URLS.API + `Category/${CategoryId}`);
     //         const data = await response.json();
     //         setCategorys(data);
     //     } catch (error) {
