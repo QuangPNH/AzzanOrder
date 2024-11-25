@@ -125,7 +125,7 @@ const PlaceOrderButton = ({ amount, isTake, isCash }) => {
                     PAYOS_CHECKSUM_KEY: owner.bank.payoS_CHECKSUM_KEY,
                 };
                 //Set owner PayOs
-                fetch("https://localhost:3002/?tableqr=" + getCookie("tableqr") + "&Price=" + amount + "&Item=" + cartDataString + "&Message=Order", {
+                fetch(API_URLS.PAYOS+ "?tableqr=" + getCookie("tableqr") + "&Price=" + amount + "&Item=" + cartDataString + "&Message=Order", {
                     method: "POST",
                     headers: {
                         "Content-Type": "application/json"
