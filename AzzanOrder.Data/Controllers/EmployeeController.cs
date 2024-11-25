@@ -39,7 +39,7 @@ namespace AzzanOrder.Data.Controllers
           {
               return NotFound();
           }
-            var employee = await _context.Employees.FindAsync(id);
+            var employee = _context.Employees.FirstOrDefault(x => x.EmployeeId == id);
 
             if (employee == null)
             {
@@ -125,12 +125,18 @@ namespace AzzanOrder.Data.Controllers
         [HttpPut("Update")]
         public async Task<IActionResult> PutEmployee(Employee employee)
         {
+            if (employee == null)
+            {
+                return BadRequest("Employee cannot be null");
+            }
+
             if (!EmployeeExists(employee.EmployeeId))
             {
                 return NotFound("Employee not exist");
             }
 
-            _context.Entry(employee).State = EntityState.Modified;
+            // Use Update method instead of setting the state manually
+            _context.Employees.Update(employee);
 
             try
             {
@@ -155,12 +161,17 @@ namespace AzzanOrder.Data.Controllers
         [HttpPost("Add")]
         public async Task<ActionResult<Employee>> PostEmployee(Employee employee)
         {
-          if (_context.Employees == null)
-          {
-              return Problem("Entity set 'OrderingAssistSystemContext.Employees'  is null.");
-          }
+            if (_context.Employees == null)
+            {
+                return Problem("Entity set 'OrderingAssistSystemContext.Employees' is null.");
+            }
 
-            if (!_context.Roles.Any() && employee.Role != null)
+            if (employee == null)
+            {
+                return BadRequest("Employee cannot be null.");
+            }
+
+            if (employee.Role != null && !_context.Roles?.Any(r => r.RoleId == employee.Role.RoleId) == true)
             {
                 _context.Roles.Add(employee.Role);
             }
@@ -168,7 +179,7 @@ namespace AzzanOrder.Data.Controllers
             _context.Employees.Add(employee);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetEmployee", new { id = employee.EmployeeId }, employee);
+            return CreatedAtAction(nameof(GetEmployee), new { id = employee.EmployeeId }, employee);
         }
 
         // DELETE: api/Employee/5
@@ -207,7 +218,7 @@ namespace AzzanOrder.Data.Controllers
             //    _context.OrderDetails.RemoveRange(await _context.OrderDetails.Where(od => od.MenuItemId == menuItem.MenuItemId).ToListAsync());
             //}
 
-            var employee = await _context.Employees.FindAsync(id);
+            var employee = _context.Employees.FirstOrDefault(x => x.EmployeeId == id);
             if (employee == null)
             {
                 return NotFound();

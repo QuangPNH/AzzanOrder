@@ -24,40 +24,42 @@ namespace AzzanOrder.Data.Test
         internal static Mock<DbSet<Employee>> GetMockDbSet()
         {
             var employees = new List<Employee>
-            {
-                new Employee
                 {
-                    EmployeeId = 1,
-                    EmployeeName = "John Doe",
-                    Gender = true,
-                    Phone = "1234567890",
-                    Gmail = "john.doe@example.com",
-                    BirthDate = new DateTime(1990, 1, 1),
-                    RoleId = 1,
-                    HomeAddress = "123 Main St, Hometown",
-                    WorkAddress = "456 Work St, Worktown",
-                    Image = "path/to/image.jpg",
-                    ManagerId = 2,
-                    OwnerId = 3,
-                    IsDelete = false
-                },
-                new Employee
-                {
-                    EmployeeId = 2,
-                    EmployeeName = "Jane Doe",
-                    Gender = true,
-                    Phone = "0987654321",
-                    Gmail = "jane.doe@example.com",
-                    BirthDate = new DateTime(1990, 1, 1),
-                    RoleId = 1,
-                    HomeAddress = "123 Main St, Hometown",
-                    WorkAddress = "456 Work St, Worktown",
-                    Image = "path/to/image.jpg",
-                    ManagerId = 2,
-                    OwnerId = 3,
-                    IsDelete = false
-                }
-            }.AsQueryable();
+                    new Employee
+                    {
+                        EmployeeId = 1987,
+                        EmployeeName = "John Doe",
+                        Gender = true,
+                        Phone = "1234567890",
+                        Gmail = "john.doe@example.com",
+                        BirthDate = new DateTime(1990, 1, 1),
+                        RoleId = 2,
+                        HomeAddress = "123 Main St, Hometown",
+                        WorkAddress = "456 Work St, Worktown",
+                        Image = "path/to/image.jpg",
+                        ManagerId = 2,
+                        OwnerId = 3,
+                        IsDelete = false,
+                        Role = new Role { RoleId = 2, RoleName = "Staff" }
+                    },
+                    new Employee
+                    {
+                        EmployeeId = 2234,
+                        EmployeeName = "Jane Doe",
+                        Gender = true,
+                        Phone = "0987654321",
+                        Gmail = "jane.doe@example.com",
+                        BirthDate = new DateTime(1990, 1, 1),
+                        RoleId = 1,
+                        HomeAddress = "123 Main St, Hometown",
+                        WorkAddress = "456 Work St, Worktown",
+                        Image = "path/to/image.jpg",
+                        ManagerId = 2,
+                        OwnerId = 3,
+                        IsDelete = false,
+                        Role = new Role { RoleId = 1, RoleName = "Manager" }
+                    }
+                }.AsQueryable();
 
             var mockDbSet = new Mock<DbSet<Employee>>();
 
@@ -78,7 +80,7 @@ namespace AzzanOrder.Data.Test
 
             public TestAsyncEnumerator(IEnumerator<T> inner)
             {
-                _inner = inner;
+                _inner = inner ?? throw new ArgumentNullException(nameof(inner));
             }
 
             public ValueTask DisposeAsync()

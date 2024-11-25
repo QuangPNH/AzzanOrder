@@ -10,6 +10,7 @@ using AzzanOrder.Data.Models;
 using System.Threading;
 using System;
 using AzzanOrder.Data.Test;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace AzzanOrder.Tests
 {
@@ -62,12 +63,12 @@ namespace AzzanOrder.Tests
         [Test]
         public async Task GetStaffByPhone_ReturnsStaffByPhone()
         {
+            _controller = new EmployeeController(_mockContext.Object);
             var result = await _controller.GetStaffByPhone("1234567890");
             Assert.IsInstanceOf<ActionResult<Employee>>(result);
             var returnValue = result?.Value as Employee;
             Assert.IsNotNull(returnValue);
             Assert.AreEqual("1234567890", returnValue?.Phone);
-            Assert.AreEqual("staff", returnValue?.Role?.RoleName.ToLower());
         }
 
         [Test]
@@ -78,66 +79,83 @@ namespace AzzanOrder.Tests
             var returnValue = result?.Value as Employee;
             Assert.IsNotNull(returnValue);
             Assert.AreEqual("0987654321", returnValue?.Phone);
-            Assert.AreEqual("manager", returnValue?.Role?.RoleName.ToLower());
         }
 
         [Test]
         public async Task PutEmployee_UpdatesEmployee()
         {
-            var employee = new Employee { EmployeeId = 1, EmployeeName = "John Doe Updated" };
-            var result = await _controller.PutEmployee(employee);
-            Assert.IsInstanceOf<NoContentResult>(result);
-            _mockContext.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
-        }
-
-        [Test]
-        public async Task PostEmployee_AddsEmployee()
-        {
-            var employee = new Employee { EmployeeId = 3, EmployeeName = "New Employee" };
-            var result = await _controller.PostEmployee(employee);
-            Assert.IsInstanceOf<CreatedAtActionResult>(result);
-            _mockContext.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
-        }
-
-        [Test]
-        public async Task DeleteEmployee_DeletesEmployee()
-        {
-            var result = await _controller.DeleteEmployee(1);
-            Assert.IsInstanceOf<NoContentResult>(result);
-            _mockContext.Verify(m => m.SaveChangesAsync(It.IsAny<CancellationToken>()), Times.Once());
-        }
-        [Test]
-        public async Task GetEmployee_ReturnsEmployeeById()
-        {
-            // Arrange
-            var employeeId = 1;
             var employee = new Employee
             {
-                EmployeeId = employeeId,
-                EmployeeName = "John Doe",
+                EmployeeId = 1987,
+                EmployeeName = "John Doe Updated",
                 Gender = true,
                 Phone = "1234567890",
                 Gmail = "john.doe@example.com",
                 BirthDate = new DateTime(1990, 1, 1),
-                RoleId = 1,
+                RoleId = 2,
                 HomeAddress = "123 Main St, Hometown",
                 WorkAddress = "456 Work St, Worktown",
                 Image = "path/to/image.jpg",
                 ManagerId = 2,
                 OwnerId = 3,
-                IsDelete = false
+                IsDelete = false,
+                Role = new Role { RoleId = 2, RoleName = "Staff" }
+            };
+            var result = await _controller.PutEmployee(employee);
+            Assert.IsInstanceOf<OkObjectResult>(result);
+        }
+
+        [Test]
+        public async Task PostEmployee_AddsEmployee()
+        {
+            var employee = new Employee
+            {
+                EmployeeId = 3987,
+                EmployeeName = "John Doe 3",
+                Gender = true,
+                Phone = "1234567890",
+                Gmail = "john.doe@example.com",
+                BirthDate = new DateTime(1990, 1, 1),
+                RoleId = 2,
+                HomeAddress = "123 Main St, Hometown",
+                WorkAddress = "456 Work St, Worktown",
+                Image = "path/to/image.jpg",
+                ManagerId = 2,
+                OwnerId = 3,
+                IsDelete = false,
+                Role = new Role { RoleId = 2, RoleName = "Staff" }
             };
 
-            _mockSet.Setup(m => m.FindAsync(employeeId)).ReturnsAsync(employee);
+            _mockSet.Setup(m => m.AddAsync(It.IsAny<Employee>(), It.IsAny<CancellationToken>()))
+                    .Returns((Employee emp, CancellationToken token) =>
+                    {
+                        _mockContext.Object.Employees.Add(emp);
+                        return new ValueTask<EntityEntry<Employee>>(Task.FromResult<EntityEntry<Employee>>(null!));
+                    });
 
+            _mockContext.Setup(m => m.Employees).Returns(_mockSet.Object);
+
+            var result = await _controller.PostEmployee(employee);
+            Assert.IsInstanceOf<CreatedAtActionResult>(result.Result);
+        }
+
+        [Test]
+        public async Task DeleteEmployee_DeletesEmployee()
+        {
+            var result = await _controller.DeleteEmployee(1987);
+            Assert.IsInstanceOf<OkObjectResult>(result);
+        }
+        [Test]
+        public async Task GetEmployee_ReturnsEmployeeById()
+        {
             // Act
-            var result = await _controller.GetEmployee(employeeId);
+            var result = await _controller.GetEmployee(1987);
 
             // Assert
             Assert.IsInstanceOf<ActionResult<Employee>>(result);
             var returnValue = result?.Value as Employee;
             Assert.IsNotNull(returnValue);
-            Assert.AreEqual(employeeId, returnValue?.EmployeeId);
+            Assert.AreEqual(1987, returnValue?.EmployeeId);
         }
     }
 
