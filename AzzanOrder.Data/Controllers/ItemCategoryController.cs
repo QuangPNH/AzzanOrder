@@ -20,7 +20,17 @@ namespace AzzanOrder.Data.Controllers
         {
             _context = context;
         }
-
+        [HttpGet("GetAllBaseItemCategories")]
+        public async Task<IActionResult> GetAllBaseItemCategories(int? id)
+        {
+            if (_context.ItemCategories == null)
+            {
+                return NotFound();
+            }
+            var a = await _context.ItemCategories.Where(ic => ic.EmployeeId == id && ic.IsCombo == false).Include(ic => ic.MenuCategories).ToListAsync();
+            
+            return Ok(a);
+        }
         // GET: api/ItemCategory
         [HttpGet]
         public async Task<ActionResult<IEnumerable<ItemCategory>>> GetItemCategories(int? id)
@@ -176,7 +186,7 @@ namespace AzzanOrder.Data.Controllers
             _context.ItemCategories.Add(ic);
             await _context.SaveChangesAsync();
 
-            return Ok();
+            return Ok(ic);
         }
 
         // DELETE: api/ItemCategory/5
