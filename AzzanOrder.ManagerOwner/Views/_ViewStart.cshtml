@@ -6,11 +6,11 @@
     {
         Layout = "_LayoutOwner";
     }
-    else if (path.Contains("/login") || path.Contains("/subscribe"))
+    if (path.Contains("/login") || path.Contains("/subscribe"))
     {
         Layout = "_LayoutEmpty";
     }
-    else
+    if (EmployeeService.CurrentEmployee != null)
     {
         Layout = "_LayoutManager";
     }

@@ -21,4 +21,11 @@
         public bool? IsAvailable { get; set; }
         public string? ImageBase64 { get; set; }
     }
+	public class MenuItemSalesDTO
+	{
+		public int MenuItemId { get; set; }
+		public string ItemName { get; set; }
+		public int Sales { get; set; }
+		public string ManagerName { get; set; }
+	}
 }

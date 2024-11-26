@@ -1,16 +1,14 @@
-﻿using Microsoft.AspNetCore.Mvc.RazorPages;
+﻿using AzzanOrder.ManagerOwner.DTOs;
+using Microsoft.AspNetCore.Mvc.RazorPages;
 
 namespace AzzanOrder.ManagerOwner.Models
 {
     public class Model
     {
         internal int totalPages;
-
-
         public int pageSize { get; set; }
         public int pageNumber { get; set; }
         public int maxPageNav { get; set; }
-
         public int anIntegerUsedForCountingNumberOfPageQueuedForTheList { get; set; }
         public int anIntegerUsedForKnowingWhatTheCurrentPageOfTheList { get; set; }
         public int thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed { get; set; }
@@ -33,8 +31,7 @@ namespace AzzanOrder.ManagerOwner.Models
         public IEnumerable<MenuCategory> menuCategories { get; set; }
         public IEnumerable<Api.Bank> bankData { get; set; }
         public IEnumerable<Api.Datum> bankDatums{ get; set; }
-
-        public About about { get; set; }
+		public About about { get; set; }
         public Bank bank { get; set; }
         public Employee employee { get; set; }
         public Feedback feedback { get; set; }
@@ -52,8 +49,6 @@ namespace AzzanOrder.ManagerOwner.Models
         public VoucherDetail voucherDetail { get; set; }
         public Api.Bank theBank { get; set; }
         public Api.Datum bankDatum { get; set; }
-
-
-
-    }
+        
+	}
 }
