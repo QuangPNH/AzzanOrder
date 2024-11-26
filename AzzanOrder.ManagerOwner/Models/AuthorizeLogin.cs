@@ -18,10 +18,11 @@ namespace AzzanOrder.ManagerOwner.Models
 			Employee emp = new Employee();
 			Owner owner = new Owner();
 			bool isManager = false;
+			bool idNull = false;
 
 			try
 			{
-				_httpContext.Request.Cookies.TryGetValue("LoginInfo", out string loginInfoJson); // Use the instance field
+				_httpContext.Request.Cookies.TryGetValue("LoginInfo", out string loginInfoJson);
 
 				var loginInfo = JsonConvert.DeserializeObject<Employee>(loginInfoJson);
 				if (loginInfo.RoleId != null)
@@ -58,30 +59,39 @@ namespace AzzanOrder.ManagerOwner.Models
                                     return "first manager";
                                 }
                             }
-
-
-                            res = await client.GetAsync(_apiUrl + "Employee/Manager/Phone/" + emp.Phone);
-							if (res.IsSuccessStatusCode)
-							{
-								string data = await res.Content.ReadAsStringAsync();
-								emp = JsonConvert.DeserializeObject<Employee>(data);
-								if (emp.Phone != null)
-								{
-									return "manager";
-								}
-								if (emp.Owner.SubscribeEndDate < DateTime.Now.AddDays(7))
-								{
-									return "manager expired";
-								}
-							}
-							else { return "null"; }
 						}
 						catch (HttpRequestException e) { }
 					}
-				}
+                    using (HttpClient client = new HttpClient())
+                    {
+                        try
+                        {
+                            HttpResponseMessage res = await client.GetAsync(_apiUrl + "Employee/Manager/Phone/" + emp.Phone);
+                            if (res.IsSuccessStatusCode)
+                            {
+                                string data = await res.Content.ReadAsStringAsync();
+                                emp = JsonConvert.DeserializeObject<Employee>(data);
+                                if (emp.Phone != null)
+                                {
+                                    return "manager";
+                                }
+                                if (emp.Owner.SubscribeEndDate < DateTime.Now.AddDays(7))
+                                {
+                                    return "manager expired";
+                                }
+                            }
+                            else { return "null"; }
+                        }
+                        catch (HttpRequestException e) { }
+                    }
+                }
 				else
 				{
 					owner = JsonConvert.DeserializeObject<Owner>(user);
+					if (owner.OwnerId == 0)
+					{
+						idNull = true;
+					}
 					if (owner == null)
 					{
 						return "null";
@@ -94,7 +104,16 @@ namespace AzzanOrder.ManagerOwner.Models
 							if (res.IsSuccessStatusCode)
 							{
 								string data = await res.Content.ReadAsStringAsync();
-								owner = JsonConvert.DeserializeObject<Owner>(data);
+
+                                owner = JsonConvert.DeserializeObject<Owner>(data);
+
+								if (idNull)
+								{
+									_httpContext.Response.Cookies.Append("LoginInfo", data, new CookieOptions
+									{
+										Expires = DateTimeOffset.UtcNow.AddDays(30)
+									});
+								}
 
 								if (owner.SubscribeEndDate < DateTime.Now.AddDays(7))
 								{

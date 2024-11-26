@@ -99,41 +99,105 @@ namespace AzzanOrder.ManagerOwner.Controllers
         // POST: Employee/Add
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(Employee employee, IFormFile Image)
+        public async Task<IActionResult> AddPost(Employee employee, IFormFile Image)
         {
             Owner emp = new Owner();
+            var e = new Employee();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
             {
                 emp = JsonConvert.DeserializeObject<Owner>(empJson);
             }
-            if (Image != null && Image.Length > 0)
-            {
-                using (var memoryStream = new MemoryStream())
-                {
-                    await Image.CopyToAsync(memoryStream);
-                    var fileBytes = memoryStream.ToArray();
-                    employee.Image = "data:image/png;base64," + Convert.ToBase64String(fileBytes);
-                }
-            }
+            //if (Image != null && Image.Length > 0)
+            //{
+            //    using (var memoryStream = new MemoryStream())
+            //    {
+            //        await Image.CopyToAsync(memoryStream);
+            //        var fileBytes = memoryStream.ToArray();
+            //        employee.Image = "data:image/png;base64," + Convert.ToBase64String(fileBytes);
+            //    }
+            //}
             employee.RoleId = 1;
             employee.OwnerId = emp.OwnerId;
             employee.IsDelete = false;
             using (HttpClient client = new HttpClient())
             {
-                var json = JsonConvert.SerializeObject(employee);
-                var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 
-                HttpResponseMessage response = await client.PostAsync(_apiUrl + "Employee/Add/", content);
+
+                HttpResponseMessage response = await client.PostAsJsonAsync(_apiUrl + "Employee/Add/", employee);
 
                 if (response.IsSuccessStatusCode)
                 {
+                    string g = await response.Content.ReadAsStringAsync();
+                    employee = JsonConvert.DeserializeObject<Employee>(g);
+                    HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Employee/FirstEmployee/{emp.OwnerId}");
+                    if (res.IsSuccessStatusCode)
+                    {
+                        string a = await res.Content.ReadAsStringAsync();
+                        e = JsonConvert.DeserializeObject<Employee>(a);
+                        HttpResponseMessage res1 = await client.GetAsync(_apiUrl + $"ItemCategory/GetAllBaseItemCategories?id={e.EmployeeId}");
+                        if (res1.IsSuccessStatusCode)
+                        {
+                            string b = await res1.Content.ReadAsStringAsync();
+                            var itemCategories = JsonConvert.DeserializeObject<List<ItemCategory>>(b);
+                            foreach (var i in itemCategories)
+                            {
+                                i.EmployeeId = employee.EmployeeId;
+                                HttpResponseMessage res2 = await client.PostAsJsonAsync(_apiUrl + "ItemCategory/Add", i);
+                                if (res2.IsSuccessStatusCode)
+                                {
+                                    string c = await res2.Content.ReadAsStringAsync();
+                                    var itemCategory = JsonConvert.DeserializeObject<ItemCategory>(c);
+                                    var h = i.MenuCategories.Where(mc => mc.ItemCategoryId == i.ItemCategoryId).Select(mc => mc.MenuItem).ToList();
+                                    foreach (var j in h)
+                                    {
+                                        j.EmployeeId = employee.EmployeeId;
+                                        HttpResponseMessage res3 = await client.PostAsJsonAsync(_apiUrl + "MenuItem/Add", j);
+                                        if (res3.IsSuccessStatusCode)
+                                        {
+                                            string d = await res3.Content.ReadAsStringAsync();
+                                            var menuItem = JsonConvert.DeserializeObject<MenuItem>(d);
+                                            HttpResponseMessage res4 = await client.PostAsJsonAsync(_apiUrl + "MenuCategory/Add", new MenuCategory() { MenuItemId = menuItem.MenuItemId, ItemCategoryId = itemCategory.ItemCategoryId });
+                                            if (res4.IsSuccessStatusCode)
+                                            {
+                                                string f = await res4.Content.ReadAsStringAsync();
+                                                var menuCategory = JsonConvert.DeserializeObject<MenuCategory>(f);
+                                            }
+                                            else
+                                            {
+                                                ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                                            }
+                                        }
+                                        else
+                                        {
+                                            ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                                        }
+                                    }
+                                }
+                                else
+                                {
+                                    ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                                }
+                            }
+                        }
+                        else
+                        {
+                            ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                    }
                     return RedirectToAction("List");
                 }
                 else
                 {
                     ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
                 }
+
+
             }
+
             return View(employee);
         }
 
