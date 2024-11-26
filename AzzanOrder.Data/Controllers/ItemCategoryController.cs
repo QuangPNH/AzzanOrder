@@ -27,8 +27,8 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            var a = await _context.ItemCategories.Where(ic => ic.EmployeeId == id && ic.IsCombo == false).Include(ic => ic.MenuCategories).ToListAsync();
-            
+            var a = await _context.ItemCategories.Where(ic => ic.EmployeeId == id && ic.IsCombo == false).Include(ic => ic.MenuCategories).ThenInclude(ic => ic.MenuItem).ToListAsync();
+
             return Ok(a);
         }
         // GET: api/ItemCategory
@@ -97,15 +97,15 @@ namespace AzzanOrder.Data.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<IEnumerable>> GetItemCategory(int id)
         {
-          if (_context.ItemCategories == null)
-          {
-              return NotFound();
-          }
-            if(id == 0)
+            if (_context.ItemCategories == null)
+            {
+                return NotFound();
+            }
+            if (id == 0)
             {
                 return await _context.ItemCategories.ToListAsync();
             }
-            var itemCategory = await _context.ItemCategories.Where(ic=>ic.ItemCategoryId == id).ToListAsync();
+            var itemCategory = await _context.ItemCategories.Where(ic => ic.ItemCategoryId == id).ToListAsync();
 
             if (itemCategory == null)
             {
@@ -167,22 +167,22 @@ namespace AzzanOrder.Data.Controllers
         [HttpPost("Add")]
         public async Task<ActionResult<ItemCategory>> PostItemCategory(ItemCategory itemCategory)
         {
-          if (_context.ItemCategories == null)
-          {
-              return Problem("Entity set 'OrderingAssistSystemContext.ItemCategories'  is null.");
-          }
-          ItemCategory ic = new ItemCategory() 
-          {
-              ItemCategoryName = itemCategory.ItemCategoryName, 
-              Description = itemCategory.Description, 
-              Discount = itemCategory.Discount, 
-              Image = itemCategory.Image,
-              EmployeeId = itemCategory.EmployeeId,
-              IsDelete = false,
-              StartDate = itemCategory.StartDate,
-              EndDate = itemCategory.EndDate,
-              IsCombo = itemCategory.IsCombo
-          };
+            if (_context.ItemCategories == null)
+            {
+                return Problem("Entity set 'OrderingAssistSystemContext.ItemCategories'  is null.");
+            }
+            ItemCategory ic = new ItemCategory()
+            {
+                ItemCategoryName = itemCategory.ItemCategoryName,
+                Description = itemCategory.Description,
+                Discount = itemCategory.Discount,
+                Image = itemCategory.Image,
+                EmployeeId = itemCategory.EmployeeId,
+                IsDelete = false,
+                StartDate = itemCategory.StartDate,
+                EndDate = itemCategory.EndDate,
+                IsCombo = itemCategory.IsCombo
+            };
             _context.ItemCategories.Add(ic);
             await _context.SaveChangesAsync();
 

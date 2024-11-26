@@ -1,4 +1,5 @@
-﻿using AzzanOrder.ManagerOwner.Models;
+﻿using AzzanOrder.ManagerOwner.DTOs;
+using AzzanOrder.ManagerOwner.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using static System.Net.Mime.MediaTypeNames;
@@ -51,7 +52,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
                 }
             }
-            employees = employees.Where(e => e.RoleId == 1).ToList();
+            employees = employees.Where(e => e.RoleId == 1 && e.IsDelete == false).ToList();
 
             int pageSize = 10;
             int pageNumber = page ?? 1;
@@ -123,84 +124,98 @@ namespace AzzanOrder.ManagerOwner.Controllers
             {
 
 
-                HttpResponseMessage response = await client.PostAsJsonAsync(_apiUrl + "Employee/Add/", employee);
-
-                if (response.IsSuccessStatusCode)
+                using (HttpResponseMessage response = await client.PostAsJsonAsync(_apiUrl + "Employee/Add/", employee))
                 {
-                    string g = await response.Content.ReadAsStringAsync();
-                    employee = JsonConvert.DeserializeObject<Employee>(g);
-                    HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Employee/FirstEmployee/{emp.OwnerId}");
-                    if (res.IsSuccessStatusCode)
+                    if (response.IsSuccessStatusCode)
                     {
-                        string a = await res.Content.ReadAsStringAsync();
-                        e = JsonConvert.DeserializeObject<Employee>(a);
-                        HttpResponseMessage res1 = await client.GetAsync(_apiUrl + $"ItemCategory/GetAllBaseItemCategories?id={e.EmployeeId}");
-                        if (res1.IsSuccessStatusCode)
+                        string g = await response.Content.ReadAsStringAsync();
+                        employee = JsonConvert.DeserializeObject<Employee>(g);
+                        HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Employee/FirstEmployee/{emp.OwnerId}");
+                        if (res.IsSuccessStatusCode)
                         {
-                            string b = await res1.Content.ReadAsStringAsync();
-                            var itemCategories = JsonConvert.DeserializeObject<List<ItemCategory>>(b);
-                            foreach (var i in itemCategories)
+                            string a = await res.Content.ReadAsStringAsync();
+                            e = JsonConvert.DeserializeObject<Employee>(a);
+                            HttpResponseMessage res1 = await client.GetAsync(_apiUrl + $"ItemCategory/GetAllBaseItemCategories?id={e.EmployeeId}");
+                            if (res1.IsSuccessStatusCode)
                             {
-                                i.EmployeeId = employee.EmployeeId;
-                                HttpResponseMessage res2 = await client.PostAsJsonAsync(_apiUrl + "ItemCategory/Add", i);
-                                if (res2.IsSuccessStatusCode)
-                                {
-                                    string c = await res2.Content.ReadAsStringAsync();
-                                    var itemCategory = JsonConvert.DeserializeObject<ItemCategory>(c);
-                                    var h = i.MenuCategories.Where(mc => mc.ItemCategoryId == i.ItemCategoryId).Select(mc => mc.MenuItem).ToList();
-                                    foreach (var j in h)
-                                    {
-                                        j.EmployeeId = employee.EmployeeId;
-                                        HttpResponseMessage res3 = await client.PostAsJsonAsync(_apiUrl + "MenuItem/Add", j);
-                                        if (res3.IsSuccessStatusCode)
-                                        {
-                                            string d = await res3.Content.ReadAsStringAsync();
-                                            var menuItem = JsonConvert.DeserializeObject<MenuItem>(d);
-                                            HttpResponseMessage res4 = await client.PostAsJsonAsync(_apiUrl + "MenuCategory/Add", new MenuCategory() { MenuItemId = menuItem.MenuItemId, ItemCategoryId = itemCategory.ItemCategoryId });
-                                            if (res4.IsSuccessStatusCode)
-                                            {
-                                                string f = await res4.Content.ReadAsStringAsync();
-                                                var menuCategory = JsonConvert.DeserializeObject<MenuCategory>(f);
-                                            }
-                                            else
-                                            {
-                                                ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
-                                            }
-                                        }
-                                        else
-                                        {
-                                            ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
-                                        }
-                                    }
-                                }
-                                else
-                                {
-                                    ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
-                                }
+                                string b = await res1.Content.ReadAsStringAsync();
+                                var itemCategories = JsonConvert.DeserializeObject<List<ItemCategory>>(b);
+                                AddBaseMenu(itemCategories, employee);
+                            }
+                            else
+                            {
+                                ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
                             }
                         }
                         else
                         {
                             ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
                         }
+                        return RedirectToAction("List", "Manager");
                     }
                     else
                     {
                         ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
                     }
-                    return RedirectToAction("List");
                 }
-                else
-                {
-                    ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
-                }
+
+
 
 
             }
 
             return View(employee);
         }
+        private async void AddBaseMenu(List<ItemCategory> itemCategories, Employee employee)
+        {
+            using (HttpClient client = new HttpClient())
+            {
+                foreach (var i in itemCategories)
+                {
 
+                    i.EmployeeId = employee.EmployeeId;
+                    var k = i.MenuCategories;
+                    i.MenuCategories = new List<MenuCategory>();
+                    HttpResponseMessage res2 = await client.PostAsJsonAsync(_apiUrl + "ItemCategory/Add/", i);
+                    if (res2.IsSuccessStatusCode)
+                    {
+                        string c = await res2.Content.ReadAsStringAsync();
+                        var itemCategory = JsonConvert.DeserializeObject<ItemCategory>(c);
+
+                        foreach (var j in k.Where(mc => mc.ItemCategoryId == i.ItemCategoryId).Select(mc => mc.MenuItem).ToList())
+                        {
+                            j.EmployeeId = employee.EmployeeId;
+                            j.MenuCategories = new List<MenuCategory>();
+
+                            HttpResponseMessage res3 = await client.PostAsJsonAsync(_apiUrl + "MenuItem/Add/", j);
+                            if (res3.IsSuccessStatusCode)
+                            {
+                                string d = await res3.Content.ReadAsStringAsync();
+                                var menuItem = JsonConvert.DeserializeObject<MenuItem>(d);
+                                HttpResponseMessage res4 = await client.PostAsJsonAsync(_apiUrl + "MenuCategory/Add/", new MenuCategoryDTO() { MenuItemId = menuItem.MenuItemId, ItemCategoryId = itemCategory.ItemCategoryId });
+                                if (res4.IsSuccessStatusCode)
+                                {
+                                    string f = await res4.Content.ReadAsStringAsync();
+                                    var menuCategory = JsonConvert.DeserializeObject<MenuCategory>(f);
+                                }
+                                else
+                                {
+                                    ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                                }
+                            }
+                            else
+                            {
+                                ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                            }
+                        }
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                    }
+                }
+            }
+        }
         public async Task<IActionResult> Update(int id)
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
@@ -256,7 +271,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
         // POST: Employee/Update
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Update(Employee employee, IFormFile Image)
+        public async Task<IActionResult> UpdatePost(Employee employee, IFormFile Image)
         {
             Owner emp = new Owner();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
@@ -292,6 +307,38 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 }
             }
             return View(employee);
+        }
+
+        [HttpGet]
+        public async Task<IActionResult> Delete(int id)
+        {
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+            if (authorizeLogin.Equals("owner"))
+            {
+
+            }
+            else if (authorizeLogin.Equals("manager"))
+            {
+                return RedirectToAction("List", "Employee");
+            }
+            else if (authorizeLogin.Equals("owner expired"))
+            {
+                ViewBag.Message = "Your subscription has expired. Please subscribe again.";
+                return RedirectToAction("Login", "Home");
+            }
+            else if (authorizeLogin.Equals("manager expired"))
+            {
+                ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
+                return RedirectToAction("Login", "Home");
+            }
+            using (HttpClient client = new HttpClient())
+            {
+                HttpResponseMessage res = await client.DeleteAsync(_apiUrl + "Employee/Delete/" + id);
+                string mess = await res.Content.ReadAsStringAsync();
+                ViewBag.error = mess;
+
+                return RedirectToAction("List", "Manager");
+            }
         }
 
         public async Task<IActionResult> MenuList(int id, int? page)

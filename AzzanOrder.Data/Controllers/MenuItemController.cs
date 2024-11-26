@@ -100,8 +100,18 @@ namespace AzzanOrder.Data.Controllers
             {
                 return Problem("Entity set 'OrderingAssistSystemContext.MenuItems'  is null.");
             }
-            menuItem.IsAvailable = true;
-            _context.MenuItems.Add(menuItem);
+            MenuItem mi = new MenuItem()
+            {
+                ItemName = menuItem.ItemName,
+                Price = menuItem.Price,
+                Description = menuItem.Description,
+                Discount = menuItem.Discount,
+                Image = menuItem.Image,       
+                IsAvailable = true,
+                EmployeeId = menuItem.EmployeeId
+            };
+            
+            _context.MenuItems.Add(mi);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetMenuItem", new { id = menuItem.MenuItemId }, menuItem);

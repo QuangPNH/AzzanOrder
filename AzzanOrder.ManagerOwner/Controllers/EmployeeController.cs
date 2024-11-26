@@ -449,7 +449,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 HttpResponseMessage res = await client.DeleteAsync(_apiUrl + "Employee/Delete/" + id);
                 string mess = await res.Content.ReadAsStringAsync();
                 ViewBag.error = mess;
-                Console.WriteLine("jhhdghjhgjahgdjhas " + mess);
+                
                 return RedirectToAction("List", "Employee");
             }
         }
