@@ -18,10 +18,11 @@ namespace AzzanOrder.ManagerOwner.Models
 			Employee emp = new Employee();
 			Owner owner = new Owner();
 			bool isManager = false;
+			bool idNull = false;
 
 			try
 			{
-				_httpContext.Request.Cookies.TryGetValue("LoginInfo", out string loginInfoJson); // Use the instance field
+				_httpContext.Request.Cookies.TryGetValue("LoginInfo", out string loginInfoJson);
 
 				var loginInfo = JsonConvert.DeserializeObject<Employee>(loginInfoJson);
 				if (loginInfo.RoleId != null)
@@ -83,11 +84,14 @@ namespace AzzanOrder.ManagerOwner.Models
                         }
                         catch (HttpRequestException e) { }
                     }
-
                 }
 				else
 				{
 					owner = JsonConvert.DeserializeObject<Owner>(user);
+					if (owner.OwnerId == 0)
+					{
+						idNull = true;
+					}
 					if (owner == null)
 					{
 						return "null";
@@ -103,12 +107,13 @@ namespace AzzanOrder.ManagerOwner.Models
 
                                 owner = JsonConvert.DeserializeObject<Owner>(data);
 
-								if (owner.OwnerId == 0) {
-                                    _httpContext.Response.Cookies.Append("LoginInfo", data, new CookieOptions
-                                    {
-                                        Expires = DateTimeOffset.UtcNow.AddDays(30)
-                                    });
-                                }
+								if (idNull)
+								{
+									_httpContext.Response.Cookies.Append("LoginInfo", data, new CookieOptions
+									{
+										Expires = DateTimeOffset.UtcNow.AddDays(30)
+									});
+								}
 
 								if (owner.SubscribeEndDate < DateTime.Now.AddDays(7))
 								{
