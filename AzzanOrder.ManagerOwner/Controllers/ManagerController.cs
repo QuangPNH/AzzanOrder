@@ -172,22 +172,36 @@ namespace AzzanOrder.ManagerOwner.Controllers
             {
                 foreach (var i in itemCategories)
                 {
-
-                    i.EmployeeId = employee.EmployeeId;
-                    var k = i.MenuCategories;
-                    i.MenuCategories = new List<MenuCategory>();
-                    HttpResponseMessage res2 = await client.PostAsJsonAsync(_apiUrl + "ItemCategory/Add/", i);
+                    ItemCategory category = new ItemCategory() 
+                    {  
+                        ItemCategoryName = i.ItemCategoryName,
+                        Description = i.Description,
+                        Discount = i.Discount,
+                        Image = i.Image,
+                        EmployeeId = employee.EmployeeId,
+                        IsDelete = i.IsDelete,
+                        StartDate = i.StartDate,
+                        EndDate = i.EndDate,
+                        IsCombo = i.IsCombo
+                    };
+                    HttpResponseMessage res2 = await client.PostAsJsonAsync(_apiUrl + "ItemCategory/Add/", category);
                     if (res2.IsSuccessStatusCode)
                     {
                         string c = await res2.Content.ReadAsStringAsync();
                         var itemCategory = JsonConvert.DeserializeObject<ItemCategory>(c);
-
-                        foreach (var j in k.Where(mc => mc.ItemCategoryId == i.ItemCategoryId).Select(mc => mc.MenuItem).ToList())
+                        foreach (var j in i.MenuCategories.Where(mc => mc.ItemCategoryId == i.ItemCategoryId).Select(mc => mc.MenuItem).ToList())
                         {
-                            j.EmployeeId = employee.EmployeeId;
-                            j.MenuCategories = new List<MenuCategory>();
-
-                            HttpResponseMessage res3 = await client.PostAsJsonAsync(_apiUrl + "MenuItem/Add/", j);
+                            MenuItem item = new MenuItem()
+                            {
+                                ItemName = j.ItemName,
+                                Price = j.Price,
+                                Description = j.Description,
+                                Discount = j.Discount,
+                                Image = j.Image,
+                                IsAvailable = j.IsAvailable,
+                                EmployeeId = employee.EmployeeId
+                            };
+                            HttpResponseMessage res3 = await client.PostAsJsonAsync(_apiUrl + "MenuItem/Add/", item);
                             if (res3.IsSuccessStatusCode)
                             {
                                 string d = await res3.Content.ReadAsStringAsync();

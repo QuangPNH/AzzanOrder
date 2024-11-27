@@ -11,7 +11,7 @@ import ProductCard from './ProductCard/ProductCard';
 import { getCookie, setCookie } from './Account/SignUpForm/Validate';
 import API_URLS from '../config/apiUrls';
 
-const ItemDetail = ({ closeModal, imageSrc, key, title, price, discount , cate, desc, id }) => {
+const ItemDetail = ({ closeModal, imageSrc, key, title, price, discount, cate, desc, id }) => {
     const [products, setProducts] = useState([]);
     const [toppings, setToppings] = useState([]);
     const [selectedSugar, setSelectedSugar] = useState('50');
@@ -74,27 +74,47 @@ const ItemDetail = ({ closeModal, imageSrc, key, title, price, discount , cate, 
             item.options.selectedIce === selectedIce &&
             JSON.stringify(item.options.toppings) === JSON.stringify(selectedToppings)
         );
+        let discountAmount = 0; // Default discount is 0
+        const emp = JSON.parse(getCookie('memberInfo'));
+        const voucher = JSON.parse(getCookie('voucher'));
+        if (item.id === id && JSON.stringify(item.options) === JSON.stringify(options)) {
+            // Check if the item is valid with the voucher
+            const data = checkLegal(item, emp.memberId, voucher);
 
-        if (existingItemIndex !== -1) {
-            // Item exists, increase quantity
-            parsedData[existingItemIndex].quantity += currentQuantity;
-        } else {
-            // Item does not exist, add new item
-            const newItem = {
-                key: key,
-                id: id,
-                name: title,
-                options: formattedOptions,
-                price: price,
-                quantity: currentQuantity,
-               
-            };
-            parsedData.push(newItem);
+            // If `data` is valid (e.g., `data` is not empty or has necessary properties)
+            if (data == true) {
+                discountAmount = item.price * (voucher.discount / 100);
+
+            }
+            if (existingItemIndex !== -1) {
+                // Item exists, increase quantity
+                parsedData[existingItemIndex].quantity += currentQuantity;
+            } else {
+                // Item does not exist, add new item
+                const newItem = {
+                    key: key,
+                    id: id,
+                    name: title,
+                    options: formattedOptions,
+                    price: price,
+                    quantity: currentQuantity,
+                    discount: discountAmount
+
+                };
+                parsedData.push(newItem);
+            }
         }
-
         setCookie("cartData", JSON.stringify(parsedData), 0.02);
     };
-
+    const checkLegal = async (item, memberId, voucher) => {
+        try {
+            const response = await fetch(API_URLS.API + `Vouchers/voucherDetailId/menuItemId?voucherDetailid=${voucher.voucherDetailId}&menuItemId=${item.id}&employeeId=${memberId}`);
+            const data = await response.json();
+            return data;
+        } catch (error) {
+            console.error('Error fetching notifications:', error);
+        }
+    };
     const modifiedDesc = desc.includes('/') ? desc.split('/').slice(1).join('/') : desc;
 
     return (

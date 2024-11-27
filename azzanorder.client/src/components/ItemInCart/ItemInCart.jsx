@@ -38,14 +38,15 @@ const ItemInCart = ({ id, name, options, price, quantity, onQuantityChange }) =>
 
             const updatedCartData = await Promise.all(cartData.map(async (item) => {
                 let discountAmount = 0; // Default discount is 0
-
+                const emp =  JSON.parse(getCookie('memberInfo'));
                 if (item.id === id && JSON.stringify(item.options) === JSON.stringify(options)) {
                     // Check if the item is valid with the voucher
-                    const data = await checkLegal(item, id, voucher);
+                    const data = await checkLegal(item, emp.memberId, voucher);
 
                     // If `data` is valid (e.g., `data` is not empty or has necessary properties)
-                    if (data && Object.keys(data).length !== 0) {
-                        discountAmount = (item.price * (voucher.discount / 100)) * currentQuantity;
+                    if (data == true) {
+                        discountAmount = item.price * (voucher.discount / 100);
+
                     }
 
                     return {
@@ -76,9 +77,9 @@ const ItemInCart = ({ id, name, options, price, quantity, onQuantityChange }) =>
         setCurrentQuantity(newQuantity);
     };
 
-    const checkLegal = async (item, id, voucher) => {
+    const checkLegal = async (item, memberId, voucher) => {
         try {
-            const response = await fetch(API_URLS.API + `Vouchers/voucherDetailId/menuItemId?voucherDetailid=${voucher.voucherDetailId}&menuItemId=${item.id}&employeeId=${id}`);
+            const response = await fetch(API_URLS.API + `Vouchers/voucherDetailId/menuItemId?voucherDetailid=${voucher.voucherDetailId}&menuItemId=${item.id}&employeeId=${memberId}`);
             const data = await response.json();
             return data;
         } catch (error) {

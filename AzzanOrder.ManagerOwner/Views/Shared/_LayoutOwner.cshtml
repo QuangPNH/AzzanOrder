@@ -53,7 +53,7 @@
 					<span class="sidebar-brand-text align-middle">
 						OAS
 						<sup>
-							@if (@EmployeeService.CurrentOwner.IsFreeTrial == true)
+							@if (EmployeeService.CurrentOwner.IsFreeTrial == true)
 							{
 								<small class="badge bg-primary text-uppercase">
 									Trial
@@ -81,7 +81,7 @@
 				<div class="sidebar-user">
 					<div class="d-flex justify-content-center">
 						<div class="flex-grow-1 ps-2">
-							@if (EmployeeService.CurrentEmployee != null)
+							@if (EmployeeService.CurrentOwner != null)
 							{
 								<div class="sidebar-user-title">@EmployeeService.CurrentOwner.OwnerName</div>
 								<div class="sidebar-user-subtitle">Owner</div>
@@ -89,6 +89,7 @@
 						</div>
 					</div>
 				</div>
+
 
 				<ul class="sidebar-nav">
 					<li class="sidebar-header">
@@ -100,11 +101,7 @@
 							<i class="align-middle" data-feather="user"></i> <span class="align-middle">Manager</span>
 						</a>
 					</li>
-					<li class="sidebar-item">
-						<a class="sidebar-link" href="@Url.Action("Manage", "Bank")">
-							<i class="align-middle" data-feather="user"></i> <span class="align-middle">Bank</span>
-						</a>
-					</li>
+					
 					<li class="sidebar-item">
 						<a class="sidebar-link" href="@Url.Action("List", "AboutUs")">
 							<i class="align-middle" data-feather="user"></i> <span class="align-middle">About Us</span>
