@@ -94,7 +94,7 @@ public class CheckoutController : Controller
     public async Task<string> Subscribe(
         [FromBody] Owner owner,
         [FromQuery] string? Item,
-        [FromQuery] double? Price,
+        [FromQuery] int? Price,
         [FromQuery] string? Message)
     {
         string ownerJson = JsonConvert.SerializeObject(owner);
@@ -125,11 +125,8 @@ public class CheckoutController : Controller
 
             // Create the item list with the provided item data
             List<ItemData> items = new List<ItemData>();
-            var a = System.Text.Json.JsonSerializer.Deserialize<List<Item>>(Item);
-            foreach (var i in a)
-            {
-                items.Add(new ItemData(i.name, i.quantity, (i.price - i.discount) * i.quantity));
-            }
+
+            items.Add(new ItemData(Item, 1, (int)Price));
 
             // Get the base URL of the current request
             var request = _httpContextAccessor.HttpContext.Request;

@@ -1,5 +1,6 @@
 ﻿using AzzanOrder.ManagerOwner.DTOs;
 using AzzanOrder.ManagerOwner.Models;
+using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -383,7 +384,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 
         [HttpPost]
-		public async Task<IActionResult> SubscribeActionAsync(string pack, Model model)
+		public async Task<IActionResult> SubscribeAction(string pack, Model model)
 		{
 			if (pack.Equals("free"))
 			{
@@ -392,7 +393,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 			string redirectUrl = new Config()._payOS + "Subscribe/?";
 			string price = "0";
-
 
             bool ownerExist = false;
             using (HttpClient client = new HttpClient())
@@ -410,7 +410,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     }
                 }
             }
-
 
             if (pack.Equals("yearly"))
 			{
@@ -467,11 +466,12 @@ namespace AzzanOrder.ManagerOwner.Controllers
 				});
 
 				redirectUrl += string.Join("&", ownerParams.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
-				using (HttpClient client = new HttpClient())
+                var uri = new Uri(redirectUrl);
+                using (HttpClient client = new HttpClient())
 				{
 					var json = JsonConvert.SerializeObject(model.owner);
 					var content = new StringContent(json, Encoding.UTF8, "application/json");
-					var response = await client.PostAsync(redirectUrl, content);
+					var response = await client.PostAsync(uri.AbsoluteUri, content);
 					if (response.IsSuccessStatusCode)
 					{
 						string payURL = await response.Content.ReadAsStringAsync();
