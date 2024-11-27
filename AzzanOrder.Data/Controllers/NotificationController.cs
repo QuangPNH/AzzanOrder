@@ -45,7 +45,6 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-
             return notification;
         }
 
@@ -63,6 +62,22 @@ namespace AzzanOrder.Data.Controllers
                 return NotFound();
             }
 
+            return notification;
+        }
+
+        [HttpGet("Employee/{id}")]
+        public async Task<ActionResult<IEnumerable<Notification>>> GetNotificationByEmployee(int id)
+        {
+            if (_context.Notifications == null)
+            {
+                return NotFound();
+            }
+            var notification = await _context.Notifications.Where(x => x.EmployeeId == id).ToListAsync();
+
+            if (notification == null)
+            {
+                return NotFound();
+            }
             return notification;
         }
 

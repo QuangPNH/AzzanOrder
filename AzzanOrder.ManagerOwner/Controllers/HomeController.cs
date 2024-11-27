@@ -1,12 +1,8 @@
 ﻿using AzzanOrder.ManagerOwner.DTOs;
 using AzzanOrder.ManagerOwner.Models;
-using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Diagnostics;
-using System.Numerics;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using Twilio;
@@ -643,7 +639,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
             }
             catch
             {
-
             }
             return Conflict();
         }
