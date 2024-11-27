@@ -44,7 +44,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            var member = await _context.Members.FindAsync(id);
+            var member = _context.Members.FirstOrDefault(x => x.MemberId.Equals(id));
 
             if (member == null)
             {
@@ -62,7 +62,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            var member = await _context.Members.FirstOrDefaultAsync(m => m.Phone.Equals(phone));
+            var member = _context.Members.FirstOrDefault(m => m.Phone.Equals(phone));
 
             if (member == null)
             {
@@ -92,7 +92,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 errors += "\nPhone number is invalid";
             }
-            var member = await _context.Members.FirstOrDefaultAsync(m => m.Phone.Equals(phone));
+            var member = _context.Members.FirstOrDefault(m => m.Phone.Equals(phone));
 
             if (member != null)
             {
@@ -146,8 +146,12 @@ namespace AzzanOrder.Data.Controllers
         [HttpPut("Update")]
         public async Task<IActionResult> PutMember(Member member)
         {
-            _context.Entry(member).State = EntityState.Modified;
+            if (_context.Members == null)
+            {
+                return Problem("Entity set 'OrderingAssistSystemContext.Members' is null.");
+            }
 
+            _context.Members.Update(member);
             try
             {
                 await _context.SaveChangesAsync();
@@ -170,7 +174,7 @@ namespace AzzanOrder.Data.Controllers
         [HttpGet("UpdatePoints/memberId/point")]
         public async Task<IActionResult> UpdatePoints(int memberId, double point)
         {
-            var member = await _context.Members.FindAsync(memberId);
+            var member = _context.Members.FirstOrDefault(x => x.MemberId.Equals(memberId));
             if (member == null)
             {
                 return NotFound();
@@ -205,7 +209,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            var member = await _context.Members.FindAsync(id);
+            var member = _context.Members.FirstOrDefault(x => x.MemberId.Equals(id));
             if (member == null)
             {
                 return NotFound();
@@ -220,7 +224,7 @@ namespace AzzanOrder.Data.Controllers
         [HttpPut("ImageAdd/{id}")]
         public async Task<IActionResult> PutImage(int id,[FromBody] string img)
         {
-            var member = await _context.Members.FindAsync(id);
+            var member = _context.Members.FirstOrDefault(x => x.MemberId.Equals(id));
             if (member == null)
             {
                 return NotFound();
