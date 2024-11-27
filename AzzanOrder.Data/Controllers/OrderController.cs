@@ -26,7 +26,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            return await _context.Orders.Include(o => o.OrderDetails).ToListAsync();
+            return await _context.Orders.Include(o => o.Table).Include(o => o.Member).Include(o => o.OrderDetails).ThenInclude(od => od.MenuItem).ToListAsync();
         }
 
         // GET: api/Order/5

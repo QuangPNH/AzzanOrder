@@ -393,12 +393,46 @@ namespace AzzanOrder.ManagerOwner.Controllers
 			string redirectUrl = new Config()._payOS + "Subscribe/?";
 			string price = "0";
 
-			if (pack.Equals("yearly"))
+
+            bool ownerExist = false;
+            using (HttpClient client = new HttpClient())
+            {
+                HttpResponseMessage getResponse = await client.GetAsync(_apiUrl + $"Owner/Phone/{model.owner.Phone}");
+                if (getResponse.IsSuccessStatusCode)
+                {
+                    var ownerData = await getResponse.Content.ReadAsStringAsync();
+                    var existingOwner = JsonConvert.DeserializeObject<Owner>(ownerData);
+
+                    if (existingOwner != null)
+                    {
+                        ownerExist = true;
+                        model.owner = existingOwner;
+                    }
+                }
+            }
+
+
+            if (pack.Equals("yearly"))
 			{
 				price = "300000";
 				model.owner.SubscriptionStartDate = DateTime.Now;
 				model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
-			}
+                if (model.owner.SubscribeEndDate != null)
+                {
+                    if (model.owner.SubscribeEndDate < DateTime.Now)
+                    {
+                        return Json(DateTime.Now.AddYears(1));
+                    }
+                    else
+                    {
+                        return Json(model.owner.SubscribeEndDate.AddYears(1));
+                    }
+                }
+                else
+                {
+                    return Json(DateTime.Now.AddYears(1));
+                }
+            }
 			else if (pack.Equals("forever"))
 			{
 				price = "3000000";
