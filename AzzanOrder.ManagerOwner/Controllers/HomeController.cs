@@ -1,5 +1,6 @@
 ﻿using AzzanOrder.ManagerOwner.DTOs;
 using AzzanOrder.ManagerOwner.Models;
+using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -383,7 +384,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 
         [HttpPost]
-		public async Task<IActionResult> SubscribeActionAsync(string pack, Model model)
+		public async Task<IActionResult> SubscribeAction(string pack, Model model)
 		{
 			if (pack.Equals("free"))
 			{
@@ -393,12 +394,45 @@ namespace AzzanOrder.ManagerOwner.Controllers
 			string redirectUrl = new Config()._payOS + "Subscribe/?";
 			string price = "0";
 
-			if (pack.Equals("yearly"))
+            bool ownerExist = false;
+            using (HttpClient client = new HttpClient())
+            {
+                HttpResponseMessage getResponse = await client.GetAsync(_apiUrl + $"Owner/Phone/{model.owner.Phone}");
+                if (getResponse.IsSuccessStatusCode)
+                {
+                    var ownerData = await getResponse.Content.ReadAsStringAsync();
+                    var existingOwner = JsonConvert.DeserializeObject<Owner>(ownerData);
+
+                    if (existingOwner != null)
+                    {
+                        ownerExist = true;
+                        model.owner = existingOwner;
+                    }
+                }
+            }
+
+            if (pack.Equals("yearly"))
 			{
 				price = "300000";
 				model.owner.SubscriptionStartDate = DateTime.Now;
-				model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
-			}
+				//model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
+                if (model.owner.SubscribeEndDate != null)
+                {
+                    if (model.owner.SubscribeEndDate < DateTime.Now)
+                    {
+                        model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
+                    }
+                    else
+                    {
+                        model.owner.SubscribeEndDate = model.owner.SubscribeEndDate.AddYears(1);
+                        
+                    }
+                }
+                else
+                {
+                    model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
+                }
+            }
 			else if (pack.Equals("forever"))
 			{
 				price = "3000000";
@@ -432,11 +466,12 @@ namespace AzzanOrder.ManagerOwner.Controllers
 				});
 
 				redirectUrl += string.Join("&", ownerParams.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
-				using (HttpClient client = new HttpClient())
+                var uri = new Uri(redirectUrl);
+                using (HttpClient client = new HttpClient())
 				{
 					var json = JsonConvert.SerializeObject(model.owner);
 					var content = new StringContent(json, Encoding.UTF8, "application/json");
-					var response = await client.PostAsync(redirectUrl, content);
+					var response = await client.PostAsync(uri.AbsoluteUri, content);
 					if (response.IsSuccessStatusCode)
 					{
 						string payURL = await response.Content.ReadAsStringAsync();

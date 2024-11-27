@@ -116,6 +116,7 @@ namespace AzzanOrder.ManagerOwner.Models
 								}
 								if (owner.SubscribeEndDate < DateTime.Now.AddDays(7))
 								{
+
 									return "owner expired";
 								}
 								if (owner.Phone != null)
