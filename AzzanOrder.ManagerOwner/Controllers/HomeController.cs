@@ -643,8 +643,39 @@ namespace AzzanOrder.ManagerOwner.Controllers
             return Conflict();
         }
 
+		public async Task<IActionResult> NotificationRead(int id)
+        {
+			using (HttpClient client = new HttpClient())
+			{
+				// Get the notification by id
+				var response = await client.GetAsync(_apiUrl + $"Notification/{id}");
+				if (response.IsSuccessStatusCode)
+				{
+					var notificationJson = await response.Content.ReadAsStringAsync();
+					var notification = JsonConvert.DeserializeObject<Notification>(notificationJson);
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+					if (notification != null)
+					{
+						// Change the IsRead property to true
+						notification.IsRead = true;
+
+						// Update the notification
+						var content = new StringContent(JsonConvert.SerializeObject(notification), Encoding.UTF8, "application/json");
+						await client.PutAsync(_apiUrl + $"Notification/Update", content);
+					}
+				}
+			}
+
+			// Redirect to the previous page
+			var referer = Request.Headers["Referer"].ToString();
+			if (!string.IsNullOrEmpty(referer))
+			{
+				return Redirect(referer);
+			}
+
+			return RedirectToAction("Index");
+		}
+		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

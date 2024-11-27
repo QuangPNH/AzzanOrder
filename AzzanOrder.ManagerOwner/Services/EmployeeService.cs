@@ -6,5 +6,7 @@ namespace AzzanOrder.ManagerOwner.Services
     {
 		public Owner? CurrentOwner { get; set; }
 		public Employee? CurrentEmployee { get; set; }
-    }
+        public List<Notification>? CurrentOwnerNotifications { get; set; }
+
+	}
 }

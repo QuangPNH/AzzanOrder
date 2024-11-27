@@ -114,7 +114,6 @@ namespace AzzanOrder.ManagerOwner.Models
 										Expires = DateTimeOffset.UtcNow.AddDays(30)
 									});
 								}
-
 								if (owner.SubscribeEndDate < DateTime.Now.AddDays(7))
 								{
 
