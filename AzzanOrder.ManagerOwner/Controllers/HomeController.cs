@@ -1,4 +1,6 @@
-﻿using AzzanOrder.ManagerOwner.Models;
+﻿using AzzanOrder.ManagerOwner.DTOs;
+using AzzanOrder.ManagerOwner.Models;
+using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
@@ -22,37 +24,129 @@ namespace AzzanOrder.ManagerOwner.Controllers
         {
             _logger = logger;
         }
+		public async Task<IActionResult> IndexAsync()
+		{
+			AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
 
+			var loginStatus = await authorizeLogin.CheckLogin();
+			if (loginStatus.Equals("owner"))
+			{
 
-        public async Task<IActionResult> IndexAsync()
-        {
-            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+			}
+			else if (loginStatus.Equals("manager"))
+			{
+				return RedirectToAction("List", "Employee");
+			}
+			else if (loginStatus.Equals("owner expired"))
+			{
+				return RedirectToAction("Login", "Home");
+			}
+			else if (loginStatus.Equals("manager expired"))
+			{
+				return RedirectToAction("Login", "Home");
+			}
+			else
+			{
+				return RedirectToAction("Login", "Home");
+			}
+            int numberOfOrder =  0;
+            int numberOfOrderLastMonth = 0;
+            int numberOfEmployee = 0;
+            int numberOFManger = 0;
+            List<MenuItemSalesDTO> trendingItems = new List<MenuItemSalesDTO>();
+			List<MenuItemSalesDTO> failingItems = new List<MenuItemSalesDTO>();
+			Owner emp = new Owner();
+			if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
+			{
+				emp = JsonConvert.DeserializeObject<Owner>(empJson);
+			}
+			var startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1);
+			var endDate = DateTime.Now;
+			var menuItemSales = await FetchSalesData(emp.OwnerId, startDate, endDate); 
+            if (menuItemSales != null)
+            {
+				numberOfOrder = menuItemSales.Sum(item => item.Sales);
+                trendingItems = menuItemSales.Take(10).ToList();
+                if (menuItemSales.Where(mis => mis.Sales == 0).Count() >= 10)
+                    failingItems = menuItemSales.Where(mis => mis.Sales == 0).ToList();
+                else
+                    failingItems = menuItemSales.OrderBy(mis => mis.Sales).Take(10).ToList();
+			}
+			startDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month - 1, 1);
+			endDate = new DateTime(DateTime.Now.Year, DateTime.Now.Month, 1).AddDays(-1);
+			var menuItemSalesLastMonth = await FetchSalesData(emp.OwnerId, startDate, endDate);
+			if (menuItemSalesLastMonth != null)
+            {
+				numberOfOrderLastMonth = menuItemSalesLastMonth.Sum(item => item.Sales);
+			}
+            var employees = await FetchEmpoyeeData(emp.OwnerId);
+            numberOfEmployee = employees.Where(e => e.RoleId != 1).Count();
+            numberOFManger = employees.Where(e => e.RoleId == 1).Count();
+			double percentileChangeInNumberOfOrder = numberOfOrderLastMonth != 0
+				? ((double)(numberOfOrder - numberOfOrderLastMonth) / numberOfOrderLastMonth) * 100
+				: 0;
 
-            var loginStatus = await authorizeLogin.CheckLogin();
-            if (loginStatus.Equals("owner"))
-            {
-                return View();
-            }
-            else if (loginStatus.Equals("manager"))
-            {
-                return RedirectToAction("List", "Employee");
-            }
-            else if (loginStatus.Equals("owner expired"))
-            {
-                return RedirectToAction("Login", "Home");
-            }
-            else if (loginStatus.Equals("manager expired"))
-            {
-                return RedirectToAction("Login", "Home");
-            }
-            else
-            {
-                return RedirectToAction("Login", "Home");
-            }
-        }
+			//var monthlySales = await FetchMonthlySalesData(emp.OwnerId);
 
-        //00867f56a5a886a975463d3ec7941061
-        public IActionResult Privacy()
+			var model = new Dashbroad
+			{
+				numberOfOrder = numberOfOrder,
+				PercentileChangeInNumberOfOrder = percentileChangeInNumberOfOrder,
+                numberOfEmployee = numberOfEmployee,
+                numberOFManger = numberOFManger,
+				trendingItems = trendingItems,
+                failingItems = failingItems
+			};
+
+			return View(model);
+		}
+
+		private async Task<List<MenuItemSalesDTO>> FetchSalesData(int ownerId, DateTime startDate, DateTime endDate)
+		{
+			var menuItemSales = new List<MenuItemSalesDTO>();
+
+			using (HttpClient client = new HttpClient())
+			{
+				try
+				{
+					HttpResponseMessage res = await client.GetAsync($"{_apiUrl}MenuItem/Sales/{ownerId}/{startDate.ToString("yyyy-MM-dd")}/{endDate.ToString("yyyy-MM-dd")}");
+					string data = await res.Content.ReadAsStringAsync();
+					menuItemSales = JsonConvert.DeserializeObject<List<MenuItemSalesDTO>>(data);
+				}
+				catch (HttpRequestException e)
+				{
+					// Handle the exception here
+					ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
+				}
+			}
+
+			return menuItemSales;
+		}
+
+		private async Task<List<Employee>> FetchEmpoyeeData(int ownerId)
+		{
+			var emp = new List<Employee>();
+
+			using (HttpClient client = new HttpClient())
+			{
+				try
+				{
+					HttpResponseMessage res = await client.GetAsync($"{_apiUrl}Employee");
+					string data = await res.Content.ReadAsStringAsync();
+					emp = JsonConvert.DeserializeObject<List<Employee>>(data);
+				}
+				catch (HttpRequestException e)
+				{
+					// Handle the exception here
+					ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
+				}
+			}
+            emp = emp.Where(e => e.OwnerId == ownerId && e.IsDelete != true).ToList();
+			return emp;
+		}
+
+		//00867f56a5a886a975463d3ec7941061
+		public IActionResult Privacy()
         {
             return View();
         }
@@ -290,7 +384,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 
         [HttpPost]
-		public async Task<IActionResult> SubscribeActionAsync(string pack, Model model)
+		public async Task<IActionResult> SubscribeAction(string pack, Model model)
 		{
 			if (pack.Equals("free"))
 			{
@@ -300,12 +394,45 @@ namespace AzzanOrder.ManagerOwner.Controllers
 			string redirectUrl = new Config()._payOS + "Subscribe/?";
 			string price = "0";
 
-			if (pack.Equals("yearly"))
+            bool ownerExist = false;
+            using (HttpClient client = new HttpClient())
+            {
+                HttpResponseMessage getResponse = await client.GetAsync(_apiUrl + $"Owner/Phone/{model.owner.Phone}");
+                if (getResponse.IsSuccessStatusCode)
+                {
+                    var ownerData = await getResponse.Content.ReadAsStringAsync();
+                    var existingOwner = JsonConvert.DeserializeObject<Owner>(ownerData);
+
+                    if (existingOwner != null)
+                    {
+                        ownerExist = true;
+                        model.owner = existingOwner;
+                    }
+                }
+            }
+
+            if (pack.Equals("yearly"))
 			{
 				price = "300000";
 				model.owner.SubscriptionStartDate = DateTime.Now;
-				model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
-			}
+				//model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
+                if (model.owner.SubscribeEndDate != null)
+                {
+                    if (model.owner.SubscribeEndDate < DateTime.Now)
+                    {
+                        model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
+                    }
+                    else
+                    {
+                        model.owner.SubscribeEndDate = model.owner.SubscribeEndDate.AddYears(1);
+                        
+                    }
+                }
+                else
+                {
+                    model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
+                }
+            }
 			else if (pack.Equals("forever"))
 			{
 				price = "3000000";
@@ -339,11 +466,12 @@ namespace AzzanOrder.ManagerOwner.Controllers
 				});
 
 				redirectUrl += string.Join("&", ownerParams.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
-				using (HttpClient client = new HttpClient())
+                var uri = new Uri(redirectUrl);
+                using (HttpClient client = new HttpClient())
 				{
 					var json = JsonConvert.SerializeObject(model.owner);
 					var content = new StringContent(json, Encoding.UTF8, "application/json");
-					var response = await client.PostAsync(redirectUrl, content);
+					var response = await client.PostAsync(uri.AbsoluteUri, content);
 					if (response.IsSuccessStatusCode)
 					{
 						string payURL = await response.Content.ReadAsStringAsync();
@@ -520,8 +648,39 @@ namespace AzzanOrder.ManagerOwner.Controllers
             return Conflict();
         }
 
+		public async Task<IActionResult> NotificationRead(int id)
+        {
+			using (HttpClient client = new HttpClient())
+			{
+				// Get the notification by id
+				var response = await client.GetAsync(_apiUrl + $"Notification/{id}");
+				if (response.IsSuccessStatusCode)
+				{
+					var notificationJson = await response.Content.ReadAsStringAsync();
+					var notification = JsonConvert.DeserializeObject<Notification>(notificationJson);
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+					if (notification != null)
+					{
+						// Change the IsRead property to true
+						notification.IsRead = true;
+
+						// Update the notification
+						var content = new StringContent(JsonConvert.SerializeObject(notification), Encoding.UTF8, "application/json");
+						await client.PutAsync(_apiUrl + $"Notification/Update", content);
+					}
+				}
+			}
+
+			// Redirect to the previous page
+			var referer = Request.Headers["Referer"].ToString();
+			if (!string.IsNullOrEmpty(referer))
+			{
+				return Redirect(referer);
+			}
+
+			return RedirectToAction("Index");
+		}
+		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

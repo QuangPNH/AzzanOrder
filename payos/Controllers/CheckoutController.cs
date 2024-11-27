@@ -76,9 +76,7 @@ public class CheckoutController : Controller
                 $"{baseUrl}/cancel",
                 $"{baseUrl}/success"
             );
-
             CreatePaymentResult createPayment = await _payOS.createPaymentLink(paymentData);
-
             //return Redirect(createPayment.checkoutUrl);
             return createPayment.checkoutUrl;
         }
@@ -94,7 +92,7 @@ public class CheckoutController : Controller
     public async Task<string> Subscribe(
         [FromBody] Owner owner,
         [FromQuery] string? Item,
-        [FromQuery] double? Price,
+        [FromQuery] int? Price,
         [FromQuery] string? Message)
     {
         string ownerJson = JsonConvert.SerializeObject(owner);
@@ -125,11 +123,8 @@ public class CheckoutController : Controller
 
             // Create the item list with the provided item data
             List<ItemData> items = new List<ItemData>();
-            var a = System.Text.Json.JsonSerializer.Deserialize<List<Item>>(Item);
-            foreach (var i in a)
-            {
-                items.Add(new ItemData(i.name, i.quantity, (i.price - i.discount) * i.quantity));
-            }
+
+            items.Add(new ItemData(Item, 1, (int)Price));
 
             // Get the base URL of the current request
             var request = _httpContextAccessor.HttpContext.Request;
@@ -167,6 +162,7 @@ public class CheckoutController : Controller
 
         if (itemType.Contains("Subscribe"))
         {
+            Response.Cookies.Delete("ItemType");
             Console.WriteLine("When succ" + HttpContext.Request.Cookies.TryGetValue("OwnerData", out string ownerJson));
             Console.WriteLine("Tets cookie " + ownerJson);
             Console.WriteLine("Tets cookie " + Request.Cookies["OwnerData"]);
@@ -233,6 +229,7 @@ public class CheckoutController : Controller
 
         if (itemType.Contains("Subscribe"))
         {
+            Response.Cookies.Delete("ItemType");
             return Redirect($"{_config._manager}Home/Subscribe");
         }
 

@@ -100,11 +100,21 @@ namespace AzzanOrder.Data.Controllers
             {
                 return Problem("Entity set 'OrderingAssistSystemContext.MenuItems'  is null.");
             }
-            menuItem.IsAvailable = true;
-            _context.MenuItems.Add(menuItem);
+            MenuItem mi = new MenuItem()
+            {
+                ItemName = menuItem.ItemName,
+                Price = menuItem.Price,
+                Description = menuItem.Description,
+                Discount = menuItem.Discount,
+                Image = menuItem.Image,       
+                IsAvailable = true,
+                EmployeeId = menuItem.EmployeeId
+            };
+            
+            _context.MenuItems.Add(mi);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetMenuItem", new { id = menuItem.MenuItemId }, menuItem);
+            return Ok(mi);
         }
 
         // DELETE: api/MenuItem/5
@@ -251,5 +261,70 @@ namespace AzzanOrder.Data.Controllers
 
             return Ok(recentMenuItems);
         }
-    }
+
+		// GET: api/MenuItem/Sales
+		[HttpGet("Sales/{id}/{startDate}/{endDate}")]
+		public async Task<ActionResult<IEnumerable<MenuItemSalesDTO>>> GetMenuItemSales(int id, string startDate, string endDate)
+		{
+			var menuItems = await _context.MenuItems
+                .Include(mi => mi.OrderDetails)
+                .ThenInclude(od => od.Order)
+                .Where(mi => mi.IsAvailable == true && mi.Employee.OwnerId == id && mi.Employee.IsDelete != true)
+                .Select(mi => new
+                {
+                    mi.MenuItemId,
+                    mi.ItemName,
+                    mi.Employee.EmployeeName,
+                    OrderDetails = mi.OrderDetails
+                    .Where(od => od.Order.OrderDate >= DateTime.Parse(startDate) && od.Order.OrderDate <= DateTime.Parse(endDate))
+                    .Select(od => od.Quantity)
+                })
+                .ToListAsync();
+
+			var groupedMenuItems = menuItems
+				.GroupBy(mi => mi.ItemName)
+				.Select(g => new MenuItemSalesDTO
+				{
+					MenuItemId = g.First().MenuItemId,
+					ItemName = g.Key,
+					Sales = (int)g.Sum(mi => mi.OrderDetails.Sum()),
+					ManagerName = g.First().EmployeeName
+				})
+				.OrderByDescending(mi => mi.Sales)
+				.ToList();
+
+			return Ok(groupedMenuItems);
+		}
+
+		[HttpGet("ManagerSales/{id}/{startDate}/{endDate}")]
+		public async Task<ActionResult<IEnumerable<MenuItemSalesDTO>>> GetSales(int id, string startDate, string endDate)
+		{
+			var menuItems = await _context.MenuItems
+				.Include(mi => mi.OrderDetails)
+				.ThenInclude(od => od.Order)
+				.Where(mi => mi.IsAvailable == true && mi.Employee.OwnerId == id && mi.Employee.IsDelete != true)
+				.Select(mi => new
+				{
+					mi.MenuItemId,
+					mi.ItemName,
+					mi.Employee.EmployeeName,
+					OrderDetails = mi.OrderDetails
+					.Where(od => od.Order.OrderDate >= DateTime.Parse(startDate) && od.Order.OrderDate <= DateTime.Parse(endDate))
+					.Select(od => od.Quantity)
+				})
+				.ToListAsync();
+
+			var groupedMenuItems = menuItems
+				.GroupBy(mi => mi.EmployeeName)
+				.Select(g => new MenuItemSalesDTO
+				{
+					Sales = (int)g.Sum(mi => mi.OrderDetails.Sum()),
+					ManagerName = g.First().EmployeeName
+				})
+				.OrderByDescending(mi => mi.Sales)
+				.ToList();
+
+			return Ok(groupedMenuItems);
+		}
+	}
 }

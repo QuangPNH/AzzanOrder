@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AzzanOrder.Data.Models;
+using Microsoft.IdentityModel.Tokens;
 
 namespace AzzanOrder.Data.Controllers
 {
@@ -66,32 +67,61 @@ namespace AzzanOrder.Data.Controllers
             return notification;
         }
 
-        // PUT: api/Notification/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
-        [HttpPut("Update")]
-        public async Task<IActionResult> PutNotification(Notification notification)
+		[HttpGet("GetByOwnerId/{id}")]
+		public async Task<ActionResult<IEnumerable<Notification>>> GetNotificationByOwner(int id)
+		{
+			if (_context.Notifications == null)
+			{
+				return NotFound();
+			}
+			var notification = await _context.Notifications.Where(x => x.EmployeeId == id).ToListAsync();
+
+			if (notification == null)
+			{
+				return NotFound();
+			}
+
+			return notification;
+		}
+
+		// PUT: api/Notification/5
+		// To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
+		[HttpPut("Update")]
+        public async Task<IActionResult> PutNotification(int? id, Notification notification)
         {
-            if (NotificationExists( notification.NotificationId))
+            if(id != null)
             {
-                return BadRequest();
-            }
-
-            _context.Entry(notification).State = EntityState.Modified;
-
+				if (_context.Notifications.Where(n => n.EmployeeId == id && n.Title.Equals("Renew your subscription")).IsNullOrEmpty())
+				{
+					var newnotification = new Notification
+					{
+						EmployeeId = id,
+						Content = notification.Content,
+						Title = "Renew your subscription",
+						IsRead = false,
+					};
+					_context.Notifications.Add(newnotification);
+					await _context.SaveChangesAsync();
+					return Ok("Add renew your subscription notification");
+				}
+				else
+				{
+					var noti = _context.Notifications.Where(n => n.EmployeeId == id && n.Title.Equals("Renew your subscription")).First();
+					noti.Content = notification.Content;
+					await _context.SaveChangesAsync();
+					return Ok("Update renew your subscription notification");
+				}
+			}
+			
+			_context.Entry(notification).State = EntityState.Modified;
+            
             try
             {
                 await _context.SaveChangesAsync();
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!NotificationExists(notification.NotificationId))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
+                return BadRequest();   
             }
 
             return Ok(notification);
