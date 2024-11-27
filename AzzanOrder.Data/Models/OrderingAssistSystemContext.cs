@@ -35,7 +35,7 @@ namespace AzzanOrder.Data.Models
         public virtual DbSet<Voucher> Vouchers { get; set; } = null!;
         public virtual DbSet<VoucherDetail> VoucherDetails { get; set; } = null!;
 
-        /*protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
 
         }

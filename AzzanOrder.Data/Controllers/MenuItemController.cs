@@ -114,7 +114,7 @@ namespace AzzanOrder.Data.Controllers
             _context.MenuItems.Add(mi);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetMenuItem", new { id = menuItem.MenuItemId }, menuItem);
+            return Ok(mi);
         }
 
         // DELETE: api/MenuItem/5
