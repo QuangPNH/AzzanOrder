@@ -416,21 +416,22 @@ namespace AzzanOrder.ManagerOwner.Controllers
 			{
 				price = "300000";
 				model.owner.SubscriptionStartDate = DateTime.Now;
-				model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
+				//model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
                 if (model.owner.SubscribeEndDate != null)
                 {
                     if (model.owner.SubscribeEndDate < DateTime.Now)
                     {
-                        return Json(DateTime.Now.AddYears(1));
+                        model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
                     }
                     else
                     {
-                        return Json(model.owner.SubscribeEndDate.AddYears(1));
+                        model.owner.SubscribeEndDate = model.owner.SubscribeEndDate.AddYears(1);
+                        
                     }
                 }
                 else
                 {
-                    return Json(DateTime.Now.AddYears(1));
+                    model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
                 }
             }
 			else if (pack.Equals("forever"))
