@@ -8,7 +8,7 @@ const PriceItem = ({ label, value, isTotal }) => {
             <span className="value">{value}</span>
             <style jsx>{`
         .price-item {
-          color: var(--Azzan-Color, #bd3326);
+          color: var(--primary-color);
           font: 400 16px Inter, sans-serif;
           margin: 8px 0;
           width: 100%;

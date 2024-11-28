@@ -155,7 +155,7 @@ const PlaceOrderButton = ({ amount, isTake, isCash }) => {
             <style jsx>{`
                 .place-order {
                     border-radius: 10px;
-                    background: var(--Azzan-Color, #bd3326);
+                    background: var(--primary-color);
                     box-shadow: 0 4px 4px 0 rgba(0, 0, 0, 0.25);
                     margin-top: 49px;
                     width: 100%;

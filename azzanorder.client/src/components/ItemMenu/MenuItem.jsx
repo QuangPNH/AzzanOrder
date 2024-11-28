@@ -67,7 +67,7 @@ function MenuItem({ imageSrc, name, description, price }) {
           margin-top: 14px;
         }
         .price-indicator {
-          background-color: #bd3326;
+          background-color: var(--primary-color);
           border-radius: 50%;
           width: 25px;
           height: 25px;

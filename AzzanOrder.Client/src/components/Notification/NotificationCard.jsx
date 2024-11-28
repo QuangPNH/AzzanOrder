@@ -110,7 +110,7 @@ function NotificationCard({ title, content }) {
                 }
 
                 .read-more-btn {
-                    color: #bd3326;
+                    color: var(--primary-color);
                     align-self: flex-end;
                     margin-top: 20px;
                     background: none;
@@ -149,7 +149,7 @@ function NotificationCard({ title, content }) {
                 }
 
                 .notification-separator-line {
-                    background: #bd3326;
+                    background: var(--primary-color);
                     border: none;
                     height: 1px;
                     width: 100%; /* Takes the full width of the notification-separator container */
