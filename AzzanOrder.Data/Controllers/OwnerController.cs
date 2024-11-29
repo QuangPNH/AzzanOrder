@@ -128,12 +128,13 @@ namespace AzzanOrder.Data.Controllers
 		[HttpPut("Update")]
 		public async Task<IActionResult> PutOwner(Owner owner)
 		{
-			if (OwnerExists(owner.OwnerId))
+			var data = _context.Owners.Find(owner.OwnerId);
+			if(data == null)
 			{
-				return BadRequest();
+				return NotFound();
 			}
 
-			_context.Entry(owner).State = EntityState.Modified;
+			_context.Entry(data).CurrentValues.SetValues(owner);
 
 			try
 			{
@@ -141,14 +142,7 @@ namespace AzzanOrder.Data.Controllers
 			}
 			catch (DbUpdateConcurrencyException)
 			{
-				if (!OwnerExists(owner.OwnerId))
-				{
-					return NotFound();
-				}
-				else
-				{
-					throw;
-				}
+				return BadRequest();
 			}
 
 			return Ok(owner);
