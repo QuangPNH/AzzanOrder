@@ -2,16 +2,18 @@
 @inject EmployeeService EmployeeService
 @{
     var path = Context.Request.Path.ToString().ToLower();
+
     if (EmployeeService.CurrentOwner != null)
     {
         Layout = "_LayoutOwner";
     }
-    if (path.Contains("/login") || path.Contains("/subscribe"))
-    {
-        Layout = "_LayoutEmpty";
-    }
+    
     if (EmployeeService.CurrentEmployee != null)
     {
         Layout = "_LayoutManager";
+    }
+    if (path.Contains("/login") || path.Contains("/subscribe"))
+    {
+        Layout = "_LayoutEmpty";
     }
 }

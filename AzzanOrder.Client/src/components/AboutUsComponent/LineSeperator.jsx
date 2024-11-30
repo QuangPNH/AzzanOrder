@@ -8,7 +8,7 @@ const DecorativeLine = ({ width }) => {
         .decorative-line {
           height: 1px;
           align-self: center;
-          background-color: #bd3326;
+          background-color: var(--primary-color);
         }
         .decorative-line:last-of-type {
           margin-top: 9px;

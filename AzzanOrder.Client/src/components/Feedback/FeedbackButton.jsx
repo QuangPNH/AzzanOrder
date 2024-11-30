@@ -19,7 +19,7 @@ function FeedbackButton({ text, onClick }) {
                 .submit-button {
                     border-radius: 15px;
                     border: none;
-                    background: #bd3326;
+                    background: var(--primary-color);
                     min-height: 35px;
                     width: ${buttonWidth}; /* Dynamic width based on text */
                     padding: 5px;

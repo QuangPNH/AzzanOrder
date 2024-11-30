@@ -58,6 +58,23 @@ namespace AzzanOrder.Data.Test
                         OwnerId = 3,
                         IsDelete = false,
                         Role = new Role { RoleId = 1, RoleName = "Manager" }
+                    },
+                    new Employee
+                    {
+                        EmployeeId = 1234,
+                        EmployeeName = "John Doe45",
+                        Gender = true,
+                        Phone = "1234567899",
+                        Gmail = "john.doe45@example.com",
+                        BirthDate = new DateTime(1990, 1, 1),
+                        RoleId = 2,
+                        HomeAddress = "123 Main St, Hometown",
+                        WorkAddress = "456 Work St, Worktown",
+                        Image = "path/to/image.jpg",
+                        ManagerId = 2,
+                        OwnerId = 3,
+                        IsDelete = false,
+                        Role = new Role { RoleId = 2, RoleName = "Staff" }
                     }
                 }.AsQueryable();
 

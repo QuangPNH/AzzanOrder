@@ -23,10 +23,10 @@ function AmountIcon({ isSelected, label, onClick, compact }) {
                     color: #000; /* Unselected color */
                 }
                 .amount-selected {
-                    background: var(--Azzan-Color, #bd3326);
+                    background: var(--primary-color);
                     color: #fff;
                     font-weight: 400;
-                    padding: 7px 16px;
+                    padding: 7px 16px;var(--primary-color);
                     border: none; /* No border for the selected step */
                 }
                 .compact{

@@ -76,9 +76,7 @@ public class CheckoutController : Controller
                 $"{baseUrl}/cancel",
                 $"{baseUrl}/success"
             );
-
             CreatePaymentResult createPayment = await _payOS.createPaymentLink(paymentData);
-
             //return Redirect(createPayment.checkoutUrl);
             return createPayment.checkoutUrl;
         }
@@ -164,6 +162,7 @@ public class CheckoutController : Controller
 
         if (itemType.Contains("Subscribe"))
         {
+            Response.Cookies.Delete("ItemType");
             Console.WriteLine("When succ" + HttpContext.Request.Cookies.TryGetValue("OwnerData", out string ownerJson));
             Console.WriteLine("Tets cookie " + ownerJson);
             Console.WriteLine("Tets cookie " + Request.Cookies["OwnerData"]);
@@ -230,6 +229,7 @@ public class CheckoutController : Controller
 
         if (itemType != null && itemType.Contains("Subscribe"))
         {
+            Response.Cookies.Delete("ItemType");
             return Redirect($"{_config._manager}Home/Subscribe");
         }
 

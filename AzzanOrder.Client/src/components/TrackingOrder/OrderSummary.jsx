@@ -11,7 +11,7 @@ const OrderSummary = () => {
                     margin-top: 20px; /* Add margin to create space */
                 }
                 .your-order-title {
-                    color: #bd3326; /* Set color to BD3326 (100%) */
+                    color: var(--primary-color); /* Set color to BD3326 (100%) */
                     font: bold 32px Inter, sans-serif; /* Use Inter Bold 32 */
                     margin: 0;
                     padding-top: 20px;

@@ -295,5 +295,36 @@ namespace AzzanOrder.Data.Controllers
 
 			return Ok(groupedMenuItems);
 		}
+
+		[HttpGet("ManagerSales/{id}/{startDate}/{endDate}")]
+		public async Task<ActionResult<IEnumerable<MenuItemSalesDTO>>> GetSales(int id, string startDate, string endDate)
+		{
+			var menuItems = await _context.MenuItems
+				.Include(mi => mi.OrderDetails)
+				.ThenInclude(od => od.Order)
+				.Where(mi => mi.IsAvailable == true && mi.Employee.OwnerId == id && mi.Employee.IsDelete != true)
+				.Select(mi => new
+				{
+					mi.MenuItemId,
+					mi.ItemName,
+					mi.Employee.EmployeeName,
+					OrderDetails = mi.OrderDetails
+					.Where(od => od.Order.OrderDate >= DateTime.Parse(startDate) && od.Order.OrderDate <= DateTime.Parse(endDate))
+					.Select(od => od.Quantity)
+				})
+				.ToListAsync();
+
+			var groupedMenuItems = menuItems
+				.GroupBy(mi => mi.EmployeeName)
+				.Select(g => new MenuItemSalesDTO
+				{
+					Sales = (int)g.Sum(mi => mi.OrderDetails.Sum()),
+					ManagerName = g.First().EmployeeName
+				})
+				.OrderByDescending(mi => mi.Sales)
+				.ToList();
+
+			return Ok(groupedMenuItems);
+		}
 	}
 }

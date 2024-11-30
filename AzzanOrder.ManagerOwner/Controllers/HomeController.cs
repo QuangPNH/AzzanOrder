@@ -1,12 +1,8 @@
 ﻿using AzzanOrder.ManagerOwner.DTOs;
 using AzzanOrder.ManagerOwner.Models;
-using Humanizer;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
-using Newtonsoft.Json.Linq;
 using System.Diagnostics;
-using System.Numerics;
-using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using Twilio;
@@ -643,13 +639,117 @@ namespace AzzanOrder.ManagerOwner.Controllers
             }
             catch
             {
-
             }
             return Conflict();
         }
 
+		public async Task<IActionResult> NotificationRead(int id)
+        {
+			using (HttpClient client = new HttpClient())
+			{
+				// Get the notification by id
+				var response = await client.GetAsync(_apiUrl + $"Notification/{id}");
+				if (response.IsSuccessStatusCode)
+				{
+					var notificationJson = await response.Content.ReadAsStringAsync();
+					var notification = JsonConvert.DeserializeObject<Notification>(notificationJson);
 
-        [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
+					if (notification != null)
+					{
+						// Change the IsRead property to true
+						notification.IsRead = true;
+
+						// Update the notification
+						var content = new StringContent(JsonConvert.SerializeObject(notification), Encoding.UTF8, "application/json");
+						await client.PutAsync(_apiUrl + $"Notification/Update", content);
+					}
+				}
+			}
+
+			// Redirect to the previous page
+			var referer = Request.Headers["Referer"].ToString();
+			if (!string.IsNullOrEmpty(referer))
+			{
+				return Redirect(referer);
+			}
+
+			return RedirectToAction("Index");
+		}
+		public async Task<IActionResult> Profile()
+		{
+			AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+			var loginStatus = await authorizeLogin.CheckLogin();
+			if (loginStatus.Equals("owner"))
+			{
+				
+			}
+			else if (loginStatus.Equals("manager"))
+			{
+				return RedirectToAction("List", "Employee");
+			}
+			else if (loginStatus.Equals("owner expired"))
+			{
+				return RedirectToAction("Login", "Home");
+			}
+			else if (loginStatus.Equals("manager expired"))
+			{
+				return RedirectToAction("Login", "Home");
+			}
+			Owner emp = new Owner();
+			if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
+			{
+				emp = JsonConvert.DeserializeObject<Owner>(empJson);
+			}
+			using (HttpClient client = new HttpClient())
+			{
+				// Get the notification by id
+				var response = await client.GetAsync(_apiUrl + $"Owner/{emp.OwnerId}");
+				if (response.IsSuccessStatusCode)
+				{
+					var notificationJson = await response.Content.ReadAsStringAsync();
+					emp = JsonConvert.DeserializeObject<Owner>(notificationJson);
+				}
+			}
+            var model = new Model
+            {
+                owner = emp
+            };
+            return View(model);
+		}
+        [HttpPost]
+        public async Task<IActionResult> Profile(Model model, IFormFile Image)
+        {
+			if (Image != null && Image.Length > 0)
+			{
+				using (var memoryStream = new MemoryStream())
+				{
+					await Image.CopyToAsync(memoryStream);
+					var fileBytes = memoryStream.ToArray();
+					model.owner.Image = "data:image/png;base64," + Convert.ToBase64String(fileBytes);
+				}
+			}
+
+			using (HttpClient client = new HttpClient())
+			{
+				var json = JsonConvert.SerializeObject(model.owner);
+				var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+				HttpResponseMessage response = await client.PutAsync(_apiUrl + "Owner/Update", content);
+
+				if (response.IsSuccessStatusCode)
+				{
+					return View(model);
+				}
+				else
+				{
+					ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+				}
+			}
+
+			return View(model);
+		}
+
+		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });

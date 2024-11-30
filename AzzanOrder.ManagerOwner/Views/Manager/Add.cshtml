@@ -7,6 +7,16 @@
 
         <div class="card-body">
             <form asp-action="AddPost" asp-controller="Manager" method="post">
+                <div class="d-flex justify-content-center mb-3">
+                    @if (Model.employee.Image != null)
+                    {
+                        <img src="@Model.employee.Image" class="rounded-circle me-2" width="100" height="100" alt="Owner Image">
+                    }
+                    else
+                    {
+                        <img src="~/img/avatars/avatar.jpg" class="rounded-circle me-2" width="100" height="100" alt="Owner Image">
+                    }
+                </div>
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Name</label>
                     <div class="col-sm-10">
@@ -50,7 +60,6 @@
                     <label class="col-form-label col-sm-2 text-sm-end">Birthday</label>
                     <div class="col-sm-10">
                         <input asp-for="employee.BirthDate" class="form-control flatpickr-human"/>
-                        <span class="text-muted">DD/MM/YYYY format.</span>
                     </div>
                 </div>
 
