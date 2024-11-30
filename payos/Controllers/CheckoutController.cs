@@ -224,11 +224,11 @@ public class CheckoutController : Controller
     [HttpGet("/cancel")]
     public IActionResult Cancel()
     {
-        Console.WriteLine("Cancel nah");
+        
         HttpContext.Request.Cookies.TryGetValue("tableqrPayOs", out string tableqr);
         HttpContext.Request.Cookies.TryGetValue("ItemType", out string itemType);
 
-        if (itemType.Contains("Subscribe"))
+        if (itemType != null && itemType.Contains("Subscribe"))
         {
             return Redirect($"{_config._manager}Home/Subscribe");
         }
