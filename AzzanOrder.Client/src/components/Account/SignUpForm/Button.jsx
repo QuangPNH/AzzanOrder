@@ -12,7 +12,7 @@ function Button({ text, style, disabled }) {
                     align-self: center;
                     border-radius: 15px;
                     border: none;
-                    background: #bd3326;
+                    background: var(--primary-color);
                     margin-top: 15px;
                     min-height: 35px;
                     width: ${buttonWidth}; /* Dynamic width based on text */

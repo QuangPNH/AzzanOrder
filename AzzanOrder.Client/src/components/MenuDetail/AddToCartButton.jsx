@@ -23,7 +23,7 @@ const AddToCartButton = ({ onClick  }) => {
                     justify-content: center; /* Center horizontally within button */
                     padding: 11px 16px; /* Padding for top/bottom and left/right */
                     border-radius: 8px; /* 8px curve border */
-                    background-color: #bd3326; /* Button color */
+                    background-color: var(--primary-color); /* Button color */
                     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.25); /* Shadow drop */
                     color: white; /* Text color */
                     font: 400 16px 'Inter', sans-serif; /* Font */

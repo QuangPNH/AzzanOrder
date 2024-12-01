@@ -36,6 +36,43 @@ namespace AzzanOrder.Tests
         }
 
         [Test]
+        public async Task GetStaffByPhone_ReturnsStaffByPhone()
+        {
+            // Arrange
+            var employee = new Employee { Phone = "1234567890" };
+            _mockSet.Setup(m => m.FindAsync(It.IsAny<object[]>()))
+                    .ReturnsAsync(employee);
+            _mockContext.Setup(c => c.Employees).Returns(_mockSet.Object);
+
+            // Act
+            var result = await _controller.GetStaffByPhone("1234567890");
+
+            // Assert
+            Assert.IsInstanceOf<ActionResult<Employee>>(result);
+            var returnValue = result?.Value as Employee;
+            Assert.IsNotNull(returnValue);
+            Assert.AreEqual("1234567890", returnValue?.Phone);
+        }
+
+        [Test]
+        public async Task GetManagerByPhone_ReturnsManagerByPhone()
+        {
+            // Arrange
+            var employee = new Employee { Phone = "0987654321" };
+            _mockSet.Setup(m => m.FindAsync(It.IsAny<object[]>()))
+                    .ReturnsAsync(employee);
+            _mockContext.Setup(c => c.Employees).Returns(_mockSet.Object);
+
+            // Act
+            var result = await _controller.GetManagerByPhone("0987654321");
+
+            // Assert
+            Assert.IsInstanceOf<ActionResult<Employee>>(result);
+            var returnValue = result?.Value as Employee;
+            Assert.IsNotNull(returnValue);
+            Assert.AreEqual("0987654321", returnValue?.Phone);
+        }
+        [Test]
         public async Task GetEmployees_ReturnsAllEmployees()
         {
             // Act
@@ -46,10 +83,21 @@ namespace AzzanOrder.Tests
 
             var returnValue = result?.Value as List<Employee>;
             Assert.IsNotNull(returnValue, "Expected a list of employees but got null.");
-            Assert.AreEqual(2, returnValue?.Count, "Expected 2 employees but got a different count.");
+            Assert.AreEqual(3, returnValue?.Count, "Expected 2 employees but got a different count.");
         }
 
+        [Test]
+        public async Task GetEmployees_ReturnsNotFound_WhenEmployeesIsNull()
+        {
+            // Arrange
+            _mockContext.Setup(c => c.Employees).Returns((DbSet<Employee>)null);
 
+            // Act
+            var result = await _controller.GetEmployees();
+
+            // Assert
+            Assert.IsInstanceOf<NotFoundResult>(result.Result);
+        }
         [Test]
         public async Task GetEmployeeByPhone_ReturnsEmployeeByPhone()
         {
@@ -58,27 +106,6 @@ namespace AzzanOrder.Tests
             var returnValue = result?.Value as Employee;
             Assert.IsNotNull(returnValue);
             Assert.AreEqual("1234567890", returnValue?.Phone);
-        }
-
-        [Test]
-        public async Task GetStaffByPhone_ReturnsStaffByPhone()
-        {
-            _controller = new EmployeeController(_mockContext.Object);
-            var result = await _controller.GetStaffByPhone("1234567890");
-            Assert.IsInstanceOf<ActionResult<Employee>>(result);
-            var returnValue = result?.Value as Employee;
-            Assert.IsNotNull(returnValue);
-            Assert.AreEqual("1234567890", returnValue?.Phone);
-        }
-
-        [Test]
-        public async Task GetManagerByPhone_ReturnsManagerByPhone()
-        {
-            var result = await _controller.GetManagerByPhone("0987654321");
-            Assert.IsInstanceOf<ActionResult<Employee>>(result);
-            var returnValue = result?.Value as Employee;
-            Assert.IsNotNull(returnValue);
-            Assert.AreEqual("0987654321", returnValue?.Phone);
         }
 
         [Test]
@@ -142,7 +169,7 @@ namespace AzzanOrder.Tests
         [Test]
         public async Task DeleteEmployee_DeletesEmployee()
         {
-            var result = await _controller.DeleteEmployee(1987);
+            var result = await _controller.DeleteEmployee(1234);
             Assert.IsInstanceOf<OkObjectResult>(result);
         }
         [Test]

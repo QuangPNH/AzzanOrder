@@ -675,6 +675,80 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 			return RedirectToAction("Index");
 		}
+		public async Task<IActionResult> Profile()
+		{
+			AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+			var loginStatus = await authorizeLogin.CheckLogin();
+			if (loginStatus.Equals("owner"))
+			{
+				
+			}
+			else if (loginStatus.Equals("manager"))
+			{
+				return RedirectToAction("List", "Employee");
+			}
+			else if (loginStatus.Equals("owner expired"))
+			{
+				return RedirectToAction("Login", "Home");
+			}
+			else if (loginStatus.Equals("manager expired"))
+			{
+				return RedirectToAction("Login", "Home");
+			}
+			Owner emp = new Owner();
+			if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
+			{
+				emp = JsonConvert.DeserializeObject<Owner>(empJson);
+			}
+			using (HttpClient client = new HttpClient())
+			{
+				// Get the notification by id
+				var response = await client.GetAsync(_apiUrl + $"Owner/{emp.OwnerId}");
+				if (response.IsSuccessStatusCode)
+				{
+					var notificationJson = await response.Content.ReadAsStringAsync();
+					emp = JsonConvert.DeserializeObject<Owner>(notificationJson);
+				}
+			}
+            var model = new Model
+            {
+                owner = emp
+            };
+            return View(model);
+		}
+        [HttpPost]
+        public async Task<IActionResult> Profile(Model model, IFormFile Image)
+        {
+			if (Image != null && Image.Length > 0)
+			{
+				using (var memoryStream = new MemoryStream())
+				{
+					await Image.CopyToAsync(memoryStream);
+					var fileBytes = memoryStream.ToArray();
+					model.owner.Image = "data:image/png;base64," + Convert.ToBase64String(fileBytes);
+				}
+			}
+
+			using (HttpClient client = new HttpClient())
+			{
+				var json = JsonConvert.SerializeObject(model.owner);
+				var content = new StringContent(json, Encoding.UTF8, "application/json");
+
+				HttpResponseMessage response = await client.PutAsync(_apiUrl + "Owner/Update", content);
+
+				if (response.IsSuccessStatusCode)
+				{
+					return View(model);
+				}
+				else
+				{
+					ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+				}
+			}
+
+			return View(model);
+		}
+
 		[ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {

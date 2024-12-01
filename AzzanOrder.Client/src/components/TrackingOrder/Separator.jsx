@@ -15,7 +15,7 @@ const Separator = () => {
           padding: 8px 16px;
         }
         .separator-line {
-          background: var(--Azzan-Color, #bd3326);
+          background: var(--primary-color);
           display: flex;
           min-height: 1px;
           width: 100%;

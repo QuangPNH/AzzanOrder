@@ -66,7 +66,7 @@
         width: 81px;
     }
 #logoutbutton {
-    background-color: #bd3326;
+    background-color: var(--primary-color);
 }
 #warning-container{
     border-radius: 8px;
@@ -112,7 +112,7 @@
     .box .button-2 {
         all: unset;
         box-sizing: border-box;
-        color: #bd3326;
+        color: var(--primary-color);
         font-family: "Inter-Regular", Helvetica;
         font-size: 16px;
         font-weight: 400;

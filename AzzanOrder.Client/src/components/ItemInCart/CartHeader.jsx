@@ -113,7 +113,7 @@ const CartHeader = ({ headerText }) => {
                 .cartHeader {
                     display: flex;
                     align-items: center;
-                    color: var(--Azzan-Color, #bd3326);
+                    color: var(--primary-color);
                 }
                 .cartHeader p {
                     margin-left: 10px;
@@ -133,7 +133,7 @@ const CartHeader = ({ headerText }) => {
                 }
                 .selected-option1 {
                     margin-right: 10px;
-                    color: var(--Azzan-Color, #bd3326);
+                    color: var(--primary-color);
                 }
                 .dropdown-menu1 {
                     display: flex;
@@ -155,7 +155,7 @@ const CartHeader = ({ headerText }) => {
                     background: none;
                     border: none;
                     cursor: pointer;
-                    color: var(--Azzan-Color, #bd3326);
+                    color: var(--primary-color);
                 }
                 .dropdown-menu1 button:hover {
                     background-color: #f0f0f0;
