@@ -28,7 +28,7 @@ namespace AzzanOrder.Data.Controllers
           {
               return NotFound();
           }
-            return await _context.Feedbacks.ToListAsync();
+            return await _context.Feedbacks.OrderByDescending(mc=>mc.FeedbackId).ToListAsync();
         }
 
         // GET: api/Feedback/5
@@ -67,7 +67,7 @@ namespace AzzanOrder.Data.Controllers
         [HttpPut("Update")]
         public async Task<IActionResult> PutFeedback(Feedback feedback)
         {
-            if (!FeedbackExists(feedback.Feedbackid))
+            if (!FeedbackExists(feedback.FeedbackId))
             {
                 return NotFound("This feedback not exist");
             }
@@ -80,7 +80,7 @@ namespace AzzanOrder.Data.Controllers
             }
             catch (DbUpdateConcurrencyException)
             {
-                if (!FeedbackExists(feedback.Feedbackid))
+                if (!FeedbackExists(feedback.FeedbackId))
                 {
                     return NotFound();
                 }
@@ -110,7 +110,7 @@ namespace AzzanOrder.Data.Controllers
             _context.Feedbacks.Add(f);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetFeedback", new { id = f.Feedbackid }, f);
+            return CreatedAtAction("GetFeedback", new { id = f.FeedbackId }, f);
         }
 
         // DELETE: api/Feedback/5
@@ -135,10 +135,8 @@ namespace AzzanOrder.Data.Controllers
 
         private bool FeedbackExists(int id)
         {
-            return (_context.Feedbacks?.Any(e => e.Feedbackid == id)).GetValueOrDefault();
+            return (_context.Feedbacks?.Any(e => e.FeedbackId == id)).GetValueOrDefault();
         }
     }
 }
 
-
-//O day nua ne
