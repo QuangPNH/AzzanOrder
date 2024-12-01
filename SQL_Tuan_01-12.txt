@@ -604,6 +604,8 @@ SET IDENTITY_INSERT [dbo].[Notification] ON
 
 INSERT [dbo].[Notification] ([NotificationId], [Title], [Content], [IsRead], [MemberId], [EmployeeId]) VALUES (1, N'Discount offer', N'Get 10% off on all coffee orders',0, 1, 2)
 INSERT [dbo].[Notification] ([NotificationId], [Title], [Content], [IsRead], [MemberId], [EmployeeId]) VALUES (2, N'Happy Hour', N'50% off on all drinks from 3-5 PM',0, 2, 2)
+INSERT [dbo].[Notification] ([NotificationId], [Title], [Content], [IsRead], [MemberId], [EmployeeId]) VALUES (3, N'Happy Hour', N'A new dish incoming',0, 1, 1)
+INSERT [dbo].[Notification] ([NotificationId], [Title], [Content], [IsRead], [MemberId], [EmployeeId]) VALUES (4, N'Happy Hour', N'Maybe dishes',0, 2, 1)
 SET IDENTITY_INSERT [dbo].[Notification] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Order] ON 
