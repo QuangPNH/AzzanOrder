@@ -29,7 +29,7 @@ namespace AzzanOrder.Data.Controllers
           {
               return NotFound();
           }
-          var promotions = await _context.Promotions.Where(p => p.EmployeeId == id && p.IsActive != false).ToListAsync();
+          var promotions = await _context.Promotions.Where(p => p.EmployeeId == id && p.Is != false).ToListAsync();
             if (promotions == null)
             {
                 return NotFound();
