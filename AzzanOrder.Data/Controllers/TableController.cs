@@ -40,7 +40,7 @@ namespace AzzanOrder.Data.Controllers
             if (_context.Tables == null)
             {
                 return NotFound();
-            }
+            }   
             return await _context.Tables.Where(x => x.EmployeeId == id).ToListAsync();
         }
 
