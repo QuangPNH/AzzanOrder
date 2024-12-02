@@ -4,9 +4,9 @@
 <div class="col-12">
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">ListManager</h5>
+            <h5 class="card-title">List Manager</h5>
         </div>
-        <div>
+        <div style="margin-left:15px">
             <a href="@Url.Action("Add", "Manager")" class="btn btn-primary">Add New Manager</a>
         </div>
 
@@ -32,8 +32,8 @@
                         <td>@position</td>
                         <td>@emp.EmployeeName</td>
                         <td>@emp.Phone</td>
-                        <td>@emp.Gmail</td>
-                        <td>@emp.BirthDate</td>
+                        <td class="d-none d-md-table-cell">@emp.Gmail</td>
+                        <td class="d-none d-md-table-cell">@emp.BirthDate</td>
                         <td class="table-action">
                             <a href="@Url.Action("MenuList", "Manager", new { id = emp.EmployeeId})">Link</a>
                         </td>
