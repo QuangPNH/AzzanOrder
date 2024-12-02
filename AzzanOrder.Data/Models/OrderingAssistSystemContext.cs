@@ -23,7 +23,6 @@ namespace AzzanOrder.Data.Models
         public virtual DbSet<ItemCategory> ItemCategories { get; set; } = null!;
         public virtual DbSet<Member> Members { get; set; } = null!;
         public virtual DbSet<MemberVoucher> MemberVouchers { get; set; } = null!;
-        public virtual DbSet<MenuCategory> MenuCategories { get; set; } = null!;
         public virtual DbSet<MenuItem> MenuItems { get; set; } = null!;
         public virtual DbSet<Notification> Notifications { get; set; } = null!;
         public virtual DbSet<Order> Orders { get; set; } = null!;
