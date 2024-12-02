@@ -17,7 +17,7 @@ namespace AzzanOrder.Data.Models
         public string? MemberName { get; set; }
         public bool? Gender { get; set; }
         public string Phone { get; set; } = null!;
-        public string? Gmail { get; set; }
+        public string Gmail { get; set; } = null!;
         public DateTime? BirthDate { get; set; }
         public string? Address { get; set; }
         public double? Point { get; set; }

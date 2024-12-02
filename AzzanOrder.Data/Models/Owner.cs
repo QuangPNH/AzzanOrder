@@ -14,8 +14,8 @@ namespace AzzanOrder.Data.Models
         public int OwnerId { get; set; }
         public string? OwnerName { get; set; }
         public bool? Gender { get; set; }
-        public string? Phone { get; set; }
-        public string? Gmail { get; set; }
+        public string Phone { get; set; } = null!;
+        public string Gmail { get; set; } = null!;
         public DateTime? BirthDate { get; set; }
         public int? BankId { get; set; }
         public string? Image { get; set; }
@@ -23,6 +23,7 @@ namespace AzzanOrder.Data.Models
         public DateTime SubscriptionStartDate { get; set; }
         public DateTime SubscribeEndDate { get; set; }
         public bool? IsFreeTrial { get; set; }
+        public int? NumberOfAccountAllowed { get; set; }
 
         public virtual Bank? Bank { get; set; }
         public virtual ICollection<About> Abouts { get; set; }

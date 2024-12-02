@@ -71,7 +71,17 @@ namespace AzzanOrder.Data.Models
             {
                 entity.ToTable("Employee");
 
+                entity.HasIndex(e => e.Phone, "UQ__Employee__5C7E359E33973715")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.Gmail, "UQ__Employee__B488B103848F54A2")
+                    .IsUnique();
+
                 entity.Property(e => e.BirthDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Gmail)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Phone)
                     .HasMaxLength(10)
@@ -90,6 +100,7 @@ namespace AzzanOrder.Data.Models
                 entity.HasOne(d => d.Role)
                     .WithMany(p => p.Employees)
                     .HasForeignKey(d => d.RoleId)
+                    .OnDelete(DeleteBehavior.ClientSetNull)
                     .HasConstraintName("FK_Employee_Role");
             });
 
@@ -107,6 +118,10 @@ namespace AzzanOrder.Data.Models
             {
                 entity.ToTable("ItemCategory");
 
+                entity.Property(e => e.EndDate).HasColumnType("date");
+
+                entity.Property(e => e.StartDate).HasColumnType("date");
+
                 entity.HasOne(d => d.Employee)
                     .WithMany(p => p.ItemCategories)
                     .HasForeignKey(d => d.EmployeeId)
@@ -117,7 +132,17 @@ namespace AzzanOrder.Data.Models
             {
                 entity.ToTable("Member");
 
+                entity.HasIndex(e => e.Phone, "UQ__Member__5C7E359E701B6A3C")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.Gmail, "UQ__Member__B488B10351DF5EA4")
+                    .IsUnique();
+
                 entity.Property(e => e.BirthDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Gmail)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Phone)
                     .HasMaxLength(10)

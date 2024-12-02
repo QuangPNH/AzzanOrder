@@ -18,10 +18,10 @@ namespace AzzanOrder.Data.Models
         public int EmployeeId { get; set; }
         public string? EmployeeName { get; set; }
         public bool? Gender { get; set; }
-        public string? Phone { get; set; }
-        public string? Gmail { get; set; }
+        public string Phone { get; set; } = null!;
+        public string Gmail { get; set; } = null!;
         public DateTime? BirthDate { get; set; }
-        public int? RoleId { get; set; }
+        public int RoleId { get; set; }
         public string? HomeAddress { get; set; }
         public string? WorkAddress { get; set; }
         public string? Image { get; set; }
@@ -31,7 +31,7 @@ namespace AzzanOrder.Data.Models
 
         public virtual Employee? Manager { get; set; }
         public virtual Owner? Owner { get; set; }
-        public virtual Role? Role { get; set; }
+        public virtual Role Role { get; set; } = null!;
         public virtual ICollection<Employee> InverseManager { get; set; }
         public virtual ICollection<ItemCategory> ItemCategories { get; set; }
         public virtual ICollection<MenuItem> MenuItems { get; set; }
