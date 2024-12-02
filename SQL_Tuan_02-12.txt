@@ -122,10 +122,10 @@ CREATE TABLE [dbo].[Employee](
 	[EmployeeId] [int] IDENTITY(1,1) NOT NULL,
 	[EmployeeName] [nvarchar](max) NULL,
 	[Gender] [bit] NULL,
-	[Phone] [varchar](10) NULL,
-	[Gmail] [nvarchar](max) NULL,
+	[Phone] [varchar](10) NOT NULL UNIQUE,
+	[Gmail] [varchar](50) NOT NULL UNIQUE,
 	[BirthDate] [datetime] NULL,
-	[RoleId] [int] NULL,
+	[RoleId] [int] NOT NULL,
 	[HomeAddress] [nvarchar](max) NULL,
 	[WorkAddress] [nvarchar](max) NULL,
 	[Image] [nvarchar](max) NULL,
@@ -144,12 +144,12 @@ GO
 SET QUOTED_IDENTIFIER ON
 GO
 CREATE TABLE [dbo].[Feedback](
-	[Feedbackid] [int] IDENTITY(1,1) NOT NULL,
+	[FeedbackId] [int] IDENTITY(1,1) NOT NULL,
 	[Content] [nvarchar](max) NULL,
 	[MemberId] [int] NULL,
  CONSTRAINT [PK_Feedback] PRIMARY KEY CLUSTERED 
 (
-	[Feedbackid] ASC
+	[FeedbackId] ASC
 )WITH (PAD_INDEX = OFF, STATISTICS_NORECOMPUTE = OFF, IGNORE_DUP_KEY = OFF, ALLOW_ROW_LOCKS = ON, ALLOW_PAGE_LOCKS = ON, OPTIMIZE_FOR_SEQUENTIAL_KEY = OFF) ON [PRIMARY]
 ) ON [PRIMARY] TEXTIMAGE_ON [PRIMARY]
 GO
@@ -184,8 +184,8 @@ CREATE TABLE [dbo].[Member](
 	[MemberId] [int] IDENTITY(1,1) NOT NULL,
 	[MemberName] [nvarchar](max) NULL,
 	[Gender] [bit] NULL,
-	[Phone] [varchar](10) NOT NULL,
-	[Gmail] [nvarchar](max) NULL,
+	[Phone] [varchar](10) NOT NULL UNIQUE,
+	[Gmail] [varchar](50) NOT NULL UNIQUE,
 	[BirthDate] [datetime] NULL,
 	[Address] [nvarchar](max) NULL,
 	[Point] [float] NULL,
@@ -314,8 +314,8 @@ CREATE TABLE [dbo].[Owner](
 	[OwnerId] [int] IDENTITY(1,1) NOT NULL,
 	[OwnerName] [nvarchar](max) NULL,
 	[Gender] [bit] NULL,
-	[Phone] [varchar](10) NULL,
-	[Gmail] [nvarchar](max) NULL,
+	[Phone] [varchar](10) NOT NULL UNIQUE,
+	[Gmail] [varchar](50) NOT NULL UNIQUE,
 	[BirthDate] [datetime] NULL,
 	[BankId] [int] NULL,
 	[Image] [nvarchar](max) NULL,
@@ -446,11 +446,11 @@ SET IDENTITY_INSERT [dbo].[Employee] OFF
 GO
 SET IDENTITY_INSERT [dbo].[Feedback] ON 
 
-INSERT [dbo].[Feedback] ([Feedbackid], [Content], [MemberId]) VALUES (1, N'Great coffee and fast service!', 1)
-INSERT [dbo].[Feedback] ([Feedbackid], [Content], [MemberId]) VALUES (2, N'Loved the atmosphere!', 2)
-INSERT [dbo].[Feedback] ([Feedbackid], [Content], [MemberId]) VALUES (3, N'Great coffee and fast service!', 1)
-INSERT [dbo].[Feedback] ([Feedbackid], [Content], [MemberId]) VALUES (5, N'Great coffee and fast service!', 1)
-INSERT [dbo].[Feedback] ([Feedbackid], [Content], [MemberId]) VALUES (6, N'Great coffee and fast service!', 1)
+INSERT [dbo].[Feedback] ([FeedbackId], [Content], [MemberId]) VALUES (1, N'Great coffee and fast service!', 1)
+INSERT [dbo].[Feedback] ([FeedbackId], [Content], [MemberId]) VALUES (2, N'Loved the atmosphere!', 2)
+INSERT [dbo].[Feedback] ([FeedbackId], [Content], [MemberId]) VALUES (3, N'Great coffee and fast service!', 1)
+INSERT [dbo].[Feedback] ([FeedbackId], [Content], [MemberId]) VALUES (5, N'Great coffee and fast service!', 1)
+INSERT [dbo].[Feedback] ([FeedbackId], [Content], [MemberId]) VALUES (6, N'Great coffee and fast service!', 1)
 SET IDENTITY_INSERT [dbo].[Feedback] OFF
 GO
 SET IDENTITY_INSERT [dbo].[ItemCategory] ON 

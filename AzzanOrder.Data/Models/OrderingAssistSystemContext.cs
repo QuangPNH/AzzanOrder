@@ -168,9 +168,8 @@ namespace AzzanOrder.Data.Models
                     .HasForeignKey(d => d.VoucherDetailId)
                     .HasConstraintName("FK_MemberVoucher_VoucherDetail");
             });
-
-            modelBuilder.Entity<MenuCategory>(entity =>
-            {
+			modelBuilder.Entity<MenuCategory>(entity =>
+			{
                 entity.HasKey(e => new { e.MenuItemId, e.ItemCategoryId });
 
                 entity.ToTable("MenuCategory");
