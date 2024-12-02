@@ -41,7 +41,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            return await _context.Tables.Where(x => x.EmployeeId == 1).ToListAsync();
+            return await _context.Tables.Where(x => x.EmployeeId == id).ToListAsync();
         }
 
         // GET: api/Table/5

@@ -11,7 +11,7 @@ namespace AzzanOrder.Data.Controllers
     public class OrderController : ControllerBase
     {
         private readonly OrderingAssistSystemContext _context;
-        public string base64Image { get; set; }
+        public string? base64Image { get; set; } // Fix for Problem 1
 
         public OrderController(OrderingAssistSystemContext context)
         {
@@ -48,7 +48,7 @@ namespace AzzanOrder.Data.Controllers
         }
 
         [HttpGet("GetCustomerOrder/{id}")]
-        public async Task<ActionResult<IEnumerable<Order>>> GetGetCustomerOrder(int id, int?  employeeId)
+        public async Task<ActionResult<IEnumerable<Order>>> GetGetCustomerOrder(int id, int? employeeId)
         {
             if (_context.Orders == null)
             {
@@ -56,8 +56,28 @@ namespace AzzanOrder.Data.Controllers
             }
             var orders = await _context.Orders.Include(o => o.OrderDetails)
                     .ThenInclude(od => od.MenuItem).Where(
-                x => x.MemberId == id  &&
+                x => x.MemberId == id &&
                 x.OrderDate > DateTime.Now.AddHours(-1)
+                ).ToListAsync();
+
+            if (orders == null)
+            {
+                return NotFound();
+            }
+
+            return orders;
+        }
+
+        [HttpGet("Employee/{id}")]
+        public async Task<ActionResult<IEnumerable<Order>>> GetOrderByEmployeeId(int id)
+        {
+            if (_context.Orders == null)
+            {
+                return NotFound();
+            }
+            var orders = await _context.Orders.Include(o => o.Table).Include(o => o.OrderDetails)
+                    .ThenInclude(od => od.MenuItem).Where(
+                x => x.Table != null && x.Table.EmployeeId == id // Fix for Problem 2
                 ).ToListAsync();
 
             if (orders == null)
@@ -81,7 +101,7 @@ namespace AzzanOrder.Data.Controllers
                 .Include(o => o.OrderDetails)
                     .ThenInclude(od => od.MenuItem)
                 .Include(o => o.Table)
-                .Where(x => x.Table.Qr == qr
+                .Where(x => x.Table != null && x.Table.Qr == qr // Fix for Problem 3
                             && x.Table.EmployeeId == id
                             && x.OrderDate > oneHourAgo
                 ).ToListAsync();
@@ -165,7 +185,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            var order = await _context.Orders.FindAsync(id);
+            var order = await _context.Orders.Include(o => o.OrderDetails).FirstOrDefaultAsync(o => o.OrderId == id); // Fix for Problem 4
             if (order == null)
             {
                 return NotFound();
@@ -194,7 +214,7 @@ namespace AzzanOrder.Data.Controllers
                     .ThenInclude(od => od.MenuItem)
                 .Include(o => o.Table)
                 .Where(x => x.Status == false
-                            //&& x.OrderDate > DateTime.Now.AddHours(-1)
+                //&& x.OrderDate > DateTime.Now.AddHours(-1)
                 ).ToListAsync();
 
             if (orders == null || !orders.Any())
