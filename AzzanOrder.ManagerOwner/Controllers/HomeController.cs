@@ -20,6 +20,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
         {
             _logger = logger;
         }
+
 		public async Task<IActionResult> IndexAsync()
 		{
 			AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
