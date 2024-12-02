@@ -23,7 +23,6 @@ namespace AzzanOrder.Data.Models
         public virtual DbSet<ItemCategory> ItemCategories { get; set; } = null!;
         public virtual DbSet<Member> Members { get; set; } = null!;
         public virtual DbSet<MemberVoucher> MemberVouchers { get; set; } = null!;
-        public virtual DbSet<MenuCategory> MenuCategories { get; set; } = null!;
         public virtual DbSet<MenuItem> MenuItems { get; set; } = null!;
         public virtual DbSet<Notification> Notifications { get; set; } = null!;
         public virtual DbSet<Order> Orders { get; set; } = null!;
@@ -35,10 +34,7 @@ namespace AzzanOrder.Data.Models
         public virtual DbSet<Voucher> Vouchers { get; set; } = null!;
         public virtual DbSet<VoucherDetail> VoucherDetails { get; set; } = null!;
 
-        protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-        {
-
-        }
+    
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
@@ -170,24 +166,24 @@ namespace AzzanOrder.Data.Models
             });
 			modelBuilder.Entity<MenuCategory>(entity =>
 			{
-                entity.HasKey(e => new { e.MenuItemId, e.ItemCategoryId });
+				entity.HasKey(e => new { e.MenuItemId, e.ItemCategoryId });
 
-                entity.ToTable("MenuCategory");
+				entity.ToTable("MenuCategory");
 
-                entity.HasOne(d => d.ItemCategory)
-                    .WithMany(p => p.MenuCategories)
-                    .HasForeignKey(d => d.ItemCategoryId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_MenuCategory_ItemCategory");
+				entity.HasOne(d => d.ItemCategory)
+					.WithMany(p => p.MenuCategories)
+					.HasForeignKey(d => d.ItemCategoryId)
+					.OnDelete(DeleteBehavior.ClientSetNull)
+					.HasConstraintName("FK_MenuCategory_ItemCategory");
 
-                entity.HasOne(d => d.MenuItem)
-                    .WithMany(p => p.MenuCategories)
-                    .HasForeignKey(d => d.MenuItemId)
-                    .OnDelete(DeleteBehavior.ClientSetNull)
-                    .HasConstraintName("FK_MenuCategory_MenuItem");
-            });
+				entity.HasOne(d => d.MenuItem)
+					.WithMany(p => p.MenuCategories)
+					.HasForeignKey(d => d.MenuItemId)
+					.OnDelete(DeleteBehavior.ClientSetNull)
+					.HasConstraintName("FK_MenuCategory_MenuItem");
+			});
 
-            modelBuilder.Entity<MenuItem>(entity =>
+			modelBuilder.Entity<MenuItem>(entity =>
             {
                 entity.ToTable("MenuItem");
 
@@ -250,7 +246,17 @@ namespace AzzanOrder.Data.Models
             {
                 entity.ToTable("Owner");
 
+                entity.HasIndex(e => e.Phone, "UQ__Owner__5C7E359E389639CB")
+                    .IsUnique();
+
+                entity.HasIndex(e => e.Gmail, "UQ__Owner__B488B10318008FBE")
+                    .IsUnique();
+
                 entity.Property(e => e.BirthDate).HasColumnType("datetime");
+
+                entity.Property(e => e.Gmail)
+                    .HasMaxLength(50)
+                    .IsUnicode(false);
 
                 entity.Property(e => e.Phone)
                     .HasMaxLength(10)
@@ -325,6 +331,6 @@ namespace AzzanOrder.Data.Models
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
-        public DbSet<AzzanOrder.Data.DTO.LoginDTO>? LoginDTO { get; set; }
-    }
+		public DbSet<AzzanOrder.Data.DTO.LoginDTO>? LoginDTO { get; set; }
+	}
 }
