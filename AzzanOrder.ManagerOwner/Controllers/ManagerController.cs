@@ -94,7 +94,11 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
                 return RedirectToAction("Login", "Home");
             }
-            return View();
+            var viewModel = new Model
+            {
+                employee = new Employee()
+            };
+            return View(viewModel);
         }
 
         // POST: Employee/Add
