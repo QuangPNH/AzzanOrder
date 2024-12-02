@@ -1,127 +1,66 @@
-﻿@* Thêm javascript để nó tự động load feedback khi bấm vào 1 dòng trong bảng
- --> *@
+﻿@model AzzanOrder.ManagerOwner.Models.Model
+<h1 class="h3 mb-3">List Feedback</h1>
 
-<div class="container-fluid p-0">
+<div class="col-12">
+    <div class="card">
+        <div class="card-header">
+            <h5 class="card-title">List Feedback</h5>
+        </div>
+        <table class="table table-striped table-hover">
+            <thead>
+                <tr>
+                    <th style="width:5%">No.</th>
+                    <th style="width:15%">Member Phone</th>
+                    <th style="width:30%">Content</th>
+                </tr>
+            </thead>
+            <tbody>
+                @{
+                    int position = 1;
+                }
+                @foreach (var emp in Model.feedbacks)
+                {
+                    <tr>
+                        <td>@position</td>
+                        <td>@Model.members.FirstOrDefault(em => em.MemberId == emp.MemberId).Phone</td>
+                        <td>@emp.Content</td>
+                    </tr>
+                    position++;
+                }
+            </tbody>
+        </table>
 
-	<div class="mb-3">
-		<h1 class="h3 d-inline align-middle">Clients</h1>
-	</div>
-
-	<div class="row">
-		<div class="col-xl-8">
-			<div class="card">
-				<div class="card-header pb-0">
-					<div class="card-actions float-end">
-						<div class="dropdown position-relative">
-							<a href="#" data-bs-toggle="dropdown" data-bs-display="static">
-								<i class="align-middle" data-feather="more-horizontal"></i>
-							</a>
-
-							<div class="dropdown-menu dropdown-menu-end">
-								<a class="dropdown-item" href="#">Action</a>
-								<a class="dropdown-item" href="#">Another action</a>
-								<a class="dropdown-item" href="#">Something else here</a>
-							</div>
-						</div>
-					</div>
-					<h5 class="card-title mb-0">Customers</h5>
-				</div>
-				<div class="card-body">
-					<table class="table table-striped" style="width:100%">
-						<thead>
-							<tr>
-								<th>No</th>
-								<th>Name</th>
-								<th>Company</th>
-								<th>Email</th>
-								<th>Status</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>1</td>
-								<td>Garrett Winters</td>
-								<td>Good Guys</td>
-								<td>garrett@winters.com</td>
-								<td><span class="badge bg-success">Active</span></td>
-							</tr>
-							<tr>
-								<td>2</td>
-								<td>Sonya Frost</td>
-								<td>Child World</td>
-								<td>sonya@frost.com</td>
-								<td><span class="badge bg-danger">Deleted</span></td>
-							</tr>
-							<tr>
-								<td>3</td>
-								<td>Jena Gaines</td>
-								<td>Helping Hand</td>
-								<td>jena@gaines.com</td>
-								<td><span class="badge bg-warning">Inactive</span></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</div>
-		</div>
-
-		<div class="col-xl-4">
-			<div class="card">
-				<div class="card-header">
-					<div class="card-actions float-end">
-						<div class="dropdown position-relative">
-							<a href="#" data-bs-toggle="dropdown" data-bs-display="static">
-								<i class="align-middle" data-feather="more-horizontal"></i>
-							</a>
-
-							<div class="dropdown-menu dropdown-menu-end">
-								<a class="dropdown-item" href="#">Action</a>
-								<a class="dropdown-item" href="#">Another action</a>
-								<a class="dropdown-item" href="#">Something else here</a>
-							</div>
-						</div>
-					</div>
-					<h5 class="card-title mb-0">Angelica Ramos's Feedback</h5>
-				</div>
-				<div class="card-body">
-					<table class="table table-sm mt-2 mb-4">
-						<tbody>
-							<tr>
-								<th>Name</th>
-								<td>Angelica Ramos</td>
-							</tr>
-							<tr>
-								<th>Company</th>
-								<td>The Wiz</td>
-							</tr>
-							<tr>
-								<th>Email</th>
-								<td>angelica@ramos.com</td>
-							</tr>
-							<tr>
-								<th>Phone</th>
-								<td>+1234123123123</td>
-							</tr>
-							<tr>
-								<th>Status</th>
-								<td><span class="badge bg-success">Active</span></td>
-							</tr>
-						</tbody>
-					</table>
-
-					<div class="row g-0">
-						<div class="col-sm-9 col-xl-12 col-xxl-9">
-							<strong>About me</strong>
-							<p>
-								Lorem ipsum dolor sit amet, consectetur adipisicing elit, sed do eiusmod tempor incididunt ut labore et dolore
-								magna aliqua.
-							</p>
-						</div>
-					</div>
-
-				</div>
-			</div>
-		</div>
-	</div>
-
+        <div class="row mt-3">
+            <div class="col d-flex justify-content-end">
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination pagination-md mb-0">
+                        <li class="page-item @(Model.anIntegerUsedForKnowingWhatTheCurrentPageOfTheList == 1 ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("List", new { page = Model.anIntegerUsedForKnowingWhatTheCurrentPageOfTheList - 1 })">
+                                <i class="fas fa-angle-left"></i>
+                            </a>
+                        </li>
+                        @{
+                            int startPage = Math.Max(1, Model.anIntegerUsedForKnowingWhatTheCurrentPageOfTheList - Model.thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed / 2);
+                            int endPage = Math.Min(Model.anIntegerUsedForCountingNumberOfPageQueuedForTheList, startPage + Model.thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed - 1);
+                            if (endPage - startPage < Model.thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed)
+                            {
+                                startPage = Math.Max(1, endPage - Model.thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed + 1);
+                            }
+                        }
+                        @for (int i = startPage; i <= endPage; i++)
+                        {
+                            <li class="page-item @(Model.anIntegerUsedForKnowingWhatTheCurrentPageOfTheList == i ? "active" : "")">
+                                <a class="page-link" href="@Url.Action("List", new { page = i })">@i</a>
+                            </li>
+                        }
+                        <li class="page-item @(Model.anIntegerUsedForKnowingWhatTheCurrentPageOfTheList == Model.anIntegerUsedForCountingNumberOfPageQueuedForTheList ? "disabled" : "")">
+                            <a class="page-link" href="@Url.Action("List", new { page = Model.anIntegerUsedForKnowingWhatTheCurrentPageOfTheList + 1 })">
+                                <i class="fas fa-angle-right"></i>
+                            </a>
+                        </li>
+                    </ul>
+                </nav>
+            </div>
+        </div>
+    </div>
 </div>

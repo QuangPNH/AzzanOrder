@@ -5,7 +5,7 @@ namespace AzzanOrder.ManagerOwner.Models
 {
     public partial class Feedback
     {
-        public int Feedbackid { get; set; }
+        public int FeedbackId { get; set; }
         public string? Content { get; set; }
         public int? MemberId { get; set; }
 
