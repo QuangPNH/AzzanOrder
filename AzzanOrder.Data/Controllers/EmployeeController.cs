@@ -170,7 +170,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return BadRequest("Employee cannot be null.");
             }
-
+           
             if (employee.Role != null && !_context.Roles?.Any(r => r.RoleId == employee.Role.RoleId) == true)
             {
                 _context.Roles.Add(employee.Role);

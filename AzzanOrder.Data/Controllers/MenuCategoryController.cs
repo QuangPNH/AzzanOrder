@@ -30,7 +30,7 @@ namespace AzzanOrder.Data.Controllers
               return NotFound();
           }
             var a = employeeId.HasValue ?  await _context.MenuCategories.Include(mc=>mc.ItemCategory).Where(mc => mc.MenuItem.EmployeeId == employeeId).ToListAsync() : await _context.MenuCategories.Include(mc => mc.ItemCategory).ToListAsync();
-            return a ;
+            return Ok(a) ;
         }
 
         //GET: api/MenuCategory/5

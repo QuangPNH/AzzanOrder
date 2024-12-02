@@ -78,7 +78,7 @@
                                         @foreach (var item in Model.roles)
                                         {
                                             <label class="form-check">
-                                                <input asp-for="employee.RoleId" type="radio" class="form-check-input" value="@item.RoleId" checked="@item.RoleId == Model.roles.First().RoleId">
+                                                <input asp-for="employee.RoleId" type="radio" class="form-check-input" value="@item.RoleId">
                                                 <span class="form-check-label">@item.RoleName</span>
                                             </label>
                                         }
