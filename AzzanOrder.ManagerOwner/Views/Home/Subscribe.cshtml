@@ -22,7 +22,7 @@
                         <h5 class="card-title">Become the boss of your shop</h5>
                     </div>
                     <div class="card-body">
-                        <form asp-action="SubscribeAction" asp-controller="Home" method="post" enctype="multipart/form-data">
+                        <form asp-action="Subscribe" asp-controller="Home" method="post" enctype="multipart/form-data">
                             <div class="mb-3 row">
                                 <label class="col-form-label col-sm-2 text-sm-end">Name</label>
                                 <div class="col-sm-10">
@@ -33,12 +33,16 @@
                                 <label class="col-form-label col-sm-2 text-sm-end">Phone</label>
                                 <div class="col-sm-10">
                                     <input asp-for="owner.Phone" class="form-control" placeholder="Phone">
+                                    <span asp-validation-for="owner.Phone" class="text-danger"></span>
+                                    
                                 </div>
                             </div>
                             <div class="mb-3 row">
                                 <label class="col-form-label col-sm-2 text-sm-end">Gmail</label>
                                 <div class="col-sm-10">
                                     <input asp-for="owner.Gmail" class="form-control" placeholder="Gmail">
+                                    <span asp-validation-for="owner.Gmail" class="text-danger"></span>
+                                    
                                 </div>
                             </div>
 

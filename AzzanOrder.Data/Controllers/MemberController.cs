@@ -71,7 +71,21 @@ namespace AzzanOrder.Data.Controllers
             return member;
         }
 
+        [HttpGet("Gmail/{gmail}")]
+        public async Task<ActionResult<Member>> GetMemberByGmail(string gmail)
+        {
+            if (_context.Members == null)
+            {
+                return NotFound();
+            }
+            var member = _context.Members.FirstOrDefault(m => m.Gmail.ToLower().Equals(gmail.ToLower()));
 
+            if (member == null)
+            {
+                return NotFound();
+            }
+            return member;
+        }
 
 
 

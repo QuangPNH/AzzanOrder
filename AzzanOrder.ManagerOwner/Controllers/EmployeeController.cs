@@ -1,6 +1,8 @@
 ﻿using AzzanOrder.ManagerOwner.Models;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Newtonsoft.Json;
+using System.Reflection;
 
 namespace AzzanOrder.ManagerOwner.Controllers
 {
@@ -12,24 +14,24 @@ namespace AzzanOrder.ManagerOwner.Controllers
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             var loginStatus = await authorizeLogin.CheckLogin();
             if (loginStatus.Equals("owner"))
-			{
-				return RedirectToAction("Index", "Home");
-			}
-			else if (loginStatus.Equals("manager"))
-			{
-			}
-			else if (loginStatus.Equals("owner expired"))
-			{
-				ViewBag.Message = "Your subscription has expired. Please subscribe again.";
-				return RedirectToAction("Login", "Home");
-			}
-			else if (loginStatus.Equals("manager expired"))
-			{
-				ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
-				return RedirectToAction("Login", "Home");
-			}
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if (loginStatus.Equals("manager"))
+            {
+            }
+            else if (loginStatus.Equals("owner expired"))
+            {
+                ViewBag.Message = "Your subscription has expired. Please subscribe again.";
+                return RedirectToAction("Login", "Home");
+            }
+            else if (loginStatus.Equals("manager expired"))
+            {
+                ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
+                return RedirectToAction("Login", "Home");
+            }
 
-			Employee emp = new Employee();
+            Employee emp = new Employee();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
             {
                 emp = JsonConvert.DeserializeObject<Employee>(empJson);
@@ -41,9 +43,9 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 try
                 {
                     HttpResponseMessage res = await client.GetAsync(_apiUrl + "Employee");
-                            string data = await res.Content.ReadAsStringAsync();
+                    string data = await res.Content.ReadAsStringAsync();
                     employees = JsonConvert.DeserializeObject<List<Employee>>(data);
-                        totalEmployees = employees.Count(e => e.IsDelete == false);
+                    totalEmployees = employees.Count(e => e.IsDelete == false);
                 }
                 catch (HttpRequestException e)
                 {
@@ -127,34 +129,37 @@ namespace AzzanOrder.ManagerOwner.Controllers
         }
 
 
-
-        public async Task<IActionResult> AddAction(Employee employee, IFormFile employeeImage)
+        [HttpPost]
+        public async Task<IActionResult> Add(Employee employee)
         {
+
+
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             var loginStatus = await authorizeLogin.CheckLogin();
             if (loginStatus.Equals("owner"))
-			{
-				return RedirectToAction("Index", "Home");
-			}
-			else if (loginStatus.Equals("manager"))
-			{
-			}
-			else if (loginStatus.Equals("owner expired"))
-			{
-				ViewBag.Message = "Your subscription has expired. Please subscribe again.";
-				return RedirectToAction("Login", "Home");
-			}
-			else if (loginStatus.Equals("manager expired"))
-			{
-				ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
-				return RedirectToAction("Login", "Home");
-			}
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if (loginStatus.Equals("manager"))
+            {
+            }
+            else if (loginStatus.Equals("owner expired"))
+            {
+                ViewBag.Message = "Your subscription has expired. Please subscribe again.";
+                return RedirectToAction("Login", "Home");
+            }
+            else if (loginStatus.Equals("manager expired"))
+            {
+                ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
+                return RedirectToAction("Login", "Home");
+            }
 
-			if (employeeImage != null && employeeImage.Length > 0)
-                employee.Image = await ImageToBase64Async(employeeImage);
+            //if (employeeImage != null && employeeImage.Length > 0)
+            //             employee.Image = await ImageToBase64Async(employeeImage);
 
             Employee emp = new Employee();
             Role role = new Role();
+            List<Role> roles = new List<Role>();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
             {
                 emp = JsonConvert.DeserializeObject<Employee>(empJson);
@@ -171,8 +176,19 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
                     }
                 }
+                using (HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Role"))
+                {
+                    using (HttpContent content = res.Content)
+                    {
+                        string message = await res.Content.ReadAsStringAsync();
+                        roles = JsonConvert.DeserializeObject<List<Role>>(message);
+
+                        roles.RemoveAll(role => role.RoleName == "Magager" || role.RoleName == "Manager");
+
+                    }
+                }
             }
-				var employeeToSend = new
+            var employeeToSend = new
             {
                 EmployeeName = employee.EmployeeName,
                 Gender = employee.Gender,
@@ -188,15 +204,37 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 IsDelete = false,
                 Role = role
             };
-            Console.WriteLine(JsonConvert.SerializeObject(employeeToSend));
+
+
             using (HttpClient client = new HttpClient())
             {
+                using (HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Employee/Phone/{employeeToSend.Phone}"))
+                {
+                    if (res.IsSuccessStatusCode)
+                    {
+                        TempData["ErrorPhone"] = "Phone is already in use.";  
+                    }
+                }
+                using (HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Employee/Gmail/{employeeToSend.Gmail}"))
+                {
+                    if (res.IsSuccessStatusCode)
+                    {
+                        TempData["ErrorGmail"] = "Email is already in use.";
+                        
+                    }
+                }
+
+                if (TempData["ErrorPhone"] != null || TempData["ErrorGmail"] != null)
+                {
+                    return View(new Model() { employee = employee, roles = roles });
+                }
+                
                 using (HttpResponseMessage res = await client.PostAsJsonAsync(_apiUrl + "Employee/Add/", employeeToSend))
                 {
                     using (HttpContent content = res.Content)
                     {
                         string message = await res.Content.ReadAsStringAsync();
-                        
+
 
                     }
                 }
@@ -210,24 +248,24 @@ namespace AzzanOrder.ManagerOwner.Controllers
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             var loginStatus = await authorizeLogin.CheckLogin();
             if (loginStatus.Equals("owner"))
-			{
-				return RedirectToAction("Index", "Home");
-			}
-			else if (loginStatus.Equals("manager"))
-			{
-			}
-			else if (loginStatus.Equals("owner expired"))
-			{
-				ViewBag.Message = "Your subscription has expired. Please subscribe again.";
-				return RedirectToAction("Login", "Home");
-			}
-			else if (loginStatus.Equals("manager expired"))
-			{
-				ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
-				return RedirectToAction("Login", "Home");
-			}
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if (loginStatus.Equals("manager"))
+            {
+            }
+            else if (loginStatus.Equals("owner expired"))
+            {
+                ViewBag.Message = "Your subscription has expired. Please subscribe again.";
+                return RedirectToAction("Login", "Home");
+            }
+            else if (loginStatus.Equals("manager expired"))
+            {
+                ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
+                return RedirectToAction("Login", "Home");
+            }
 
-			Employee employee = new Employee();
+            Employee employee = new Employee();
             List<Role> roles = new List<Role>();
 
             using (HttpClient client = new HttpClient())
@@ -286,55 +324,67 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
             return View(viewModel);
         }
-
-        public async Task<IActionResult> UpdateAction(Employee employee, IFormFile employeeImage)
+        [HttpPost]
+        public async Task<IActionResult> Update(Employee employee)
         {
+          
+
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             var loginStatus = await authorizeLogin.CheckLogin();
             if (loginStatus.Equals("owner"))
-			{
-				return RedirectToAction("Index", "Home");
-			}
-			else if (loginStatus.Equals("manager"))
-			{
-			}
-			else if (loginStatus.Equals("owner expired"))
-			{
-				ViewBag.Message = "Your subscription has expired. Please subscribe again.";
-				return RedirectToAction("Login", "Home");
-			}
-			else if (loginStatus.Equals("manager expired"))
-			{
-				ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
-				return RedirectToAction("Login", "Home");
-			}
-			// Convert uploaded image to Base64 if there is a new image
-			if (employeeImage != null && employeeImage.Length > 0)
-                employee.Image = await ImageToBase64Async(employeeImage);
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if (loginStatus.Equals("manager"))
+            {
+            }
+            else if (loginStatus.Equals("owner expired"))
+            {
+                ViewBag.Message = "Your subscription has expired. Please subscribe again.";
+                return RedirectToAction("Login", "Home");
+            }
+            else if (loginStatus.Equals("manager expired"))
+            {
+                ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
+                return RedirectToAction("Login", "Home");
+            }
+
+
 
             Employee emp = new Employee();
             Role role = new Role();
+            List<Role> roles = new List<Role>();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
             {
                 emp = JsonConvert.DeserializeObject<Employee>(empJson);
             }
 
 
-			using (HttpClient client = new HttpClient())
-			{
-				using (HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Role/{employee.RoleId}"))
-				{
-					using (HttpContent content = res.Content)
-					{
-						string message = await res.Content.ReadAsStringAsync();
-						role = JsonConvert.DeserializeObject<Role>(message);
+            using (HttpClient client = new HttpClient())
+            {
+                using (HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Role/{employee.RoleId}"))
+                {
+                    using (HttpContent content = res.Content)
+                    {
+                        string message = await res.Content.ReadAsStringAsync();
+                        role = JsonConvert.DeserializeObject<Role>(message);
 
 
-					}
-				}
-			}
-			// Conditionally include Image property only if it's not null
-			var employeeToUpdate = new
+                    }
+                }
+                using (HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Role"))
+                {
+                    using (HttpContent content = res.Content)
+                    {
+                        string message = await res.Content.ReadAsStringAsync();
+                        roles = JsonConvert.DeserializeObject<List<Role>>(message);
+                        roles.RemoveAll(role => role.RoleName == "Magager" || role.RoleName == "Manager");
+                    }
+                }
+            }
+
+            // Conditionally include Image property only if it's not null
+            var employeeToUpdate = new
             {
                 EmployeeId = employee.EmployeeId,
                 EmployeeName = employee.EmployeeName,
@@ -366,6 +416,35 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
             using (HttpClient client = new HttpClient())
             {
+                using (HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Employee/Phone/{employeeToUpdate.Phone}"))
+                {
+                    if (res.IsSuccessStatusCode)
+                    {
+                        string mess = await res.Content.ReadAsStringAsync();
+                        var a = JsonConvert.DeserializeObject<Employee>(mess);
+                        if (a.EmployeeId != employeeToUpdate.EmployeeId)
+                        {
+                            TempData["ErrorPhone"] = "Phone is already in use.";
+                        }
+                    }
+                }
+                using (HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Employee/Gmail/{employeeToUpdate.Gmail}"))
+                {
+                    if (res.IsSuccessStatusCode)
+                    {
+                        string mess = await res.Content.ReadAsStringAsync();
+                        var a = JsonConvert.DeserializeObject<Employee>(mess);
+                        if (a.EmployeeId != employeeToUpdate.EmployeeId)
+                        {
+                            TempData["ErrorGmail"] = "Email is already in use.";
+                        }
+                    }
+                }
+
+                if (TempData["ErrorPhone"] != null || TempData["ErrorGmail"] != null)
+                {
+                    return View(new Model() { employee = employee, roles = roles });
+                }
                 try
                 {
                     // Send update request with modified JSON content
@@ -405,28 +484,28 @@ namespace AzzanOrder.ManagerOwner.Controllers
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             var loginStatus = await authorizeLogin.CheckLogin();
             if (loginStatus.Equals("owner"))
-			{
-				return RedirectToAction("Index", "Home");
-			}
-			else if (loginStatus.Equals("manager"))
-			{
-			}
-			else if (loginStatus.Equals("owner expired"))
-			{
-				ViewBag.Message = "Your subscription has expired. Please subscribe again.";
-				return RedirectToAction("Login", "Home");
-			}
-			else if (loginStatus.Equals("manager expired"))
-			{
-				ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
-				return RedirectToAction("Login", "Home");
-			}
-			using (HttpClient client = new HttpClient())
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if (loginStatus.Equals("manager"))
+            {
+            }
+            else if (loginStatus.Equals("owner expired"))
+            {
+                ViewBag.Message = "Your subscription has expired. Please subscribe again.";
+                return RedirectToAction("Login", "Home");
+            }
+            else if (loginStatus.Equals("manager expired"))
+            {
+                ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
+                return RedirectToAction("Login", "Home");
+            }
+            using (HttpClient client = new HttpClient())
             {
                 HttpResponseMessage res = await client.DeleteAsync(_apiUrl + "Employee/Delete/" + id);
                 string mess = await res.Content.ReadAsStringAsync();
                 ViewBag.error = mess;
-                
+
                 return RedirectToAction("List", "Employee");
             }
         }

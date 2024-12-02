@@ -66,6 +66,22 @@ namespace AzzanOrder.Data.Controllers
 
             return employee;
         }
+        [HttpGet("Gmail/{gmail}")]
+        public async Task<ActionResult<Employee>> GetEmployeeByEmail(string gmail)
+        {
+            if (_context.Employees == null)
+            {
+                return NotFound();
+            }
+            var employee = _context.Employees.Include(e => e.Role).FirstOrDefault(e => e.Gmail.ToLower().Equals(gmail.ToLower()));
+
+            if (employee == null)
+            {
+                return NotFound();
+            }
+
+            return employee;
+        }
 
 
         // GET: api/Employee/5
@@ -134,7 +150,8 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound("Employee not exist");
             }
-
+             var a = await _context.Roles.FirstOrDefaultAsync(r => r.RoleId == employee.RoleId);
+            employee.Role = a;
             // Use Update method instead of setting the state manually
             _context.Employees.Update(employee);
 
@@ -171,15 +188,13 @@ namespace AzzanOrder.Data.Controllers
                 return BadRequest("Employee cannot be null.");
             }
            
-            if (employee.Role != null && !_context.Roles?.Any(r => r.RoleId == employee.Role.RoleId) == true)
-            {
-                _context.Roles.Add(employee.Role);
-            }
-
+            
+            var a = await _context.Roles.FirstOrDefaultAsync(r => r.RoleId == employee.RoleId);
+            employee.Role = a;
             _context.Employees.Add(employee);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction(nameof(GetEmployee), new { id = employee.EmployeeId }, employee);
+            return Ok(employee);
         }
 
         // DELETE: api/Employee/5

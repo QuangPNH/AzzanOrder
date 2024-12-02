@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace AzzanOrder.ManagerOwner.Models
 {
@@ -14,9 +15,15 @@ namespace AzzanOrder.ManagerOwner.Models
 		public int OwnerId { get; set; }
 		public string? OwnerName { get; set; }
 		public bool? Gender { get; set; }
-		public string Phone { get; set; } = null!;
-		public string Gmail { get; set; } = null!;
-		public DateTime? BirthDate { get; set; }
+        [Required(ErrorMessage = "Phone number is requied.")]
+        [StringLength(10, ErrorMessage = "Phone number must be 10 characters long.")]
+        [RegularExpression(@"^\d{10}$", ErrorMessage = "Phone number must be exactly 10 digits.")]
+        public string Phone { get; set; } = null!;
+        [Required(ErrorMessage = "Email address is required.")]
+        [StringLength(50, ErrorMessage = "Email cannot exceed 50 characters.")]
+        [EmailAddress(ErrorMessage = "Invalid email format.")]
+        public string Gmail { get; set; } = null!;
+        public DateTime? BirthDate { get; set; }
 		public int? BankId { get; set; }
 		public string? Image { get; set; }
 		public bool? IsDelete { get; set; }

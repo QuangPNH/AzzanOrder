@@ -7,7 +7,7 @@
             <h5 class="card-title">Update Employee</h5>
         </div>
         <div class="card-body">
-            <form asp-action="UpdateAction" asp-controller="Employee" method="post" enctype="multipart/form-data">
+            <form asp-action="Update" asp-controller="Employee" method="post" enctype="multipart/form-data">
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Employee ID</label>
                     <div class="col-sm-10">
@@ -26,6 +26,11 @@
                     <label class="col-form-label col-sm-2 text-sm-end">Phone</label>
                     <div class="col-sm-10">
                         <input asp-for="employee.Phone" class="form-control" placeholder="Phone">
+                        <span asp-validation-for="employee.Phone" class="text-danger"></span>
+                        @if (TempData["ErrorPhone"] != null)
+                        {
+                            <span class="text-danger">@TempData["ErrorPhone"]</span>
+                        }
                     </div>
                 </div>
 
@@ -33,6 +38,11 @@
                     <label class="col-form-label col-sm-2 text-sm-end">Email</label>
                     <div class="col-sm-10">
                         <input asp-for="employee.Gmail" class="form-control" placeholder="Email">
+                        <span asp-validation-for="employee.Gmail" class="text-danger"></span>
+                        @if (TempData["ErrorGmail"] != null)
+                        {
+                            <span class="text-danger">@TempData["ErrorGmail"]</span>
+                        }
                     </div>
                 </div>
 
@@ -109,7 +119,7 @@
                                     <span class="form-check-label">@item.RoleName</span>
                                 </label>
                             }
-
+                            <span asp-validation-for="employee.RoleId" class="text-danger"></span>
                         </div>
                     </div>
                 </fieldset>

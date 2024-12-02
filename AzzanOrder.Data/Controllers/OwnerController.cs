@@ -83,7 +83,23 @@ namespace AzzanOrder.Data.Controllers
 			return owner;
 		}
 
-		[HttpPatch("UpdateSubscriptionDatesByPhone/{phone}")]
+        [HttpGet("Gmail/{gmail}")]
+        public async Task<ActionResult<Owner>> GetOwnerByGmail(string gmail)
+        {
+            if (_context.Owners == null)
+            {
+                return NotFound();
+            }
+            var owner = await _context.Owners.Where(o => o.IsDelete == false).FirstOrDefaultAsync(o => o.Gmail.ToLower().Equals(gmail.ToLower()));
+
+            if (owner == null)
+            {
+                return NotFound();
+            }
+            return owner;
+        }
+
+        [HttpPatch("UpdateSubscriptionDatesByPhone/{phone}")]
 		public async Task<IActionResult> UpdateSubscriptionDatesByPhone(string phone, DateTime subscriptionStartDate, DateTime subscriptionEndDate)
 		{
 			if (_context.Owners == null)
