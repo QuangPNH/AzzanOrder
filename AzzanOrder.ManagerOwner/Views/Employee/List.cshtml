@@ -9,7 +9,7 @@
 <div class="col-12">
     <div class="card">
         <div class="card-header">
-            <h5 class="card-title">ListEmployee</h5>
+            <h5 class="card-title">List Employee</h5>
         </div>
         <div>
             <a href="@Url.Action("Add", "Employee")" class="btn btn-primary">Add New Employee</a>
@@ -22,8 +22,8 @@
                     <th style="width:20%">Employee Name</th>
                     <th style="width:20%">Phone Number</th>
                     <th class="d-none d-md-table-cell" style="width:20%">Email</th>
-                    <th style="width:10%">Role</th>
-                    <th style="width:10%">Gender</th>
+                    <th class="d-none d-md-table-cell" style="width:10%">Role</th>
+                    <th class="d-none d-md-table-cell" style="width:10%">Gender</th>
                     <th class="d-none d-md-table-cell" style="width:20%">Date of Birth</th>
                     <th>Actions</th>
                 </tr>
@@ -44,16 +44,16 @@
                         <td>
                             @Html.DisplayFor(modelItem => item.Phone)
                         </td>
-                        <td>
+                        <td class="d-none d-md-table-cell">
                             @Html.DisplayFor(modelItem => item.Gmail)
                         </td>
-                        <td>
+                        <td class="d-none d-md-table-cell">
                             @Html.DisplayFor(modelItem => item.Role.RoleName)
                         </td>
-                        <td>
+                        <td class="d-none d-md-table-cell">
                             @(item.Gender.HasValue && item.Gender.Value ? "Male" : "Female")
                         </td>
-                        <td>
+                        <td class="d-none d-md-table-cell">
                             @Html.DisplayFor(modelItem => item.BirthDate)
                         </td>
                         <td class="table-action">
