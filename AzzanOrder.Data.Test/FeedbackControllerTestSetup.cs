@@ -15,18 +15,18 @@ namespace AzzanOrder.Data.Test
 {
 	public class FeedbackControllerTestSetup
 	{
-		internal static Mock<OrderingAssistSystemContext> GetMockContext()
+		internal static Mock<OrderingAssistSystemContext> GetMockContext(List<Feedback>? feedbacks = null)
 		{
 			var mockContext = new Mock<OrderingAssistSystemContext>();
-			var mockDbSet = GetMockDbSet();
+			var mockDbSet = GetMockDbSet(feedbacks);
 
 			mockContext.Setup(c => c.Feedbacks).Returns(mockDbSet.Object);
 			return mockContext;
 		}
 
-		internal static Mock<DbSet<Feedback>> GetMockDbSet()
+		internal static Mock<DbSet<Feedback>> GetMockDbSet(List<Feedback>? feedbacks = null)
 		{
-			var feedbacks = new List<Feedback>
+			feedbacks ??= new List<Feedback>
 			{
 				new Feedback
 				{
@@ -61,39 +61,24 @@ namespace AzzanOrder.Data.Test
 						MemberName = "John Smith",
 					}
 				}
-			}.AsQueryable();
+			};
 
-			var mockDbSet = new Mock<DbSet<Feedback>>();
-
-			mockDbSet.As<IQueryable<Feedback>>().Setup(m => m.Provider).Returns(new TestAsyncQueryProvider<Feedback>(feedbacks.Provider));
-			mockDbSet.As<IQueryable<Feedback>>().Setup(m => m.Expression).Returns(feedbacks.Expression);
-			mockDbSet.As<IQueryable<Feedback>>().Setup(m => m.ElementType).Returns(feedbacks.ElementType);
-			mockDbSet.As<IQueryable<Feedback>>().Setup(m => m.GetEnumerator()).Returns(feedbacks.GetEnumerator());
-
-			mockDbSet.As<IAsyncEnumerable<Feedback>>()
-				.Setup(m => m.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
-				.Returns(new TestAsyncEnumerator<Feedback>(feedbacks.GetEnumerator()));
-
-			mockDbSet.Setup(m => m.AddAsync(It.IsAny<Feedback>(), It.IsAny<CancellationToken>()))
-				.Callback<Feedback, CancellationToken>((f, ct) => feedbacks.ToList().Add(f))
-				.ReturnsAsync((EntityEntry<Feedback>)null!);
-
-			mockDbSet.Setup(m => m.FindAsync(It.IsAny<object[]>()))
-				.ReturnsAsync((object[] ids) => feedbacks.FirstOrDefault(f => f.FeedbackId == (int)ids[0]));
-
-			return mockDbSet;
-		}
-
-		internal static Mock<DbSet<Feedback>> GetMockDbSetWithFeedbacks(List<Feedback> feedbacks)
-		{
 			var feedbacksQueryable = feedbacks.AsQueryable();
+
 			var mockDbSet = new Mock<DbSet<Feedback>>();
 
 			mockDbSet.As<IQueryable<Feedback>>().Setup(m => m.Provider).Returns(new TestAsyncQueryProvider<Feedback>(feedbacksQueryable.Provider));
 			mockDbSet.As<IQueryable<Feedback>>().Setup(m => m.Expression).Returns(feedbacksQueryable.Expression);
 			mockDbSet.As<IQueryable<Feedback>>().Setup(m => m.ElementType).Returns(feedbacksQueryable.ElementType);
 			mockDbSet.As<IQueryable<Feedback>>().Setup(m => m.GetEnumerator()).Returns(feedbacksQueryable.GetEnumerator());
-			mockDbSet.As<IAsyncEnumerable<Feedback>>().Setup(m => m.GetAsyncEnumerator(default)).Returns(new TestAsyncEnumerator<Feedback>(feedbacksQueryable.GetEnumerator()));
+
+			mockDbSet.As<IAsyncEnumerable<Feedback>>()
+				.Setup(m => m.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
+				.Returns(new TestAsyncEnumerator<Feedback>(feedbacksQueryable.GetEnumerator()));
+
+			mockDbSet.Setup(m => m.AddAsync(It.IsAny<Feedback>(), It.IsAny<CancellationToken>()))
+				.Callback<Feedback, CancellationToken>((f, ct) => feedbacks.Add(f))
+				.ReturnsAsync((EntityEntry<Feedback>)null!);
 
 			mockDbSet.Setup(m => m.FindAsync(It.IsAny<object[]>()))
 				.ReturnsAsync((object[] ids) => feedbacks.FirstOrDefault(f => f.FeedbackId == (int)ids[0]));

@@ -46,10 +46,6 @@ namespace AzzanOrder.Tests
 		{
 			// Arrange
 			var feedbackId = 1;
-			var feedback = new Feedback { FeedbackId = feedbackId, MemberId = 1 };
-			var mockDbSet = FeedbackControllerTestSetup.GetMockDbSetWithFeedbacks(new List<Feedback> { feedback });
-
-			_mockContext.Setup(c => c.Feedbacks).Returns(mockDbSet.Object);
 
 			// Act
 			var result = await _controller.GetFeedback(feedbackId);
@@ -65,9 +61,6 @@ namespace AzzanOrder.Tests
 		{
 			// Arrange
 			var feedbackId = 99;
-			var mockDbSet = FeedbackControllerTestSetup.GetMockDbSetWithFeedbacks(new List<Feedback>());
-
-			_mockContext.Setup(c => c.Feedbacks).Returns(mockDbSet.Object);
 
 			// Act
 			var result = await _controller.GetFeedback(feedbackId);
@@ -82,10 +75,6 @@ namespace AzzanOrder.Tests
 		{
 			// Arrange
 			var memberId = 1;
-			var feedback = new Feedback { FeedbackId = 1, MemberId = memberId };
-			var mockDbSet = FeedbackControllerTestSetup.GetMockDbSetWithFeedbacks(new List<Feedback> { feedback });
-
-			_mockContext.Setup(c => c.Feedbacks).Returns(mockDbSet.Object);
 
 			// Act
 			var result = await _controller.GetFeedbackByMember(memberId);
@@ -101,9 +90,6 @@ namespace AzzanOrder.Tests
 		{
 			// Arrange
 			var memberId = 99;
-			var mockDbSet = FeedbackControllerTestSetup.GetMockDbSetWithFeedbacks(new List<Feedback>());
-
-			_mockContext.Setup(c => c.Feedbacks).Returns(mockDbSet.Object);
 
 			// Act
 			var result = await _controller.GetFeedbackByMember(memberId);
@@ -118,14 +104,9 @@ namespace AzzanOrder.Tests
 		{
 			// Arrange
 			var feedback = new Feedback { FeedbackId = 1, MemberId = 1, Content = "Updated Content" };
-			var feedbacks = new List<Feedback>
-			{
-				new Feedback { FeedbackId = 1, MemberId = 1, Content = "Good" }
-			};
-			var mockDbSet = FeedbackControllerTestSetup.GetMockDbSetWithFeedbacks(feedbacks);
 
-			mockDbSet.Setup(m => m.FindAsync(feedback.FeedbackId)).ReturnsAsync(feedback);
-			_mockContext.Setup(c => c.Feedbacks).Returns(mockDbSet.Object);
+			var mockDbSet = _mockContext.Object.Feedbacks;
+			Mock.Get(mockDbSet).Setup(m => m.FindAsync(feedback.FeedbackId)).ReturnsAsync(feedback);
 			_mockContext.Setup(c => c.Feedbacks.Any(e => e.FeedbackId == feedback.FeedbackId)).Returns(true);
 
 			// Act
@@ -141,14 +122,9 @@ namespace AzzanOrder.Tests
 		{
 			// Arrange
 			var feedback = new Feedback { FeedbackId = 99, MemberId = 1, Content = "Updated Content" };
-			var feedbacks = new List<Feedback>
-			{
-				new Feedback { FeedbackId = 1, MemberId = 1, Content = "Good" }
-			};
-			var mockDbSet = FeedbackControllerTestSetup.GetMockDbSetWithFeedbacks(feedbacks);
 
-			mockDbSet.Setup(m => m.FindAsync(feedback.FeedbackId)).ReturnsAsync(default(Feedback));
-			_mockContext.Setup(c => c.Feedbacks).Returns(mockDbSet.Object);
+			var mockDbSet = _mockContext.Object.Feedbacks;
+			Mock.Get(mockDbSet).Setup(m => m.FindAsync(feedback.FeedbackId)).ReturnsAsync(default(Feedback));
 
 			// Act
 			var result = await _controller.PutFeedback(feedback);
@@ -162,14 +138,9 @@ namespace AzzanOrder.Tests
 		{
 			// Arrange
 			var feedback = new Feedback { FeedbackId = 4, MemberId = 4, Content = "New Feedback" };
-			var feedbacks = new List<Feedback>
-			{
-				new Feedback { FeedbackId = 1, MemberId = 1, Content = "Good" }
-			};
-			var mockDbSet = FeedbackControllerTestSetup.GetMockDbSetWithFeedbacks(feedbacks);
 
-			mockDbSet.Setup(m => m.AddAsync(feedback, It.IsAny<CancellationToken>())).ReturnsAsync((EntityEntry<Feedback>)null!);
-			_mockContext.Setup(c => c.Feedbacks).Returns(mockDbSet.Object);
+			var mockDbSet = _mockContext.Object.Feedbacks;
+			Mock.Get(mockDbSet).Setup(m => m.AddAsync(feedback, It.IsAny<CancellationToken>())).ReturnsAsync((EntityEntry<Feedback>)null!);
 
 			// Act
 			var result = await _controller.PostFeedback(feedback);
@@ -184,13 +155,6 @@ namespace AzzanOrder.Tests
 		{
 			// Arrange
 			var feedback = new Feedback { FeedbackId = 1, MemberId = 1, Content = "Duplicate Feedback" };
-			var feedbacks = new List<Feedback>
-			{
-				new Feedback { FeedbackId = 1, MemberId = 1, Content = "Good" }
-			};
-			var mockDbSet = FeedbackControllerTestSetup.GetMockDbSetWithFeedbacks(feedbacks);
-
-			_mockContext.Setup(c => c.Feedbacks).Returns(mockDbSet.Object);
 
 			// Act
 			var result = await _controller.PostFeedback(feedback);
@@ -205,10 +169,9 @@ namespace AzzanOrder.Tests
 			// Arrange
 			var feedbackId = 1;
 			var feedback = new Feedback { FeedbackId = feedbackId, MemberId = 1 };
-			var mockDbSet = FeedbackControllerTestSetup.GetMockDbSetWithFeedbacks(new List<Feedback> { feedback });
 
-			mockDbSet.Setup(m => m.FindAsync(feedbackId)).ReturnsAsync(feedback);
-			_mockContext.Setup(c => c.Feedbacks).Returns(mockDbSet.Object);
+			var mockDbSet = _mockContext.Object.Feedbacks;
+			Mock.Get(mockDbSet).Setup(m => m.FindAsync(feedbackId)).ReturnsAsync(feedback);
 
 			// Act
 			var result = await _controller.DeleteFeedback(feedbackId);
@@ -223,10 +186,9 @@ namespace AzzanOrder.Tests
 		{
 			// Arrange
 			var feedbackId = 99;
-			var mockDbSet = FeedbackControllerTestSetup.GetMockDbSetWithFeedbacks(new List<Feedback>());
 
-			mockDbSet.Setup(m => m.FindAsync(feedbackId)).ReturnsAsync(default(Feedback));
-			_mockContext.Setup(c => c.Feedbacks).Returns(mockDbSet.Object);
+			var mockDbSet = _mockContext.Object.Feedbacks;
+			Mock.Get(mockDbSet).Setup(m => m.FindAsync(feedbackId)).ReturnsAsync(default(Feedback));
 
 			// Act
 			var result = await _controller.DeleteFeedback(feedbackId);
