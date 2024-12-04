@@ -644,6 +644,14 @@ namespace AzzanOrder.ManagerOwner.Controllers
                                     string addMessage = await addResponse.Content.ReadAsStringAsync();
                                 }
                             }
+                            var c = new Table() {EmployeeId = emp.EmployeeId, Qr = "QR_000", Status = true};
+                            using (HttpResponseMessage addResponse = await client.PostAsJsonAsync(_apiUrl + "Table/Add", c))
+                            {
+                                if (addResponse.IsSuccessStatusCode)
+                                {
+                                    string addMessage = await addResponse.Content.ReadAsStringAsync();
+                                }
+                            }
                         }
                     }
                     else

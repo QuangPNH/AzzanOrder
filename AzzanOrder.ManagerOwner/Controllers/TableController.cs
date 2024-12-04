@@ -17,6 +17,11 @@ namespace AzzanOrder.ManagerOwner.Controllers
         private readonly string _apiUrl = new Config()._apiUrl;
         public async Task<IActionResult> ListAsync(int? page)
         {
+            Employee emp = new Employee();
+            if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
+            {
+                emp = JsonConvert.DeserializeObject<Employee>(empJson);
+            }
             List<Table> tables = new List<Table>();
 
             using (HttpClient client = new HttpClient())
@@ -24,7 +29,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 try
                 {
                     // Fetch tables
-                    HttpResponseMessage tableRes = await client.GetAsync(_apiUrl + "Table/GetTablesByManagerId/1");
+                    HttpResponseMessage tableRes = await client.GetAsync(_apiUrl + $"Table/GetTablesByManagerId/{emp.EmployeeId}");
                     if (tableRes.IsSuccessStatusCode)
                     {
                         string tableData = await tableRes.Content.ReadAsStringAsync();

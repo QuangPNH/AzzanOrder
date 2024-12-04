@@ -104,10 +104,11 @@ namespace AzzanOrder.ManagerOwner.Controllers
         // POST: Employee/Add
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddPost(Employee employee, IFormFile Image)
+        public async Task<IActionResult> Add(Employee employee, IFormFile Image)
         {
             Owner emp = new Owner();
             var e = new Employee();
+            var role = new Role();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
             {
                 emp = JsonConvert.DeserializeObject<Owner>(empJson);
@@ -122,11 +123,23 @@ namespace AzzanOrder.ManagerOwner.Controllers
             //    }
             //}
             employee.RoleId = 1;
-            employee.OwnerId = emp.OwnerId;
-            employee.IsDelete = false;
             using (HttpClient client = new HttpClient())
             {
-
+                using (HttpResponseMessage addResponse = await client.GetAsync(_apiUrl + $"Role/{1}"))
+                {
+                    if (addResponse.IsSuccessStatusCode)
+                    {
+                        string mes = await addResponse.Content.ReadAsStringAsync();
+                        role = JsonConvert.DeserializeObject<Role>(mes);
+                    }
+                }
+            }
+            employee.OwnerId = emp.OwnerId;
+            employee.IsDelete = false;
+            employee.Role = role;
+            using (HttpClient client = new HttpClient())
+            {
+              
 
                 using (HttpResponseMessage response = await client.PostAsJsonAsync(_apiUrl + "Employee/Add/", employee))
                 {
@@ -174,6 +187,14 @@ namespace AzzanOrder.ManagerOwner.Controllers
         {
             using (HttpClient client = new HttpClient())
             {
+                var t = new Table() { EmployeeId = employee.EmployeeId, Qr = "QR_000", Status = true };
+                using (HttpResponseMessage addResponse = await client.PostAsJsonAsync(_apiUrl + "Table/Add", t))
+                {
+                    if (addResponse.IsSuccessStatusCode)
+                    {
+                        string addMessage = await addResponse.Content.ReadAsStringAsync();
+                    }
+                }
                 foreach (var i in itemCategories)
                 {
                     ItemCategory category = new ItemCategory()
