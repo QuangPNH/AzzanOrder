@@ -22,12 +22,19 @@
                                 foreach (var i in Model.itemCategories)
                                 {
                                     <li>
-                                        <input type="checkbox" name="SelectedCategories" value="@i.ItemCategoryId" />
+                                        <input type="checkbox" name="SelectedCategories" value="@i.ItemCategoryId"
+                                               data-description="@i.Description" class="category-checkbox" />
                                         <label>@i.ItemCategoryName</label>
                                     </li>
                                 }
                             }
                         </ul>
+                        <span id="category-warning" class="text-danger" style="display:none;">
+                            Items in <strong>@Model.itemCategories.FirstOrDefault(c => c.Description == "TOPPING")?.ItemCategoryName</strong>
+                            cannot belong to other categories.
+                        </span>
+
+
                     </div>
                 </div>
 
@@ -81,19 +88,28 @@
 
 
 
+
 <script>
     document.addEventListener("DOMContentLoaded", function () {
-        // Enable/disable datetime fields based on checkbox state
-        const limitedCheckbox = document.getElementById('limitedCheckbox');
-        const startDate = document.getElementById('startDate');
-        const endDate = document.getElementById('endDate');
+        const categoryCheckboxes = document.querySelectorAll('.category-checkbox');
+        const warningMessage = document.getElementById('category-warning');
 
-        if (limitedCheckbox) {
-            limitedCheckbox.addEventListener('change', function () {
-                const isChecked = limitedCheckbox.checked;
-                startDate.disabled = !isChecked;
-                endDate.disabled = !isChecked;
+        categoryCheckboxes.forEach(checkbox => {
+            checkbox.addEventListener('change', function () {
+                const isTopping = this.dataset.description === 'TOPPING';
+
+                if (isTopping && this.checked) {
+                    categoryCheckboxes.forEach(cb => {
+                        if (cb !== this) {
+                            cb.disabled = true;
+                        }
+                    });
+                    warningMessage.style.display = 'block';
+                } else if (isTopping && !this.checked) {
+                    categoryCheckboxes.forEach(cb => cb.disabled = false);
+                    warningMessage.style.display = 'none';
+                }
             });
-        }
+        });
     });
 </script>

@@ -104,7 +104,7 @@ namespace AzzanOrder.Data.Controllers
             _context.Tables.Add(tab);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetTable", new { id = tab.TableId }, tab);
+            return Ok(tab);
         }
         
         // DELETE: api/Table/5

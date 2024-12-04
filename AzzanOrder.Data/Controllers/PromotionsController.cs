@@ -93,7 +93,7 @@ namespace AzzanOrder.Data.Controllers
             _context.Promotions.Add(promotion);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetPromotion", new { id = promotion.PromotionId }, promotion);
+            return Ok(promotion);
         }
 
         // DELETE: api/Promotions/5

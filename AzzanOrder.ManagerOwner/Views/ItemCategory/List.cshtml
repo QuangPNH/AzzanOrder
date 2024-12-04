@@ -13,6 +13,9 @@
 
         <table class="table table-striped table-hover">
             <thead>
+                @{
+                    int position = 1;
+                }
                 <tr>
                     <th style="width:5%">No.</th>
                     <th style="width:25%">Item Category Name</th>
@@ -27,22 +30,23 @@
                 @foreach (var data in Model.itemCategories)
                 {
                     <tr>
-                    <td>@data.ItemCategoryId</td>
-                    <td>@data.ItemCategoryName</td>
-                    <td class="d-none d-md-table-cell">@data.Description</td>
-                    <td>@data.StartDate</td>
-                    <td>@data.EndDate</td>
-                    <td>@(data.IsCombo == true ? "Yes" : "No")</td>
-                    <td class="table-action">
+                        <td>@position</td>
+                        <td>@data.ItemCategoryName</td>
+                        <td class="d-none d-md-table-cell">@data.Description</td>
+                        <td>@data.StartDate</td>
+                        <td>@data.EndDate</td>
+                        <td>@(data.IsCombo == true ? "Yes" : "No")</td>
+                        <td class="table-action">
                             <a href="@Url.Action("Update", "ItemCategory", new { id = data.ItemCategoryId })"><i class="align-middle" data-feather="edit-2"></i></a>
                             <a href="@Url.Action("Delete", "ItemCategory", new { id = data.ItemCategoryId })"><i class="align-middle" data-feather="trash"></i></a>
-                    </td>
-                </tr>
+                        </td>
+                    </tr>
+                    position++;
                 }
             </tbody>
         </table>
 
-       <div class="row mt-3">
+        <div class="row mt-3">
             <div class="col d-flex justify-content-end">
                 <nav aria-label="Page navigation example">
                     <ul class="pagination pagination-md mb-0">

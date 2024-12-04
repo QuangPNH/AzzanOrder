@@ -94,7 +94,6 @@ namespace AzzanOrder.Data.Test
             mockDbSet.As<IQueryable<Order>>().Setup(m => m.Expression).Returns(orders.Expression);
             mockDbSet.As<IQueryable<Order>>().Setup(m => m.ElementType).Returns(orders.ElementType);
             mockDbSet.As<IQueryable<Order>>().Setup(m => m.GetEnumerator()).Returns(orders.GetEnumerator());
-
             mockDbSet.As<IAsyncEnumerable<Order>>().Setup(m => m.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
                 .Returns(new TestAsyncEnumerator<Order>(orders.GetEnumerator()));
 

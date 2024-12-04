@@ -54,11 +54,17 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            var orders = await _context.Orders.Include(o => o.OrderDetails)
-                    .ThenInclude(od => od.MenuItem).Where(
-                x => x.MemberId == id &&
-                x.OrderDate > DateTime.Now.AddHours(-1)
-                ).ToListAsync();
+            var orders = employeeId.HasValue ?
+                await _context.Orders
+                .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.MenuItem)
+                .Where(x => x.MemberId == id && x.Table.EmployeeId == employeeId && x.OrderDate > DateTime.Now.AddHours(-1))
+                .ToListAsync() :
+                await _context.Orders
+                .Include(o => o.OrderDetails)
+                .ThenInclude(od => od.MenuItem)
+                .Where(x => x.MemberId == id && x.OrderDate > DateTime.Now.AddHours(-1))
+                .ToListAsync();
 
             if (orders == null)
             {
@@ -174,7 +180,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return BadRequest(ex);
             }
-            return CreatedAtAction("GetOrder", new { id = order.OrderId }, order);
+            return Ok(order);
         }
 
         // DELETE: api/Order/5

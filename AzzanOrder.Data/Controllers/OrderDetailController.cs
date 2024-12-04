@@ -110,7 +110,7 @@ namespace AzzanOrder.Data.Controllers
 
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetOrderDetail", new { id = orderDetail.OrderDetailId }, orderDetail);
+            return Ok(orderDetail);
         }
 
         // DELETE: api/OrderDetail/5

@@ -26,7 +26,13 @@
 									<label class="form-label">Phone</label>
 									<input asp-for="employee.Phone" class="form-control form-control-lg" type="phone" name="phone" placeholder="Enter your phone" />
 								</div>
-
+								<div class="col-sm-10">
+								<label for="roleSelect">Choose a role:</label>
+										<select id="roleSelect" name="role">
+											<option value="owner">Owner</option>
+											<option value="manager">Manager</option>
+										</select>
+								</div>
 								<div class="text-center mt-3">
 									@* <a href="@Url.Action("List", "Employee")" class="btn btn-lg btn-primary">Sign in</a> *@
 									<button type="submit" class="btn btn-lg btn-primary">Sign in</button>

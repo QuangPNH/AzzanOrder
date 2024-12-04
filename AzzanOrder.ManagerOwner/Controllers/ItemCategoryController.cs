@@ -47,7 +47,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             {
                 try
                 {
-                    HttpResponseMessage tableRes = await client.GetAsync(_apiUrl + "ItemCategory?id=" + emp.EmployeeId);
+                    HttpResponseMessage tableRes = await client.GetAsync(_apiUrl + $"ItemCategory?id={emp.EmployeeId}");
                     if (tableRes.IsSuccessStatusCode)
                     {
                         string tableData = await tableRes.Content.ReadAsStringAsync();

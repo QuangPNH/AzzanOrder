@@ -154,7 +154,7 @@ namespace AzzanOrder.Data.Controllers
             _context.Notifications.Add(notification);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetNotification", new { id = notification.NotificationId }, notification);
+            return Ok(notification);
         }
 
         // DELETE: api/Notification/5

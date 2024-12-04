@@ -110,7 +110,7 @@ namespace AzzanOrder.Data.Controllers
             _context.Feedbacks.Add(f);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetFeedback", new { id = f.FeedbackId }, f);
+            return Ok(f);
         }
 
         // DELETE: api/Feedback/5

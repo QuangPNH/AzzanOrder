@@ -52,7 +52,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
                 }
             }
-            employees = employees.Where(e => e.RoleId == 1 && e.IsDelete == false).ToList();
+            employees = employees.Where(e => e.RoleId == 1 && e.IsDelete == false && e.OwnerId == emp.OwnerId).ToList();
 
             int pageSize = 10;
             int pageNumber = page ?? 1;
@@ -176,8 +176,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
             {
                 foreach (var i in itemCategories)
                 {
-                    ItemCategory category = new ItemCategory() 
-                    {  
+                    ItemCategory category = new ItemCategory()
+                    {
                         ItemCategoryName = i.ItemCategoryName,
                         Description = i.Description,
                         Discount = i.Discount,
