@@ -173,29 +173,29 @@ namespace AzzanOrder.Data.Test
         }
 
         [Test]
-        public async Task PostMember_CreatesNewMember()
-        {
-            // Arrange
-            var newMember = new Member
-            {
-                MemberId = 4,
-                MemberName = "New Member",
-                Phone = "5555555555"
-            };
+		public async Task PostMember_CreatesNewMember()
+		{
+			// Arrange
+			var newMember = new Member
+			{
+				MemberId = 4,
+				MemberName = "New Member",
+				Phone = "5555555555"
+			};
 
-            // Act
-            var result = await _controller.PostMember(newMember);
+			// Act
+			var result = await _controller.PostMember(newMember);
 
-            // Assert
-            Assert.IsInstanceOf<ActionResult<Member>>(result);
-            var createdAtActionResult = result.Result as CreatedAtActionResult;
-            Assert.IsNotNull(createdAtActionResult);
-            var member = createdAtActionResult.Value as Member;
-            Assert.IsNotNull(member);
-            Assert.AreEqual(4, member.MemberId);
-        }
+			// Assert
+			Assert.IsInstanceOf<ActionResult<Member>>(result);
+			var okObjectResult = result.Result as OkObjectResult;
+			Assert.IsNotNull(okObjectResult);
+			var member = okObjectResult.Value as Member;
+			Assert.IsNotNull(member);
+			Assert.AreEqual(4, member.MemberId);
+		}
 
-        [Test]
+		[Test]
         public async Task DeleteOwner_DeletesMember()
         {
             // Act

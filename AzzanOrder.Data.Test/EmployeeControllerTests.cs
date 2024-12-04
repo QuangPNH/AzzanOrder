@@ -132,41 +132,51 @@ namespace AzzanOrder.Tests
             Assert.IsInstanceOf<OkObjectResult>(result);
         }
 
-        [Test]
-        public async Task PostEmployee_AddsEmployee()
-        {
-            var employee = new Employee
-            {
-                EmployeeId = 3987,
-                EmployeeName = "John Doe 3",
-                Gender = true,
-                Phone = "1234567890",
-                Gmail = "john.doe@example.com",
-                BirthDate = new DateTime(1990, 1, 1),
-                RoleId = 2,
-                HomeAddress = "123 Main St, Hometown",
-                WorkAddress = "456 Work St, Worktown",
-                Image = "path/to/image.jpg",
-                ManagerId = 2,
-                OwnerId = 3,
-                IsDelete = false,
-                Role = new Role { RoleId = 2, RoleName = "Staff" }
-            };
+		[Test]
+		public async Task PostEmployee_AddsEmployee()
+		{
+			// Arrange
+			var employee = new Employee
+			{
+				EmployeeId = 3987,
+				EmployeeName = "John Doe 3",
+				Gender = true,
+				Phone = "1234567890",
+				Gmail = "john.doe@example.com",
+				BirthDate = new DateTime(1990, 1, 1),
+				RoleId = 2,
+				HomeAddress = "123 Main St, Hometown",
+				WorkAddress = "456 Work St, Worktown",
+				Image = "path/to/image.jpg",
+				ManagerId = 2,
+				OwnerId = 3,
+				IsDelete = false,
+				Role = new Role { RoleId = 2, RoleName = "Staff" }
+			};
 
-            _mockSet.Setup(m => m.AddAsync(It.IsAny<Employee>(), It.IsAny<CancellationToken>()))
-                    .Returns((Employee emp, CancellationToken token) =>
-                    {
-                        _mockContext.Object.Employees.Add(emp);
-                        return new ValueTask<EntityEntry<Employee>>(Task.FromResult<EntityEntry<Employee>>(null!));
-                    });
+			_mockSet.Setup(m => m.AddAsync(It.IsAny<Employee>(), It.IsAny<CancellationToken>()))
+					.Returns((Employee emp, CancellationToken token) =>
+					{
+						_mockContext.Object.Employees.Add(emp);
+						return new ValueTask<EntityEntry<Employee>>(Task.FromResult<EntityEntry<Employee>>(null!));
+					});
 
-            _mockContext.Setup(m => m.Employees).Returns(_mockSet.Object);
+			_mockContext.Setup(m => m.Employees).Returns(_mockSet.Object);
 
-            var result = await _controller.PostEmployee(employee);
-            Assert.IsInstanceOf<CreatedAtActionResult>(result.Result);
-        }
+			// Act
+			var result = await _controller.PostEmployee(employee);
 
-        [Test]
+			// Assert
+			Assert.IsInstanceOf<ActionResult<Employee>>(result);
+			var okObjectResult = result.Result as OkObjectResult;
+			Assert.IsNotNull(okObjectResult);
+			var returnedEmployee = okObjectResult.Value as Employee;
+			Assert.IsNotNull(returnedEmployee);
+			Assert.AreEqual("John Doe 3", returnedEmployee.EmployeeName);
+			Assert.AreEqual(2, returnedEmployee.RoleId);
+		}
+
+		[Test]
         public async Task DeleteEmployee_DeletesEmployee()
         {
             var result = await _controller.DeleteEmployee(1234);
