@@ -21,10 +21,7 @@ namespace AzzanOrder.ManagerOwner.Models
         [StringLength(10, ErrorMessage = "Phone number must be 10 characters long.")]
         [RegularExpression(@"^\d{10}$", ErrorMessage = "Phone number must be exactly 10 digits.")]
         public string Phone { get; set; } = null!;
-        [Required(ErrorMessage = "Email address is required.")]
-        [StringLength(50, ErrorMessage = "Email cannot exceed 50 characters.")]
-        [EmailAddress(ErrorMessage = "Invalid email format.")]
-        public string Gmail { get; set; } = null!;
+        public string? Gmail { get; set; }
         public DateTime? BirthDate { get; set; }
 		public string? Address { get; set; }
 		public double? Point { get; set; }
