@@ -107,7 +107,6 @@ namespace AzzanOrder.Tests
 
 			var mockDbSet = _mockContext.Object.Feedbacks;
 			Mock.Get(mockDbSet).Setup(m => m.FindAsync(feedback.FeedbackId)).ReturnsAsync(feedback);
-			_mockContext.Setup(c => c.Feedbacks.Any(e => e.FeedbackId == feedback.FeedbackId)).Returns(true);
 
 			// Act
 			var result = await _controller.PutFeedback(feedback);
