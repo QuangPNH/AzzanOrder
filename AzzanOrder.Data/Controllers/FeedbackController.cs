@@ -104,7 +104,7 @@ namespace AzzanOrder.Data.Controllers
             }
             if (_context.Feedbacks.Where(x => x.MemberId == feedback.MemberId).Any())
             {
-                return BadRequest("Y");
+                return BadRequest("You had feedback before");
             }
             var f = new Feedback() { Content = feedback.Content, MemberId = feedback.MemberId };
             _context.Feedbacks.Add(f);

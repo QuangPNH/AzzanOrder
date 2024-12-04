@@ -198,7 +198,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         if (res.IsSuccessStatusCode)
                         {
                             string data = await res.Content.ReadAsStringAsync();
-                            Console.WriteLine("try dgee" + data);
                             emp = JsonConvert.DeserializeObject<Employee>(data);
                         }
                         else
@@ -210,6 +209,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     {
                         ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
                     }
+                }
+                if (emp == null)
+                {
+                    return RedirectToAction("Login", "Home");
                 }
             }
             if (a.ToLower().Equals("owner"))
