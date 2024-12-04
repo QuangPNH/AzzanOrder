@@ -36,29 +36,30 @@ namespace AzzanOrder.Data.Test
 
             // Assert
             Assert.IsInstanceOf<ActionResult<IEnumerable<Order>>>(result);
-            var okResult = result.Result as OkObjectResult;
-            Assert.IsNotNull(okResult);
-            var orders = okResult.Value as List<Order>;
+
+            var orders = result.Value as List<Order>;
             Assert.IsNotNull(orders);
             Assert.AreEqual(2, orders.Count);
         }
 
-        [Test]
-        public async Task GetOrder_ReturnsOrderById()
-        {
-            // Act
-            var result = await _controller.GetOrder(1);
+		[Test]
+		public async Task GetOrder_ReturnsOrder()
+		{
+			// Arrange
+			int orderId = 1; // Use an existing order ID from your mock data
 
-            // Assert
-            Assert.IsInstanceOf<ActionResult<Order>>(result);
-            var okResult = result.Result as OkObjectResult;
-            Assert.IsNotNull(okResult);
-            var order = okResult.Value as Order;
-            Assert.IsNotNull(order);
-            Assert.AreEqual(1, order.OrderId);
-        }
+			// Act
+			var result = await _controller.GetOrder(orderId);
 
-        [Test]
+			// Assert
+			Assert.IsInstanceOf<ActionResult<Order>>(result);
+
+			var order = result.Value;
+			Assert.IsNotNull(order);
+			Assert.AreEqual(orderId, order.OrderId);
+		}
+
+		[Test]
         public async Task GetOrder_ReturnsNotFound_WhenOrderDoesNotExist()
         {
             // Act
