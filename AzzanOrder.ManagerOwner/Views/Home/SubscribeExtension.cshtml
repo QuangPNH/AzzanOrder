@@ -25,68 +25,72 @@
                             <div class="mb-3 row">
 
 
-                            <br />
-                            @if (TempData["Message"] != null)
-                            {
-                                <div class="alert alert-warning">
-                                    @TempData["Message"]
-                                </div>
-                            }
+                                <br />
+                                @if (TempData["Message"] != null)
+                                {
+                                    <div class="alert alert-warning">
+                                        @TempData["Message"]
+                                    </div>
+                                }
 
+                                @if (TempData["EndDate"] != null)
+                                {
+                                    <div class="alert alert-info">
+                                        @TempData["EndDate"]
+                                    </div>
+                                }
 
-
-
-                            <div class="tab-content">
-                                <div class="tab-pane fade show active" id="monthly">
-                                    <div class="row py-4">
-                                        <div class="col-sm-6 mb-3 mb-md-0">
-                                            <div class="card text-center h-100">
-                                                <div class="card-body d-flex flex-column">
-                                                    <div class="mb-4">
-                                                        <h5>Monthly</h5>
-                                                        <span class="display-4">30.000đ</span>
-                                                        <span>/month</span>
-                                                    </div>
-                                                    <ul class="list-unstyled">
-                                                        <li class="mb-2">
-                                                            Moderate
-                                                        </li>
-                                                    </ul>
-                                                    <div class="mt-auto">
-                                                        <button type="submit" class="btn btn-outline-primary" name="pack" value="yearly">Purchase</button>
+                                <div class="tab-content">
+                                    <div class="tab-pane fade show active" id="monthly">
+                                        <div class="row py-4">
+                                            <div class="col-sm-6 mb-3 mb-md-0">
+                                                <div class="card text-center h-100">
+                                                    <div class="card-body d-flex flex-column">
+                                                        <div class="mb-4">
+                                                            <h5>Monthly</h5>
+                                                            <span class="display-4">30.000đ</span>
+                                                            <span>/month</span>
+                                                        </div>
+                                                        <ul class="list-unstyled">
+                                                            <li class="mb-2">
+                                                                Moderate
+                                                            </li>
+                                                        </ul>
+                                                        <div class="mt-auto">
+                                                            <button type="submit" class="btn btn-outline-primary" name="pack" value="yearly">Purchase</button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
-                                        <div class="col-sm-6 mb-3 mb-md-0">
-                                            <div class="card text-center h-100">
-                                                <div class="card-body d-flex flex-column">
-                                                    <div class="mb-4">
-                                                        <h5>Yearly</h5>
-                                                        <span class="display-4">300.000đ</span>
-                                                        <span>/year</span>
-                                                    </div>
-                                                    <ul class="list-unstyled">
-                                                        <li class="mb-2">
-                                                            Best value!
-                                                        </li>
-                                                    </ul>
-                                                    <div class="mt-auto">
-                                                        <button type="submit" class="btn btn-outline-primary" name="pack" value="forever">Purchase</button>
+                                            <div class="col-sm-6 mb-3 mb-md-0">
+                                                <div class="card text-center h-100">
+                                                    <div class="card-body d-flex flex-column">
+                                                        <div class="mb-4">
+                                                            <h5>Yearly</h5>
+                                                            <span class="display-4">300.000đ</span>
+                                                            <span>/year</span>
+                                                        </div>
+                                                        <ul class="list-unstyled">
+                                                            <li class="mb-2">
+                                                                Best value!
+                                                            </li>
+                                                        </ul>
+                                                        <div class="mt-auto">
+                                                            <button type="submit" class="btn btn-outline-primary" name="pack" value="forever">Purchase</button>
+                                                        </div>
                                                     </div>
                                                 </div>
                                             </div>
                                         </div>
                                     </div>
                                 </div>
-                            </div>
                         </form>
                     </div>
                 </div>
             </div>
 
 
-            <hr/>
+            <hr />
             <div class="text-center my-4">
                 <h2>Frequently asked questions</h2>
             </div>
@@ -111,18 +115,18 @@
                         </div>
                     </div>
                 </div>
-             
-                    <div class="col-md-5 col-sm-6 ms-auto">
-                        <div class="card">
-                            <div class="card-body">
-                                <h5 class="h6 card-title">Do you need all the information above?</h5>
-                                <p class="mb-0">
-                                    Not really. All we need is your phone number.
-                                </p>
-                            </div>
+
+                <div class="col-md-5 col-sm-6 ms-auto">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="h6 card-title">Do you need all the information above?</h5>
+                            <p class="mb-0">
+                                Not really. All we need is your phone number.
+                            </p>
                         </div>
                     </div>
-                
+                </div>
+
                 <div class="col-md-5 col-sm-6 me-auto">
                     <div class="card">
                         <div class="card-body">
@@ -134,7 +138,7 @@
                     </div>
                 </div>
             </div>
-            
+
         </div>
     </div>
 </div>

@@ -169,7 +169,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             }
             else if (loginStatus.Equals("manager expired"))
             {
-				TempData["Message"] = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
+                TempData["Message"] = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
             }
             return View();
         }
@@ -353,22 +353,22 @@ namespace AzzanOrder.ManagerOwner.Controllers
             var loginStatus = await authorizeLogin.CheckLogin();
             if (loginStatus.Equals("owner"))
             {
-                
+
             }
             else if (loginStatus.Equals("manager"))
             {
                 return RedirectToAction("List", "Employee");
             }
-			else if (loginStatus.Equals("owner expired"))
-			{
-				
-			}
-			else if (loginStatus.Equals("manager expired"))
-			{
-				
-			}
+            else if (loginStatus.Equals("owner expired"))
+            {
 
-			Api.Bank theBank = new Api.Bank();
+            }
+            else if (loginStatus.Equals("manager expired"))
+            {
+
+            }
+
+            Api.Bank theBank = new Api.Bank();
             using (System.Net.Http.HttpClient httpClient = new System.Net.Http.HttpClient())
             {
                 var htmlData = await httpClient.GetStringAsync("https://api.vietqr.io/v2/banks");
@@ -705,6 +705,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
             var loginStatus = await authorizeLogin.CheckLogin();
             if (loginStatus.Equals("owner"))
             {
+                HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string loginInfoJson);
+                var owner = JsonConvert.DeserializeObject<Owner>(loginInfoJson);
+                string ye = "Your subscription is until " + owner.SubscribeEndDate.ToString("MMMM dd, yyyy") + ". " + (owner.SubscribeEndDate - DateTime.Now).Days + " days remaining.";
+                TempData["EndDate"] = ye;
                 return View();
             }
             else if (loginStatus.Equals("manager"))
@@ -743,6 +747,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 TempData["Message"] = "Owner PAYOS information, phone number, or Gmail is missing.";
                 return RedirectToAction("SubscribeExtension", "Home");
             }
+
 
 
             string redirectUrl = new Config()._payOS + "Subscribe/?";

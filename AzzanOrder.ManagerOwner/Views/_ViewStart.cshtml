@@ -3,16 +3,21 @@
 @{
     var path = Context.Request.Path.ToString().ToLower();
 
-    if (EmployeeService.CurrentOwner != null)
+    if (EmployeeService.CurrentOwner != null || path.Contains("/subscribeextension"))
     {
         Layout = "_LayoutOwner";
     }
-    
+    else
     if (EmployeeService.CurrentEmployee != null)
     {
         Layout = "_LayoutManager";
     }
+    else
     if (path.Contains("/login") || path.Contains("/subscribe"))
+    {
+        Layout = "_LayoutEmpty";
+    }
+    else
     {
         Layout = "_LayoutEmpty";
     }
