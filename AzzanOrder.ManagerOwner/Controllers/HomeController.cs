@@ -383,7 +383,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
         [HttpPost]
         public async Task<IActionResult> Subscribe(string pack, Model model)
         {
-
             if (string.IsNullOrEmpty(model.owner.Bank.PAYOS_CLIENT_ID) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_API_KEY) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_CHECKSUM_KEY) || string.IsNullOrEmpty(model.owner.Phone) || string.IsNullOrEmpty(model.owner.Gmail))
             {
                 TempData["Message"] = "Owner PAYOS information, phone number, or Gmail is missing.";
@@ -419,7 +418,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
             {
                 price = "300000";
                 model.owner.SubscriptionStartDate = DateTime.Now;
-                //model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
                 if (model.owner.SubscribeEndDate != null)
                 {
                     if (model.owner.SubscribeEndDate < DateTime.Now)
@@ -436,11 +434,25 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
                 }
             }
-            else if (pack.Equals("forever"))
+            else if (pack.Equals("monthly"))
             {
-                price = "3000000";
+                price = "30000";
                 model.owner.SubscriptionStartDate = DateTime.Now;
-                model.owner.SubscribeEndDate = DateTime.Now.AddYears(100);
+                if (model.owner.SubscribeEndDate != null)
+                {
+                    if (model.owner.SubscribeEndDate < DateTime.Now)
+                    {
+                        model.owner.SubscribeEndDate = DateTime.Now.AddMonths(1);
+                    }
+                    else
+                    {
+                        model.owner.SubscribeEndDate = model.owner.SubscribeEndDate.AddMonths(1);
+                    }
+                }
+                else
+                {
+                    model.owner.SubscribeEndDate = DateTime.Now.AddMonths(1);
+                }
             }
 
             if (model.owner != null)

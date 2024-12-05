@@ -108,7 +108,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 		// POST: Employee/Add
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> AddPost(ItemCategory itemCategory)
+		public async Task<IActionResult> Add(ItemCategory itemCategory)
 		{
             Employee emp = new Employee();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
@@ -197,7 +197,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 		[HttpPost]
 		[ValidateAntiForgeryToken]
-		public async Task<IActionResult> UpdatePost(ItemCategory itemCategory)
+		public async Task<IActionResult> Update(ItemCategory itemCategory)
         {
             Employee emp = new Employee();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
