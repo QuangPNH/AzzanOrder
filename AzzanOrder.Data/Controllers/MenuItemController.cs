@@ -32,6 +32,7 @@ namespace AzzanOrder.Data.Controllers
             var a = employeeId.HasValue ? await _context.MenuItems.Include(mi => mi.MenuCategories).ThenInclude(mi=>mi.ItemCategory).Where(mi => mi.EmployeeId == employeeId).ToListAsync() : await _context.MenuItems.Include(mi => mi.MenuCategories).ThenInclude(mi => mi.ItemCategory).ToListAsync();
             return a;
         }
+
         [HttpGet("ItemCategoryId/{itemCategoryId}")]
         public async Task<ActionResult> GetMenuItemByTtemCategory(int itemCategoryId)
         {

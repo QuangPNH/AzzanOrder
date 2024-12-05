@@ -37,7 +37,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            var order = await _context.Orders.FindAsync(id);
+            var order = await _context.Orders.Include(o => o.Table).Include(o => o.Member).Include(o => o.OrderDetails).ThenInclude(od => od.MenuItem).FirstOrDefaultAsync(o => o.OrderId == id);
 
             if (order == null)
             {

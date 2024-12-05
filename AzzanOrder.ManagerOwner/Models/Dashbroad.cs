@@ -2,7 +2,7 @@
 
 namespace AzzanOrder.ManagerOwner.Models
 {
-	public class Dashbroad
+    public class Dashbroad
 	{
 		public IEnumerable<MenuItemSalesDTO> trendingItems { get; set; }
 		public IEnumerable<MenuItemSalesDTO> failingItems { get; set; }
