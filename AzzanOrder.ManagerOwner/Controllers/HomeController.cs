@@ -564,7 +564,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 
                     var owner = JsonConvert.DeserializeObject<Owner>(loginInfoJson);
-                    var role = new Role();
+                    
                     bool ownerExist = false;
                     using (HttpClient client = new HttpClient())
                     {
@@ -604,53 +604,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
                     if (ownerExist == false)
                     {
-                        using (HttpClient client = new HttpClient())
-                        {
-                            using (HttpResponseMessage addResponse = await client.PostAsJsonAsync(_apiUrl + "Owner/Add/", owner))
-                            {
-                                if (addResponse.IsSuccessStatusCode)
-                                {
-                                    string addMessage = await addResponse.Content.ReadAsStringAsync();
-                                    owner = JsonConvert.DeserializeObject<Owner>(addMessage);
-                                }
-                            }
-
-                            using (HttpResponseMessage addResponse = await client.GetAsync(_apiUrl + $"Role/{1}"))
-                            {
-                                if (addResponse.IsSuccessStatusCode)
-                                {
-                                    string mes = await addResponse.Content.ReadAsStringAsync();
-                                    role = JsonConvert.DeserializeObject<Role>(mes);
-                                }
-                            }
-                            var emp = new Employee() { EmployeeName = owner.OwnerName, Phone = owner.Phone, Gender = owner.Gender, Gmail = owner.Gmail, BirthDate = owner.BirthDate, RoleId = 1, Image = owner.Image, IsDelete = false, OwnerId = owner.OwnerId, Role = role };
-                            Console.WriteLine(JsonConvert.SerializeObject(emp));
-                            using (HttpResponseMessage addResponse = await client.PostAsJsonAsync(_apiUrl + "Employee/Add", emp))
-                            {
-                                if (addResponse.IsSuccessStatusCode)
-                                {
-                                    string addMessage = await addResponse.Content.ReadAsStringAsync();
-                                    emp = JsonConvert.DeserializeObject<Employee>(addMessage);
-                                }
-                            }
-                            var a = new ItemCategory() { ItemCategoryName = "LỚP PHỦ", Description = "TOPPING", Discount = 0, EmployeeId = emp.EmployeeId, IsCombo = false, IsDelete = false };
-
-                            using (HttpResponseMessage addResponse = await client.PostAsJsonAsync(_apiUrl + "ItemCategory/Add", a))
-                            {
-                                if (addResponse.IsSuccessStatusCode)
-                                {
-                                    string addMessage = await addResponse.Content.ReadAsStringAsync();
-                                }
-                            }
-                            var c = new Table() { EmployeeId = emp.EmployeeId, Qr = "QR_000", Status = true };
-                            using (HttpResponseMessage addResponse = await client.PostAsJsonAsync(_apiUrl + "Table/Add", c))
-                            {
-                                if (addResponse.IsSuccessStatusCode)
-                                {
-                                    string addMessage = await addResponse.Content.ReadAsStringAsync();
-                                }
-                            }
-                        }
+                        
                     }
                     else
                     {
@@ -679,13 +633,65 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 return View("OTPFreeTrial", model);
             }
         }
+        private async Task AddFirstManagerAsync(Owner owner)
+        {
+            var role = new Role();
+            using (HttpClient client = new HttpClient())
+            {
+                using (HttpResponseMessage getResponse = await client.GetAsync(_apiUrl + $"Owner/Phone/{owner.Phone}"))
+                {
 
+                    if (getResponse.IsSuccessStatusCode)
+                    {
+                        string mes = await getResponse.Content.ReadAsStringAsync();
+                        owner = JsonConvert.DeserializeObject<Owner>(mes);
+                    }
+                }
+
+                using (HttpResponseMessage addResponse = await client.GetAsync(_apiUrl + $"Role/{1}"))
+                {
+                    if (addResponse.IsSuccessStatusCode)
+                    {
+                        string mes = await addResponse.Content.ReadAsStringAsync();
+                        role = JsonConvert.DeserializeObject<Role>(mes);
+                    }
+                }
+                var emp = new Employee() { EmployeeName = owner.OwnerName, Phone = owner.Phone, Gender = owner.Gender, Gmail = owner.Gmail, BirthDate = owner.BirthDate, RoleId = 1, Image = owner.Image, IsDelete = false, OwnerId = owner.OwnerId, Role = role };
+                Console.WriteLine(JsonConvert.SerializeObject(emp));
+                using (HttpResponseMessage addResponse = await client.PostAsJsonAsync(_apiUrl + "Employee/Add", emp))
+                {
+                    if (addResponse.IsSuccessStatusCode)
+                    {
+                        string addMessage = await addResponse.Content.ReadAsStringAsync();
+                        emp = JsonConvert.DeserializeObject<Employee>(addMessage);
+                    }
+                }
+                var a = new ItemCategory() { ItemCategoryName = "LỚP PHỦ", Description = "TOPPING", Discount = 0, EmployeeId = emp.EmployeeId, IsCombo = false, IsDelete = false };
+
+                using (HttpResponseMessage addResponse = await client.PostAsJsonAsync(_apiUrl + "ItemCategory/Add", a))
+                {
+                    if (addResponse.IsSuccessStatusCode)
+                    {
+                        string addMessage = await addResponse.Content.ReadAsStringAsync();
+                    }
+                }
+                var c = new Table() { EmployeeId = emp.EmployeeId, Qr = "QR_000", Status = true };
+                using (HttpResponseMessage addResponse = await client.PostAsJsonAsync(_apiUrl + "Table/Add", c))
+                {
+                    if (addResponse.IsSuccessStatusCode)
+                    {
+                        string addMessage = await addResponse.Content.ReadAsStringAsync();
+                    }
+                }
+            }
+        }
 
         [HttpPost]
         public IActionResult OwnerRegister([FromBody] Owner owner)
         {
             try
             {
+                AddFirstManagerAsync(owner);
                 var ownerJson = JsonConvert.SerializeObject(owner);
                 HttpContext.Response.Cookies.Append("LoginInfo", ownerJson, new CookieOptions
                 {
