@@ -135,13 +135,13 @@ namespace AzzanOrder.Data.Controllers
         [HttpPut("Update")]
         public async Task<IActionResult> PutItemCategory(ItemCategory itemCategory)
         {
-            var ic = await _context.ItemCategories.FindAsync(itemCategory.ItemCategoryId);
-            if (ic == null)
+            
+            if (ItemCategoryExists(itemCategory.ItemCategoryId) == null)
             {
                 return NotFound();
             }
-            ic.ItemCategoryName = itemCategory.ItemCategoryName;
-            ic.Description = itemCategory.Description;
+
+            _context.ItemCategories.Update(itemCategory);
 
             try
             {

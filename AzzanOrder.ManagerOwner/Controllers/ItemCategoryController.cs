@@ -81,7 +81,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             return View(viewModel);
         }
         [HttpGet]
-        public async Task<IActionResult> AddAsync()
+        public async Task<IActionResult> Add()
 		{
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             var loginStatus = await authorizeLogin.CheckLogin();
@@ -105,7 +105,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             return View();
 		}
 
-		// POST: Employee/Add
+	
 		[HttpPost]
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Add(ItemCategory itemCategory)
@@ -125,11 +125,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         itemCategory.IsCombo = isCombo;
                         itemCategory.EmployeeId = emp.EmployeeId;
                         itemCategory.IsDelete = false;
-                        itemCategory.Employee = new Employee { };
-                        string json = JsonConvert.SerializeObject(itemCategory);
-                        StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                        HttpResponseMessage response = await client.PostAsync(_apiUrl + "ItemCategory/Add", content);
+                        HttpResponseMessage response = await client.PostAsJsonAsync(_apiUrl + "ItemCategory/Add", itemCategory);
                         if (response.IsSuccessStatusCode)
                         {
                             return RedirectToAction("List");
@@ -149,7 +145,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 		}
 
         [HttpGet]
-        public async Task<IActionResult> UpdateAsync(int id)
+        public async Task<IActionResult> Update(int id)
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             var loginStatus = await authorizeLogin.CheckLogin();
@@ -208,21 +204,19 @@ namespace AzzanOrder.ManagerOwner.Controllers
             {
                 return RedirectToAction("List");
             }
+            
             var isCombo = !Request.Form["IsCombo"].IsNullOrEmpty();
             if (ModelState.IsValid)
             {
                 using (HttpClient client = new HttpClient())
                 {
+                
                     try
                     {
                         itemCategory.IsCombo = isCombo;
                         itemCategory.EmployeeId = emp.EmployeeId;
                         itemCategory.IsDelete = false;
-                        itemCategory.Employee = new Employee { };
-                        string json = JsonConvert.SerializeObject(itemCategory);
-                        StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                        HttpResponseMessage response = await client.PutAsync(_apiUrl + "ItemCategory/Update", content);
+                        HttpResponseMessage response = await client.PutAsJsonAsync(_apiUrl + "ItemCategory/Update", itemCategory);
                         if (response.IsSuccessStatusCode)
                         {
                             return RedirectToAction("List");

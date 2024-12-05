@@ -100,7 +100,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             return View(model);
         }
 
-        public async Task<IActionResult> AddAsync()
+        public async Task<IActionResult> Add()
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             var loginStatus = await authorizeLogin.CheckLogin();
@@ -164,7 +164,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddPost(VoucherDetail voucherDetail)
+        public async Task<IActionResult> Add(VoucherDetail voucherDetail)
         {
             //if (ModelState.IsValid)
             //{
@@ -233,7 +233,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
         }
 
 
-        public async Task<IActionResult> UpdateAsync(int id)
+        public async Task<IActionResult> Update(int id)
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             var loginStatus = await authorizeLogin.CheckLogin();
@@ -323,7 +323,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdatePost(VoucherDetail voucherDetail)
+        public async Task<IActionResult> Update(VoucherDetail voucherDetail)
         {
             Employee emp = new Employee();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
@@ -384,7 +384,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             // If model validation fails, redisplay the form with validation messages
             return RedirectToAction("List", "Voucher");
         }
-        public async Task<IActionResult> DeleteAsync(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             var itemCategories = new List<ItemCategory>();
 

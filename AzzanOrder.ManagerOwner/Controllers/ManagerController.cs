@@ -35,6 +35,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             {
                 emp = JsonConvert.DeserializeObject<Owner>(empJson);
             }
+
             List<Employee> employees = new List<Employee>();
             int totalEmployees = 0;
             using (HttpClient client = new HttpClient())
@@ -310,7 +311,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
         // POST: Employee/Update
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdatePost(Employee employee, IFormFile Image)
+        public async Task<IActionResult> Update(Employee employee, IFormFile Image)
         {
             Owner emp = new Owner();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))

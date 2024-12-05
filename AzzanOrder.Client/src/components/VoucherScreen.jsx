@@ -49,7 +49,7 @@ const VoucherScreen = () => {
     const fetchVouchers = async (category, manaId) => {
         try {
             
-            const response = category == '' ? await fetch(API_URLS.API + `VoucherDetail/?employeeId=${manaId}`) : await fetch(API_URLS.API + `VoucherDetail/categoryId?categoryId=${category}&employeeId=${manaId}`);
+            const response = category == '' ? await fetch(API_URLS.API + `VoucherDetail/ListVoucherDetail?employeeId=${manaId}`) : await fetch(API_URLS.API + `VoucherDetail/categoryId?categoryId=${category}&employeeId=${manaId}`);
             const data = await response.json();
             if (category == '') {
                 setAllVouchers(data);

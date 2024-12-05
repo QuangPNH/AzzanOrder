@@ -201,7 +201,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 Image = employee.Image,
                 ManagerId = emp.EmployeeId,
                 OwnerId = emp.OwnerId,
-                IsDelete = false
+                IsDelete = false,
+                Role = role
             };
 
 
@@ -351,7 +352,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 
             Employee emp = new Employee();
-            
+            Role role = new Role();
             List<Role> roles = new List<Role>();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
             {
@@ -396,8 +397,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 WorkAddress = employee.WorkAddress,
                 ManagerId = emp.EmployeeId,
                 OwnerId = emp.OwnerId,
-                IsDelete = false,
-                Role = role
+                IsDelete = false
+                
             };
 
             // Serialize to JSON and conditionally include "Image" if not null
@@ -478,7 +479,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 
 
-        public async Task<IActionResult> DeleteAsync(int id)
+        public async Task<IActionResult> Delete(int id)
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             var loginStatus = await authorizeLogin.CheckLogin();

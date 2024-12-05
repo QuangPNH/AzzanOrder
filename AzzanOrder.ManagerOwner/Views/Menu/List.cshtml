@@ -20,8 +20,9 @@
                     <th style="width:5%">No.</th>
                     <th style="width:20%">Name</th>
                     <th class="d-none d-md-table-cell" style="width:10%">Description</th>
-                    <th class="d-none d-md-table-cell" style="width:5%">Discount</th>
-                    <th style="width:10%">Is Available</th>
+                    <th class="d-none d-md-table-cell" style="width:10%">Start Date </th>
+                    <th class="d-none d-md-table-cell" style="width:10%">End Date</th>
+                    <th style="width:10%">Is Combo</th>
                     <th>Actions</th>
                 </tr>
             </thead>
@@ -33,8 +34,9 @@
                             <td>@i.ItemCategoryId</td>
                             <td>@i.ItemCategoryName</td>
                             <td class="d-none d-md-table-cell">@i.Description</td>
-                            <td class="d-none d-md-table-cell">@i.Discount</td>
-                            <td>@(i.IsDelete != true ? "Yes" : "No")</td>
+                            <td class="d-none d-md-table-cell">@i.StartDate</td>
+                            <td class="d-none d-md-table-cell">@i.EndDate</td>
+                            <td>@(i.IsCombo == true ? "Yes" : "No")</td>
                             <td class="table-action" data-category-id="@i.ItemCategoryId" data-category-name="@i.ItemCategoryName" style="cursor:pointer">
                                 <button class="btn btn-info btn-sm">View Items</button>
                             </td>
