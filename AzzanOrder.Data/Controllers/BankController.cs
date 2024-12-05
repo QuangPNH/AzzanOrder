@@ -74,9 +74,9 @@ namespace AzzanOrder.Data.Controllers
                 return NotFound("This bank not exist.");
             }
 
-            _context.Entry(bank).State = EntityState.Modified;
-
-            try
+            //_context.Entry(bank).State = EntityState.Modified;
+			_context.Banks.Update(bank);
+			try
             {
                 await _context.SaveChangesAsync();
             }
@@ -91,7 +91,7 @@ namespace AzzanOrder.Data.Controllers
                     throw;
                 }
             }
-            return Ok(_context.Banks.FirstOrDefault(a => a.BankId == bank.BankId));
+            return Ok(bank);
         }
 
         // POST: api/Bank

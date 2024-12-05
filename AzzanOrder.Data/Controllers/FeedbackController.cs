@@ -72,9 +72,9 @@ namespace AzzanOrder.Data.Controllers
                 return NotFound("This feedback not exist");
             }
 
-            _context.Entry(feedback).State = EntityState.Modified;
-
-            try
+            //_context.Entry(feedback).State = EntityState.Modified;
+            _context.Feedbacks.Update(feedback);
+			try
             {
                 await _context.SaveChangesAsync();
             }

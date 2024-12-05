@@ -17,6 +17,26 @@ namespace AzzanOrder.ManagerOwner.Controllers
         private readonly string _apiUrl = new Config()._apiUrl;
         public async Task<IActionResult> ListAsync(int? page)
         {
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+            var loginStatus = await authorizeLogin.CheckLogin();
+            if (loginStatus.Equals("owner"))
+            {
+                return RedirectToAction("Index", "Home");
+            }
+            else if (loginStatus.Equals("manager"))
+            {
+            }
+            else if (loginStatus.Equals("owner expired"))
+            {
+                ViewBag.Message = "Your subscription has expired. Please subscribe again.";
+                return RedirectToAction("Login", "Home");
+            }
+            else if (loginStatus.Equals("manager expired"))
+            {
+                ViewBag.Message = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
+                return RedirectToAction("Login", "Home");
+            }
+
             Employee emp = new Employee();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
             {
@@ -29,12 +49,12 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 try
                 {
                     // Fetch tables
-                    HttpResponseMessage tableRes = await client.GetAsync(_apiUrl + $"Table/GetTablesByManagerId/{emp.EmployeeId}");
+                    HttpResponseMessage tableRes = await client.GetAsync(_apiUrl + "Table/GetTablesByManagerId/"+emp.EmployeeId);
                     if (tableRes.IsSuccessStatusCode)
                     {
                         string tableData = await tableRes.Content.ReadAsStringAsync();
                         var data = JsonConvert.DeserializeObject<List<Table>>(tableData) ?? new List<Table>();
-                        tables = data.Where(x => x.Status != null).ToList();
+                        tables = data.Where(x => x.Status != null && x.Qr == "QR_000").ToList();
                     }
                     else
                     {
@@ -77,6 +97,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 {
                     try
                     {
+                        if (table.Qr == "QR_000")
+                        {
+                            return View(table);
+                        }
                         table.EmployeeId = 1;
                         table.Status = true;
                         string json = JsonConvert.SerializeObject(table);
@@ -148,6 +172,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 {
                     try
                     {
+                        if (table.Qr == "QR_000")
+                        {
+                            return View(table);
+                        }
                         table.EmployeeId = 1;
                         table.Status = true;
                         string json = JsonConvert.SerializeObject(table);
