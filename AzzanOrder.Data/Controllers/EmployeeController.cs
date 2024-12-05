@@ -190,6 +190,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return BadRequest("Employee cannot be null.");
             }
+            Role a = await _context.Roles.FirstOrDefaultAsync(r => r.RoleId == employee.RoleId);
             var emp = new Employee
             {
                 EmployeeName = employee.EmployeeName,
@@ -204,13 +205,13 @@ namespace AzzanOrder.Data.Controllers
                 ManagerId = employee.ManagerId,
                 OwnerId = employee.OwnerId,
                 IsDelete = employee.IsDelete,
-                Role = employee.Role
+                Role = a
             };
-            if (employee.Role == null)
-            {
-                Role a = await _context.Roles.FirstOrDefaultAsync(r => r.RoleId == employee.RoleId);
-                emp.Role = a;
-            }
+            //if (employee.Role == null)
+            //{
+                
+            //    emp.Role = a;
+            //}
 
             _context.Employees.Add(emp);
             await _context.SaveChangesAsync();

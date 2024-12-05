@@ -49,7 +49,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             {
                 try
                 {
-                    var url1 = emp != null ? _apiUrl + $"ItemCategory/GetAllBaseItemCategories?id={emp.EmployeeId}" : _apiUrl + "ItemCategory/GetAllBaseItemCategories";
+                    var url1 = emp != null ? _apiUrl + $"ItemCategory/GetAllItemCategories?id={emp.EmployeeId}" : _apiUrl + "ItemCategory/GetAllItemCategories";
                     HttpResponseMessage itemCategoryRes = await client.GetAsync(url1);
                     if (itemCategoryRes.IsSuccessStatusCode)
                     {
@@ -110,7 +110,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             {
                 try
                 {
-                    var url1 = emp != null ? _apiUrl + $"ItemCategory/GetAllBaseItemCategories?id={emp.EmployeeId}" : _apiUrl + "ItemCategory/GetAllBaseItemCategories";
+                    var url1 = emp != null ? _apiUrl + $"ItemCategory/GetAllItemCategories?id={emp.EmployeeId}" : _apiUrl + "ItemCategory/GetAllItemCategories";
                     HttpResponseMessage itemCategoryRes = await client.GetAsync(url1);
                     if (itemCategoryRes.IsSuccessStatusCode)
                     {
@@ -217,7 +217,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             {
                 try
                 {
-                    var url1 = emp != null ? _apiUrl + $"ItemCategory/GetAllBaseItemCategories?id={emp.EmployeeId}" : _apiUrl + "ItemCategory/GetAllBaseItemCategories";
+                    var url1 = emp != null ? _apiUrl + $"ItemCategory/GetAllItemCategories?id={emp.EmployeeId}" : _apiUrl + "ItemCategory/GetAllItemCategories";
                     HttpResponseMessage itemCategoryRes = await client.GetAsync(url1);
                     if (itemCategoryRes.IsSuccessStatusCode)
                     {

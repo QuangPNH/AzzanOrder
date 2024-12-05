@@ -20,6 +20,18 @@ namespace AzzanOrder.Data.Controllers
         {
             _context = context;
         }
+        [HttpGet("GetAllItemCategories")]
+        public async Task<IActionResult> GetAllItemCategories(int? id)
+        {
+            if (_context.ItemCategories == null)
+            {
+                return NotFound();
+            }
+            var a = id.HasValue ? await _context.ItemCategories.Where(ic => ic.EmployeeId == id ).Include(ic => ic.MenuCategories).ThenInclude(ic => ic.MenuItem).ToListAsync()
+                : await _context.ItemCategories.Include(ic => ic.MenuCategories).ThenInclude(ic => ic.MenuItem).ToListAsync();
+
+            return Ok(a);
+        }
         [HttpGet("GetAllBaseItemCategories")]
         public async Task<IActionResult> GetAllBaseItemCategories(int? id)
         {

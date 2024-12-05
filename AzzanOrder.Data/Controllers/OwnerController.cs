@@ -57,7 +57,8 @@ namespace AzzanOrder.Data.Controllers
 			{
 				return NotFound();
 			}
-			var owner = await _context.Owners.Where(o => o.IsDelete == false).Include(o => o.Bank).FirstOrDefaultAsync(o => o.OwnerId == id);
+			var manager = await _context.Employees.FirstOrDefaultAsync(e => e.EmployeeId == id);
+			var owner = await _context.Owners.Where(o => o.IsDelete == false).Include(o => o.Bank).FirstOrDefaultAsync(o => o.OwnerId == manager.OwnerId);
 
 			if (owner == null)
 			{

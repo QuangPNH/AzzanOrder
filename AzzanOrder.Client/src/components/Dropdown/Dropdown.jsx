@@ -24,6 +24,7 @@ const Dropdown = ({ options, onChange, onClick}) => {
             const url = id ? API_URLS.API + `ItemCategory?id=${id}` : API_URLS.API + 'ItemCategory';
             const response = await fetch(url);
             const data = await response.json();
+            
             return data;
         } catch (error) {
             console.error('Error fetching labels:', error);

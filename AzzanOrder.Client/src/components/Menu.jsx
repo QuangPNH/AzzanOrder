@@ -13,6 +13,7 @@ const fetchCategoriesAndProducts = async (setCategories, setProducts) => {
         const url = id ? API_URLS.API + `ItemCategory?id=${id}` : API_URLS.API + 'ItemCategory';
         const response = await fetch(url);
         const categories = await response.json();
+      
 
         const initialProducts = categories.reduce((acc, category) => {
             acc[category.description] = category.menuCategories.map(mc => ({
