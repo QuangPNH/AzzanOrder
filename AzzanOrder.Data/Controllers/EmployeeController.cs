@@ -150,8 +150,11 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound("Employee not exist");
             }
-            var a = await _context.Roles.FirstOrDefaultAsync(r => r.RoleId == employee.RoleId);
-            employee.Role = a;
+            if (employee == null)
+            {
+                var a = await _context.Roles.FirstOrDefaultAsync(r => r.RoleId == employee.RoleId);
+                employee.Role = a;
+            }
             // Use Update method instead of setting the state manually
             _context.Employees.Update(employee);
 
@@ -187,22 +190,28 @@ namespace AzzanOrder.Data.Controllers
             {
                 return BadRequest("Employee cannot be null.");
             }
-            Role a = await _context.Roles.FirstOrDefaultAsync(r => r.RoleId == employee.RoleId);
-            var emp = new Employee { 
-                EmployeeName = employee.EmployeeName, 
-                BirthDate = employee.BirthDate, 
-                Phone = employee.Phone, 
-                Gender = employee.Gender, 
-                Gmail = employee.Gmail, 
-                HomeAddress = employee.HomeAddress, 
-                Image = employee.Image, 
-                RoleId = employee.RoleId, 
-                WorkAddress = employee.WorkAddress, 
-                ManagerId = employee.ManagerId, 
-                OwnerId = employee.OwnerId, 
-                IsDelete = employee.IsDelete, 
-                Role = a 
+            var emp = new Employee
+            {
+                EmployeeName = employee.EmployeeName,
+                BirthDate = employee.BirthDate,
+                Phone = employee.Phone,
+                Gender = employee.Gender,
+                Gmail = employee.Gmail,
+                HomeAddress = employee.HomeAddress,
+                Image = employee.Image,
+                RoleId = employee.RoleId,
+                WorkAddress = employee.WorkAddress,
+                ManagerId = employee.ManagerId,
+                OwnerId = employee.OwnerId,
+                IsDelete = employee.IsDelete,
+                Role = employee.Role
             };
+            if (employee.Role == null)
+            {
+                Role a = await _context.Roles.FirstOrDefaultAsync(r => r.RoleId == employee.RoleId);
+                emp.Role = a;
+            }
+
             _context.Employees.Add(emp);
             await _context.SaveChangesAsync();
             return Ok(emp);
