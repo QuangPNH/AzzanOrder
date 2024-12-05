@@ -20,25 +20,23 @@
                     <div class="card-header">
                         <h5 class="card-title">Become the boss of your shop</h5>
                     </div>
+                    @if (TempData["Message"] != null)
+                    {
+                        <div class="alert alert-warning mx-3">
+                            @TempData["Message"]
+                        </div>
+                    }
+
+                    @if (TempData["EndDate"] != null)
+                    {
+                        <div class="alert alert-info mx-3">
+                            @TempData["EndDate"]
+                        </div>
+                    }
                     <div class="card-body">
                         <form asp-action="SubscribeExtension" asp-controller="Home" method="post" enctype="multipart/form-data">
                             <div class="mb-3 row">
-
-
-                                <br />
-                                @if (TempData["Message"] != null)
-                                {
-                                    <div class="alert alert-warning">
-                                        @TempData["Message"]
-                                    </div>
-                                }
-
-                                @if (TempData["EndDate"] != null)
-                                {
-                                    <div class="alert alert-info">
-                                        @TempData["EndDate"]
-                                    </div>
-                                }
+                                
 
                                 <div class="tab-content">
                                     <div class="tab-pane fade show active" id="monthly">
