@@ -22,17 +22,25 @@
                     </div>
                     @if (TempData["Message"] != null)
                     {
-                        <div class="alert alert-warning mx-3">
+                        <div class="alert alert-warning mx-3 my-0">
                             @TempData["Message"]
                         </div>
                     }
 
                     @if (TempData["EndDate"] != null)
                     {
-                        <div class="alert alert-info mx-3">
+                        <div class="alert alert-info mx-3 my-0">
                             @TempData["EndDate"]
                         </div>
                     }
+
+                    @if (TempData["EndDateWarn"] != null)
+                    {
+                        <div class="alert alert-warning mx-3 my-0">
+                            @TempData["EndDateWarn"]
+                        </div>
+                    }
+
                     <div class="card-body">
                         <form asp-action="SubscribeExtension" asp-controller="Home" method="post" enctype="multipart/form-data">
                             <div class="mb-3 row">
@@ -106,9 +114,9 @@
                 <div class="col-md-5 col-sm-6 me-auto">
                     <div class="card">
                         <div class="card-body">
-                            <h5 class="h6 card-title">Do you offer a free trial?</h5>
+                            <h5 class="h6 card-title">Will the system works after expired?</h5>
                             <p class="mb-0">
-                                Unfortunately no. But you can try our cheapest plan. It's dirt cheap!
+                                Your staffs can still use the system after your subscription expiration date for a week. However, you can't manage your shop anymore.
                             </p>
                         </div>
                     </div>

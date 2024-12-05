@@ -707,8 +707,13 @@ namespace AzzanOrder.ManagerOwner.Controllers
             {
                 HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string loginInfoJson);
                 var owner = JsonConvert.DeserializeObject<Owner>(loginInfoJson);
-                string ye = "Your subscription is until " + owner.SubscribeEndDate.ToString("MMMM dd, yyyy") + ". " + (owner.SubscribeEndDate - DateTime.Now).Days + " days remaining.";
-                TempData["EndDate"] = ye;
+                TempData["EndDate"] = "Your subscription is until " + owner.SubscribeEndDate.ToString("MMMM dd, yyyy") + ". " + (owner.SubscribeEndDate - DateTime.Now).Days + " days remaining.";
+
+                if ((owner.SubscribeEndDate - DateTime.Now).Days <= 7)
+                {
+                    TempData["EndDateWarn"] = "Your subscription is about to expire in " + (owner.SubscribeEndDate - DateTime.Now).Days + " days.";
+                }
+
                 return View();
             }
             else if (loginStatus.Equals("manager"))
