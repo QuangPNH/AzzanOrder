@@ -388,14 +388,11 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 return await SubscribeFreeTrialAction(model);
             }
 
-            if (model.owner?.Gmail == null)
-            {
-                model.owner.Gmail = "";
-            }
+            
 
-            if (string.IsNullOrEmpty(model.owner.Bank.PAYOS_CLIENT_ID) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_API_KEY) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_CHECKSUM_KEY) || string.IsNullOrEmpty(model.owner.Phone))
+            if (string.IsNullOrEmpty(model.owner.Bank.PAYOS_CLIENT_ID) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_API_KEY) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_CHECKSUM_KEY) || string.IsNullOrEmpty(model.owner.Phone) || string.IsNullOrEmpty(model.owner.Gmail))
             {
-                TempData["Message"] = "Owner PAYOS information or phone number is missing.";
+                TempData["Message"] = "Owner PAYOS information, phone number, or Gmail is missing.";
                 return RedirectToAction("Subscribe", "Home");
             }
 
@@ -743,9 +740,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 return View();
             }
 
-            if (model.owner?.Gmail == null)
+            if (string.IsNullOrEmpty(model.owner.Bank.PAYOS_CLIENT_ID) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_API_KEY) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_CHECKSUM_KEY) || string.IsNullOrEmpty(model.owner.Phone) || string.IsNullOrEmpty(model.owner.Gmail))
             {
-                model.owner.Gmail = "";
+                TempData["Message"] = "Owner PAYOS information, phone number, or Gmail is missing.";
+                return RedirectToAction("SubscribeExtension", "Home");
             }
 
 
