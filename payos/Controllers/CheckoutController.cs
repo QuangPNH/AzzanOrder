@@ -73,8 +73,8 @@ public class CheckoutController : Controller
                 (int)Price,
                 Message + orderCode,
                 items,
-                $"{baseUrl}/cancel",
-                $"{baseUrl}/success"
+                $"{baseUrl}/success",
+                $"{baseUrl}/cancel"
             );
             CreatePaymentResult createPayment = await _payOS.createPaymentLink(paymentData);
             //return Redirect(createPayment.checkoutUrl);
@@ -160,6 +160,7 @@ public class CheckoutController : Controller
         HttpContext.Request.Cookies.TryGetValue("tableqrPayOs", out string tableqr);
         HttpContext.Request.Cookies.TryGetValue("ItemType", out string itemType);
 
+        if (!string.IsNullOrEmpty(itemType))
         if (itemType.Contains("Subscribe"))
         {
             Response.Cookies.Delete("ItemType");
@@ -223,7 +224,7 @@ public class CheckoutController : Controller
     [HttpGet("/cancel")]
     public IActionResult Cancel()
     {
-        
+
         HttpContext.Request.Cookies.TryGetValue("tableqrPayOs", out string tableqr);
         HttpContext.Request.Cookies.TryGetValue("ItemType", out string itemType);
 
@@ -234,6 +235,6 @@ public class CheckoutController : Controller
         }
 
         //return Redirect("http://localhost:5173/?tableqr=" + tableqr + "&status=cancel");
-        return Redirect($"{_config._client}?tableqr=" + tableqr + "&status=success");
+        return Redirect($"{_config._client}?tableqr=" + tableqr + "&status=cancel");
     }
 }

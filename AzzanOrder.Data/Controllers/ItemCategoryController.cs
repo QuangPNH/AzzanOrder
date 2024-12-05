@@ -115,7 +115,6 @@ namespace AzzanOrder.Data.Controllers
 
             return itemCategory;
         }
-
         [HttpGet("VoucherDetailId")]
         public async Task<ActionResult<IEnumerable>> GetItemCategoryByVoucherDetail(int VoucherDetailId)
         {

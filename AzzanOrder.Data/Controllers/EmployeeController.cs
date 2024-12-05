@@ -92,7 +92,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            var employee = _context.Employees.Include(e => e.Role).Where(e => e.Role.RoleName.ToLower().Equals("staff") || e.Role.RoleName.ToLower().Equals("bartender")).FirstOrDefault(e => e.Phone.Equals(phone));
+            var employee = _context.Employees.Include(e => e.Role).Include( e => e.Owner).Where(e => e.Role.RoleName.ToLower().Equals("staff") || e.Role.RoleName.ToLower().Equals("bartender")).FirstOrDefault(e => e.Phone.Equals(phone));
             if (employee == null)
             {
                 return NotFound();

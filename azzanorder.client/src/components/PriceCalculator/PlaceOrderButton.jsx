@@ -64,12 +64,13 @@ export async function postOrder(amount, isCash) {
             TableId: tableId,
             Cost: amount,
             OrderDetails: orderDetails,
+            Status: false,
         };
         if (memberIn) {
             order.MemberId = JSON.parse(memberIn).memberId;
         }
         if (isCash) {
-            order.tax = 1;
+            order.Status = null;
         }
         const response = await fetch("https://localhost:7183/api/Order", {
             method: "POST",
