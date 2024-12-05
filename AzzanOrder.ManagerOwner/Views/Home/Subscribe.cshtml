@@ -93,14 +93,14 @@
                             </div> *@
 
                             <div class="mb-3 row">
-                                <label class="col-form-label col-sm-2 text-sm-end">PayOS client ID</label>
+                                <label class="col-form-label col-sm-2 text-sm-end">PayOS client ID (required)</label>
                                 <div class="col-sm-10">
                                     <input asp-for="owner.Bank.PAYOS_CLIENT_ID" class="form-control" placeholder="PAYOS_API_KEY">
                                 </div>
                             </div>
 
                             <div class="mb-3 row">
-                                <label class="col-form-label col-sm-2 text-sm-end">PayOS API key</label>
+                                <label class="col-form-label col-sm-2 text-sm-end">PayOS API key (required)</label>
                                 <div class="col-sm-10">
                                     <input asp-for="owner.Bank.PAYOS_API_KEY" class="form-control" placeholder="PAYOS_CLIENT_ID">
                                 </div>
@@ -108,7 +108,7 @@
 
 
                             <div class="mb-3 row">
-                                <label class="col-form-label col-sm-2 text-sm-end">PayOS checksum key</label>
+                                <label class="col-form-label col-sm-2 text-sm-end">PayOS checksum key (required)</label>
                                 <div class="col-sm-10">
                                     <input asp-for="owner.Bank.PAYOS_CHECKSUM_KEY" class="form-control" placeholder="PAYOS_CHECKSUM_KEY">
                                 </div>
@@ -232,8 +232,7 @@
                         <div class="card-body">
                             <h5 class="h6 card-title">What do I do if my account expired?</h5>
                             <p class="mb-0">
-                                You subscribe again with the same phone number. Your staffs and managers can still use the account for one more week over your expiration.
-                                P/S: All  input other than your phone number will be ignored.
+                                You purchase again for a pack. It will automatically extend your subscription end date!
                             </p>
                         </div>
                     </div>

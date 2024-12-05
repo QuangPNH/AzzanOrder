@@ -19,11 +19,9 @@ namespace AzzanOrder.ManagerOwner.Models
 			Owner owner = new Owner();
 			bool isManager = false;
 			bool idNull = false;
-
 			try
 			{
 				_httpContext.Request.Cookies.TryGetValue("LoginInfo", out string loginInfoJson);
-
 				var loginInfo = JsonConvert.DeserializeObject<Employee>(loginInfoJson);
 				if (loginInfo.RoleId == 1)
 				{
