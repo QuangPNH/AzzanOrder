@@ -27,7 +27,8 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            var a = await _context.ItemCategories.Where(ic => ic.EmployeeId == id && ic.IsCombo == false).Include(ic => ic.MenuCategories).ThenInclude(ic => ic.MenuItem).ToListAsync();
+            var a = id.HasValue ? await _context.ItemCategories.Where(ic => ic.EmployeeId == id && ic.IsCombo == false).Include(ic => ic.MenuCategories).ThenInclude(ic => ic.MenuItem).ToListAsync()
+                : await _context.ItemCategories.Where(ic => ic.IsCombo == false).Include(ic => ic.MenuCategories).ThenInclude(ic => ic.MenuItem).ToListAsync();
 
             return Ok(a);
         }

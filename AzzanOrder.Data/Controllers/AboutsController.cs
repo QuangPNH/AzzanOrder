@@ -94,7 +94,7 @@ namespace AzzanOrder.Data.Controllers
             _context.Abouts.Add(ab);
             await _context.SaveChangesAsync();
             
-            return CreatedAtAction("GetAbout", new { id = ab.AboutId }, ab);
+            return Ok(ab);
         }
 
         // DELETE: api/Abouts/5

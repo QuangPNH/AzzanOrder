@@ -212,7 +212,7 @@ namespace AzzanOrder.Data.Controllers
             member.IsDelete = false;
             _context.Members.Add(member);
             await _context.SaveChangesAsync();
-            return CreatedAtAction("GetMember", new { id = member.MemberId }, member);
+            return Ok(member);
         }
 
         // DELETE: api/Owner/5

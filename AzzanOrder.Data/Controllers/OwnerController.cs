@@ -182,8 +182,8 @@ namespace AzzanOrder.Data.Controllers
 
 			_context.Owners.Add(owner);
 			await _context.SaveChangesAsync();
-
-			return CreatedAtAction("GetOwner", new { id = owner.OwnerId }, owner);
+           
+			return Ok(owner);
 		}
 
 		// DELETE: api/Owner/5

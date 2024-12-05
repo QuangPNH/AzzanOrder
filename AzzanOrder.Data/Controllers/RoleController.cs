@@ -91,7 +91,7 @@ namespace AzzanOrder.Data.Controllers
             _context.Roles.Add(role);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetRole", new { id = role.RoleId }, role);
+            return Ok(role);
         }
 
         // DELETE: api/Role/5

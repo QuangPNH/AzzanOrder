@@ -107,7 +107,7 @@ namespace AzzanOrder.Data.Controllers
             _context.Banks.Add(b);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetBank", new { id = b.BankId }, b);
+            return Ok(b);
         }
 
         // DELETE: api/Bank/5

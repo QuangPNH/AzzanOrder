@@ -24,10 +24,10 @@ namespace AzzanOrder.Data.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Employee>>> GetEmployees()
         {
-          if (_context.Employees == null)
-          {
-              return NotFound();
-          }
+            if (_context.Employees == null)
+            {
+                return NotFound();
+            }
             return await _context.Employees.Include(e => e.Role).ToListAsync();
         }
 
@@ -35,10 +35,10 @@ namespace AzzanOrder.Data.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Employee>> GetEmployee(int id)
         {
-          if (_context.Employees == null)
-          {
-              return NotFound();
-          }
+            if (_context.Employees == null)
+            {
+                return NotFound();
+            }
             var employee = _context.Employees.FirstOrDefault(x => x.EmployeeId == id);
 
             if (employee == null)
@@ -127,7 +127,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            var employee = _context.Employees.Include(e => e.Role).Include(e => e.Owner).Where( e => e.OwnerId == id).FirstOrDefault();
+            var employee = _context.Employees.Include(e => e.Role).Include(e => e.Owner).Where(e => e.OwnerId == id).FirstOrDefault();
             if (employee == null)
             {
                 return NotFound();
@@ -150,7 +150,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound("Employee not exist");
             }
-             var a = await _context.Roles.FirstOrDefaultAsync(r => r.RoleId == employee.RoleId);
+            var a = await _context.Roles.FirstOrDefaultAsync(r => r.RoleId == employee.RoleId);
             employee.Role = a;
             // Use Update method instead of setting the state manually
             _context.Employees.Update(employee);
@@ -187,14 +187,25 @@ namespace AzzanOrder.Data.Controllers
             {
                 return BadRequest("Employee cannot be null.");
             }
-           
-            
-            var a = await _context.Roles.FirstOrDefaultAsync(r => r.RoleId == employee.RoleId);
-            employee.Role = a;
-            _context.Employees.Add(employee);
+            Role a = await _context.Roles.FirstOrDefaultAsync(r => r.RoleId == employee.RoleId);
+            var emp = new Employee { 
+                EmployeeName = employee.EmployeeName, 
+                BirthDate = employee.BirthDate, 
+                Phone = employee.Phone, 
+                Gender = employee.Gender, 
+                Gmail = employee.Gmail, 
+                HomeAddress = employee.HomeAddress, 
+                Image = employee.Image, 
+                RoleId = employee.RoleId, 
+                WorkAddress = employee.WorkAddress, 
+                ManagerId = employee.ManagerId, 
+                OwnerId = employee.OwnerId, 
+                IsDelete = employee.IsDelete, 
+                Role = a 
+            };
+            _context.Employees.Add(emp);
             await _context.SaveChangesAsync();
-
-            return Ok(employee);
+            return Ok(emp);
         }
 
         // DELETE: api/Employee/5

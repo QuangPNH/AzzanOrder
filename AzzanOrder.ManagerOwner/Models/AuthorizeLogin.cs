@@ -25,7 +25,7 @@ namespace AzzanOrder.ManagerOwner.Models
 				_httpContext.Request.Cookies.TryGetValue("LoginInfo", out string loginInfoJson);
 
 				var loginInfo = JsonConvert.DeserializeObject<Employee>(loginInfoJson);
-				if (loginInfo.RoleId != null)
+				if (loginInfo.RoleId == 1)
 				{
 					isManager = true;
 				}

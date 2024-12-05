@@ -36,29 +36,30 @@ namespace AzzanOrder.Data.Test
 
             // Assert
             Assert.IsInstanceOf<ActionResult<IEnumerable<Order>>>(result);
-            var okResult = result.Result as OkObjectResult;
-            Assert.IsNotNull(okResult);
-            var orders = okResult.Value as List<Order>;
+
+            var orders = result.Value as List<Order>;
             Assert.IsNotNull(orders);
             Assert.AreEqual(2, orders.Count);
         }
 
-        [Test]
-        public async Task GetOrder_ReturnsOrderById()
-        {
-            // Act
-            var result = await _controller.GetOrder(1);
+		[Test]
+		public async Task GetOrder_ReturnsOrder()
+		{
+			// Arrange
+			int orderId = 1; // Use an existing order ID from your mock data
 
-            // Assert
-            Assert.IsInstanceOf<ActionResult<Order>>(result);
-            var okResult = result.Result as OkObjectResult;
-            Assert.IsNotNull(okResult);
-            var order = okResult.Value as Order;
-            Assert.IsNotNull(order);
-            Assert.AreEqual(1, order.OrderId);
-        }
+			// Act
+			var result = await _controller.GetOrder(orderId);
 
-        [Test]
+			// Assert
+			Assert.IsInstanceOf<ActionResult<Order>>(result);
+
+			var order = result.Value;
+			Assert.IsNotNull(order);
+			Assert.AreEqual(orderId, order.OrderId);
+		}
+
+		[Test]
         public async Task GetOrder_ReturnsNotFound_WhenOrderDoesNotExist()
         {
             // Act
@@ -68,38 +69,39 @@ namespace AzzanOrder.Data.Test
             Assert.IsInstanceOf<NotFoundResult>(result.Result);
         }
 
-        [Test]
-        public async Task PostOrder_CreatesNewOrder()
-        {
-            // Arrange
-            var newOrder = new Order
-            {
-                OrderId = 3,
-                OrderDate = new DateTime(2023, 3, 1),
-                TableId = 3,
-                Cost = 300.0,
-                Tax = 30.0,
-                MemberId = 3,
-                Status = true,
-                OrderDetails = new List<OrderDetail>
-                {
-                    new OrderDetail { OrderId = 3, MenuItemId = 1, Quantity = 1 }
-                }
-            };
+		[Test]
+		public async Task PostOrder_CreatesNewOrder()
+		{
+			// Arrange
+			var newOrder = new Order
+			{
+				OrderId = 3,
+				OrderDate = new DateTime(2023, 3, 1),
+				TableId = 3,
+				Cost = 300.0,
+				Tax = 30.0,
+				MemberId = 3,
+				Status = true,
+				OrderDetails = new List<OrderDetail>
+		{
+			new OrderDetail { OrderId = 3, MenuItemId = 1, Quantity = 1 }
+		}
+			};
 
-            // Act
-            var result = await _controller.PostOrder(newOrder);
+			// Act
+			var result = await _controller.PostOrder(newOrder);
 
-            // Assert
-            Assert.IsInstanceOf<ActionResult<Order>>(result);
-            var createdAtActionResult = result.Result as CreatedAtActionResult;
-            Assert.IsNotNull(createdAtActionResult);
-            var order = createdAtActionResult.Value as Order;
-            Assert.IsNotNull(order);
-            Assert.AreEqual(3, order.OrderId);
-        }
+			// Assert
+			Assert.IsInstanceOf<ActionResult<Order>>(result);
+			var okObjectResult = result.Result as OkObjectResult;
+			Assert.IsNotNull(okObjectResult);
+			var order = okObjectResult.Value as Order;
+			Assert.IsNotNull(order);
+			Assert.AreEqual(3, order.OrderId);
+		}
 
-        [Test]
+
+		[Test]
         public async Task DeleteOrder_RemovesOrder()
         {
             // Act

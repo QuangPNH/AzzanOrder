@@ -135,7 +135,7 @@ namespace AzzanOrder.Data.Controllers
             await _context.SaveChangesAsync();
 
 
-            return CreatedAtAction("GetVoucherDetail", new { id = voucherDetail.VoucherDetailId }, voucherDetail);
+            return Ok(voucherDetail);
         }
 
         // DELETE: api/VoucherDetail/5

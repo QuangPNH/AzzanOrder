@@ -1,105 +1,87 @@
-﻿using AzzanOrder.Data.Models;
+﻿using NUnit.Framework;
+using AzzanOrder.Data.Models;
 using Microsoft.EntityFrameworkCore;
-using Microsoft.EntityFrameworkCore.Query;
 using Moq;
-using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Linq.Expressions;
+using System;
 using System.Threading;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Query;
+using System.Linq.Expressions;
+using Microsoft.EntityFrameworkCore.ChangeTracking;
 
 namespace AzzanOrder.Data.Test
 {
-	internal class OrderControllerTestSetup
+	public class FeedbackControllerTestSetup
 	{
-		internal static Mock<OrderingAssistSystemContext> GetMockContext()
+		internal static Mock<OrderingAssistSystemContext> GetMockContext(List<Feedback>? feedbacks = null)
 		{
 			var mockContext = new Mock<OrderingAssistSystemContext>();
-			var mockDbSet = GetMockDbSet();
+			var mockDbSet = GetMockDbSet(feedbacks);
 
-			mockContext.Setup(c => c.Orders).Returns(mockDbSet.Object);
-
+			mockContext.Setup(c => c.Feedbacks).Returns(mockDbSet.Object);
 			return mockContext;
 		}
 
-		internal static Mock<DbSet<Order>> GetMockDbSet()
+		internal static Mock<DbSet<Feedback>> GetMockDbSet(List<Feedback>? feedbacks = null)
 		{
-			var orders = new List<Order>
+			feedbacks ??= new List<Feedback>
 			{
-				new Order
+				new Feedback
 				{
-					OrderId = 1,
-					OrderDate = new DateTime(2023, 1, 1),
-					TableId = 1,
-					Cost = 100.0,
-					Tax = 10.0,
+					FeedbackId = 1,
 					MemberId = 1,
-					Status = true,
+					Content = "Good",
 					Member = new Member
 					{
 						MemberId = 1,
 						MemberName = "John Doe",
-						Gender = true,
-						Phone = "123-456-7890",
-						Gmail = "john.doe@example.com",
-						BirthDate = new DateTime(1990, 1, 1),
-						Address = "123 Main St",
-						Point = 100.0,
-						Image = "john_doe.jpg",
-						IsDelete = false
-					},
-					Table = new Table
-					{
-						TableId = 1,
-						Qr = "QR1",
-						Status = true,
-						EmployeeId = 1
 					}
 				},
-				new Order
+				new Feedback
 				{
-					OrderId = 2,
-					OrderDate = new DateTime(2023, 2, 1),
-					TableId = 2,
-					Cost = 200.0,
-					Tax = 20.0,
+					FeedbackId = 2,
 					MemberId = 2,
-					Status = false,
+					Content = "Bad",
 					Member = new Member
 					{
 						MemberId = 2,
 						MemberName = "Jane Doe",
-						Gender = false,
-						Phone = "987-654-3210",
-						Gmail = "jane.doe@example.com",
-						BirthDate = new DateTime(1992, 2, 2),
-						Address = "456 Elm St",
-						Point = 200.0,
-						Image = "jane_doe.jpg",
-						IsDelete = false
-					},
-					Table = new Table
+					}
+				},
+				new Feedback
+				{
+					FeedbackId = 3,
+					MemberId = 3,
+					Content = "Good",
+					Member = new Member
 					{
-						TableId = 2,
-						Qr = "QR2",
-						Status = false,
-						EmployeeId = 2
+						MemberId = 3,
+						MemberName = "John Smith",
 					}
 				}
-			}.AsQueryable();
+			};
 
-			var mockDbSet = new Mock<DbSet<Order>>();
+			var feedbacksQueryable = feedbacks.AsQueryable();
 
-			mockDbSet.As<IQueryable<Order>>().Setup(m => m.Provider).Returns(new TestAsyncQueryProvider<Order>(orders.Provider));
-			mockDbSet.As<IQueryable<Order>>().Setup(m => m.Expression).Returns(orders.Expression);
-			mockDbSet.As<IQueryable<Order>>().Setup(m => m.ElementType).Returns(orders.ElementType);
-			mockDbSet.As<IQueryable<Order>>().Setup(m => m.GetEnumerator()).Returns(orders.GetEnumerator());
-			mockDbSet.As<IAsyncEnumerable<Order>>().Setup(m => m.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
-				.Returns(new TestAsyncEnumerator<Order>(orders.GetEnumerator()));
+			var mockDbSet = new Mock<DbSet<Feedback>>();
+
+			mockDbSet.As<IQueryable<Feedback>>().Setup(m => m.Provider).Returns(new TestAsyncQueryProvider<Feedback>(feedbacksQueryable.Provider));
+			mockDbSet.As<IQueryable<Feedback>>().Setup(m => m.Expression).Returns(feedbacksQueryable.Expression);
+			mockDbSet.As<IQueryable<Feedback>>().Setup(m => m.ElementType).Returns(feedbacksQueryable.ElementType);
+			mockDbSet.As<IQueryable<Feedback>>().Setup(m => m.GetEnumerator()).Returns(feedbacksQueryable.GetEnumerator());
+
+			mockDbSet.As<IAsyncEnumerable<Feedback>>()
+				.Setup(m => m.GetAsyncEnumerator(It.IsAny<CancellationToken>()))
+				.Returns(new TestAsyncEnumerator<Feedback>(feedbacksQueryable.GetEnumerator()));
+
+			mockDbSet.Setup(m => m.AddAsync(It.IsAny<Feedback>(), It.IsAny<CancellationToken>()))
+				.Callback<Feedback, CancellationToken>((f, ct) => feedbacks.Add(f))
+				.ReturnsAsync((EntityEntry<Feedback>)null!);
 
 			mockDbSet.Setup(m => m.FindAsync(It.IsAny<object[]>()))
-				.ReturnsAsync((object[] ids) => orders.FirstOrDefault(o => o.OrderId == (int)ids[0]));
+				.ReturnsAsync((object[] ids) => feedbacks.FirstOrDefault(f => f.FeedbackId == (int)ids[0]));
 
 			return mockDbSet;
 		}
@@ -133,7 +115,7 @@ namespace AzzanOrder.Data.Test
 
 			internal TestAsyncQueryProvider(IQueryProvider inner)
 			{
-				_inner = inner ?? throw new ArgumentNullException(nameof(inner));
+				_inner = inner;
 			}
 
 			public IQueryable CreateQuery(Expression expression)
@@ -163,10 +145,14 @@ namespace AzzanOrder.Data.Test
 
 			public TResult ExecuteAsync<TResult>(Expression expression, CancellationToken cancellationToken)
 			{
-				return Execute<TResult>(expression);
+				var executionResult = Execute<TResult>(expression);
+				if (executionResult is Task<TResult> taskResult)
+				{
+					return taskResult.GetAwaiter().GetResult();
+				}
+				return executionResult;
 			}
 		}
-
 
 		internal class TestAsyncEnumerable<T> : EnumerableQuery<T>, IAsyncEnumerable<T>, IQueryable<T>
 		{

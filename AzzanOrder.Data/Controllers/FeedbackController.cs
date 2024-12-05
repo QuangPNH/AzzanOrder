@@ -104,13 +104,13 @@ namespace AzzanOrder.Data.Controllers
             }
             if (_context.Feedbacks.Where(x => x.MemberId == feedback.MemberId).Any())
             {
-                return BadRequest("Y");
+                return BadRequest("You had feedback before");
             }
             var f = new Feedback() { Content = feedback.Content, MemberId = feedback.MemberId };
             _context.Feedbacks.Add(f);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetFeedback", new { id = f.FeedbackId }, f);
+            return Ok(f);
         }
 
         // DELETE: api/Feedback/5
