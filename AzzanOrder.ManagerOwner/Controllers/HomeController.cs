@@ -383,12 +383,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
         [HttpPost]
         public async Task<IActionResult> Subscribe(string pack, Model model)
         {
-            if (pack.Equals("free"))
-            {
-                return await SubscribeFreeTrialAction(model);
-            }
-
-            
 
             if (string.IsNullOrEmpty(model.owner.Bank.PAYOS_CLIENT_ID) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_API_KEY) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_CHECKSUM_KEY) || string.IsNullOrEmpty(model.owner.Phone) || string.IsNullOrEmpty(model.owner.Gmail))
             {
@@ -396,6 +390,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 return RedirectToAction("Subscribe", "Home");
             }
 
+            if (pack.Equals("free"))
+            {
+                return await SubscribeFreeTrialAction(model);
+            }
 
             string redirectUrl = new Config()._payOS + "Subscribe/?";
             string price = "0";
