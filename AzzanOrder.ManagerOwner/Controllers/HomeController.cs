@@ -4,6 +4,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using Newtonsoft.Json;
 using System.Diagnostics;
+using System.Reflection;
 using System.Text;
 using System.Text.RegularExpressions;
 using Twilio;
@@ -149,15 +150,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
             return View();
         }
 
-
-
         [HttpGet]
         public async Task<IActionResult> Login()
         {
-            HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson);
-
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
-            //Console.WriteLine("aaaaaaaaa a " + await authorizeLogin.CheckLogin());
             var loginStatus = await authorizeLogin.CheckLogin();
             if (loginStatus.Equals("owner"))
             {
@@ -170,14 +166,11 @@ namespace AzzanOrder.ManagerOwner.Controllers
             else if (loginStatus.Equals("owner expired"))
             {
                 TempData["Message"] = "Your subscription has expired. Please subscribe again.";
-                return RedirectToAction("Login", "Home");
             }
             else if (loginStatus.Equals("manager expired"))
             {
                 TempData["Message"] = "Your owner's subscription has expired for over a week.\nFor more instruction, please contact the owner.";
-                return RedirectToAction("Login", "Home");
             }
-
             return View();
         }
 
@@ -360,7 +353,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             var loginStatus = await authorizeLogin.CheckLogin();
             if (loginStatus.Equals("owner"))
             {
-                return RedirectToAction("Index", "Home");
+
             }
             else if (loginStatus.Equals("manager"))
             {
@@ -368,11 +361,11 @@ namespace AzzanOrder.ManagerOwner.Controllers
             }
             else if (loginStatus.Equals("owner expired"))
             {
-                return RedirectToAction("Login", "Home");
+
             }
             else if (loginStatus.Equals("manager expired"))
             {
-                return RedirectToAction("Login", "Home");
+
             }
 
             Api.Bank theBank = new Api.Bank();
@@ -390,6 +383,13 @@ namespace AzzanOrder.ManagerOwner.Controllers
         [HttpPost]
         public async Task<IActionResult> Subscribe(string pack, Model model)
         {
+
+            if (string.IsNullOrEmpty(model.owner.Bank.PAYOS_CLIENT_ID) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_API_KEY) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_CHECKSUM_KEY) || string.IsNullOrEmpty(model.owner.Phone) || string.IsNullOrEmpty(model.owner.Gmail))
+            {
+                TempData["Message"] = "Owner PAYOS information, phone number, or Gmail is missing.";
+                return RedirectToAction("Subscribe", "Home");
+            }
+
             if (pack.Equals("free"))
             {
                 return await SubscribeFreeTrialAction(model);
@@ -429,7 +429,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     else
                     {
                         model.owner.SubscribeEndDate = model.owner.SubscribeEndDate.AddYears(1);
-
                     }
                 }
                 else
@@ -515,14 +514,13 @@ namespace AzzanOrder.ManagerOwner.Controllers
 			MessageResource.Create(messageOptions);*/
 
             // Redirect to the OTP input page
-            model = new AzzanOrder.ManagerOwner.Models.Model { owner = model.owner, employee = emp };
+            model = new Model { owner = model.owner, employee = emp };
 
             var ownerJson = JsonConvert.SerializeObject(model.owner);
             HttpContext.Response.Cookies.Append("TempLoginInfo", ownerJson, new CookieOptions
             {
                 Expires = DateTimeOffset.UtcNow.AddDays(30)
             });
-
 
             bool ownerExist = false;
             using (HttpClient client = new HttpClient())
@@ -616,7 +614,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                                     owner = JsonConvert.DeserializeObject<Owner>(addMessage);
                                 }
                             }
-                            
+
                             using (HttpResponseMessage addResponse = await client.GetAsync(_apiUrl + $"Role/{1}"))
                             {
                                 if (addResponse.IsSuccessStatusCode)
@@ -644,7 +642,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                                     string addMessage = await addResponse.Content.ReadAsStringAsync();
                                 }
                             }
-                            var c = new Table() {EmployeeId = emp.EmployeeId, Qr = "QR_000", Status = true};
+                            var c = new Table() { EmployeeId = emp.EmployeeId, Qr = "QR_000", Status = true };
                             using (HttpResponseMessage addResponse = await client.PostAsJsonAsync(_apiUrl + "Table/Add", c))
                             {
                                 if (addResponse.IsSuccessStatusCode)
@@ -699,6 +697,164 @@ namespace AzzanOrder.ManagerOwner.Controllers
             {
             }
             return Conflict();
+        }
+
+        public async Task<IActionResult> SubscribeExtension()
+        {
+            AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
+            var loginStatus = await authorizeLogin.CheckLogin();
+            if (loginStatus.Equals("owner"))
+            {
+                HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string loginInfoJson);
+                var owner = JsonConvert.DeserializeObject<Owner>(loginInfoJson);
+                TempData["EndDate"] = "Your subscription is until " + owner.SubscribeEndDate.ToString("MMMM dd, yyyy") + ". " + (owner.SubscribeEndDate - DateTime.Now).Days + " days remaining.";
+
+                if ((owner.SubscribeEndDate - DateTime.Now).Days <= 7)
+                {
+                    TempData["EndDateWarn"] = "Your subscription is about to expire in " + (owner.SubscribeEndDate - DateTime.Now).Days + " days.";
+                }
+
+                return View();
+            }
+            else if (loginStatus.Equals("manager"))
+            {
+                return RedirectToAction("List", "Employee");
+            }
+            else if (loginStatus.Equals("owner expired"))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            else if (loginStatus.Equals("manager expired"))
+            {
+                return RedirectToAction("Login", "Home");
+            }
+            return View();
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> SubscribeExtension(string pack)
+        {
+
+            Model model = new Model();
+            model.owner = new Owner();
+            HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string loginInfoJson);
+            if (!string.IsNullOrEmpty(loginInfoJson))
+            {
+                model.owner = JsonConvert.DeserializeObject<Owner>(loginInfoJson);
+            }
+            else
+            {
+                return View();
+            }
+
+            if (string.IsNullOrEmpty(model.owner.Bank.PAYOS_CLIENT_ID) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_API_KEY) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_CHECKSUM_KEY) || string.IsNullOrEmpty(model.owner.Phone) || string.IsNullOrEmpty(model.owner.Gmail))
+            {
+                TempData["Message"] = "Owner PAYOS information, phone number, or Gmail is missing.";
+                return RedirectToAction("SubscribeExtension", "Home");
+            }
+
+
+
+            string redirectUrl = new Config()._payOS + "Subscribe/?";
+            string price = "0";
+
+            bool ownerExist = false;
+            using (HttpClient client = new HttpClient())
+            {
+                HttpResponseMessage getResponse = await client.GetAsync(_apiUrl + $"Owner/Phone/{model.owner.Phone}");
+                if (getResponse.IsSuccessStatusCode)
+                {
+                    var ownerData = await getResponse.Content.ReadAsStringAsync();
+                    var existingOwner = JsonConvert.DeserializeObject<Owner>(ownerData);
+
+                    if (existingOwner != null)
+                    {
+                        ownerExist = true;
+                        model.owner = existingOwner;
+                    }
+                }
+            }
+
+            if (string.IsNullOrEmpty(model.owner.Bank.PAYOS_CLIENT_ID) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_API_KEY) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_CHECKSUM_KEY) || string.IsNullOrEmpty(model.owner.Phone))
+            {
+                TempData["Message"] = "Owner PAYOS information or phone number is missing.";
+                return RedirectToAction("SubscribeExtension", "Home");
+            }
+
+
+            if (pack.Equals("yearly"))
+            {
+                price = "300000";
+                model.owner.SubscriptionStartDate = DateTime.Now;
+                //model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
+                if (model.owner.SubscribeEndDate != null)
+                {
+                    if (model.owner.SubscribeEndDate < DateTime.Now)
+                    {
+                        model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
+                    }
+                    else
+                    {
+                        model.owner.SubscribeEndDate = model.owner.SubscribeEndDate.AddYears(1);
+                    }
+                }
+                else
+                {
+                    model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
+                }
+            }
+            else if (pack.Equals("forever"))
+            {
+                price = "3000000";
+                model.owner.SubscriptionStartDate = DateTime.Now;
+                model.owner.SubscribeEndDate = DateTime.Now.AddYears(100);
+            }
+
+            if (model.owner != null)
+            {
+                var ownerJson = JsonConvert.SerializeObject(model.owner);
+                var ownerParams = new Dictionary<string, string>
+                {
+                    { "Price", price },
+                    { "Item", "Subscribe" + char.ToUpper(pack[0]) + pack.Substring(1) + "Pack" },
+                    { "Message", char.ToUpper(pack[0]) + pack.Substring(1) + "Pack" }
+                };
+
+                if (!string.IsNullOrEmpty(ownerJson))
+                {
+                    Response.Cookies.Append("OwnerData", ownerJson, new CookieOptions
+                    {
+                        HttpOnly = true,
+                        Expires = DateTimeOffset.UtcNow.AddDays(1)
+                    });
+                }
+
+                Response.Cookies.Append("ItemType", "Subscribe" + char.ToUpper(pack[0]) + pack.Substring(1) + "Pack", new CookieOptions
+                {
+                    HttpOnly = true,
+                    Expires = DateTimeOffset.UtcNow.AddDays(1)
+                });
+
+                redirectUrl += string.Join("&", ownerParams.Select(kvp => $"{kvp.Key}={Uri.EscapeDataString(kvp.Value)}"));
+                var uri = new Uri(redirectUrl);
+                using (HttpClient client = new HttpClient())
+                {
+                    var json = JsonConvert.SerializeObject(model.owner);
+                    var content = new StringContent(json, Encoding.UTF8, "application/json");
+                    var response = await client.PostAsync(uri.AbsoluteUri, content);
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string payURL = await response.Content.ReadAsStringAsync();
+                        return Redirect(payURL);
+                    }
+                }
+            }
+            else
+            {
+                return RedirectToAction("Error");
+            }
+
+            return Redirect(redirectUrl);
         }
 
         public async Task<IActionResult> NotificationRead(int id)

@@ -62,14 +62,14 @@
                     success: function (data) {
                         // Hiển thị danh sách món ăn tại đây
                         var menuItemsHtml = `<h3 class="card-title">Menu Items of ${categoryName}</h3><table class="table table-striped">`;
-                        menuItemsHtml += '<thead><tr><th>No</th><th>Name</th><th>Image</th><th>Price</th><th>Description</th><th>Actions</th></tr></thead><tbody>';
+                        menuItemsHtml += '<thead><tr><th>No</th><th>Name</th><th class="d-none d-md-table-cell">Image</th><th>Price</th><th>Description</th><th>Actions</th></tr></thead><tbody>';
                         $.each(data, function (index, item) {
                             menuItemsHtml += `
                                  
                             <tr>
                                     <td>${item.menuItem.menuItemId}</td>
                                                 <td>${item.menuItem.itemName}</td>
-                                                <td>${item.menuItem.image}</td>
+                                                        <td class="d-none d-md-table-cell">${item.menuItem.image}</td>
                                                 <td>${item.menuItem.price}</td>
                                                 <td>${item.menuItem.description}</td>
                                         <td>

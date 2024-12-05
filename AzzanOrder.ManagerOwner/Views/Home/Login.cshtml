@@ -44,10 +44,10 @@
 								</div>
 							</form>
 							<br />
-							@if (ViewBag.Message != null)
+							@if (TempData["Message"] != null)
 							{
 								<div class="alert alert-warning">
-									@ViewBag.Message
+									@TempData["Message"]
 								</div>
 							}
 						</div>
