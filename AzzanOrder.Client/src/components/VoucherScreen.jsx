@@ -17,7 +17,7 @@ const VoucherScreen = () => {
     const manaId = getCookie("tableqr");
     useEffect(() => {
         if (manaId) {
-          
+
             fetchVouchers('', manaId.split('/')[1]);
             fetchCategories(manaId.split('/')[1]);
             if (getCookie('memberInfo') != null) {
@@ -29,18 +29,23 @@ const VoucherScreen = () => {
             fetchCategories('');
             if (getCookie('memberInfo') != null) {
                 fetchMembers(JSON.parse(getCookie('memberInfo')).memberId);
-                fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId,'');
+                fetchMemberVouchers(JSON.parse(getCookie('memberInfo')).memberId, '');
             }
         }
     }, []);
     const fetchMemberVouchers = async (memberId, manaId) => {
         try {
-        
+
             const response = await fetch(API_URLS.API + `MemberVouchers/memberId?memberId=${memberId}&employeeId=${manaId}`);
-            //dang sửa API cho phần này về việc voucher và một số thành phần cần có sự quản lý của từng employeeId
             const data = await response.json();
+            let a = [];
+            for (let i of data) {
+                if (i.endDate > new Date() || i.endDate === null) {
+                    a.push(i);
+                }
+            }
             setMemberVouchers([true]);
-            setMemberVouchers(data);
+            setMemberVouchers(a);
         } catch (error) {
             console.error('Error fetching menu items:', error);
         }
@@ -48,14 +53,20 @@ const VoucherScreen = () => {
 
     const fetchVouchers = async (category, manaId) => {
         try {
-            
+
             const response = category == '' ? await fetch(API_URLS.API + `VoucherDetail/ListVoucherDetail?employeeId=${manaId}`) : await fetch(API_URLS.API + `VoucherDetail/categoryId?categoryId=${category}&employeeId=${manaId}`);
             const data = await response.json();
+            let a = [];
+            for (let i of data) {
+                if (i.endDate > new Date() || i.endDate === null) {
+                    a.push(i);
+                }
+            }
             if (category == '') {
-                setAllVouchers(data);
+                setAllVouchers(a);
             } else {
                 setAllVouchers(false);
-                setVouchers(data);
+                setVouchers(a);
 
             }
         } catch (error) {
@@ -77,7 +88,7 @@ const VoucherScreen = () => {
 
     const fetchCategories = async (manaId) => {
         try {
-            const response = await fetch(API_URLS.API + `ItemCategory?id=${manaId}`);
+            const response = await fetch(API_URLS.API + `ItemCategory/GetAllItemCategoriesValid?id=${manaId}`);
             const data = await response.json();
             setCategories(data);
         } catch (error) {
@@ -86,7 +97,7 @@ const VoucherScreen = () => {
     };
 
     const handleDropdownChange = (selectedCategory) => {
-        if(manaId){
+        if (manaId) {
             fetchVouchers(selectedCategory, manaId.split('/')[1]);
         }
         fetchVouchers(selectedCategory, '');

@@ -21,7 +21,7 @@ const Dropdown = ({ options, onChange, onClick}) => {
 
     const fetchLabels = async (id) => {
         try {
-            const url = id ? API_URLS.API + `ItemCategory?id=${id}` : API_URLS.API + 'ItemCategory';
+            const url = id ? API_URLS.API + `ItemCategory/GetAllItemCategoriesValid?id=${id}` : API_URLS.API + 'ItemCategory/GetAllItemCategoriesValid';
             const response = await fetch(url);
             const data = await response.json();
             

@@ -10,7 +10,7 @@ import API_URLS from '../config/apiUrls';
 const fetchCategoriesAndProducts = async (setCategories, setProducts) => {
     try {
         const id = getCookie("tableqr") ? getCookie("tableqr").split('/')[1] : null;
-        const url = id ? API_URLS.API + `ItemCategory?id=${id}` : API_URLS.API + 'ItemCategory';
+        const url = id ? API_URLS.API + `ItemCategory/GetAllItemCategoriesValid?id=${id}` : API_URLS.API + 'ItemCategory/GetAllItemCategoriesValid';
         const response = await fetch(url);
         const categories = await response.json();
       

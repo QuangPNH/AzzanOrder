@@ -20,6 +20,47 @@ namespace AzzanOrder.Data.Controllers
         {
             _context = context;
         }
+        [HttpGet("GetAllItemCategoriesValid")]
+        public async Task<ActionResult<IEnumerable<ItemCategory>>> GetAllItemCategoriesValid(int? id)
+        {
+            if (_context.ItemCategories == null)
+            {
+                return NotFound();
+            }
+
+            var query = _context.ItemCategories
+                .Where(ic => !ic.Description.Contains("TOPPING") && (ic.EndDate >= DateTime.Now || ic.EndDate == null));
+
+            if (id.HasValue)
+            {
+                query = query.Where(ic =>
+                ic.EmployeeId == id.Value ||
+                ic.MenuCategories.Any(mc => mc.MenuItem.EmployeeId == id.Value));
+            }
+
+            var itemCategories = await query
+                .Include(ic => ic.MenuCategories)
+                .ThenInclude(mc => mc.MenuItem)
+                .ToListAsync();
+
+            if (itemCategories == null || !itemCategories.Any())
+            {
+                return NotFound();
+            }
+
+            // Remove MenuCategories that don't have MenuItems with the specified EmployeeId
+            if (id.HasValue)
+            {
+                foreach (var itemCategory in itemCategories)
+                {
+                    itemCategory.MenuCategories = itemCategory.MenuCategories
+                        .Where(mc => mc.MenuItem.EmployeeId == id.Value)
+                        .ToList();
+                }
+            }
+
+            return Ok(itemCategories);
+        }
         [HttpGet("GetAllItemCategories")]
         public async Task<IActionResult> GetAllItemCategories(int? id)
         {

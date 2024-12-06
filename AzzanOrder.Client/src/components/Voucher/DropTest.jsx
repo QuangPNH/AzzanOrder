@@ -47,7 +47,13 @@ const DropTest = ({ options, onChange }) => {
         try {
             const response = categoryId != '' ? await fetch(API_URLS.API + `MemberVouchers/memberId/itemCategoryId?memberId=${memberId}&categoryId=${categoryId}&employeeId=${id}`) : await fetch(API_URLS.API + `MemberVouchers/memberId?memberId=${memberId}&employeeId=${id}`);
             const data = await response.json();
-            return data;
+            let a = [];
+            for (let i of data) {
+                if (i.endDate > new Date() || i.endDate === null) {
+                    a.push(i);
+                }
+            }
+            return a;
 
         } catch (error) {
             console.error('Error fetching menu items:', error);

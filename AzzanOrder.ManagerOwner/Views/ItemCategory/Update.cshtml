@@ -22,12 +22,19 @@
                         <span asp-validation-for="Description" class="text-danger"></span>
                     </div>
                 </div>
-
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end pt-sm-0">Limited</label>
+                    <div class="col-sm-10">
+                        <label class="form-check m-0">
+                            <input type="checkbox" class="form-check-input" id="limitedCheckbox">
+                        </label>
+                    </div>
+                </div>
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Start Date</label>
                     <div class="col-sm-10">
-                        <input asp-for="StartDate" class="form-control" data-inputmask-alias="datetime"
-                               data-inputmask-inputformat="dd/mm/yyyy" />
+                        <input asp-for="StartDate" class="form-control" id="startDate" data-inputmask-alias="datetime"
+                               data-inputmask-inputformat="dd/mm/yyyy" disabled />
                         <span asp-validation-for="StartDate" class="text-danger"></span>
                     </div>
                 </div>
@@ -35,8 +42,8 @@
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">End Date</label>
                     <div class="col-sm-10">
-                        <input asp-for="EndDate" class="form-control" data-inputmask-alias="datetime"
-                               data-inputmask-inputformat="dd/mm/yyyy" />
+                        <input asp-for="EndDate" class="form-control" id="endDate" data-inputmask-alias="datetime"
+                               data-inputmask-inputformat="dd/mm/yyyy" disabled />
                         <span asp-validation-for="EndDate" class="text-danger"></span>
                     </div>
                 </div>
@@ -55,3 +62,21 @@
         </div>
     </div>
 </div>
+<script>
+    document.addEventListener("DOMContentLoaded", function () {
+        // Enable/disable datetime fields based on checkbox state
+        const limitedCheckbox = document.getElementById('limitedCheckbox');
+        const startDate = document.getElementById('startDate');
+        const endDate = document.getElementById('endDate');
+
+        if (limitedCheckbox) {
+            limitedCheckbox.addEventListener('change', function () {
+                const isChecked = limitedCheckbox.checked;
+                startDate.disabled = !isChecked;
+                endDate.disabled = !isChecked;
+                startDate.value = "";
+                endDate.value = "";
+            });
+        }
+    });
+</script>
