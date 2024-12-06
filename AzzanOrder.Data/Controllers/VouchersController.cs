@@ -67,8 +67,9 @@ namespace AzzanOrder.Data.Controllers
                 return NotFound("This voucher not exist");
             }
             var vou = new Voucher() { IsActive = voucher.IsActive, ItemCategoryId = voucher.ItemCategoryId, VoucherDetailId = voucher.VoucherDetailId };
-            _context.Entry(vou).State = EntityState.Modified;
-            try
+            //_context.Entry(vou).State = EntityState.Modified;
+            _context.Vouchers.Update(vou);
+			try
             {
                 await _context.SaveChangesAsync();
             }
