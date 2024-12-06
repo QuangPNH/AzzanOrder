@@ -34,7 +34,7 @@ namespace AzzanOrder.Data.Controllers
         }
 
         [HttpGet("ItemCategoryId/{itemCategoryId}")]
-        public async Task<ActionResult> GetMenuItemByTtemCategory(int itemCategoryId)
+        public async Task<ActionResult> GetMenuItemByItemCategory(int itemCategoryId)
         {
             if (_context.MenuItems == null)
             {
