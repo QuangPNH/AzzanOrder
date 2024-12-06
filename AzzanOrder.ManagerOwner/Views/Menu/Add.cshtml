@@ -6,7 +6,7 @@
             <h5 class="card-title">Add Menu Item</h5>
         </div>
         <div class="card-body">
-            <form asp-action="AddPost" asp-controller="Menu" method="post">
+            <form asp-action="Add" asp-controller="Menu" method="post">
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Name</label>
                     <div class="col-sm-10">
@@ -38,6 +38,12 @@
                     </div>
                 </div>
 
+                <div class="mb-3 row">
+                    <label class="col-form-label col-sm-2 text-sm-end">Is Food</label>
+                    <label class="col-sm-10">
+                        <input type="checkbox" class="form-check-input" name="IsFood" value="true">
+                    </label>
+                </div>
 
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Price</label>

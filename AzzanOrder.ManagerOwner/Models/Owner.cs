@@ -17,7 +17,7 @@ namespace AzzanOrder.ManagerOwner.Models
 		public bool? Gender { get; set; }
         [Required(ErrorMessage = "Phone number is requied.")]
         [StringLength(10, ErrorMessage = "Phone number must be 10 characters long.")]
-        [RegularExpression(@"^\d{10}$", ErrorMessage = "Phone number must be exactly 10 digits.")]
+        [RegularExpression(@"^0\d{9}$", ErrorMessage = "Phone number must be exactly 10 digits.")]
         public string Phone { get; set; } = null!;
         [Required(ErrorMessage = "Email address is required.")]
         [StringLength(50, ErrorMessage = "Email cannot exceed 50 characters.")]

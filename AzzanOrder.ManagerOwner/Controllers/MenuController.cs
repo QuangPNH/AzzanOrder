@@ -78,8 +78,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 
 
-       
-        public async Task<IActionResult> AddAsync()
+
+        public async Task<IActionResult> Add()
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             if (authorizeLogin.Equals("owner"))
@@ -102,6 +102,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             Employee emp = new Employee();
             List<ItemCategory> itemCategories = new List<ItemCategory>();
             var menuItemCounts = 0;
+
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
             {
                 emp = JsonConvert.DeserializeObject<Employee>(empJson);
@@ -138,7 +139,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddPost(MenuItem menuItem)
+        public async Task<IActionResult> Add(MenuItem menuItem)
         {
             Employee emp = new Employee();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
@@ -146,13 +147,17 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 emp = JsonConvert.DeserializeObject<Employee>(empJson);
             }
             menuItem.EmployeeId = emp.EmployeeId;
-            //List<Voucher> voucherlist = new List<Voucher>();
+            var isFood = !Request.Form["IsFood"].IsNullOrEmpty();
             var itemCategories = new List<ItemCategory>();
             var selectedCategories = Request.Form["SelectedCategories"].Select(int.Parse).ToList();
             //var isAvailable = !Request.Form["IsAvailable"].IsNullOrEmpty();
             menuItem.IsAvailable = true;
             using (HttpClient client = new HttpClient())
             {
+                if (isFood == true)
+                {
+                    menuItem.Description = "food/" + menuItem.Description;
+                }
                 using (HttpResponseMessage res = await client.PostAsJsonAsync(_apiUrl + "MenuItem/Add/", menuItem))
                 {
                     using (HttpContent content = res.Content)
@@ -169,6 +174,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     {
                         if (!res.IsSuccessStatusCode)
                         {
+
                             using (HttpResponseMessage res1 = await client.PostAsJsonAsync(_apiUrl + "MenuCategory/Add/", new MenuCategoryDTO() { ItemCategoryId = i, MenuItemId = menuItem.MenuItemId }))
                             {
                                 using (HttpContent content = res1.Content)
@@ -184,8 +190,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
             // If model validation fails, redisplay the form with validation messages
             return RedirectToAction("List", "Menu");
         }
-    
-        public async Task<IActionResult> UpdateAsync(int id)
+
+        public async Task<IActionResult> Update(int id)
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             if (authorizeLogin.Equals("owner"))
@@ -243,6 +249,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     {
                         string menuItemStr = await menuItem.Content.ReadAsStringAsync();
                         mi = JsonConvert.DeserializeObject<MenuItem>(menuItemStr);
+                        if (mi.Description.Contains("food/"))
+                        {
+                            mi.Description = mi.Description.Split("food/")[1];
+                        }
                     }
                     else
                     {
@@ -267,8 +277,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
             foreach (var i in mi.MenuCategories)
             {
 
-                    Console.WriteLine(i.ItemCategory.ItemCategoryName);
-                
+                Console.WriteLine(i.ItemCategory.ItemCategoryName);
+
             }
             return View(model);
 
@@ -276,7 +286,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdatePost(MenuItem menuItem)
+        public async Task<IActionResult> Update(MenuItem menuItem)
         {
             Employee emp = new Employee();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
@@ -284,13 +294,25 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 emp = JsonConvert.DeserializeObject<Employee>(empJson);
             }
             menuItem.EmployeeId = emp.EmployeeId;
-            //List<Voucher> voucherlist = new List<Voucher>();
+            var isFood = !Request.Form["IsFood"].IsNullOrEmpty();
             var itemCategories = new List<ItemCategory>();
             var selectedCategories = Request.Form["SelectedCategories"].Select(int.Parse).ToList();
             //var isAvailable = !Request.Form["IsAvailable"].IsNullOrEmpty();
             menuItem.IsAvailable = true;
             using (HttpClient client = new HttpClient())
             {
+
+                if (menuItem.Description.Contains("food/"))
+                {
+                    menuItem.Description = menuItem.Description.Split("food/")[1];
+                }
+
+                if (isFood == true)
+                {
+                    menuItem.Description = "food/" + menuItem.Description;
+                }
+
+
                 using (HttpResponseMessage res = await client.PutAsJsonAsync(_apiUrl + "MenuItem/Update/", menuItem))
                 {
                     using (HttpContent content = res.Content)
@@ -307,20 +329,20 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     {
                         if (!res.IsSuccessStatusCode)
                         {
-                            using (HttpResponseMessage res1 = await client.PostAsJsonAsync(_apiUrl + "MenuCategory/Add/", new MenuCategoryDTO() { ItemCategoryId = i, MenuItemId = menuItem.MenuItemId}))
+                            using (HttpResponseMessage res1 = await client.PostAsJsonAsync(_apiUrl + "MenuCategory/Add/", new MenuCategoryDTO() { ItemCategoryId = i, MenuItemId = menuItem.MenuItemId }))
                             {
                                 using (HttpContent content = res1.Content)
                                 {
                                     string message = await res.Content.ReadAsStringAsync();
-                                  
+
                                 }
                             }
                         }
-                    }        
+                    }
                 }
             }
-                // If model validation fails, redisplay the form with validation messages
-                return RedirectToAction("List", "Menu");
+            // If model validation fails, redisplay the form with validation messages
+            return RedirectToAction("List", "Menu");
         }
     }
 }

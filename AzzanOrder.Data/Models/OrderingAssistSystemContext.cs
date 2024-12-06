@@ -332,6 +332,5 @@ namespace AzzanOrder.Data.Models
         }
 
         partial void OnModelCreatingPartial(ModelBuilder modelBuilder);
-		public DbSet<AzzanOrder.Data.DTO.LoginDTO>? LoginDTO { get; set; }
 	}
 }
