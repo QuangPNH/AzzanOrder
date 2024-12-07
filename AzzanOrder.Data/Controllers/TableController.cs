@@ -44,6 +44,22 @@ namespace AzzanOrder.Data.Controllers
             return await _context.Tables.Where(x => x.EmployeeId == id).ToListAsync();
         }
 
+        [HttpGet("GetTableByQr")]
+        public async Task<ActionResult> GetTableByQr(string qr)
+        {
+            if (_context.Tables == null)
+            {
+                return NotFound();
+            }
+            
+            var a = await _context.Tables.Where(x => x.Qr.ToLower().Equals(qr.ToLower())).ToListAsync();
+            if(a.Count != 0)
+            {
+                return Ok(a);
+            }
+            return Conflict();
+        }
+
         // GET: api/Table/5
         [HttpGet("{id}")]
         public async Task<ActionResult<Table>> GetTable(int id)
