@@ -10,6 +10,7 @@ using System.Text.RegularExpressions;
 using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
+using AzzanOrder.ManagerOwner.Services;
 
 namespace AzzanOrder.ManagerOwner.Controllers
 {
@@ -344,6 +345,9 @@ namespace AzzanOrder.ManagerOwner.Controllers
         public async Task<IActionResult> LogoutAction()
         {
             HttpContext.Response.Cookies.Delete("LoginInfo");
+            EmployeeService employeeService = new EmployeeService();
+            employeeService.CurrentEmployee = null;
+            employeeService.CurrentOwner = null;
             return RedirectToAction("Login", "Home");
         }
 
