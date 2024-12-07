@@ -55,21 +55,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
             }
             employees = employees.Where(e => e.RoleId == 1 && e.IsDelete == false && e.OwnerId == emp.OwnerId).ToList();
 
-            int pageSize = 10;
-            int pageNumber = page ?? 1;
-            int maxPageNav = 10;
-            totalEmployees = employees.Count();
-            int totalPages = (int)Math.Ceiling((double)totalEmployees / pageSize);
-
-            // Paginate the employees
-            employees = employees.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
-
             var viewModel = new Model
             {
-                anIntegerUsedForCountingNumberOfPageQueuedForTheList = totalPages,
-                anIntegerUsedForKnowingWhatTheCurrentPageOfTheList = pageNumber,
-                thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed = maxPageNav,
-                employees = employees,
+
+                employees = employees
             };
             return View(viewModel);
         }

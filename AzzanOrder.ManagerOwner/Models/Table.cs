@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 
 namespace AzzanOrder.ManagerOwner.Models
 {
@@ -11,7 +12,8 @@ namespace AzzanOrder.ManagerOwner.Models
         }
 
         public int TableId { get; set; }
-        public string? Qr { get; set; }
+        [Required(ErrorMessage = "Qr is required")]
+        public string? Qr { get; set; } = null!;
         public bool? Status { get; set; }
         public int? EmployeeId { get; set; }
 

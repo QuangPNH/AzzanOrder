@@ -61,18 +61,9 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
                 }
             }
-            int pageSize = 10;
-            int pageNumber = page ?? 1;
-            int maxPageNav = 10;
-            int totalTables = abouts.Count;
-            int totalPages = (int)Math.Ceiling((double)totalTables / pageSize);
-            abouts = abouts.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             var viewModel = new Model
             {
-                anIntegerUsedForCountingNumberOfPageQueuedForTheList = totalPages,
-                anIntegerUsedForKnowingWhatTheCurrentPageOfTheList = pageNumber,
-                thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed = maxPageNav,
-                abouts = abouts,
+                abouts = abouts
             };
             return View(viewModel);
         }
