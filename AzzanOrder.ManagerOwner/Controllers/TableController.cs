@@ -54,7 +54,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     {
                         string tableData = await tableRes.Content.ReadAsStringAsync();
                         var data = JsonConvert.DeserializeObject<List<Table>>(tableData) ?? new List<Table>();
-                        tables = data.Where(x => x.Status != null && x.Qr == "QR_000").ToList();
+                        tables = data.Where(x => x.Status != null && x.Qr != "QR_000").ToList();
                     }
                     else
                     {
@@ -85,6 +85,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
         [HttpGet]
         public IActionResult Add()
         {
+            ViewBag.QrCodeUrl = null;
             return View();
         }
 

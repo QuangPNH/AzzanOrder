@@ -128,7 +128,8 @@ namespace AzzanOrder.Data.Controllers
                 Member member1 = new Member()
                 {
                     Phone = phone,
-                    MemberName = new string(numbers)
+                    MemberName = new string(numbers),
+                    Image = "https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg"
                 };
                 
                 //var accountSid = "ACd5083d30edb839433981a766a0c2e2fd";

@@ -40,7 +40,8 @@ const VoucherScreen = () => {
             const data = await response.json();
             let a = [];
             for (let i of data) {
-                if (i.endDate > new Date() || i.endDate === null) {
+               
+                if (i.endDate > new Date().toISOString() || i.endDate === null) {
                     a.push(i);
                 }
             }
@@ -58,7 +59,7 @@ const VoucherScreen = () => {
             const data = await response.json();
             let a = [];
             for (let i of data) {
-                if (i.endDate > new Date() || i.endDate === null) {
+                if (i.endDate > new Date().toISOString() || i.endDate === null) {
                     a.push(i);
                 }
             }
