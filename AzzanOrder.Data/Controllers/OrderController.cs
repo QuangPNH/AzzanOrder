@@ -81,7 +81,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            var orders = await _context.Orders.Include(o => o.Table).Include(o => o.OrderDetails)
+            var orders = await _context.Orders.Include(o => o.Member).Include(o => o.Table).Include(o => o.OrderDetails)
                     .ThenInclude(od => od.MenuItem).Where(
                 x => x.Table != null && x.Table.EmployeeId == id // Fix for Problem 2
                 ).ToListAsync();
