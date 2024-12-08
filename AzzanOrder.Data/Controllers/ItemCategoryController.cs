@@ -37,11 +37,20 @@ namespace AzzanOrder.Data.Controllers
                 ic.EmployeeId == id.Value ||
                 ic.MenuCategories.Any(mc => mc.MenuItem.EmployeeId == id.Value));
             }
-
-            var itemCategories = await query
-                .Include(ic => ic.MenuCategories)
-                .ThenInclude(mc => mc.MenuItem)
-                .ToListAsync();
+            var itemCategories = new List<ItemCategory>();
+            try
+            {
+                itemCategories = await query
+                    .Include(ic => ic.MenuCategories)
+                    .ThenInclude(mc => mc.MenuItem)
+                    .ToListAsync();
+            }
+            catch (Exception ex)
+            {
+                // Handle the exception (e.g., log it)
+                Console.WriteLine(ex.ToString());
+                return StatusCode(StatusCodes.Status500InternalServerError, "An error occurred while processing your request.");
+            }
 
             if (itemCategories == null || !itemCategories.Any())
             {

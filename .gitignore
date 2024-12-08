@@ -6,6 +6,7 @@
 app.jsx
 App.jsx
 appsettings.json
+appsettings.Development.json
 # User-specific files
 *.rsuser
 *.suo
