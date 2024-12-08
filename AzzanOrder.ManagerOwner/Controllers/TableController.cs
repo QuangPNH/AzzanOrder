@@ -180,7 +180,14 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         table.Status = true;
                         string json = JsonConvert.SerializeObject(table);
                         StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-
+                        using (HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Table/GetTableByQr?qr={table.Qr}"))
+                        {
+                            if (res.IsSuccessStatusCode)
+                            {
+                                TempData["ErrorMes"] = "This name is exit";
+                                return View(table);
+                            }
+                        }
                         HttpResponseMessage response = await client.PutAsync(_apiUrl + "Table/Update", content);
                         if (response.IsSuccessStatusCode)
                         {
