@@ -19,12 +19,12 @@
                     @{
                         int position = 1;
                     }
-                    @foreach (var emp in Model.feedbacks)
+                    @foreach (var emp in Model.feedbacks.Where(f => f.Content.Split('/')[0] == Model.employee.EmployeeId.ToString()))
                     {
                         <tr>
                             <td>@position</td>
                             <td>@Model.members.FirstOrDefault(em => em.MemberId == emp.MemberId).Phone</td>
-                            <td>@emp.Content</td>
+                            <td>@emp.Content.Split('/')[1]</td>
                         </tr>
                         position++;
                     }

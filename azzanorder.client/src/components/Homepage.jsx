@@ -13,6 +13,7 @@ import Cart from './Cart';
 import { del } from 'framer-motion/client';
 import Banner from './HomeItem/Banner';
 import API_URLS from '../config/apiUrls';
+import VoucherCart from './VoucherCart';
 
 const Homepage = () => {
     const [menuItems, setMenuItems] = useState([]);
@@ -27,12 +28,16 @@ const Homepage = () => {
     useEffect(() => {
         const memberInfo = getCookie('memberInfo');
         const memberId = memberInfo ? JSON.parse(memberInfo).memberId : null;
-
+        
         const fetchData = async () => {
             await fetchMenuItems(id ? id.split('/')[1] : null);
             if (memberId) {
                 await fetchRecentMenuItems(memberId, id ? id.split('/')[1] : null);
                 setShowRecentlyOrdered(true);
+            }
+            if (id.split('/')[1] != getCookie('tableqr').split('/')[1]){
+                setCookie('voucher', '' , -1);
+                setCookie('cartData', '' , -1);
             }
             if (id) {
                 setCookie('tableqr', '', -1);

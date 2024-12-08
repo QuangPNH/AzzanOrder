@@ -85,7 +85,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
             Model model = new Model
             {
                 feedbacks = feedBackDatas,
-                members = members
+                members = members,
+                employee = emp
             };
             return View(model);
 		}

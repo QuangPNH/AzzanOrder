@@ -4,7 +4,12 @@
 	ViewData["Title"] = "Login page";
 }
 
-
+@if(TempData["ErrorMes"] != null)
+{
+	<script>
+		alert(@TempData["ErrorMes"]);
+	</script>
+}
 
 <div class="container d-flex flex-column">
 	<div class="row vh-100">
@@ -21,7 +26,7 @@
 				<div class="card">
 					<div class="card-body">
 						<div class="m-sm-4">
-							<form asp-action="LoginAction" asp-controller="Home" method="post" enctype="multipart/form-data">
+							<form asp-action="Login" asp-controller="Home" method="post" enctype="multipart/form-data">
 								<div class="mb-3">
 									<label class="form-label">Phone</label>
 									<input asp-for="employee.Phone" class="form-control form-control-lg" type="phone" name="phone" placeholder="Enter your phone" />
