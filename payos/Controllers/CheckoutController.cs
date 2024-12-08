@@ -161,63 +161,64 @@ public class CheckoutController : Controller
         HttpContext.Request.Cookies.TryGetValue("ItemType", out string itemType);
 
         if (!string.IsNullOrEmpty(itemType))
-        if (itemType.Contains("Subscribe"))
-        {
-            Response.Cookies.Delete("ItemType");
-            Console.WriteLine("When succ" + HttpContext.Request.Cookies.TryGetValue("OwnerData", out string ownerJson));
-            Console.WriteLine("Tets cookie " + ownerJson);
-            Console.WriteLine("Tets cookie " + Request.Cookies["OwnerData"]);
-
-            Owner owner = JsonConvert.DeserializeObject<Owner>(ownerJson);
-
-            using (HttpClient client = new HttpClient())
+            if (itemType.Contains("Subscribe"))
             {
-                // Check if the phone number exists
-                HttpResponseMessage getResponse = await client.GetAsync($"{_config._apiUrl}Owner/Phone/{owner.Phone}");
-                if (getResponse.IsSuccessStatusCode)
+                Response.Cookies.Delete("ItemType");
+                Console.WriteLine("When succ" + HttpContext.Request.Cookies.TryGetValue("OwnerData", out string ownerJson));
+                Console.WriteLine("Tets cookie " + ownerJson);
+                Console.WriteLine("Tets cookie " + Request.Cookies["OwnerData"]);
+
+                Owner owner = JsonConvert.DeserializeObject<Owner>(ownerJson);
+
+                using (HttpClient client = new HttpClient())
                 {
-                    // Phone number exists, update subscription dates
-                    var updateData = new
+                    // Check if the phone number exists
+                    HttpResponseMessage getResponse = await client.GetAsync($"{_config._apiUrl}Owner/Phone/{owner.Phone}");
+                    if (getResponse.IsSuccessStatusCode)
                     {
-                        subscriptionStartDate = owner.SubscriptionStartDate,
-                        subscriptionEndDate = owner.SubscribeEndDate
-                    };
-                    HttpResponseMessage updateResponse = await client.PatchAsync(
-                        $"{_config._apiUrl}Owner/UpdateSubscriptionDatesByPhone/{owner.Phone}",
-                        JsonContent.Create(updateData)
-                    );
-                    if (updateResponse.IsSuccessStatusCode)
-                    {
-                        string updateMessage = await updateResponse.Content.ReadAsStringAsync();
-                        Console.WriteLine(updateMessage);
+                        // Phone number exists, update subscription dates
+                        var updateData = new
+                        {
+                            subscriptionStartDate = owner.SubscriptionStartDate,
+                            subscriptionEndDate = owner.SubscribeEndDate
+                        };
+                        HttpResponseMessage updateResponse = await client.PatchAsync(
+                            $"{_config._apiUrl}Owner/UpdateSubscriptionDatesByPhone/{owner.Phone}",
+                            JsonContent.Create(updateData)
+                        );
+                        if (updateResponse.IsSuccessStatusCode)
+                        {
+                            string updateMessage = await updateResponse.Content.ReadAsStringAsync();
+                            Console.WriteLine(updateMessage);
+                        }
                     }
-                }
-                else
-                {
-                    // Phone number does not exist, add new owner
-                    HttpResponseMessage addResponse = await client.PostAsJsonAsync($"{_config._apiUrl}Owner/Add/", owner);
-                    if (addResponse.IsSuccessStatusCode)
+                    else
                     {
-                        string addMessage = await addResponse.Content.ReadAsStringAsync();
-                        Console.WriteLine(addMessage);
+                        owner.IsFreeTrial = true;
+                        // Phone number does not exist, add new owner
+                        HttpResponseMessage addResponse = await client.PostAsJsonAsync($"{_config._apiUrl}Owner/Add/", owner);
+                        if (addResponse.IsSuccessStatusCode)
+                        {
+                            string addMessage = await addResponse.Content.ReadAsStringAsync();
+                            Console.WriteLine(addMessage);
+                        }
+                    }
+
+                    HttpResponseMessage registerResponse = await client.PostAsJsonAsync($"{_config._manager}Home/OwnerRegister", owner);
+                    if (registerResponse.IsSuccessStatusCode)
+                    {
+                        string registerMessage = await registerResponse.Content.ReadAsStringAsync();
+                        Console.WriteLine(registerMessage);
                     }
                 }
 
-                HttpResponseMessage registerResponse = await client.PostAsJsonAsync($"{_config._manager}Home/OwnerRegister", owner);
-                if (registerResponse.IsSuccessStatusCode)
+                HttpContext.Response.Cookies.Append("LoginInfo", ownerJson, new CookieOptions
                 {
-                    string registerMessage = await registerResponse.Content.ReadAsStringAsync();
-                    Console.WriteLine(registerMessage);
-                }
+                    Expires = DateTimeOffset.UtcNow.AddDays(30)
+                });
+
+                return Redirect($"{_config._manager}Home/Index");
             }
-
-            HttpContext.Response.Cookies.Append("LoginInfo", ownerJson, new CookieOptions
-            {
-                Expires = DateTimeOffset.UtcNow.AddDays(30)
-            });
-
-            return Redirect($"{_config._manager}Home/Index");
-        }
         return Redirect($"{_config._client}?tableqr=" + tableqr + "&status=success");
     }
 

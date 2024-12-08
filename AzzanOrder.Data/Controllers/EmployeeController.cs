@@ -199,7 +199,7 @@ namespace AzzanOrder.Data.Controllers
                 Gender = employee.Gender,
                 Gmail = employee.Gmail,
                 HomeAddress = employee.HomeAddress,
-                Image = employee.Image,
+                Image = "https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg",
                 RoleId = employee.RoleId,
                 WorkAddress = employee.WorkAddress,
                 ManagerId = employee.ManagerId,

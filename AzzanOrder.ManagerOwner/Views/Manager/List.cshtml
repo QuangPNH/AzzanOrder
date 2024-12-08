@@ -6,78 +6,59 @@
         <div class="card-header">
             <h5 class="card-title">List Manager</h5>
         </div>
-        <div style="margin-left:15px">
-            <a href="@Url.Action("Add", "Manager")" class="btn btn-primary">Add New Manager</a>
-        </div>
-
-        <table class="table table-striped table-hover">
-            <thead>
-                <tr>
-                    <th style="width:5%">No.</th>
-                    <th style="width:20%">Employee Name</th>
-                    <th style="width:20%">Phone Number</th>
-                    <th class="d-none d-md-table-cell" style="width:20%">Email</th>
-                    <th class="d-none d-md-table-cell" style="width:20%">Date of Birth</th>
-                    <th>Menu</th>
-                    <th>Actions</th>
-                </tr>
-            </thead>
-            <tbody>
-                @{
-                    int position = 1;
-                }
-                @foreach (var emp in Model.employees)
-                {
-                    <tr>
-                        <td>@position</td>
-                        <td>@emp.EmployeeName</td>
-                        <td>@emp.Phone</td>
-                        <td class="d-none d-md-table-cell">@emp.Gmail</td>
-                        <td class="d-none d-md-table-cell">@emp.BirthDate</td>
-                        <td class="table-action">
-                            <a href="@Url.Action("MenuList", "Manager", new { id = emp.EmployeeId})">Link</a>
-                        </td>
-                        <td class="table-action">
-                            <a href="@Url.Action("Update", "Manager", new { id = emp.EmployeeId})"><i class="align-middle" data-feather="edit-2"></i></a>
-                            <a href="@Url.Action("Delete", "Manager", new { id = emp.EmployeeId})"><i class="align-middle" data-feather="trash"></i></a>
-                        </td>
-                    </tr>
-                    position++;
-                }
-            </tbody>
-        </table>
-
-        <div class="row mt-3">
-            <div class="col d-flex justify-content-end">
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination pagination-md mb-0">
-                        <li class="page-item @(Model.anIntegerUsedForKnowingWhatTheCurrentPageOfTheList == 1 ? "disabled" : "")">
-                            <a class="page-link" href="@Url.Action("List", new { page = Model.anIntegerUsedForKnowingWhatTheCurrentPageOfTheList - 1 })">
-                                <i class="fas fa-angle-left"></i>
-                            </a>
-                        </li>
-                        @{
-                            int startPage = Math.Max(1, Model.anIntegerUsedForKnowingWhatTheCurrentPageOfTheList - Model.thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed / 2);
-                            int endPage = Math.Min(Model.anIntegerUsedForCountingNumberOfPageQueuedForTheList, startPage + Model.thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed - 1);
-                            if (endPage - startPage < Model.thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed)
-                            {
-                                startPage = Math.Max(1, endPage - Model.thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed + 1);
-                            }
-                        }
-                        @for (int i = startPage; i <= endPage; i++)
-                        {
-                            <li class="page-item @(Model.anIntegerUsedForKnowingWhatTheCurrentPageOfTheList == i ? "active" : "")">
-                                <a class="page-link" href="@Url.Action("List", new { page = i })">@i</a>
-                            </li>
-                        }
-                        <li class="page-item @(Model.anIntegerUsedForKnowingWhatTheCurrentPageOfTheList == Model.anIntegerUsedForCountingNumberOfPageQueuedForTheList ? "disabled" : "")">
-                            <a class="page-link" href="@Url.Action("List", new { page = Model.anIntegerUsedForKnowingWhatTheCurrentPageOfTheList + 1 })">
-                                <i class="fas fa-angle-right"></i>
-                            </a>
-                        </li>
-                    </ul>
-                </nav>
+        <div class="card-boby">
+            <div style="margin-left:15px">
+                <a href="@Url.Action("Add", "Manager")" class="btn btn-primary">Add New Manager</a>
             </div>
+            <br/>
+            <table class="table table-striped table-hover">
+                <thead>
+                    <tr>
+                        <th style="width:5%">No.</th>
+                        <th style="width:20%">Employee Name</th>
+                        <th style="width:20%">Phone Number</th>
+                        <th class="d-none d-md-table-cell" style="width:20%">Email</th>
+                        <th class="d-none d-md-table-cell" style="width:20%">Date of Birth</th>
+                        <th>Menu</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @{
+                        int position = 1;
+                    }
+                    @foreach (var emp in Model.employees)
+                    {
+                        <tr>
+                            <td>@position</td>
+                            <td>@emp.EmployeeName</td>
+                            <td>@emp.Phone</td>
+                            <td class="d-none d-md-table-cell">@emp.Gmail</td>
+                            <td class="d-none d-md-table-cell">@emp.BirthDate</td>
+                            <td class="table-action">
+                                <a href="@Url.Action("MenuList", "Manager", new { id = emp.EmployeeId})">Link</a>
+                            </td>
+                            <td class="table-action">
+                                <a href="@Url.Action("Update", "Manager", new { id = emp.EmployeeId})"><i class="align-middle" data-feather="edit-2"></i></a>
+                                <a href="@Url.Action("Delete", "Manager", new { id = emp.EmployeeId})"><i class="align-middle" data-feather="trash"></i></a>
+                            </td>
+                        </tr>
+                        position++;
+                    }
+                </tbody>
+            </table>
         </div>
     </div>
 </div>
+
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+
+<link rel="stylesheet" href="https://cdn.datatables.net/2.1.8/css/dataTables.dataTables.css" />
+
+<script src="https://cdn.datatables.net/2.1.8/js/dataTables.js"></script>
+
+<script>
+    $(document).ready(function () {
+        $('#myTable').DataTable();
+    });
+</script>

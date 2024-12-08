@@ -174,17 +174,31 @@ namespace AzzanOrder.Data.Controllers
 			{
 				return Problem("Entity set 'OrderingAssistSystemContext.Owners'  is null.");
 			}
-			owner.IsDelete = false;
-
+			
+			
 			if (_context.Owners.Any(o => o.Phone == owner.Phone))
 			{
 				return BadRequest("Phone number already exists");
 			}
-
-			_context.Owners.Add(owner);
+			Owner o = new Owner()
+			{
+				OwnerName = owner.OwnerName,
+				Gender = owner.Gender,
+				Phone = owner.Phone,
+				Gmail = owner.Gmail,
+				BirthDate = owner.BirthDate,
+				BankId = owner.BankId,
+				IsDelete = false,
+				IsFreeTrial = owner.IsFreeTrial,
+				SubscribeEndDate = owner.SubscribeEndDate,
+				SubscriptionStartDate = owner.SubscriptionStartDate,
+				NumberOfAccountAllowed = owner.NumberOfAccountAllowed,
+				Image = "https://cellphones.com.vn/sforum/wp-content/uploads/2023/10/avatar-trang-4.jpg"
+            };
+			_context.Owners.Add(o);
 			await _context.SaveChangesAsync();
            
-			return Ok(owner);
+			return Ok(o);
 		}
 
 		// DELETE: api/Owner/5

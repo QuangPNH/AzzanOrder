@@ -100,7 +100,8 @@ const Footer = () => {
                 .company-logo {
                     aspect-ratio: 2.14;
                     object-fit: contain;
-                    width: 201px;
+                    width: 200px;
+                    height: 200px;
                     align-self: center;
                     margin-top: 20px;
                     max-width: 100%;

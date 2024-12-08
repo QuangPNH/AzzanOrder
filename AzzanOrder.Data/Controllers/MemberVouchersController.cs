@@ -128,6 +128,10 @@ namespace AzzanOrder.Data.Controllers
                 MemberVoucher mv = new MemberVoucher() { MemberId = memberVoucher.MemberId, VoucherDetailId = memberVoucher.VoucherDetailId, OrderId = memberVoucher.OrderId };
                 mv.IsActive = true;
                 mv.Quantity = 1;
+                var member = _context.Members.FirstOrDefault(m => m.MemberId == memberVoucher.MemberId);
+                var voucherDetail = _context.VoucherDetails.FirstOrDefault(vD => vD.VoucherDetailId == memberVoucher.VoucherDetailId);
+                member.Point = member.Point - voucherDetail.Price;
+                _context.Members.Update(member);
                 _context.MemberVouchers.Add(mv);
                 
             }

@@ -66,18 +66,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     ModelState.AddModelError(string.Empty, "Request error. Please contact administrator.");
                 }
             }
-            int pageSize = 10;
-            int pageNumber = page ?? 1;
-            int maxPageNav = 10;
-            int totalTables = tables.Count;
-            int totalPages = (int)Math.Ceiling((double)totalTables / pageSize);
 
-            tables = tables.Skip((pageNumber - 1) * pageSize).Take(pageSize).ToList();
             var viewModel = new Model
             {
-                anIntegerUsedForCountingNumberOfPageQueuedForTheList = totalPages,
-                anIntegerUsedForKnowingWhatTheCurrentPageOfTheList = pageNumber,
-                thisIntegerIsUsedForKnowingTheMaxNumberOfPageNavButtonShouldBeDisplayed = maxPageNav,
+
                 tables = tables,
             };
             return View(viewModel);
@@ -85,6 +77,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
         [HttpGet]
         public IActionResult Add()
         {
+            ViewBag.QrCodeUrl = null;
             return View();
         }
 
@@ -105,7 +98,14 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         table.Status = true;
                         string json = JsonConvert.SerializeObject(table);
                         StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-
+                        using(HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Table/GetTableByQr?qr={table.Qr}"))
+                        {
+                            if (res.IsSuccessStatusCode)
+                            {
+                                TempData["ErrorMes"] = "This name is exit";
+                                return View(table);
+                            }
+                        }
                         HttpResponseMessage response = await client.PostAsync(_apiUrl + "Table/Add", content);
                         if (response.IsSuccessStatusCode)
                         {
@@ -180,7 +180,14 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         table.Status = true;
                         string json = JsonConvert.SerializeObject(table);
                         StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-
+                        using (HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Table/GetTableByQr?qr={table.Qr}"))
+                        {
+                            if (res.IsSuccessStatusCode)
+                            {
+                                TempData["ErrorMes"] = "This name is exit";
+                                return View(table);
+                            }
+                        }
                         HttpResponseMessage response = await client.PutAsync(_apiUrl + "Table/Update", content);
                         if (response.IsSuccessStatusCode)
                         {

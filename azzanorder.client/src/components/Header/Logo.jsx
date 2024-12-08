@@ -43,11 +43,10 @@ const Logo = () => {
                 .logo {
                     aspect-ratio: 4.67;
                     cursor: pointer;
-                    object-fit: contain;
                     object-position: center;
-                    width: 126px;
-                    max-width: 100%;
-                    margin: auto 0;
+                    width: 15%;
+                    height: 125%;
+                    margin: 0 0;
                 }
             `}</style>
         </>

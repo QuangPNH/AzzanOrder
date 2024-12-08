@@ -11,7 +11,8 @@ namespace AzzanOrder.Data.Models
         }
 
         public int TableId { get; set; }
-        public string? Qr { get; set; }
+       
+        public string? Qr { get; set; } = null!;
         public bool? Status { get; set; }
         public int? EmployeeId { get; set; }
 

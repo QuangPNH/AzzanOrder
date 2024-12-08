@@ -580,7 +580,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
 
                     var owner = JsonConvert.DeserializeObject<Owner>(loginInfoJson);
-                    
+                    var existingOwner = new Owner();
                     bool ownerExist = false;
                     using (HttpClient client = new HttpClient())
                     {
@@ -588,8 +588,9 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         {
                             if (getResponse.IsSuccessStatusCode)
                             {
+                                ownerExist = true;
                                 var ownerData = await getResponse.Content.ReadAsStringAsync();
-                                var existingOwner = JsonConvert.DeserializeObject<Owner>(ownerData);
+                                existingOwner = JsonConvert.DeserializeObject<Owner>(ownerData);
                                 if (existingOwner.IsFreeTrial == true)
                                 {
                                     TempData["Message"] = "Already in free trial";
@@ -602,8 +603,9 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
                             if (getResponse.IsSuccessStatusCode)
                             {
+                                ownerExist = true;
                                 var ownerData = await getResponse.Content.ReadAsStringAsync();
-                                var existingOwner = JsonConvert.DeserializeObject<Owner>(ownerData);
+                                existingOwner = JsonConvert.DeserializeObject<Owner>(ownerData);
                                 if (existingOwner.IsFreeTrial == true)
                                 {
                                     TempData["Message"] = "Already in free trial";
@@ -616,16 +618,29 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     owner.SubscriptionStartDate = DateTime.Now;
                     owner.SubscribeEndDate = DateTime.Now.AddMonths(1);
                     owner.IsFreeTrial = true;
-
+                    //if (existingOwner != null && existingOwner.IsFreeTrial == true)
+                    //{
+                    //    TempData["Message"] = "You can only subscribe to the free trial once";
+                    //    return RedirectToAction("Subscribe", "Home");
+                    //}
                     if (ownerExist == false)
                     {
-                        
+                        using (HttpClient client = new HttpClient())
+                        {
+                            using (HttpResponseMessage getResponse = await client.PostAsJsonAsync(_apiUrl + $"Owner/Add", owner))
+                            {
+
+                                if (getResponse.IsSuccessStatusCode)
+                                {
+                                    string mes = await getResponse.Content.ReadAsStringAsync();
+                                    owner = JsonConvert.DeserializeObject<Owner>(mes);
+                                }
+                            }
+                        }
+                        AddFirstManagerAsync(owner);
                     }
-                    else
-                    {
-                        TempData["Message"] = "You can only subscribe to the free trial once";
-                        return RedirectToAction("Subscribe", "Home");
-                    }
+                    
+                    
                     var b = JsonConvert.SerializeObject(owner);
                     HttpContext.Response.Cookies.Append("LoginInfo", b, new CookieOptions
                     {
@@ -671,6 +686,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         role = JsonConvert.DeserializeObject<Role>(mes);
                     }
                 }
+                
                 var emp = new Employee() { EmployeeName = owner.OwnerName, Phone = owner.Phone, Gender = owner.Gender, Gmail = owner.Gmail, BirthDate = owner.BirthDate, RoleId = 1, Image = owner.Image, IsDelete = false, OwnerId = owner.OwnerId, Role = role };
                 Console.WriteLine(JsonConvert.SerializeObject(emp));
                 using (HttpResponseMessage addResponse = await client.PostAsJsonAsync(_apiUrl + "Employee/Add", emp))

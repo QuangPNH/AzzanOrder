@@ -84,7 +84,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             return View(promotions);
         }
 
-        public async Task<IActionResult> AddAsync()
+        public async Task<IActionResult> Add()
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             var loginStatus = await authorizeLogin.CheckLogin();
