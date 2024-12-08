@@ -131,11 +131,15 @@ const OrderTrackScreen = () => {
                 <div style={{ display: 'flex', flexDirection: 'column' }}>
                     <Button
                         type="submit"
-                        text="Close table to receive points"
+                        text="Clean table"
                         onClick={handleButtonClick}
                         style={{ backgroundColor: allOrdersCompleted ? 'Green' : 'Gray', cursor: allOrdersCompleted ? 'pointer' : 'not-allowed' }}
                         disabled={!allOrdersCompleted}
                     />
+                    <div style={{ textAlign: 'center', marginTop: '20px', color: 'black' }}>
+                        <p>Click to notify staff to clean table once you finished the dishes.</p>
+                        <p>Point will be earned.</p>
+                    </div>
                 </div>
             </div>
             <Footer />

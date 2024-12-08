@@ -586,7 +586,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     {
                         using (HttpResponseMessage getResponse = await client.GetAsync(_apiUrl + $"Owner/Phone/{owner.Phone}"))
                         {
-
                             if (getResponse.IsSuccessStatusCode)
                             {
                                 var ownerData = await getResponse.Content.ReadAsStringAsync();
@@ -788,7 +787,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 {
                     var ownerData = await getResponse.Content.ReadAsStringAsync();
                     var existingOwner = JsonConvert.DeserializeObject<Owner>(ownerData);
-
                     if (existingOwner != null)
                     {
                         ownerExist = true;

@@ -32,17 +32,21 @@ namespace AzzanOrder.Data.Controllers
         }
 
         [HttpGet("Employee/{id}")]
-        public async Task<ActionResult<IEnumerable<OrderDetail>>> GetOrderDetailsByEmployee(int id)
-        {
-            if (_context.OrderDetails == null)
-            {
-                return NotFound();
-            }
-            return await _context.OrderDetails
-                .Include(od => od.MenuItem).Include(od => od.Order).ThenInclude(o => o.Table)
-                .Where(od => od.Order != null && od.Order.Table != null && od.Order.Table.EmployeeId == id)
-                .ToListAsync();
-        }
+		public async Task<ActionResult<IEnumerable<OrderDetail>>> GetOrderDetailsByEmployee(int id)
+		{
+			if (_context.OrderDetails == null)
+			{
+				return NotFound();
+			}
+			return await _context.OrderDetails
+				.Include(od => od.MenuItem)
+				.Include(od => od.Order)
+					.ThenInclude(o => o.Table)
+				.Include(od => od.Order)
+					.ThenInclude(o => o.Member)
+				.Where(od => od.Order != null && od.Order.Table != null && od.Order.Table.EmployeeId == id)
+				.ToListAsync();
+		}
 
         // GET: api/OrderDetail/5
         [HttpGet("{id}")]
