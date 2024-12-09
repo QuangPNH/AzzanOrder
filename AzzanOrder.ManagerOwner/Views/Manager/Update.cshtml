@@ -36,13 +36,22 @@
                     <label class="col-form-label col-sm-2 text-sm-end">Phone</label>
                     <div class="col-sm-10">
                         <input asp-for="Phone" class="form-control" placeholder="Phone">
+                        <span asp-validation-for="Phone" class="text-danger"></span>
+                        @if (TempData["ErrorPhone"] != null)
+                        {
+                            <span class="text-danger">@TempData["ErrorPhone"]</span>
+                        }
                     </div>
                 </div>
-
                 <div class="mb-3 row">
                     <label class="col-form-label col-sm-2 text-sm-end">Email</label>
                     <div class="col-sm-10">
                         <input asp-for="Gmail" class="form-control" placeholder="Email">
+                        <span asp-validation-for="Gmail" class="text-danger"></span>
+                        @if (TempData["ErrorGmail"] != null)
+                        {
+                            <span class="text-danger">@TempData["ErrorGmail"]</span>
+                        }
                     </div>
                 </div>
 

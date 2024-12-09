@@ -220,13 +220,17 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 {
                     using (HttpContent content = res.Content)
                     {
-                        string message = await res.Content.ReadAsStringAsync();
-
-
+                        if (res.IsSuccessStatusCode)
+                        {
+                            string message = await res.Content.ReadAsStringAsync();
+                            return RedirectToAction("List", "Employee");
+                        }
+                        return View(new Model() { employee = employee, roles = roles });
                     }
                 }
+                
             }
-            return RedirectToAction("List", "Employee");
+
         }
 
 
@@ -441,7 +445,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     if (res.IsSuccessStatusCode)
                     {
                         string message = await res.Content.ReadAsStringAsync();
-                        Console.WriteLine(message);
                         return RedirectToAction("List", "Employee");
                     }
                     else
@@ -455,7 +458,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 }
             }
 
-            return RedirectToAction("List", "Employee");
+            return View(new Model() { employee = employee, roles = roles });
         }
 
 
