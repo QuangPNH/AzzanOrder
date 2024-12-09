@@ -209,8 +209,9 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 }
                 if (emp == null)
                 {
-					TempData["ErrorMes"] = "Login Failed";
-					return RedirectToAction("Login", "Home");
+					TempData["Message"] = "Login Failed";
+                    var model = new Model() { owner = owner, employee = emp };
+                    return View(model);
                 }
             }
             if (a.ToLower().Equals("owner"))
@@ -237,8 +238,9 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 }
                 if (owner == null)
                 {
-                    TempData["ErrorMes"] = "Login Failed";
-                    return RedirectToAction("Login", "Home");
+                    TempData["Message"] = "Login Failed";
+                    var model = new Model() { owner = owner, employee = emp };
+                    return View(model);
                 }
                 else
                 {
