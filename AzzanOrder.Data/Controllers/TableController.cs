@@ -27,10 +27,10 @@ namespace AzzanOrder.Data.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Table>>> GetTables()
         {
-          if (_context.Tables == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tables == null)
+            {
+                return NotFound();
+            }
             return await _context.Tables.ToListAsync();
         }
 
@@ -40,20 +40,21 @@ namespace AzzanOrder.Data.Controllers
             if (_context.Tables == null)
             {
                 return NotFound();
-            }   
+            }
             return await _context.Tables.Where(x => x.EmployeeId == id).ToListAsync();
         }
 
         [HttpGet("GetTableByQr")]
-        public async Task<ActionResult> GetTableByQr(string qr)
+        public async Task<ActionResult> GetTableByQr(string qr, int? employeeId)
         {
             if (_context.Tables == null)
             {
                 return NotFound();
             }
-            
-            var a = await _context.Tables.Where(x => x.Qr.ToLower().Equals(qr.ToLower())).ToListAsync();
-            if(a.Count != 0)
+
+            var a = employeeId.HasValue ? await _context.Tables.FirstOrDefaultAsync(x => x.Qr.ToLower().Equals(qr.ToLower()) && x.EmployeeId == employeeId)
+                : await _context.Tables.FirstOrDefaultAsync(x => x.Qr.ToLower().Equals(qr.ToLower()));
+            if (a != null)
             {
                 return Ok(a);
             }
@@ -64,10 +65,10 @@ namespace AzzanOrder.Data.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<Table>> GetTable(int id)
         {
-          if (_context.Tables == null)
-          {
-              return NotFound();
-          }
+            if (_context.Tables == null)
+            {
+                return NotFound();
+            }
             var table = await _context.Tables.FindAsync(id);
 
             if (table == null)
@@ -81,7 +82,7 @@ namespace AzzanOrder.Data.Controllers
         // PUT: api/Table/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("Update")]
-        public async Task<IActionResult> PutTable([Bind("TableId", "Qr", "Status", "EmployeeId")]Table table)
+        public async Task<IActionResult> PutTable([Bind("TableId", "Qr", "Status", "EmployeeId")] Table table)
         {
             if (!TableExists(table.TableId))
             {
@@ -112,17 +113,17 @@ namespace AzzanOrder.Data.Controllers
         [HttpPost("Add")]
         public async Task<ActionResult<Table>> PostTable(Table table)
         {
-          if (_context.Tables == null)
-          {
-              return Problem("List table are null.");
-          }
-          var tab = new Table() { Qr = table.Qr , Orders = table.Orders, Status = table.Status, EmployeeId = table.EmployeeId};
+            if (_context.Tables == null)
+            {
+                return Problem("List table are null.");
+            }
+            var tab = new Table() { Qr = table.Qr, Orders = table.Orders, Status = table.Status, EmployeeId = table.EmployeeId };
             _context.Tables.Add(tab);
             await _context.SaveChangesAsync();
 
             return Ok(tab);
         }
-        
+
         // DELETE: api/Table/5
         [HttpDelete("Delete/{id}")]
         public async Task<IActionResult> DeleteTable(int id)
@@ -154,7 +155,7 @@ namespace AzzanOrder.Data.Controllers
                 PngByteQRCode qrCode = new PngByteQRCode(qrCodeData);
                 byte[] qrCodeImage = qrCode.GetGraphic(20);
                 string base64Image = Convert.ToBase64String(qrCodeImage);
-                return Ok("data:image/png;base64,"+base64Image);
+                return Ok("data:image/png;base64," + base64Image);
             }
         }
         private bool TableExists(int id)

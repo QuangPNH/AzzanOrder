@@ -210,8 +210,11 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         
                     }
                 }
-
-                if (TempData["ErrorPhone"] != null || TempData["ErrorGmail"] != null)
+                if(employeeToSend.RoleId == null)
+                {
+                    TempData["ErrorRole"] = "Role is required";
+                }
+                if (TempData["ErrorPhone"] != null || TempData["ErrorGmail"] != null || TempData["ErrorRole"] != null)
                 {
                     return View(new Model() { employee = employee, roles = roles });
                 }

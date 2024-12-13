@@ -53,6 +53,7 @@
                                             <input asp-for="employee.Gender" type="radio" class="form-check-input" value=false>
                                             <span class="form-check-label">Female</span>
                                         </label>
+                                        
                                     </div>
                                 </div>
                             </fieldset>
@@ -90,7 +91,10 @@
                                                 <span class="form-check-label">@item.RoleName</span>
                                             </label>
                                         }
-                                        <span asp-validation-for="employee.RoleId" class="text-danger"></span>
+                                        @if (TempData["ErrorRole"] != null)
+                                        {
+                                            <span class="text-danger">@TempData["ErrorRole"]</span>
+                                        }
                                     </div>
                                 </div>
                             </fieldset>

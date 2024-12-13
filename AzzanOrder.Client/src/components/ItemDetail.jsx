@@ -18,10 +18,10 @@ const ItemDetail = ({ closeModal, imageSrc, key, title, price, discount, cate, d
     const [selectedIce, setSelectedIce] = useState('50');
     const [currentQuantity, setCurrentQuantity] = useState(1);
     const [selectedToppings, setSelectedToppings] = useState([]);
-
+    const manaId = getCookie("tableqr");
     useEffect(() => {
         fetchProducts({ cate });
-        fetchToppings();
+        fetchToppings(manaId.split('/')[1]);
     }, []);
 
     const fetchProducts = async (category) => {
@@ -35,9 +35,9 @@ const ItemDetail = ({ closeModal, imageSrc, key, title, price, discount, cate, d
         }
     };
 
-    const fetchToppings = async () => {
+    const fetchToppings = async (manaId) => {
         try {
-            const response = await fetch(API_URLS.API + `MenuItem/Category/TOPPING`);
+            const response = await fetch(API_URLS.API + `MenuItem/Category/TOPPING?id=${manaId}`);
             const data = await response.json();
             setToppings(data);
         } catch (error) {
