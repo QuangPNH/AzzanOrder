@@ -391,7 +391,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 WorkAddress = employee.WorkAddress,
                 ManagerId = emp.EmployeeId,
                 OwnerId = emp.OwnerId,
-                IsDelete = false
+                IsDelete = false,
+                Role = role
                 
             };
 
@@ -441,9 +442,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 }
                 try
                 {
-                    // Send update request with modified JSON content
-                    var content = new StringContent(employeeJson, System.Text.Encoding.UTF8, "application/json");
-                    HttpResponseMessage res = await client.PutAsync(_apiUrl + "Employee/Update", content);
+                    Console.WriteLine(employeeToUpdate);
+                    HttpResponseMessage res = await client.PutAsJsonAsync(_apiUrl + "Employee/Update", employeeToUpdate);
 
                     if (res.IsSuccessStatusCode)
                     {

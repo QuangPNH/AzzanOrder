@@ -323,6 +323,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
         {
 
             Owner emp = new Owner();
+            Role role = new Role();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
             {
                 emp = JsonConvert.DeserializeObject<Owner>(empJson);
@@ -337,8 +338,20 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 }
             }
             employee.RoleId = 1;
+            using (HttpClient client = new HttpClient())
+            {
+                using (HttpResponseMessage addResponse = await client.GetAsync(_apiUrl + $"Role/{1}"))
+                {
+                    if (addResponse.IsSuccessStatusCode)
+                    {
+                        string mes = await addResponse.Content.ReadAsStringAsync();
+                        role = JsonConvert.DeserializeObject<Role>(mes);
+                    }
+                }
+            }
             employee.OwnerId = emp.OwnerId;
             employee.IsDelete = false;
+            employee.Role = role;
             using (HttpClient client = new HttpClient())
             {
                 using (HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Employee/Phone/{employee.Phone}"))
@@ -365,11 +378,12 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         }
                     }
                 }
-
+                
                 if (TempData["ErrorPhone"] != null || TempData["ErrorGmail"] != null)
                 {
                     return View(new Model() { employee = employee });
                 }
+                
                 var json = JsonConvert.SerializeObject(employee);
                 var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 

@@ -196,6 +196,13 @@ public class CheckoutController : Controller
                     {
                         owner.IsFreeTrial = true;
                         // Phone number does not exist, add new owner
+                        using (HttpResponseMessage getRes = await client.PostAsJsonAsync($"{_config._apiUrl}Bank/Add", owner.Bank))
+                        {
+                            if (getRes.IsSuccessStatusCode)
+                            {
+                                string mes = await getRes.Content.ReadAsStringAsync();
+                            }
+                        }
                         HttpResponseMessage addResponse = await client.PostAsJsonAsync($"{_config._apiUrl}Owner/Add/", owner);
                         if (addResponse.IsSuccessStatusCode)
                         {

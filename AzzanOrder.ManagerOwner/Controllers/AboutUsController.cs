@@ -68,7 +68,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             return View(viewModel);
         }
 
-        public async Task<IActionResult> UpdateAsync(int id)
+        public async Task<IActionResult> Update(int id)
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             if (authorizeLogin.Equals("owner"))
@@ -123,7 +123,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
         }
 
         [HttpGet]
-        public IActionResult AddAsync()
+        public IActionResult Add()
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             if (authorizeLogin.Equals("owner"))
@@ -148,7 +148,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
         }
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> AddPost(About about)
+        public async Task<IActionResult> Add(About about)
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             if (authorizeLogin.Equals("owner"))
@@ -200,7 +200,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> UpdatePost(About about)
+        public async Task<IActionResult> Update(About about)
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             if (authorizeLogin.Equals("owner"))
