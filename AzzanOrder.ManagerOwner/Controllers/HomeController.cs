@@ -654,7 +654,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         AddFirstManagerAsync(owner);
                     }
                     
-                    
                     var b = JsonConvert.SerializeObject(owner);
                     HttpContext.Response.Cookies.Append("LoginInfo", b, new CookieOptions
                     {
