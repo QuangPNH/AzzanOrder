@@ -54,19 +54,26 @@ const VoucherScreen = () => {
 
     const fetchVouchers = async (category, manaId) => {
         try {
-
-            const response = category == '' ? await fetch(API_URLS.API + `VoucherDetail/ListVoucherDetail?employeeId=${manaId}`) : await fetch(API_URLS.API + `VoucherDetail/categoryId?categoryId=${category}&employeeId=${manaId}`);
+            const holdId = manaId;
+            const response = category == '' ? await fetch(API_URLS.API + `VoucherDetail/ListVoucherDetail?employeeId=${holdId}`) : await fetch(API_URLS.API + `VoucherDetail/categoryId?categoryId=${category}&employeeId=${holdId}`);
             const data = await response.json();
+            
+            if (category == '') {
             let a = [];
             for (let i of data) {
                 if (i.endDate > new Date().toISOString() || i.endDate === null) {
                     a.push(i);
                 }
             }
-            if (category == '') {
                 setAllVouchers(a);
             } else {
                 setAllVouchers(false);
+            let a = [];
+            for (let i of data) {
+                if (i.voucherDetail.endDate > new Date().toISOString() || i.voucherDetail.endDate === null) {
+                    a.push(i);
+                }
+            }
                 setVouchers(a);
 
             }
@@ -100,8 +107,9 @@ const VoucherScreen = () => {
     const handleDropdownChange = (selectedCategory) => {
         if (manaId) {
             fetchVouchers(selectedCategory, manaId.split('/')[1]);
+        }else{
+            fetchVouchers(selectedCategory, '');
         }
-        fetchVouchers(selectedCategory, '');
     };
 
 

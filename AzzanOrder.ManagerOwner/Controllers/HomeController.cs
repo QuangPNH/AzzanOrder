@@ -23,7 +23,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
         {
             _logger = logger;
         }
-
+        public async Task<IActionResult> Default()
+        {
+            return View();
+        }
         public async Task<IActionResult> IndexAsync()
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
@@ -177,7 +180,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
         //Login method for both owner and manager
         [HttpPost]
-        public async Task<IActionResult> LoginAction(Employee employee)
+        public async Task<IActionResult> Login(Employee employee)
         {
             Employee emp = null;
             Owner owner = null;
@@ -206,7 +209,9 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 }
                 if (emp == null)
                 {
-                    return RedirectToAction("Login", "Home");
+					TempData["Message"] = "Login Failed";
+                    var model = new Model() { owner = owner, employee = emp };
+                    return View(model);
                 }
             }
             if (a.ToLower().Equals("owner"))
@@ -233,7 +238,9 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 }
                 if (owner == null)
                 {
-                    return RedirectToAction("Login", "Home");
+                    TempData["Message"] = "Login Failed";
+                    var model = new Model() { owner = owner, employee = emp };
+                    return View(model);
                 }
                 else
                 {
@@ -717,11 +724,22 @@ namespace AzzanOrder.ManagerOwner.Controllers
         }
 
         [HttpPost]
-        public IActionResult OwnerRegister([FromBody] Owner owner)
+        public async Task<IActionResult> OwnerRegister([FromBody] Owner owner)
         {
             try
             {
-                AddFirstManagerAsync(owner);
+                using (HttpClient client = new HttpClient())
+                {
+                    try
+                    {
+                        HttpResponseMessage res = await client.GetAsync(_apiUrl + "/Employee/FirstEmployee/" + owner.OwnerId);
+                        if (!res.IsSuccessStatusCode)
+                        {
+                            AddFirstManagerAsync(owner);
+                        }
+                    }
+                    catch (HttpRequestException e) { }
+                }            
                 var ownerJson = JsonConvert.SerializeObject(owner);
                 HttpContext.Response.Cookies.Append("LoginInfo", ownerJson, new CookieOptions
                 {

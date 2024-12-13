@@ -11,9 +11,9 @@
                     <div class="col-sm-10">
                         <input asp-for="Qr" class="form-control" placeholder="QR code">
                         <span asp-validation-for="Qr" class="text-danger"></span>
-                        @if (TempData["ErrorMes"] != null)
+                        @if (TempData["ErrorTable"] != null)
                         {
-                            <span class="text-danger">@TempData["ErrorMes"]</span>
+                            <span class="text-danger">@TempData["ErrorTable"]</span>
                         }
                     </div>
                 </div>

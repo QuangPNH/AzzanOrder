@@ -20,12 +20,15 @@ const FeedbackScreen = () => {
             window.location.href = '';
         }
     }, []);
-
+    const employeeId = getCookie('tableqr').split('/')[1];
     const fetchContentFromAPI = async (id) => {
         try {
             const response = await fetch(API_URLS.API + `Feedback/ByMemberId/${id}`);
             if (response.ok) {
                 const data = await response.json();
+                if(data.content.split('/')[1] != null){
+                    data.content = data.content.split('/')[1];
+                }
                 setContent(data);
             }
         } catch (error) {
@@ -44,7 +47,7 @@ const FeedbackScreen = () => {
                 ...feedback,
                 memberId: feedback?.memberId || JSON.parse(getCookie('memberInfo')).memberId
             };
-
+            feedbackData.content = `${employeeId}/` + feedbackData.content;
             const response = await fetch(url, {
                 method: method,
                 headers: {

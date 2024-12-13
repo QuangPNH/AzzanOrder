@@ -11,42 +11,45 @@
                 <a href="@Url.Action("Add", "Manager")" class="btn btn-primary">Add New Manager</a>
             </div>
             <br/>
-            <table class="table table-striped table-hover">
-                <thead>
-                    <tr>
-                        <th style="width:5%">No.</th>
-                        <th style="width:20%">Employee Name</th>
-                        <th style="width:20%">Phone Number</th>
-                        <th class="d-none d-md-table-cell" style="width:20%">Email</th>
-                        <th class="d-none d-md-table-cell" style="width:20%">Date of Birth</th>
-                        <th>Menu</th>
-                        <th>Actions</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    @{
-                        int position = 1;
-                    }
-                    @foreach (var emp in Model.employees)
-                    {
+            <div class="card-body">
+                <table id="myTable" class="table table-striped table-hover">
+                    <thead>
                         <tr>
-                            <td>@position</td>
-                            <td>@emp.EmployeeName</td>
-                            <td>@emp.Phone</td>
-                            <td class="d-none d-md-table-cell">@emp.Gmail</td>
-                            <td class="d-none d-md-table-cell">@emp.BirthDate</td>
-                            <td class="table-action">
-                                <a href="@Url.Action("MenuList", "Manager", new { id = emp.EmployeeId})">Link</a>
-                            </td>
-                            <td class="table-action">
-                                <a href="@Url.Action("Update", "Manager", new { id = emp.EmployeeId})"><i class="align-middle" data-feather="edit-2"></i></a>
-                                <a href="@Url.Action("Delete", "Manager", new { id = emp.EmployeeId})"><i class="align-middle" data-feather="trash"></i></a>
-                            </td>
+                            <th style="width:5%">No.</th>
+                            <th style="width:20%">Employee Name</th>
+                            <th style="width:20%">Phone Number</th>
+                            <th class="d-none d-md-table-cell" style="width:20%">Email</th>
+                            <th class="d-none d-md-table-cell" style="width:20%">Date of Birth</th>
+                            <th>Menu</th>
+                            <th>Actions</th>
                         </tr>
-                        position++;
-                    }
-                </tbody>
-            </table>
+                    </thead>
+                    <tbody>
+                        @{
+                            int position = 1;
+                        }
+                        @foreach (var emp in Model.employees)
+                        {
+                            <tr>
+                                <td>@position</td>
+                                <td>@emp.EmployeeName</td>
+                                <td>@emp.Phone</td>
+                                <td class="d-none d-md-table-cell">@emp.Gmail</td>
+                                <td class="d-none d-md-table-cell">@emp.BirthDate</td>
+                                <td class="table-action">
+                                    <a href="@Url.Action("MenuList", "Manager", new { id = emp.EmployeeId})">Link</a>
+                                </td>
+                                <td class="table-action">
+                                    <a href="@Url.Action("Update", "Manager", new { id = emp.EmployeeId})"><i class="align-middle" data-feather="edit-2"></i></a>
+                                    <a href="@Url.Action("Delete", "Manager", new { id = emp.EmployeeId})"><i class="align-middle" data-feather="trash"></i></a>
+                                </td>
+                            </tr>
+                            position++;
+                        }
+                    </tbody>
+                </table>
+            </div>
+           
         </div>
     </div>
 </div>

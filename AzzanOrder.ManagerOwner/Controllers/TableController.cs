@@ -77,7 +77,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
         [HttpGet]
         public IActionResult Add()
         {
-            ViewBag.QrCodeUrl = null;
             return View();
         }
 
@@ -98,11 +97,12 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         table.Status = true;
                         string json = JsonConvert.SerializeObject(table);
                         StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-                        using(HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Table/GetTableByQr?qr={table.Qr}"))
+                       
+                        using (HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Table/GetTableByQr?qr={table.Qr}&employeeId={table.EmployeeId}"))
                         {
                             if (res.IsSuccessStatusCode)
                             {
-                                TempData["ErrorMes"] = "This name is exit";
+                                TempData["ErrorTable"] = "This name is exist";
                                 return View(table);
                             }
                         }
@@ -179,13 +179,19 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         table.EmployeeId = 1;
                         table.Status = true;
                         string json = JsonConvert.SerializeObject(table);
+                        Table t = new Table();
                         StringContent content = new StringContent(json, Encoding.UTF8, "application/json");
-                        using (HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Table/GetTableByQr?qr={table.Qr}"))
+                        using (HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Table/GetTableByQr?qr={table.Qr}&employeeId={table.EmployeeId}"))
                         {
                             if (res.IsSuccessStatusCode)
                             {
-                                TempData["ErrorMes"] = "This name is exit";
-                                return View(table);
+                                string data = await res.Content.ReadAsStringAsync();
+                                var a = JsonConvert.DeserializeObject<Table>(data);
+                                if(table.TableId != a.TableId)
+                                {
+                                    TempData["ErrorTable"] = "This name is exist";
+                                    return View(table);
+                                }                                        
                             }
                         }
                         HttpResponseMessage response = await client.PutAsync(_apiUrl + "Table/Update", content);

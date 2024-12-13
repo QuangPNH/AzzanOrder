@@ -2,13 +2,14 @@
 using AzzanOrder.ManagerOwner.Models;
 using Microsoft.AspNetCore.Mvc;
 using Newtonsoft.Json;
+using Twilio.TwiML.Voice;
 using static System.Net.Mime.MediaTypeNames;
 
 namespace AzzanOrder.ManagerOwner.Controllers
 {
     public class ManagerController : Controller
     {
-        private readonly string _apiUrl = new Config()._apiUrl;
+        private readonly string _apiUrl = new Models.Config()._apiUrl;
         public async Task<IActionResult> List(int? page)
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
@@ -94,7 +95,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
         // POST: Employee/Add
         [HttpPost]
         [ValidateAntiForgeryToken]
-        public async Task<IActionResult> Add(Employee employee, IFormFile Image)
+        public async Task<IActionResult> Add(Employee employee)
         {
             Owner emp = new Owner();
             var e = new Employee();
@@ -127,9 +128,32 @@ namespace AzzanOrder.ManagerOwner.Controllers
             employee.OwnerId = emp.OwnerId;
             employee.IsDelete = false;
             employee.Role = role;
+
             using (HttpClient client = new HttpClient())
             {
-              
+                using (HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Employee/Phone/{employee.Phone}"))
+                {
+                    if (res.IsSuccessStatusCode)
+                    {
+                        TempData["ErrorPhone"] = "Phone is already in use.";
+                    }
+                }
+                using (HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Employee/Gmail/{employee.Gmail}"))
+                {
+                    if (res.IsSuccessStatusCode)
+                    {
+                        TempData["ErrorGmail"] = "Email is already in use.";
+
+                    }
+                }
+
+
+
+                if (TempData["ErrorPhone"] != null || TempData["ErrorGmail"] != null)
+                {
+                    return View(new Model() { employee = employee });
+                }
+
 
                 using (HttpResponseMessage response = await client.PostAsJsonAsync(_apiUrl + "Employee/Add/", employee))
                 {
@@ -165,13 +189,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
                     }
                 }
-
-
-
-
             }
-
-            return View(employee);
+            return View(new Model() { employee = employee });
         }
         private async void AddBaseMenu(List<ItemCategory> itemCategories, Employee employee)
         {
@@ -302,6 +321,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
         [ValidateAntiForgeryToken]
         public async Task<IActionResult> Update(Employee employee, IFormFile Image)
         {
+
             Owner emp = new Owner();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
             {
@@ -321,6 +341,35 @@ namespace AzzanOrder.ManagerOwner.Controllers
             employee.IsDelete = false;
             using (HttpClient client = new HttpClient())
             {
+                using (HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Employee/Phone/{employee.Phone}"))
+                {
+                    if (res.IsSuccessStatusCode)
+                    {
+                        string mess = await res.Content.ReadAsStringAsync();
+                        var a = JsonConvert.DeserializeObject<Employee>(mess);
+                        if (a.EmployeeId != employee.EmployeeId)
+                        {
+                            TempData["ErrorPhone"] = "Phone is already in use.";
+                        }
+                    }
+                }
+                using (HttpResponseMessage res = await client.GetAsync(_apiUrl + $"Employee/Gmail/{employee.Gmail}"))
+                {
+                    if (res.IsSuccessStatusCode)
+                    {
+                        string mess = await res.Content.ReadAsStringAsync();
+                        var a = JsonConvert.DeserializeObject<Employee>(mess);
+                        if (a.EmployeeId != employee.EmployeeId)
+                        {
+                            TempData["ErrorGmail"] = "Email is already in use.";
+                        }
+                    }
+                }
+
+                if (TempData["ErrorPhone"] != null || TempData["ErrorGmail"] != null)
+                {
+                    return View(new Model() { employee = employee });
+                }
                 var json = JsonConvert.SerializeObject(employee);
                 var content = new StringContent(json, System.Text.Encoding.UTF8, "application/json");
 

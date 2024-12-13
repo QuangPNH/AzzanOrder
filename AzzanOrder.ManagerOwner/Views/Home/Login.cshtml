@@ -21,7 +21,7 @@
 				<div class="card">
 					<div class="card-body">
 						<div class="m-sm-4">
-							<form asp-action="LoginAction" asp-controller="Home" method="post" enctype="multipart/form-data">
+							<form asp-action="Login" asp-controller="Home" method="post" enctype="multipart/form-data">
 								<div class="mb-3">
 									<label class="form-label">Phone</label>
 									<input asp-for="employee.Phone" class="form-control form-control-lg" type="phone" name="phone" placeholder="Enter your phone" />
@@ -39,7 +39,7 @@
 								</div>
 								
 								<div class="text-center mt-3">
-									<a href="@Url.Action("Subscribe", "Home")" class="btn btn-lg btn-primary">Subcribe</a>
+									<a href="@Url.Action("Subscribe", "Home")" class="btn btn-lg btn-primary">Subscribe</a>
 									
 								</div>
 							</form>

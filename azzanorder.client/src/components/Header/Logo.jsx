@@ -44,8 +44,9 @@ const Logo = () => {
                     aspect-ratio: 4.67;
                     cursor: pointer;
                     object-position: center;
-                    width: 15%;
+                    width: 125px;
                     height: 125%;
+                    max-width: 100%;
                     margin: 0 0;
                 }
             `}</style>

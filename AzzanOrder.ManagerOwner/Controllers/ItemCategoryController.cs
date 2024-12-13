@@ -102,6 +102,11 @@ namespace AzzanOrder.ManagerOwner.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Add(ItemCategory itemCategory)
 		{
+            if (itemCategory.Description.ToLower().Contains("topping"))
+            {
+                TempData["ErrorMes"] = "Topping is exist and only have one";
+                return View(itemCategory);
+            }
             Employee emp = new Employee();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
             {
@@ -187,6 +192,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 		[ValidateAntiForgeryToken]
 		public async Task<IActionResult> Update(ItemCategory itemCategory)
         {
+            
             Employee emp = new Employee();
             if (HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string empJson))
             {
@@ -194,7 +200,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
             }
             if (itemCategory.Description.Contains("TOPPING"))
             {
-                return RedirectToAction("List");
+                TempData["ErrorMes"] = "Topping is exist and only have one";
+                return View(itemCategory);
             }
             
             var isCombo = !Request.Form["IsCombo"].IsNullOrEmpty();

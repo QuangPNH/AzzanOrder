@@ -1,0 +1,134 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Advertisement Page</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: lightblue;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            background-color: #ffffff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .banner {
+            position: relative;
+            width: 100%;
+            max-width: 750px;
+            text-align: left;
+            height: 500px;
+            margin-bottom: 20px;
+            overflow: hidden;
+            border-radius: 10px;
+            background-color: black;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+        }
+
+            .banner img {
+                position: absolute;
+                width: 100%;
+                height: 100%;
+                object-fit: contain;
+                opacity: 0;
+                transition: opacity 1s ease-in-out;
+            }
+
+                .banner img.active {
+                    opacity: 1;
+                }
+
+        h1 {
+            
+            font-size: 24px;
+            color: #333333;
+            margin-bottom: 20px;
+        }
+        .button{
+            flex-direction: row;
+        }
+
+        .btn {
+            display: inline-block;
+            margin: 10px;
+            padding: 10px 20px;
+            font-size: 12px;
+            color: #ffffff;
+            background-color: #007BFF;
+            border: none;
+            border-radius: 5px;
+            text-decoration: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+            .btn:hover {
+                background-color: #0056b3;
+            }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>
+            <b>
+                Welcome to Our Service
+            </b>
+        </h1>
+
+        <div class="banner">
+            <img src="~/img/photos/screenshot 2024-12-09 012341.png" alt="Image 1" class="active" />
+            <img src="~/img/photos/screenshot 2024-12-09 013939.png" alt="Image 2" />
+            <img src="~/img/photos/screenshot 2024-12-09 013108.png" alt="Image 3" />
+            <img src="~/img/photos/screenshot 2024-12-09 021945.png" alt="Image 4" />
+            <img src="~/img/photos/screenshot 2024-12-09 013503.png" alt="Image 5" />            
+            <img src="~/img/photos/screenshot 2024-12-09 014032.png" alt="Image 6" />
+        </div>
+        
+        <span>
+            <i>★Collaborate with PayOS to automate purchase★</i>
+        </span>
+        <span>
+            <i>★Support common banks in Vietnam★</i>
+        </span>
+        <span>
+            <i>★Organize purchases and orders to make, reduce headache and memorization for your worker★</i>
+        </span>
+        <span>
+            <i>★Royalty programs and easy purchase attracts royal customers★</i>
+        </span>
+        <span>
+            <i>★Organize your cafeteria without any extra piece of hardware or maintenance cost★</i>
+        </span>
+        <div class="button">
+            <a href="@Url.Action("Login", "Home")" class="btn">Login</a>
+            <a href="https://payos.vn/" class="btn">PayOS</a>
+            <a href="https://polite-island-0f3a2cb00.4.azurestaticapps.net/" class="btn">Visit out customer page</a>
+        </div>
+    </div>
+
+    <script>
+        const images = document.querySelectorAll('.banner img');
+        let currentIndex = 0;
+        setInterval(() => {
+            images[currentIndex].classList.remove('active');
+            currentIndex = (currentIndex + 1) % images.length;
+            images[currentIndex].classList.add('active');
+        }, 7000); 
+    </script>
+</body>
+</html>
