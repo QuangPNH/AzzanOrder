@@ -20,6 +20,7 @@ namespace AzzanOrder.Data.Controllers
         {
             _context = context;
         }
+
         [HttpGet("GetAllItemCategoriesValid")]
         public async Task<ActionResult<IEnumerable<ItemCategory>>> GetAllItemCategoriesValid(int? id)
         {
@@ -58,7 +59,6 @@ namespace AzzanOrder.Data.Controllers
                         .ToList();
                 }
             }
-
             return Ok(itemCategories);
         }
         [HttpGet("GetAllItemCategories")]
@@ -124,7 +124,6 @@ namespace AzzanOrder.Data.Controllers
                         .ToList();
                 }
             }
-
             return Ok(itemCategories);
         }
 
@@ -238,7 +237,6 @@ namespace AzzanOrder.Data.Controllers
             };
             _context.ItemCategories.Add(ic);
             await _context.SaveChangesAsync();
-
             return Ok(ic);
         }
 

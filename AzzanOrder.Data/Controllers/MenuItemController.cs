@@ -7,6 +7,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using AzzanOrder.Data.Models;
 using AzzanOrder.Data.DTO;
+using System.ComponentModel.DataAnnotations;
 
 namespace AzzanOrder.Data.Controllers
 {
@@ -23,15 +24,118 @@ namespace AzzanOrder.Data.Controllers
 
         // GET: api/MenuItem
         [HttpGet("GetAllMenuItem")]
-        public async Task<ActionResult<IEnumerable<MenuItem>>> GetMenuItems(int? employeeId)
-        {
-            if (_context.MenuItems == null)
-            {
-                return NotFound();
-            }
-            var a = employeeId.HasValue ? await _context.MenuItems.Include(mi => mi.MenuCategories).ThenInclude(mi=>mi.ItemCategory).Where(mi => mi.EmployeeId == employeeId).ToListAsync() : await _context.MenuItems.Include(mi => mi.MenuCategories).ThenInclude(mi => mi.ItemCategory).ToListAsync();
-            return a;
-        }
+		public async Task<ActionResult<IEnumerable<MenuItem>>> GetMenuItems(int? employeeId)
+		{
+			if (_context.MenuItems == null)
+			{
+				return NotFound();
+			}
+
+			var menuItems = employeeId.HasValue
+				? await _context.MenuItems
+					.Include(mi => mi.MenuCategories)
+					.ThenInclude(mc => mc.ItemCategory)
+					.Include(mi => mi.Employee)
+					.Where(mi => mi.EmployeeId == employeeId & mi.IsAvailable != null)
+					.Select(mi => new MenuItem
+					{
+						MenuItemId = mi.MenuItemId,
+						ItemName = mi.ItemName,
+						Price = mi.Price,
+						Description = mi.Description,
+						Discount = mi.Discount,
+						Image = mi.Image,
+						IsAvailable = mi.IsAvailable,
+						EmployeeId = mi.EmployeeId,
+						Employee = new Employee
+						{
+							EmployeeId = mi.Employee.EmployeeId,
+							EmployeeName = mi.Employee.EmployeeName,
+							Gender = mi.Employee.Gender,
+							Phone = mi.Employee.Phone,
+							Gmail = mi.Employee.Gmail,
+							BirthDate = mi.Employee.BirthDate,
+							RoleId = mi.Employee.RoleId,
+							HomeAddress = mi.Employee.HomeAddress,
+							WorkAddress = mi.Employee.WorkAddress,
+							Image = "",
+							ManagerId = mi.Employee.ManagerId,
+							OwnerId = mi.Employee.OwnerId,
+							IsDelete = mi.Employee.IsDelete
+						},
+						MenuCategories = mi.MenuCategories.Select(mc => new MenuCategory
+						{
+							MenuItemId = mc.MenuItemId,
+							ItemCategoryId = mc.ItemCategoryId,
+							ItemCategory = new ItemCategory
+							{
+								ItemCategoryId = mc.ItemCategory.ItemCategoryId,
+								ItemCategoryName = mc.ItemCategory.ItemCategoryName,
+								Discount = mc.ItemCategory.Discount,
+								Image = "",
+								EmployeeId = mc.ItemCategory.EmployeeId,
+								IsDelete = mc.ItemCategory.IsDelete,
+								Description = mc.ItemCategory.Description,
+								StartDate = mc.ItemCategory.StartDate,
+								EndDate = mc.ItemCategory.EndDate,
+								IsCombo = mc.ItemCategory.IsCombo
+							}
+						}).ToList()
+					})
+					.ToListAsync()
+				: await _context.MenuItems
+					.Include(mi => mi.MenuCategories)
+					.ThenInclude(mc => mc.ItemCategory)
+					.Include(mi => mi.Employee)
+					.Select(mi => new MenuItem
+					{
+						MenuItemId = mi.MenuItemId,
+						ItemName = mi.ItemName,
+						Price = mi.Price,
+						Description = mi.Description,
+						Discount = mi.Discount,
+						Image = mi.Image,
+						IsAvailable = mi.IsAvailable,
+						EmployeeId = mi.EmployeeId,
+						Employee = new Employee
+						{
+							EmployeeId = mi.Employee.EmployeeId,
+							EmployeeName = mi.Employee.EmployeeName,
+							Gender = mi.Employee.Gender,
+							Phone = mi.Employee.Phone,
+							Gmail = mi.Employee.Gmail,
+							BirthDate = mi.Employee.BirthDate,
+							RoleId = mi.Employee.RoleId,
+							HomeAddress = mi.Employee.HomeAddress,
+							WorkAddress = mi.Employee.WorkAddress,
+							Image = "",
+							ManagerId = mi.Employee.ManagerId,
+							OwnerId = mi.Employee.OwnerId,
+							IsDelete = mi.Employee.IsDelete
+						},
+						MenuCategories = mi.MenuCategories.Select(mc => new MenuCategory
+						{
+							MenuItemId = mc.MenuItemId,
+							ItemCategoryId = mc.ItemCategoryId,
+							ItemCategory = new ItemCategory
+							{
+								ItemCategoryId = mc.ItemCategory.ItemCategoryId,
+								ItemCategoryName = mc.ItemCategory.ItemCategoryName,
+								Discount = mc.ItemCategory.Discount,
+								Image = "",
+								EmployeeId = mc.ItemCategory.EmployeeId,
+								IsDelete = mc.ItemCategory.IsDelete,
+								Description = mc.ItemCategory.Description,
+								StartDate = mc.ItemCategory.StartDate,
+								EndDate = mc.ItemCategory.EndDate,
+								IsCombo = mc.ItemCategory.IsCombo
+							}
+						}).ToList()
+					})
+					.ToListAsync();
+
+			return menuItems;
+		}
 
         [HttpGet("ItemCategoryId/{itemCategoryId}")]
         public async Task<ActionResult> GetMenuItemByItemCategory(int itemCategoryId)
@@ -40,7 +144,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound();
             }
-            var b = await _context.MenuCategories.Include(mi => mi.MenuItem).Where(mi => mi.ItemCategoryId == itemCategoryId && mi.MenuItem.IsAvailable == true).ToListAsync();
+            var b = await _context.MenuCategories.Include(mi => mi.MenuItem).Where(mi => mi.ItemCategoryId == itemCategoryId && mi.MenuItem.IsAvailable != null).ToListAsync();
 
             //var a = employeeId.HasValue ? await _context.MenuItems.Include(mi => mi.MenuCategories).ThenInclude(mi => mi.ItemCategory).Where(mi => mi.EmployeeId == employeeId).ToListAsync() : await _context.MenuItems.Include(mi => mi.MenuCategories).ThenInclude(mi => mi.ItemCategory).ToListAsync();
             return Ok(b);
@@ -118,40 +222,37 @@ namespace AzzanOrder.Data.Controllers
             return Ok(mi);
         }
 
-        // DELETE: api/MenuItem/5
-        [HttpDelete("Delete/{id}")]
-        public async Task<IActionResult> DeleteMenuItem(int id)
-        {
-            if (_context.MenuItems == null)
-            {
-                return NotFound();
-            }
-            var menuItem = await _context.MenuItems.FindAsync(id);
-            if (menuItem == null)
-            {
-                return NotFound();
-            }
-            menuItem.IsAvailable = false;
-            //foreach(var menuCategory in menuItem.MenuCategories)
-            //{
-            //    _context.MenuCategories.Remove(menuCategory);
-            //}
+		// DELETE: api/MenuItem/5
+		[HttpDelete("Delete/{id}")]
+		public async Task<IActionResult> DeleteMenuItem(int id)
+		{
+			if (_context.MenuItems == null)
+			{
+				return NotFound();
+			}
+			var menuItem = await _context.MenuItems.FindAsync(id);
+			if (menuItem == null)
+			{
+				return NotFound();
+			}
+			menuItem.IsAvailable = null; // Set IsAvailable to null
 
-            _context.MenuItems.Update(menuItem);
-            await _context.SaveChangesAsync();
+			_context.MenuItems.Update(menuItem);
+			await _context.SaveChangesAsync();
 
-            return Ok("Delete success");
-        }
+			return Ok("Delete success");
+		}
 
         private bool MenuItemExists(int id)
         {
             return (_context.MenuItems?.Any(e => e.MenuItemId == id)).GetValueOrDefault();
         }
+
         // GET: api/MenuItem/Top4
         [HttpGet("Top4")]
         public async Task<ActionResult<IEnumerable<MenuItemDTO>>> GetTop4MenuItems(int? id)
         {
-            var query = _context.MenuItems.Where(m => m.IsAvailable == true);
+            var query = _context.MenuItems.Where(m => m.IsAvailable != null);
 
             if (id.HasValue)
             {
@@ -192,7 +293,7 @@ namespace AzzanOrder.Data.Controllers
                 mc.ItemCategory.Description.ToLower().Contains(categoryname.ToLower()) &&
                 (mc.ItemCategory.EndDate == null && mc.ItemCategory.StartDate == null ||
                 mc.ItemCategory.EndDate > DateTime.Now && mc.ItemCategory.StartDate < DateTime.Now && mc.ItemCategory.IsCombo == false)) &&
-                m.IsAvailable == true);
+                m.IsAvailable != null);
 
             if (id.HasValue)
             {
@@ -234,7 +335,7 @@ namespace AzzanOrder.Data.Controllers
                 .Where(m => m.MenuCategories.Any(mc =>
                     (mc.ItemCategory.EndDate == null && mc.ItemCategory.StartDate == null ||
                     mc.ItemCategory.EndDate > DateTime.Now && mc.ItemCategory.StartDate < DateTime.Now && mc.ItemCategory.IsCombo == false)) &&
-                    m.IsAvailable == true);
+                    m.IsAvailable != null);
 
             if (id.HasValue)
             {
@@ -270,7 +371,7 @@ namespace AzzanOrder.Data.Controllers
 			var menuItems = await _context.MenuItems
                 .Include(mi => mi.OrderDetails)
                 .ThenInclude(od => od.Order)
-                .Where(mi => mi.IsAvailable == true && mi.Employee.OwnerId == id && mi.Employee.IsDelete != true)
+                .Where(mi => mi.IsAvailable != null && mi.Employee.OwnerId == id && mi.Employee.IsDelete != true)
                 .Select(mi => new
                 {
                     mi.MenuItemId,
@@ -303,7 +404,7 @@ namespace AzzanOrder.Data.Controllers
 			var menuItems = await _context.MenuItems
 				.Include(mi => mi.OrderDetails)
 				.ThenInclude(od => od.Order)
-				.Where(mi => mi.IsAvailable == true && mi.Employee.OwnerId == id && mi.Employee.IsDelete != true)
+				.Where(mi => mi.IsAvailable != null && mi.Employee.OwnerId == id && mi.Employee.IsDelete != true)
 				.Select(mi => new
 				{
 					mi.MenuItemId,
