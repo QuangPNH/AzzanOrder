@@ -1,4 +1,4 @@
-﻿import React, { useState, useEffect, useRef } from 'react';
+﻿import React, { useState, useEffect, useRef} from 'react';
 import { useLocation } from "react-router-dom";
 import { postOrder } from './PriceCalculator/PlaceOrderButton'
 import { calculateTotal } from './Cart'
@@ -22,8 +22,8 @@ const Homepage = () => {
     const search = useLocation().search;
     const id = new URLSearchParams(search).get("tableqr");
     const status = new URLSearchParams(search).get("status");
-
-    const hasProcessedOrder = useRef(false);
+   
+       const hasProcessedOrder = useRef(false);
 
     useEffect(() => {
         const memberInfo = getCookie('memberInfo');

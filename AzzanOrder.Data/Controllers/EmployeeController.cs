@@ -150,7 +150,7 @@ namespace AzzanOrder.Data.Controllers
             {
                 return NotFound("Employee not exist");
             }
-            if (employee == null)
+            if (employee.Role == null)
             {
                 var a = await _context.Roles.FirstOrDefaultAsync(r => r.RoleId == employee.RoleId);
                 employee.Role = a;

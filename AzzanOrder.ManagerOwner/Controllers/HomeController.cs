@@ -634,6 +634,13 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     {
                         using (HttpClient client = new HttpClient())
                         {
+                            using(HttpResponseMessage getResponse = await client.PostAsJsonAsync(_apiUrl + $"Bank/Add", owner.Bank))
+                            {
+                                if (getResponse.IsSuccessStatusCode)
+                                {
+                                    string mes = await getResponse.Content.ReadAsStringAsync();
+                                }
+                            }
                             using (HttpResponseMessage getResponse = await client.PostAsJsonAsync(_apiUrl + $"Owner/Add", owner))
                             {
 
@@ -943,7 +950,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
             return RedirectToAction("Index");
         }
-        public async Task<IActionResult> Profile(Model model)
+        public async Task<IActionResult> Profile()
         {
             AuthorizeLogin authorizeLogin = new AuthorizeLogin(HttpContext);
             var loginStatus = await authorizeLogin.CheckLogin();
@@ -978,10 +985,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     emp = JsonConvert.DeserializeObject<Owner>(notificationJson);
                 }
             }
-            if (model.owner == null)
+            Model model = new Model()
             {
-                model.owner = emp;
-            }
+                owner = emp
+            };
             return View(model);
         }
         [HttpPost]
@@ -1027,19 +1034,45 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 {
                     return View(new Model() { owner = model.owner });
                 }
-                var json = JsonConvert.SerializeObject(model.owner);
-                var content = new StringContent(json, Encoding.UTF8, "application/json");
-
-                HttpResponseMessage response = await client.PutAsync(_apiUrl + "Owner/Update", content);
-
-                if (response.IsSuccessStatusCode)
+                var owner = new Owner();
+                    // Get the notification by id
+                    var responseOwner = await client.GetAsync(_apiUrl + $"Owner/{model.owner.OwnerId}");
+                    if (responseOwner.IsSuccessStatusCode)
+                    {
+                        var notificationJson = await responseOwner.Content.ReadAsStringAsync();
+                        owner = JsonConvert.DeserializeObject<Owner>(notificationJson);
+                    }
+                owner.Phone = model.owner.Phone;
+                owner.Gmail = model.owner.Gmail;
+                owner.Gender = model.owner.Gender;
+                owner.BirthDate = model.owner.BirthDate;
+                owner.OwnerName = model.owner.OwnerName;
+                model.owner.Bank.BankId = (int)owner.BankId;
+                using (HttpResponseMessage response = await client.PutAsJsonAsync(_apiUrl + "Bank/Update/", model.owner.Bank))
                 {
-                    return View(model);
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        string a = await response.Content.ReadAsStringAsync();
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                    }
                 }
-                else
+                using (HttpResponseMessage response = await client.PutAsJsonAsync(_apiUrl + "Owner/Update/", owner))
                 {
-                    ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+
+                    if (response.IsSuccessStatusCode)
+                    {
+                        return View(model);
+                    }
+                    else
+                    {
+                        ModelState.AddModelError(string.Empty, "Server error. Please contact administrator.");
+                    }
                 }
+
             }
 
             return View(model);
