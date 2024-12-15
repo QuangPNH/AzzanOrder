@@ -31,6 +31,7 @@ namespace AzzanOrder.Data.Controllers
             return await _context.OrderDetails.Include(od => od.MenuItem).ToListAsync();
         }
 
+
         [HttpGet("Employee/{id}")]
 		public async Task<ActionResult<IEnumerable<OrderDetail>>> GetOrderDetailsByEmployee(int id)
 		{
@@ -38,15 +39,64 @@ namespace AzzanOrder.Data.Controllers
 			{
 				return NotFound();
 			}
-			return await _context.OrderDetails
+
+			var orderDetails = await _context.OrderDetails
 				.Include(od => od.MenuItem)
 				.Include(od => od.Order)
 					.ThenInclude(o => o.Table)
 				.Include(od => od.Order)
 					.ThenInclude(o => o.Member)
 				.Where(od => od.Order != null && od.Order.Table != null && od.Order.Table.EmployeeId == id)
+				.Select(od => new OrderDetail
+				{
+					OrderDetailId = od.OrderDetailId,
+					OrderId = od.OrderId,
+					Quantity = od.Quantity,
+					MenuItemId = od.MenuItemId,
+					Status = od.Status,
+					Description = od.Description,
+					MenuItem = new MenuItem
+					{
+						MenuItemId = od.MenuItem.MenuItemId,
+						ItemName = od.MenuItem.ItemName,
+						Price = od.MenuItem.Price,
+						// Exclude OrderDetails to avoid circular reference
+					},
+					Order = new Order
+					{
+						OrderId = od.Order.OrderId,
+						TableId = od.Order.TableId,
+						MemberId = od.Order.MemberId,
+						OrderDate = od.Order.OrderDate,
+						Cost = od.Order.Cost,
+						Tax = od.Order.Tax,
+						Status = od.Order.Status,
+						Table = od.Order.Table,
+						Member = od.Order.Member != null ? new Member
+						{
+							MemberId = od.Order.Member.MemberId,
+							MemberName = od.Order.Member.MemberName,
+							Gender = od.Order.Member.Gender,
+							Phone = od.Order.Member.Phone,
+							Gmail = od.Order.Member.Gmail,
+							BirthDate = od.Order.Member.BirthDate,
+							Address = od.Order.Member.Address,
+							Point = od.Order.Member.Point,
+							Image = "",
+							IsDelete = od.Order.Member.IsDelete,
+							Feedbacks = new List<Feedback>(),
+							MemberVouchers = new List<MemberVoucher>(),
+							Notifications = new List<Notification>(),
+							Orders = new List<Order>()
+						} : null,
+						MemberVouchers = new List<MemberVoucher>(),
+					}
+				})
 				.ToListAsync();
+
+			return orderDetails;
 		}
+
 
         // GET: api/OrderDetail/5
         [HttpGet("{id}")]

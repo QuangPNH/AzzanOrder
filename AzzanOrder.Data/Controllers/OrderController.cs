@@ -74,7 +74,7 @@ namespace AzzanOrder.Data.Controllers
             return orders;
         }
 
-        [HttpGet("Employee/{id}")]
+		[HttpGet("Employee/{id}")]
 		public async Task<ActionResult<IEnumerable<Order>>> GetOrderByEmployeeId(int id)
 		{
 			if (_context.Orders == null)
@@ -83,33 +83,62 @@ namespace AzzanOrder.Data.Controllers
 			}
 
 			var orders = await _context.Orders
-				.Where(x => x.Table != null && x.Table.EmployeeId == id)
-				.ToListAsync();
-
-			if (orders == null || !orders.Any())
-			{
-				return NotFound();
-			}
-
-			foreach (var order in orders)
-			{
-				await _context.Entry(order).Reference(o => o.Member).LoadAsync();
-				await _context.Entry(order).Reference(o => o.Table).LoadAsync();
-				await _context.Entry(order).Collection(o => o.OrderDetails).LoadAsync();
-
-				foreach (var orderDetail in order.OrderDetails)
-				{
-					await _context.Entry(orderDetail).Reference(od => od.MenuItem).LoadAsync();
-				}
-			}
-
+					.Include(o => o.Table)
+					.Include(o => o.OrderDetails)
+					.ThenInclude(od => od.MenuItem)
+					.Where(x => x.Table != null && x.Table.EmployeeId == id)
+					.Select(o => new Order
+					{
+						OrderId = o.OrderId,
+						TableId = o.TableId,
+						MemberId = o.MemberId,
+						OrderDate = o.OrderDate,
+						Cost = o.Cost,
+						Tax = o.Tax,
+						Status = o.Status,
+						Table = o.Table,
+						OrderDetails = o.OrderDetails.Select(od => new OrderDetail
+						{
+							OrderDetailId = od.OrderDetailId,
+							OrderId = od.OrderId,
+							Quantity = od.Quantity,
+							MenuItemId = od.MenuItemId,
+							Status = od.Status,
+							Description = od.Description,
+							MenuItem = new MenuItem
+							{
+								MenuItemId = od.MenuItem.MenuItemId,
+								ItemName = od.MenuItem.ItemName,
+								Price = od.MenuItem.Price,
+							}
+						}).ToList(),
+						Member = o.Member != null ? new Member
+						{
+							MemberId = o.Member.MemberId,
+							MemberName = o.Member.MemberName,
+							Gender = o.Member.Gender,
+							Phone = o.Member.Phone,
+							Gmail = o.Member.Gmail,
+							BirthDate = o.Member.BirthDate,
+							Address = o.Member.Address,
+							Point = o.Member.Point,
+							Image = "",
+							IsDelete = o.Member.IsDelete,
+							Feedbacks = new List<Feedback>(),
+							MemberVouchers = new List<MemberVoucher>(),
+							Notifications = new List<Notification>(),
+							Orders = new List<Order>()
+						} : null,
+						MemberVouchers = new List<MemberVoucher>(),
+					})
+					.ToListAsync();
 			return orders;
 		}
 
 
 
 
-        [HttpGet("GetOrderByTableQr/{qr}/{id}")]
+		[HttpGet("GetOrderByTableQr/{qr}/{id}")]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrderByTableQr(string qr, int id)
         {
             if (_context.Orders == null)

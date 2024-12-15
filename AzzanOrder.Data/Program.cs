@@ -21,6 +21,7 @@ builder.Services.AddCors(options =>
 builder.Services.AddControllers();
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
 
+var a = builder.Configuration.GetConnectionString("MyCnn");
 builder.Services.AddDbContext<OrderingAssistSystemContext>(option => option.UseSqlServer(builder.Configuration.GetConnectionString("MyCnn")));
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddControllers()
