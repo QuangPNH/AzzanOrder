@@ -9,6 +9,7 @@ namespace AzzanOrder.Data.Models
     {
         public OrderingAssistSystemContext()
         {
+
         }
 
         public OrderingAssistSystemContext(DbContextOptions<OrderingAssistSystemContext> options)
@@ -16,7 +17,8 @@ namespace AzzanOrder.Data.Models
         {
         }
 
-        public virtual DbSet<About> Abouts { get; set; } = null!;
+
+		public virtual DbSet<About> Abouts { get; set; } = null!;
         public virtual DbSet<Bank> Banks { get; set; } = null!;
         public virtual DbSet<Employee> Employees { get; set; } = null!;
         public virtual DbSet<Feedback> Feedbacks { get; set; } = null!;

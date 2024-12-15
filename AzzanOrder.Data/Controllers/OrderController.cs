@@ -75,24 +75,39 @@ namespace AzzanOrder.Data.Controllers
         }
 
         [HttpGet("Employee/{id}")]
-        public async Task<ActionResult<IEnumerable<Order>>> GetOrderByEmployeeId(int id)
-        {
-            if (_context.Orders == null)
-            {
-                return NotFound();
-            }
-            var orders = await _context.Orders.Include(o => o.Member).Include(o => o.Table).Include(o => o.OrderDetails)
-                    .ThenInclude(od => od.MenuItem).Where(
-                x => x.Table != null && x.Table.EmployeeId == id // Fix for Problem 2
-                ).ToListAsync();
+		public async Task<ActionResult<IEnumerable<Order>>> GetOrderByEmployeeId(int id)
+		{
+			if (_context.Orders == null)
+			{
+				return NotFound();
+			}
 
-            if (orders == null)
-            {
-                return NotFound();
-            }
+			var orders = await _context.Orders
+				.Where(x => x.Table != null && x.Table.EmployeeId == id)
+				.ToListAsync();
 
-            return orders;
-        }
+			if (orders == null || !orders.Any())
+			{
+				return NotFound();
+			}
+
+			foreach (var order in orders)
+			{
+				await _context.Entry(order).Reference(o => o.Member).LoadAsync();
+				await _context.Entry(order).Reference(o => o.Table).LoadAsync();
+				await _context.Entry(order).Collection(o => o.OrderDetails).LoadAsync();
+
+				foreach (var orderDetail in order.OrderDetails)
+				{
+					await _context.Entry(orderDetail).Reference(od => od.MenuItem).LoadAsync();
+				}
+			}
+
+			return orders;
+		}
+
+
+
 
         [HttpGet("GetOrderByTableQr/{qr}/{id}")]
         public async Task<ActionResult<IEnumerable<Order>>> GetOrderByTableQr(string qr, int id)

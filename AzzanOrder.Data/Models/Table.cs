@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 
 namespace AzzanOrder.Data.Models
@@ -16,6 +17,7 @@ namespace AzzanOrder.Data.Models
         public bool? Status { get; set; }
         public int? EmployeeId { get; set; }
 
-        public virtual ICollection<Order> Orders { get; set; }
+		[JsonIgnore]
+		public virtual ICollection<Order> Orders { get; set; }
     }
 }
