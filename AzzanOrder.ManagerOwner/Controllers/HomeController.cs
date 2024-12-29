@@ -11,6 +11,9 @@ using Twilio;
 using Twilio.Rest.Api.V2010.Account;
 using Twilio.Types;
 using AzzanOrder.ManagerOwner.Services;
+using Twilio.Rest.Verify.V2.Service;
+using System.Net.Mail;
+using System.Net;
 
 namespace AzzanOrder.ManagerOwner.Controllers
 {
@@ -244,23 +247,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 }
                 else
                 {
-                    string otp = new Random().Next(000000, 999999).ToString();
-                    otp = "123456"; // For testing only, remove this line in production
-                    HttpContext.Session.SetString("OTP", otp);
-                    //var accountSid = Environment.GetEnvironmentVariable("ACCOUNTSID");
-                    //var authToken = Environment.GetEnvironmentVariable("AUTHTOKEN");
-
-                    //TwilioClient.Init(accountSid, authToken);
-                    //var messageOptions = new CreateMessageOptions(new PhoneNumber("+84" + owner.Phone.Split("0")[1]))
-                    //{
-                    //    From = new PhoneNumber("+13204336563"),
-                    //    Body = "Your OTP is " + otp
-                    //};
-                    //MessageResource.Create(messageOptions);
-
-                    // Redirect to the OTP input page
                     var model = new AzzanOrder.ManagerOwner.Models.Model { owner = owner, employee = emp };
-
+                    //SendSms(owner.Phone);
                     owner.Image = null;
                     var ownerJson = JsonConvert.SerializeObject(owner);
                     HttpContext.Response.Cookies.Append("TempLoginInfo", ownerJson, new CookieOptions
@@ -274,25 +262,10 @@ namespace AzzanOrder.ManagerOwner.Controllers
             }
             else
             {
-                string otp = new Random().Next(000000, 999999).ToString();
-                otp = "123456"; // For testing only, remove this line in production
-                HttpContext.Session.SetString("OTP", otp);
-
-                //var accountSid = Environment.GetEnvironmentVariable("ACCOUNTSID");
-                //var authToken = Environment.GetEnvironmentVariable("AUTHTOKEN");
-
-                //TwilioClient.Init(accountSid, authToken);
-                //var messageOptions = new CreateMessageOptions(new PhoneNumber("+84" + emp.Phone.Split("0")[1]))
-                //{
-                //    From = new PhoneNumber("+13204336563"),
-                //    Body = "Your OTP is " + otp
-                //};
-                //MessageResource.Create(messageOptions);
-
-                // Redirect to the OTP input page
                 var model = new AzzanOrder.ManagerOwner.Models.Model { employee = emp };
-
+                //SendSms(emp.Phone);
                 emp.Image = null;
+                emp.Owner.Image = null;
                 var empJson = JsonConvert.SerializeObject(emp);
                 HttpContext.Response.Cookies.Append("TempLoginInfo", empJson, new CookieOptions
                 {
@@ -302,18 +275,50 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 return View("OTPInput", model);
             }
         }
+        private void SendSms(string phone)
+        {
+            string[] parts = phone.Split(new char[] { '0' }, 2);
+            string result = parts[1];
+            var accountSid = Environment.GetEnvironmentVariable("ACCOUNTSID");
+            var authToken = Environment.GetEnvironmentVariable("AUTHTOKEN");
+            TwilioClient.Init(accountSid, authToken);
+            var verification = VerificationResource.Create(
+                to: "+84" + result,
+                channel: "sms",
+                pathServiceSid: "VA3c15cbc73df12d2ada324b4b96781ba7"
+            );
+        }
+        private bool VerifySms(string code, string account)
+        {
+            var a = JsonConvert.DeserializeObject<Owner>(account);
+            var phone = a.Phone;
+            string[] parts = phone.Split(new char[] { '0' }, 2);
+            string result = parts[1];
+            var accountSid = Environment.GetEnvironmentVariable("ACCOUNTSID");
+            var authToken = Environment.GetEnvironmentVariable("AUTHTOKEN");
+            TwilioClient.Init(accountSid, authToken);
 
+            var verificationCheck = VerificationCheckResource.Create(
+                to: "+84" + result,
+                code: code,
+                pathServiceSid: "VA3c15cbc73df12d2ada324b4b96781ba7"
+            );
+            if (verificationCheck.Valid != true)
+            {
+                return false;
+            }
+            return true;
+        }
         [HttpPost]
         public IActionResult VerifyOtp(string otp)
         {
-            var sessionOtp = HttpContext.Session.GetString("OTP");
+            HttpContext.Request.Cookies.TryGetValue("TempLoginInfo", out string loginInfoJson);
             // Check if the OTP matches
-            if (otp == sessionOtp?.ToString())
+            //if (VerifySms(otp, loginInfoJson) == true)
+            if (otp == "123456")
             {
-                TempData.Remove("OTP");
                 try
                 {
-                    HttpContext.Request.Cookies.TryGetValue("TempLoginInfo", out string loginInfoJson);
                     HttpContext.Response.Cookies.Append("LoginInfo", loginInfoJson, new CookieOptions
                     {
                         Expires = DateTimeOffset.UtcNow.AddDays(30)
@@ -516,54 +521,47 @@ namespace AzzanOrder.ManagerOwner.Controllers
         private async Task<IActionResult> SubscribeFreeTrialAction(Model model)
         {
             Employee emp = null;
-            Owner owner = null;
-            string otp = new Random().Next(000000, 999999).ToString();
-            otp = "123456"; // For testing only, remove this line in production
-            HttpContext.Session.SetString("OTP", otp);
-
-            //var accountSid = Environment.GetEnvironmentVariable("ACCOUNTSID");
-            //var authToken = Environment.GetEnvironmentVariable("AUTHTOKEN");
-            //TwilioClient.Init(accountSid, authToken);
-            //var messageOptions = new CreateMessageOptions(new PhoneNumber("+84" + model.owner.Phone.Split("0")[1]))
-            //{
-            //    From = new PhoneNumber("+13204336563"),
-            //    Body = "Your OTP is " + otp
-            //};
-            //MessageResource.Create(messageOptions);
-
-            // Redirect to the OTP input page
             model = new Model { owner = model.owner, employee = emp };
-
             model.owner.Image = null;
             var ownerJson = JsonConvert.SerializeObject(model.owner);
             HttpContext.Response.Cookies.Append("TempLoginInfo", ownerJson, new CookieOptions
             {
                 Expires = DateTimeOffset.UtcNow.AddDays(30)
             });
-
+            var existingOwner = new Owner();
             bool ownerExist = false;
             using (HttpClient client = new HttpClient())
             {
-                HttpResponseMessage getResponse = await client.GetAsync(_apiUrl + $"Owner/Phone/{model.owner.Phone}");
-                if (getResponse.IsSuccessStatusCode)
+                using (HttpResponseMessage getResponse = await client.GetAsync(_apiUrl + $"Owner/Phone/{model.owner.Phone}"))
                 {
-                    var ownerData = await getResponse.Content.ReadAsStringAsync();
-                    var existingOwner = JsonConvert.DeserializeObject<Owner>(ownerData);
-
-                    if (existingOwner != null)
+                    if (getResponse.IsSuccessStatusCode)
                     {
+                        ownerExist = true;
+                        var ownerData = await getResponse.Content.ReadAsStringAsync();
+                        existingOwner = JsonConvert.DeserializeObject<Owner>(ownerData);
                         if (existingOwner.IsFreeTrial == true)
                         {
-                            TempData["Message"] = "Already in free trial";
-                            return RedirectToAction("Subscribe", "Home");
-                        }
-                        else if (existingOwner.IsFreeTrial == false)
-                        {
-                            TempData["Message"] = "You can only subscribe to the free trial once";
-                            return RedirectToAction("Subscribe", "Home");
+                            TempData["Message"] = "Your phone number has already been registered for trial!";
+                            return View(model);
                         }
                     }
                 }
+                using (HttpResponseMessage getResponse = await client.GetAsync(_apiUrl + $"Owner/Gmail/{model.owner.Gmail}"))
+                {
+
+                    if (getResponse.IsSuccessStatusCode)
+                    {
+                        ownerExist = true;
+                        var ownerData = await getResponse.Content.ReadAsStringAsync();
+                        existingOwner = JsonConvert.DeserializeObject<Owner>(ownerData);
+                        if (existingOwner.IsFreeTrial == true)
+                        {
+                            TempData["Message"] = "Your email has already been registered for trial!";
+                            return View(model);
+                        }
+                    }
+                }
+                //SendSms(model.owner.Phone);
             }
             return View("OTPFreeTrial", model);
         }
@@ -571,85 +569,39 @@ namespace AzzanOrder.ManagerOwner.Controllers
         [HttpPost]
         public async Task<IActionResult> VerifyOtpFreeTrial(string otp)
         {
-            var sessionOtp = HttpContext.Session.GetString("OTP");
-
+            HttpContext.Request.Cookies.TryGetValue("TempLoginInfo", out string loginInfoJson);
             // Check if the OTP matches
-            if (otp == sessionOtp?.ToString())
+            //if (VerifySms(otp, loginInfoJson) == true)
+            if (otp == "123456")
             {
-                TempData.Remove("OTP");
                 try
                 {
-                    HttpContext.Request.Cookies.TryGetValue("TempLoginInfo", out string loginInfoJson);
-
-
                     var owner = JsonConvert.DeserializeObject<Owner>(loginInfoJson);
-                    var existingOwner = new Owner();
-                    bool ownerExist = false;
-                    using (HttpClient client = new HttpClient())
-                    {
-                        using (HttpResponseMessage getResponse = await client.GetAsync(_apiUrl + $"Owner/Phone/{owner.Phone}"))
-                        {
-                            if (getResponse.IsSuccessStatusCode)
-                            {
-                                ownerExist = true;
-                                var ownerData = await getResponse.Content.ReadAsStringAsync();
-                                existingOwner = JsonConvert.DeserializeObject<Owner>(ownerData);
-                                if (existingOwner.IsFreeTrial == true)
-                                {
-                                    TempData["Message"] = "Already in free trial";
-                                    return RedirectToAction("Subscribe", "Home");
-                                }
-                            }
-                        }
-                        using (HttpResponseMessage getResponse = await client.GetAsync(_apiUrl + $"Owner/Gmail/{owner.Gmail}"))
-                        {
-
-                            if (getResponse.IsSuccessStatusCode)
-                            {
-                                ownerExist = true;
-                                var ownerData = await getResponse.Content.ReadAsStringAsync();
-                                existingOwner = JsonConvert.DeserializeObject<Owner>(ownerData);
-                                if (existingOwner.IsFreeTrial == true)
-                                {
-                                    TempData["Message"] = "Already in free trial";
-                                    return RedirectToAction("Subscribe", "Home");
-                                }
-                            }
-                        }
-                    }
-
                     owner.SubscriptionStartDate = DateTime.Now;
                     owner.SubscribeEndDate = DateTime.Now.AddMonths(1);
                     owner.IsFreeTrial = true;
-                    //if (existingOwner != null && existingOwner.IsFreeTrial == true)
-                    //{
-                    //    TempData["Message"] = "You can only subscribe to the free trial once";
-                    //    return RedirectToAction("Subscribe", "Home");
-                    //}
-                    if (ownerExist == false)
+                    using (HttpClient client = new HttpClient())
                     {
-                        using (HttpClient client = new HttpClient())
+                        using (HttpResponseMessage getResponse = await client.PostAsJsonAsync(_apiUrl + $"Bank/Add", owner.Bank))
                         {
-                            using (HttpResponseMessage getResponse = await client.PostAsJsonAsync(_apiUrl + $"Bank/Add", owner.Bank))
+                            if (getResponse.IsSuccessStatusCode)
                             {
-                                if (getResponse.IsSuccessStatusCode)
-                                {
-                                    string mes = await getResponse.Content.ReadAsStringAsync();
-                                }
-                            }
-                            using (HttpResponseMessage getResponse = await client.PostAsJsonAsync(_apiUrl + $"Owner/Add", owner))
-                            {
-
-                                if (getResponse.IsSuccessStatusCode)
-                                {
-                                    string mes = await getResponse.Content.ReadAsStringAsync();
-                                    owner = JsonConvert.DeserializeObject<Owner>(mes);
-                                }
+                                string mes = await getResponse.Content.ReadAsStringAsync();
+                                var bank = JsonConvert.DeserializeObject<Bank>(mes);
+                                owner.BankId = bank.BankId;
                             }
                         }
-                        AddFirstManagerAsync(owner);
-                    }
+                        using (HttpResponseMessage getResponse = await client.PostAsJsonAsync(_apiUrl + $"Owner/Add", owner))
+                        {
 
+                            if (getResponse.IsSuccessStatusCode)
+                            {
+                                string mes = await getResponse.Content.ReadAsStringAsync();
+                                owner = JsonConvert.DeserializeObject<Owner>(mes);
+                            }
+                        }
+                    }
+                    AddFirstManagerAsync(owner);
                     owner.Image = null;
                     var b = JsonConvert.SerializeObject(owner);
                     HttpContext.Response.Cookies.Append("LoginInfo", b, new CookieOptions
@@ -750,6 +702,28 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 {
                     Expires = DateTimeOffset.UtcNow.AddYears(30)
                 });
+                string fromAddress = "vipxpert3721@gmail.com"; // Must be a valid, existing email address
+                string toAddress = owner.Gmail;
+                string fromPassword = "zdsz nlaf jajk xscs"; // Be cautious with handling passwords
+                string subject = "Thanks for purchasing our service!";
+                try
+                {
+                    // Create a new instance of MailMessage
+                    MailMessage mail = new MailMessage();
+                    mail.From = new MailAddress(fromAddress);
+                    mail.To.Add(toAddress);
+                    mail.Subject = subject;
+                    mail.Body = "Here's the link to the staff's application and tutorial! Please keep it for private use.\nStaff & bartender app: https://drive.google.com/file/d/1IGfBzNXATVFhMyapROYDLlQAJK6GgW00/view?usp=sharing\nTutorial: https://docs.google.com/document/d/1lbEjBjkJ2TtN4V7KlASLPzpFd5ydkzdpiF4v-4ZRJ5w/edit?usp=sharing";
+                    // Create a new instance of SmtpClient
+                    SmtpClient smtpClient = new SmtpClient("smtp.gmail.com", 587/*465*/);
+                    smtpClient.Credentials = new NetworkCredential(fromAddress, fromPassword);
+                    smtpClient.EnableSsl = true; // Enable SSL if required by your SMTP server
+                                                 // Send the email
+                    smtpClient.Send(mail);
+                }
+                catch (Exception ex)
+                {
+                }
                 return Ok();
             }
             catch
@@ -793,7 +767,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
         [HttpPost]
         public async Task<IActionResult> SubscribeExtension(string pack)
         {
-
             Model model = new Model();
             model.owner = new Owner();
             HttpContext.Request.Cookies.TryGetValue("LoginInfo", out string loginInfoJson);
@@ -806,13 +779,26 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 return View();
             }
 
-            /*if (string.IsNullOrEmpty(model.owner.Bank.PAYOS_CLIENT_ID) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_API_KEY) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_CHECKSUM_KEY) || string.IsNullOrEmpty(model.owner.Phone) || string.IsNullOrEmpty(model.owner.Gmail))
+            Bank bank = new Bank();
+            using (HttpClient client = new HttpClient())
+            {
+                try
+                {
+                    HttpResponseMessage res = await client.GetAsync(_apiUrl + "Bank/" + model.owner.BankId);
+                    if (res.IsSuccessStatusCode)
+                    {
+                        bank = JsonConvert.DeserializeObject<Bank>(await res.Content.ReadAsStringAsync());
+                        model.owner.Bank = bank;
+                    }
+                }
+                catch (HttpRequestException e) { }
+            }
+
+            if (string.IsNullOrEmpty(model.owner.Bank.PAYOS_CLIENT_ID) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_API_KEY) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_CHECKSUM_KEY) || string.IsNullOrEmpty(model.owner.Phone) || string.IsNullOrEmpty(model.owner.Gmail))
             {
                 TempData["Message"] = "Owner PAYOS information, phone number, or Gmail is missing.";
                 return RedirectToAction("SubscribeExtension", "Home");
-            }*/
-
-
+            }
 
             string redirectUrl = new Config()._payOS + "Subscribe/?";
             string price = "0";
@@ -832,13 +818,12 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     }
                 }
             }
-
-            /*if (string.IsNullOrEmpty(model.owner.Bank.PAYOS_CLIENT_ID) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_API_KEY) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_CHECKSUM_KEY) || string.IsNullOrEmpty(model.owner.Phone))
+            model.owner.Bank = bank;
+            if (string.IsNullOrEmpty(model.owner.Bank.PAYOS_CLIENT_ID) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_API_KEY) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_CHECKSUM_KEY) || string.IsNullOrEmpty(model.owner.Phone))
             {
                 TempData["Message"] = "Owner PAYOS information or phone number is missing.";
                 return RedirectToAction("SubscribeExtension", "Home");
-            }*/
-
+            }
 
             if (pack.Equals("yearly"))
             {
@@ -861,11 +846,25 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     model.owner.SubscribeEndDate = DateTime.Now.AddYears(1);
                 }
             }
-            else if (pack.Equals("forever"))
+            else if (pack.Equals("monthly"))
             {
-                price = "3000000";
+                price = "30000";
                 model.owner.SubscriptionStartDate = DateTime.Now;
-                model.owner.SubscribeEndDate = DateTime.Now.AddYears(100);
+                if (model.owner.SubscribeEndDate != null)
+                {
+                    if (model.owner.SubscribeEndDate < DateTime.Now)
+                    {
+                        model.owner.SubscribeEndDate = DateTime.Now.AddMonths(1);
+                    }
+                    else
+                    {
+                        model.owner.SubscribeEndDate = model.owner.SubscribeEndDate.AddMonths(1);
+                    }
+                }
+                else
+                {
+                    model.owner.SubscribeEndDate = DateTime.Now.AddMonths(1);
+                }
             }
 
             if (model.owner != null)
@@ -992,15 +991,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
         [HttpPost]
         public async Task<IActionResult> Profile(Model model, IFormFile? Image)
         {
-            if (Image != null && Image.Length > 0)
-            {
-                using (var memoryStream = new MemoryStream())
-                {
-                    await Image.CopyToAsync(memoryStream);
-                    var fileBytes = memoryStream.ToArray();
-                    model.owner.Image = "data:image/png;base64," + Convert.ToBase64String(fileBytes);
-                }
-            }
 
             using (HttpClient client = new HttpClient())
             {
@@ -1045,8 +1035,21 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 owner.Gender = model.owner.Gender;
                 owner.BirthDate = model.owner.BirthDate;
                 owner.OwnerName = model.owner.OwnerName;
-                owner.Image = model.owner.Image;
                 model.owner.Bank.BankId = (int)owner.BankId;
+                if (Image != null && Image.Length > 0)
+                {
+                    if (Image.Length > 1 * 1024 * 1024) // 1MB in bytes
+                    {
+                        model.owner.Image = null;
+                        TempData["ErrorImage"] = "Image cannot be over 1Mb.";
+                    }
+                    using (var memoryStream = new MemoryStream())
+                    {
+                        await Image.CopyToAsync(memoryStream);
+                        var fileBytes = memoryStream.ToArray();
+                        owner.Image = "data:image/png;base64," + Convert.ToBase64String(fileBytes);
+                    }
+                }
                 using (HttpResponseMessage response = await client.PutAsJsonAsync(_apiUrl + "Bank/Update/", model.owner.Bank))
                 {
 
@@ -1064,7 +1067,9 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
                     if (response.IsSuccessStatusCode)
                     {
-                        return View(model);
+                        var data = await response.Content.ReadAsStringAsync();
+                        owner = JsonConvert.DeserializeObject<Owner>(data);
+                        return View(new Model { owner = owner });
                     }
                     else
                     {
