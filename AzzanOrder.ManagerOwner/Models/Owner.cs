@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 
@@ -32,7 +33,9 @@ namespace AzzanOrder.ManagerOwner.Models
 		public bool? IsFreeTrial { get; set; }
 		public int? NumberOfAccountAllowed { get; set; }
 
-		public virtual Bank? Bank { get; set; }
+		
+
+        public virtual Bank? Bank { get; set; }
 		public virtual ICollection<About> Abouts { get; set; }
 		public virtual ICollection<Employee> Employees { get; set; }
 	}

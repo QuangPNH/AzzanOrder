@@ -209,7 +209,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 }
                 if (emp == null)
                 {
-					TempData["Message"] = "Login Failed";
+                    TempData["Message"] = "Login Failed";
                     var model = new Model() { owner = owner, employee = emp };
                     return View(model);
                 }
@@ -245,25 +245,23 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 else
                 {
                     string otp = new Random().Next(000000, 999999).ToString();
-
                     otp = "123456"; // For testing only, remove this line in production
-
                     HttpContext.Session.SetString("OTP", otp);
+                    //var accountSid = Environment.GetEnvironmentVariable("ACCOUNTSID");
+                    //var authToken = Environment.GetEnvironmentVariable("AUTHTOKEN");
 
-                    /*// Send OTP via Twilio
-					var accountSid = "ACd5083d30edb839433981a766a0c2e2fd";
-					var authToken = "";
-					TwilioClient.Init(accountSid, authToken);
-					var messageOptions = new CreateMessageOptions(new PhoneNumber("+84388536414"))
-					{
-						From = new PhoneNumber("+19096555985"),
-						Body = "Your OTP is " + otp
-					};
-					MessageResource.Create(messageOptions);*/
+                    //TwilioClient.Init(accountSid, authToken);
+                    //var messageOptions = new CreateMessageOptions(new PhoneNumber("+84" + owner.Phone.Split("0")[1]))
+                    //{
+                    //    From = new PhoneNumber("+13204336563"),
+                    //    Body = "Your OTP is " + otp
+                    //};
+                    //MessageResource.Create(messageOptions);
 
                     // Redirect to the OTP input page
                     var model = new AzzanOrder.ManagerOwner.Models.Model { owner = owner, employee = emp };
 
+                    owner.Image = null;
                     var ownerJson = JsonConvert.SerializeObject(owner);
                     HttpContext.Response.Cookies.Append("TempLoginInfo", ownerJson, new CookieOptions
                     {
@@ -277,25 +275,24 @@ namespace AzzanOrder.ManagerOwner.Controllers
             else
             {
                 string otp = new Random().Next(000000, 999999).ToString();
-
                 otp = "123456"; // For testing only, remove this line in production
-
                 HttpContext.Session.SetString("OTP", otp);
 
-                /*// Send OTP via Twilio
-                var accountSid = "ACd5083d30edb839433981a766a0c2e2fd";
-                var authToken = "";
-                TwilioClient.Init(accountSid, authToken);
-                var messageOptions = new CreateMessageOptions(new PhoneNumber("+84388536414"))
-                {
-                    From = new PhoneNumber("+19096555985"),
-                    Body = "Your OTP is " + otp
-                };
-                MessageResource.Create(messageOptions);*/
+                //var accountSid = Environment.GetEnvironmentVariable("ACCOUNTSID");
+                //var authToken = Environment.GetEnvironmentVariable("AUTHTOKEN");
+
+                //TwilioClient.Init(accountSid, authToken);
+                //var messageOptions = new CreateMessageOptions(new PhoneNumber("+84" + emp.Phone.Split("0")[1]))
+                //{
+                //    From = new PhoneNumber("+13204336563"),
+                //    Body = "Your OTP is " + otp
+                //};
+                //MessageResource.Create(messageOptions);
 
                 // Redirect to the OTP input page
                 var model = new AzzanOrder.ManagerOwner.Models.Model { employee = emp };
 
+                emp.Image = null;
                 var empJson = JsonConvert.SerializeObject(emp);
                 HttpContext.Response.Cookies.Append("TempLoginInfo", empJson, new CookieOptions
                 {
@@ -468,6 +465,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
             if (model.owner != null)
             {
+                model.owner.Image = null;
                 var ownerJson = JsonConvert.SerializeObject(model.owner);
                 var ownerParams = new Dictionary<string, string>
                 {
@@ -520,25 +518,23 @@ namespace AzzanOrder.ManagerOwner.Controllers
             Employee emp = null;
             Owner owner = null;
             string otp = new Random().Next(000000, 999999).ToString();
-
             otp = "123456"; // For testing only, remove this line in production
-
             HttpContext.Session.SetString("OTP", otp);
 
-            /*// Send OTP via Twilio
-			var accountSid = "ACd5083d30edb839433981a766a0c2e2fd";
-			var authToken = "";
-			TwilioClient.Init(accountSid, authToken);
-			var messageOptions = new CreateMessageOptions(new PhoneNumber("+84388536414"))
-			{
-				From = new PhoneNumber("+19096555985"),
-				Body = "Your OTP is " + otp
-			};
-			MessageResource.Create(messageOptions);*/
+            //var accountSid = Environment.GetEnvironmentVariable("ACCOUNTSID");
+            //var authToken = Environment.GetEnvironmentVariable("AUTHTOKEN");
+            //TwilioClient.Init(accountSid, authToken);
+            //var messageOptions = new CreateMessageOptions(new PhoneNumber("+84" + model.owner.Phone.Split("0")[1]))
+            //{
+            //    From = new PhoneNumber("+13204336563"),
+            //    Body = "Your OTP is " + otp
+            //};
+            //MessageResource.Create(messageOptions);
 
             // Redirect to the OTP input page
             model = new Model { owner = model.owner, employee = emp };
 
+            model.owner.Image = null;
             var ownerJson = JsonConvert.SerializeObject(model.owner);
             HttpContext.Response.Cookies.Append("TempLoginInfo", ownerJson, new CookieOptions
             {
@@ -634,7 +630,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     {
                         using (HttpClient client = new HttpClient())
                         {
-                            using(HttpResponseMessage getResponse = await client.PostAsJsonAsync(_apiUrl + $"Bank/Add", owner.Bank))
+                            using (HttpResponseMessage getResponse = await client.PostAsJsonAsync(_apiUrl + $"Bank/Add", owner.Bank))
                             {
                                 if (getResponse.IsSuccessStatusCode)
                                 {
@@ -653,7 +649,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         }
                         AddFirstManagerAsync(owner);
                     }
-                    
+
+                    owner.Image = null;
                     var b = JsonConvert.SerializeObject(owner);
                     HttpContext.Response.Cookies.Append("LoginInfo", b, new CookieOptions
                     {
@@ -699,7 +696,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         role = JsonConvert.DeserializeObject<Role>(mes);
                     }
                 }
-                
+
                 var emp = new Employee() { EmployeeName = owner.OwnerName, Phone = owner.Phone, Gender = owner.Gender, Gmail = owner.Gmail, BirthDate = owner.BirthDate, RoleId = 1, Image = owner.Image, IsDelete = false, OwnerId = owner.OwnerId, Role = role };
                 Console.WriteLine(JsonConvert.SerializeObject(emp));
                 using (HttpResponseMessage addResponse = await client.PostAsJsonAsync(_apiUrl + "Employee/Add", emp))
@@ -746,7 +743,8 @@ namespace AzzanOrder.ManagerOwner.Controllers
                         }
                     }
                     catch (HttpRequestException e) { }
-                }            
+                }
+                owner.Image = null;
                 var ownerJson = JsonConvert.SerializeObject(owner);
                 HttpContext.Response.Cookies.Append("LoginInfo", ownerJson, new CookieOptions
                 {
@@ -808,11 +806,11 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 return View();
             }
 
-            if (string.IsNullOrEmpty(model.owner.Bank.PAYOS_CLIENT_ID) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_API_KEY) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_CHECKSUM_KEY) || string.IsNullOrEmpty(model.owner.Phone) || string.IsNullOrEmpty(model.owner.Gmail))
+            /*if (string.IsNullOrEmpty(model.owner.Bank.PAYOS_CLIENT_ID) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_API_KEY) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_CHECKSUM_KEY) || string.IsNullOrEmpty(model.owner.Phone) || string.IsNullOrEmpty(model.owner.Gmail))
             {
                 TempData["Message"] = "Owner PAYOS information, phone number, or Gmail is missing.";
                 return RedirectToAction("SubscribeExtension", "Home");
-            }
+            }*/
 
 
 
@@ -835,11 +833,11 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 }
             }
 
-            if (string.IsNullOrEmpty(model.owner.Bank.PAYOS_CLIENT_ID) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_API_KEY) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_CHECKSUM_KEY) || string.IsNullOrEmpty(model.owner.Phone))
+            /*if (string.IsNullOrEmpty(model.owner.Bank.PAYOS_CLIENT_ID) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_API_KEY) || string.IsNullOrEmpty(model.owner.Bank.PAYOS_CHECKSUM_KEY) || string.IsNullOrEmpty(model.owner.Phone))
             {
                 TempData["Message"] = "Owner PAYOS information or phone number is missing.";
                 return RedirectToAction("SubscribeExtension", "Home");
-            }
+            }*/
 
 
             if (pack.Equals("yearly"))
@@ -872,6 +870,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
 
             if (model.owner != null)
             {
+                model.owner.Image = null;
                 var ownerJson = JsonConvert.SerializeObject(model.owner);
                 var ownerParams = new Dictionary<string, string>
                 {
@@ -901,7 +900,6 @@ namespace AzzanOrder.ManagerOwner.Controllers
                 {
                     var json = JsonConvert.SerializeObject(model.owner);
                     var content = new StringContent(json, Encoding.UTF8, "application/json");
-
                     var response = await client.PostAsync(uri.AbsoluteUri, content);
                     if (response.IsSuccessStatusCode)
                     {
@@ -992,7 +990,7 @@ namespace AzzanOrder.ManagerOwner.Controllers
             return View(model);
         }
         [HttpPost]
-        public async Task<IActionResult> Profile(Model model, IFormFile Image)
+        public async Task<IActionResult> Profile(Model model, IFormFile? Image)
         {
             if (Image != null && Image.Length > 0)
             {
@@ -1035,18 +1033,19 @@ namespace AzzanOrder.ManagerOwner.Controllers
                     return View(new Model() { owner = model.owner });
                 }
                 var owner = new Owner();
-                    // Get the notification by id
-                    var responseOwner = await client.GetAsync(_apiUrl + $"Owner/{model.owner.OwnerId}");
-                    if (responseOwner.IsSuccessStatusCode)
-                    {
-                        var notificationJson = await responseOwner.Content.ReadAsStringAsync();
-                        owner = JsonConvert.DeserializeObject<Owner>(notificationJson);
-                    }
+                // Get the notification by id
+                var responseOwner = await client.GetAsync(_apiUrl + $"Owner/{model.owner.OwnerId}");
+                if (responseOwner.IsSuccessStatusCode)
+                {
+                    var notificationJson = await responseOwner.Content.ReadAsStringAsync();
+                    owner = JsonConvert.DeserializeObject<Owner>(notificationJson);
+                }
                 owner.Phone = model.owner.Phone;
                 owner.Gmail = model.owner.Gmail;
                 owner.Gender = model.owner.Gender;
                 owner.BirthDate = model.owner.BirthDate;
                 owner.OwnerName = model.owner.OwnerName;
+                owner.Image = model.owner.Image;
                 model.owner.Bank.BankId = (int)owner.BankId;
                 using (HttpResponseMessage response = await client.PutAsJsonAsync(_apiUrl + "Bank/Update/", model.owner.Bank))
                 {
